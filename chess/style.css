@@ -1203,3 +1203,213 @@ select.opp-level { font-size: 0.92rem; }
   .rep-look { scroll-snap-align: start; }
   .rep-coachbar { padding: 12px 14px; }
 }
+
+/* =====================================================================
+   v37 — fit-to-screen layout. Sizing only: colours / theme untouched.
+   Goal: on a laptop viewport (innerHeight ≈ 650–950) every board tab shows
+   header + tabs, board, eval bar, nav and its key side panel without the
+   page scrolling; long side panels scroll inside themselves instead.
+   --hdr-h is kept in sync with the real header height by a tiny script in
+   index.html; the value here is only the first-paint fallback.
+   ===================================================================== */
+:root { --hdr-h: 82px; --pad-y: 12px; --pad-x: 22px; }
+:root { --stage-h: calc(100vh - var(--hdr-h) - 2 * var(--pad-y)); }
+@supports (height: 100dvh) { :root { --stage-h: calc(100dvh - var(--hdr-h) - 2 * var(--pad-y)); } }
+
+/* compact header + single-row, horizontally scrolling tab strip (all sizes) */
+.header-bar { padding: 6px var(--pad-x) 2px; gap: 12px; }
+.brand { gap: 10px; }
+.brand-mark { width: 32px; height: 32px; font-size: 20px; border-radius: 9px; }
+.app-header h1 { font-size: 1.12rem; }
+.icon-btn { width: 34px; height: 34px; font-size: 15px; border-radius: 9px; }
+.health-indicator { height: 34px; padding: 0 10px; }
+.tabs { padding: 2px calc(var(--pad-x) - 8px) 0; gap: 2px; }
+.tab-btn { padding: 7px 12px 10px; min-height: 38px; font-size: 0.92rem; }
+.tab-btn::after { left: 10px; right: 10px; }
+.tab-link { min-height: 30px; padding: 4px 12px; margin: 0 0 5px 6px; font-size: 0.88rem; }
+
+@media (min-width: 961px) {
+  main { padding: var(--pad-y) var(--pad-x); }
+
+  /* the board is sized by height as well as width: whatever is left of the
+     stage once the tab's own chrome under/over the board is taken off */
+  .tab-panel { --board-chrome: 58px; --side-min: 560px;
+    --board-size: clamp(280px, min(calc(var(--stage-h) - var(--board-chrome)),
+                                   calc(100vw - 2 * var(--pad-x) - var(--side-min) - 60px)), 860px); }
+  #tab-play { --board-chrome: 58px; }
+  #tab-games { --board-chrome: 180px; }
+  .rep-tab { --board-chrome: 104px; --side-min: 520px; }
+  #tab-attacks { --board-chrome: 48px; }
+
+  .play-layout, .games-layout, .lab-layout, .rep-layout { gap: 22px; }
+  .board-col, .lab-left, .games-board-col, .rep-left { top: calc(var(--hdr-h) + var(--pad-y)); }
+  .nav-slot { margin: 8px 0 2px; }
+  .nav-btn { min-height: 36px; }
+
+  /* long right-hand columns scroll inside themselves */
+  .side-panel, .games-side, .lab-panels, .rep-right, .lab-left {
+    max-height: var(--stage-h); overflow-y: auto; overscroll-behavior: contain;
+    scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent;
+  }
+  .side-panel { max-width: 980px; }
+  #tab-games .games-side { max-height: calc(var(--stage-h) - 64px); }
+  .lab-panels { align-content: start; }
+
+  /* tighter cards */
+  .panel-card { margin: 0 0 12px; }
+  .panel-card, .lab-panel, .plan-col, .game-review { padding: 14px 16px; }
+  #tab-puzzles .side-panel, #tab-cycles .side-panel, #tab-sparring .side-panel,
+  #tab-endgames .side-panel, #tab-masters .side-panel, #lesson-player .side-panel, #mg-viewer .side-panel { padding: 14px 18px; }
+  .side-panel .lab-panel { margin: 10px 0; }
+  .card-title, .lab-panel h3 { margin-bottom: 8px; }
+  .panel-row { margin: 8px 0; }
+  .coach-box { padding: 10px 13px; margin: 8px 0; font-size: 0.94rem; line-height: 1.5; }
+  .info-line { font-size: 0.9rem; line-height: 1.5; }
+  .chat-messages { max-height: 220px; }
+  .moves-card .move-list { max-height: 150px; }
+  .games-import.panel-row { margin: 0 0 10px; }
+
+  /* Play & Analyze: the side column splits into two scrolling columns
+     (controls + coach | engine lines + move list + tools) when there is room */
+  #tab-play .side-panel { max-height: none; overflow: visible; }
+  #tab-play .play-side-a, #tab-play .play-side-b { min-width: 0; }
+  #tab-play .play-side-b .panel-card:last-child, #tab-play .play-side-a > :last-child { margin-bottom: 0; }
+  #tab-play .rehearsal-panel { margin-bottom: 12px; }
+
+  /* plan / progress / learn: tighter grids, the tall plan columns scroll */
+  .plan-top { gap: 14px; }
+  .plan-board { gap: 12px; }
+  .plan-col { max-height: 300px; overflow-y: auto; scrollbar-width: thin; }
+  .progress-grid { gap: 12px; }
+  .progress-grid .lab-panel { min-height: 0; }
+  .card-grid { gap: 12px; }
+}
+@media (min-width: 1240px) {
+  #tab-play .side-panel {
+    display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 14px; align-items: start;
+  }
+  #tab-play .play-side-a, #tab-play .play-side-b {
+    max-height: var(--stage-h); overflow-y: auto; overscroll-behavior: contain;
+    scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent;
+  }
+  #tab-play .tab-panel, #tab-play { --side-min: 700px; }
+}
+
+/* ---- trainer tabs (Modern / Grünfeld / Attacks), v37 structure:
+        [label · board · nav] | [title · set-up strip · moves+buttons · detail] */
+.rep-right { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.rep-coachbar { margin: 0; padding: 8px 12px; gap: 10px; box-shadow: none; border-radius: var(--r); }
+.rep-coach-avatar { width: 34px; height: 34px; font-size: 1.15rem; border-radius: 9px; }
+.rep-coachbar strong { font-size: var(--fs-md); margin-bottom: 0; }
+.rep-coachbar .info-line { font-size: var(--fs-sm); line-height: 1.4;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rep-picker { margin: 0; }
+.rep-picker-head { margin-bottom: 6px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.rep-picker-head h3 { margin: 0; font-size: var(--fs-sm); text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-2); }
+.rep-picker-head .info-line { font-size: var(--fs-xs); color: var(--text-3); }
+.rep-looks {
+  display: grid; grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: minmax(200px, 1fr);
+  gap: 8px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity;
+  padding-bottom: 4px; scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent;
+}
+.rep-look { padding: 8px 11px; gap: 4px; scroll-snap-align: start; }
+.rep-look .ml-head strong { font-size: 0.9rem; }
+.rep-look .ml-tell { font-size: var(--fs-xs); -webkit-line-clamp: 2; }
+#attacks-patterns .ml-tell { -webkit-line-clamp: 2; }
+.rep-controls .rep-movebar { margin: 0 0 6px; }
+.rep-controls .panel-row { margin: 6px 0; gap: 8px; }
+.rep-status-row { min-height: 1.4em; }
+.rep-score { margin: 4px 0 0; }
+.rep-panels { gap: 10px; max-width: none; }
+.rep-panels .lab-panel { padding: 12px 14px; }
+.rep-left { position: static; }
+.rep-left .lab-game-bar { margin-bottom: 8px; padding: 6px 10px; font-size: 0.88rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.rep-layout { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
+.rep-left { width: var(--board-size); max-width: 100%; }
+@media (min-width: 961px) {
+  /* the detail panels take what is left of the right column and scroll */
+  .rep-right { height: var(--stage-h); max-height: var(--stage-h); overflow: hidden; }
+  .rep-panels { flex: 1 1 auto; min-height: 120px; overflow-y: auto; overscroll-behavior: contain;
+    scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; padding-right: 2px; }
+  .rep-picker, .rep-coachbar, .rep-controls { flex: 0 0 auto; }
+  .rep-answer { max-height: 140px; overflow-y: auto; }
+}
+@media (max-width: 960px) {
+  /* phones/tablets: board near the top — title, board, moves/buttons, then the set-ups and detail */
+  .rep-layout { display: flex; flex-direction: column; gap: 10px; }
+  .rep-left, .rep-right { display: contents; }
+  .rep-coachbar { order: 0; }
+  .rep-left .lab-game-bar { order: 1; margin-bottom: 0; }
+  .rep-left .board-holder { order: 2; width: 100%; }
+  .rep-left .nav-slot { order: 3; margin: 0; }
+  .rep-controls { order: 4; }
+  .rep-picker { order: 5; }
+  .rep-panels { order: 6; }
+  .rep-left { width: 100%; }
+  .rep-looks { grid-auto-columns: 78%; }
+}
+@media (min-width: 961px) {
+  /* keep the set-up strip to one compact row so the detail gets the height */
+  .rep-picker-head .info-line { display: none; }
+  .rep-look .ml-head { flex-wrap: nowrap; min-width: 0; }
+  .rep-look .ml-head strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .rep-look .ml-head .chip { flex: 0 0 auto; }
+  .rep-look .ml-tell { -webkit-line-clamp: 1; }
+  #attacks-patterns .ml-tell { -webkit-line-clamp: 1; }
+  .rep-coachbar .info-line { -webkit-line-clamp: 1; }
+  .rep-looks { grid-auto-columns: minmax(230px, 1fr); }
+}
+@media (min-width: 961px) and (min-height: 820px) {
+  .rep-look .ml-tell, #attacks-patterns .ml-tell, .rep-coachbar .info-line { -webkit-line-clamp: 2; }
+}
+@media (min-width: 961px) {
+  .games-board-col { width: var(--board-size); min-width: 280px; }
+  .lab-left { width: var(--board-size); }
+}
+@media (min-width: 961px) {
+  /* Play: nav buttons and the move-feedback chip share one row under the
+     board, so feedback is visible without pushing the page past the fold */
+  #tab-play { --board-chrome: 90px; }
+  #tab-play .board-nav-col {
+    display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 10px; row-gap: 0;
+    align-items: start; width: var(--board-size); max-width: var(--board-size);
+  }
+  #tab-play .board-nav-col > .board-holder, #play-history-note { grid-column: 1 / -1; }
+  #tab-play .board-nav-col > .nav-slot { grid-column: 1; }
+  #tab-play .nav-btn { width: 42px; }
+  #tab-play .feedback-chip { grid-column: 2; margin: 8px 0 0; padding: 6px 10px; gap: 10px; }
+  #tab-play .feedback-chip .fb-badge { width: 30px; height: 30px; border-radius: 9px; font-size: 0.86rem; }
+  #tab-play .feedback-chip .fb-why {
+    font-size: 0.82rem; line-height: 1.35;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  #tab-play .feedback-chip:hover .fb-why, #tab-play .feedback-chip:focus-within .fb-why { -webkit-line-clamp: unset; display: block; }
+}
+@media (min-width: 961px) {
+  /* strip cards: name gets the room (up to 2 lines); the frequency / count
+     chip is shown in the detail panel and status line instead */
+  .rep-look .ml-head .chip { display: none; }
+  .rep-look .ml-head strong { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; }
+  .rep-looks { grid-auto-columns: minmax(190px, 1fr); }
+}
+@media (min-width: 961px) {
+  #plan-streak-row { margin: 0 0 6px; }
+  .plan-top { margin-bottom: 10px; }
+  .plan-reasons { margin: 0 0 8px; padding: 8px 12px; }
+  #plan-week-note { margin: 0 0 6px; }
+  .plan-items { gap: 6px; }
+  .plan-item { padding: 7px 10px; }
+  .plan-ring-wrap { margin: 2px 0 6px; }
+  .plan-col { max-height: 250px; }
+  #learn-home h2 { margin: 6px 0 10px; font-size: var(--fs-lg); }
+}
+@media (max-width: 960px) {
+  .rep-layout > *, .rep-left > *, .rep-right > * { min-width: 0; max-width: 100%; }
+  .rep-left .nav-slot { width: 100%; }
+}
+@media (max-width: 960px) {
+  .rep-coachbar .info-line { -webkit-line-clamp: 1; }
+  .rep-coach-avatar { width: 30px; height: 30px; font-size: 1rem; }
+}

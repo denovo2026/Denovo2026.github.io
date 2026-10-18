@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=36">
+<link rel="stylesheet" href="style.css?v=37">
 </head>
 <body>
 <header class="app-header">
@@ -60,6 +60,16 @@
     <a class="tab-link" href="./olympiad/" title="Olympiad game matrix · Samarkand 2026 (opens the Olympiad explorer)">Olympiad <span class="tab-link-arrow" aria-hidden="true">&#x2197;</span></a>
   </nav>
 </header>
+<script>
+/* v37: expose the real header height so the desktop layout can size the board
+   and the scrolling side panels to the space that is actually left. */
+(function () {
+  var h = document.querySelector(".app-header"), r = document.documentElement;
+  function set() { r.style.setProperty("--hdr-h", Math.ceil(h.getBoundingClientRect().height) + "px"); }
+  set();
+  if (window.ResizeObserver) new ResizeObserver(set).observe(h); else window.addEventListener("resize", set);
+})();
+</script>
 
 <div id="engine-banner" class="banner amber hidden">
   Engine unavailable — the in-browser engine failed to load. Try refreshing the page.
@@ -124,6 +134,7 @@
         </div>
       </div>
       <aside class="side-panel">
+        <div class="play-side-a">
         <div id="review-panel" class="rehearsal-panel review-panel hidden">
           <div class="review-head">
             <span>🔍 Mistake Review</span>
@@ -241,6 +252,8 @@
             <button id="btn-chat-send" class="btn primary">Send</button>
           </div>
         </div>
+        </div>
+        <div class="play-side-b">
         <div class="panel-card engine-card">
           <h3 class="card-title">Top lines <span class="muted">engine</span></h3>
           <ol id="lines-list" class="lines-list"></ol>
@@ -326,6 +339,7 @@
             <div class="info-line muted">Coach voice is unavailable in the web version — coach texts are shown on screen only. (The voice, when available, only reads text the app already shows — it never adds new advice.)</div>
             <div class="info-line muted">Run a local server: LM Studio → Developer → Start Server (port 8080), or llama.cpp: llama-server -m model.gguf --port 8080, or Ollama (URL http://127.0.0.1:11434 + your model name below). The app calls your server at its /v1/chat/completions endpoint (OpenAI-compatible). When enabled, the AI coach rewrites plan goals and coach comments in friendlier language; if the server is off, the built-in explanations keep working. Recommended: a small model is plenty (Llama 3.2 3B / Qwen2.5 3B, ~2 GB) — the coach only rewords verified engine analysis, never invents moves.</div>
           </div>
+        </div>
         </div>
       </aside>
     </div>
@@ -1011,52 +1025,56 @@
 
   <!-- ===================== MODERN DEFENSE ===================== -->
   <section id="tab-modern" class="tab-panel rep-tab">
-    <div class="rep-coachbar">
-      <span class="rep-coach-avatar" aria-hidden="true">&#x265F;</span>
-      <div>
-        <strong id="modern-title">Modern Defense</strong>
-        <span class="info-line" id="modern-summary">Loading…</span>
-      </div>
-    </div>
-
-    <div class="rep-picker">
-      <div class="rep-picker-head">
-        <h3>What White shows you</h3>
-        <span class="info-line">You never choose the line — you recognise it. Each one is
-        named by the move that gives it away; pick one and the detail sits beside the board
-        while you step through it.</span>
-      </div>
-      <div id="modern-looks" class="rep-looks">Loading…</div>
-    </div>
-
     <div class="rep-layout">
       <div class="rep-left">
-        <div id="modern-label" class="lab-game-bar">Pick a White set-up above.</div>
+        <div id="modern-label" class="lab-game-bar">Pick a White set-up.</div>
         <div id="modern-board" class="board-holder"></div>
         <div id="modern-nav" class="nav-slot"></div>
-        <div id="modern-movebar" class="rep-movebar"></div>
-        <div class="panel-row">
-          <button id="btn-modern-quiz" class="btn primary">Quiz me on Black's moves</button>
-          <button id="btn-modern-blind" class="btn">Quiz against all types</button>
-          <button id="btn-modern-play" class="btn">Send to Play &amp; Analyze</button>
-        </div>
-        <div class="panel-row"><span id="modern-status" class="info-line"></span></div>
-        <div id="modern-score" class="rep-score hidden"></div>
       </div>
 
-      <div class="rep-panels">
-        <div class="lab-panel" id="modern-detail-panel">
-          <h3 id="modern-look-name">The set-up</h3>
-          <div id="modern-detail">
-            <p class="info-line">Choose a set-up to see the tell, the plan and the tactics that decide it.</p>
+      <div class="rep-right">
+        <div class="rep-coachbar">
+          <span class="rep-coach-avatar" aria-hidden="true">&#x265F;</span>
+          <div class="rep-coachbar-text">
+            <strong id="modern-title">Modern Defense</strong>
+            <span class="info-line" id="modern-summary">Loading…</span>
           </div>
         </div>
-        <div class="lab-panel">
-          <h3>Your scheme, whatever they play</h3>
-          <div id="modern-scheme"></div>
-          <h4 class="sub-head">Reading the board</h4>
-          <div id="modern-reading"></div>
-          <div id="modern-coach" class="coach-box hidden"></div>
+
+        <div class="rep-picker">
+          <div class="rep-picker-head">
+            <h3>What White shows you</h3>
+            <span class="info-line">You never choose the line — you recognise it. Each one is
+            named by the move that gives it away.</span>
+          </div>
+          <div id="modern-looks" class="rep-looks">Loading…</div>
+        </div>
+
+        <div class="rep-controls">
+          <div id="modern-movebar" class="rep-movebar"></div>
+          <div class="panel-row">
+            <button id="btn-modern-quiz" class="btn primary">Quiz me on Black's moves</button>
+            <button id="btn-modern-blind" class="btn">Quiz against all types</button>
+            <button id="btn-modern-play" class="btn">Send to Play &amp; Analyze</button>
+          </div>
+          <div class="rep-status-row"><span id="modern-status" class="info-line"></span></div>
+          <div id="modern-score" class="rep-score hidden"></div>
+        </div>
+
+        <div class="rep-panels">
+          <div class="lab-panel" id="modern-detail-panel">
+            <h3 id="modern-look-name">The set-up</h3>
+            <div id="modern-detail">
+              <p class="info-line">Choose a set-up to see the tell, the plan and the tactics that decide it.</p>
+            </div>
+          </div>
+          <div class="lab-panel">
+            <h3>Your scheme, whatever they play</h3>
+            <div id="modern-scheme"></div>
+            <h4 class="sub-head">Reading the board</h4>
+            <div id="modern-reading"></div>
+            <div id="modern-coach" class="coach-box hidden"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1064,52 +1082,56 @@
 
   <!-- ===================== GR&UUML;NFELD DEFENSE ===================== -->
   <section id="tab-grunfeld" class="tab-panel rep-tab">
-    <div class="rep-coachbar">
-      <span class="rep-coach-avatar" aria-hidden="true">&#x265E;</span>
-      <div>
-        <strong id="grunfeld-title">Gr&uuml;nfeld Defense</strong>
-        <span class="info-line" id="grunfeld-summary">Loading…</span>
-      </div>
-    </div>
-
-    <div class="rep-picker">
-      <div class="rep-picker-head">
-        <h3>What White shows you</h3>
-        <span class="info-line">You never choose the line — you recognise it. Each one is
-        named by the move that gives it away; pick one and the detail sits beside the board
-        while you step through it.</span>
-      </div>
-      <div id="grunfeld-looks" class="rep-looks">Loading…</div>
-    </div>
-
     <div class="rep-layout">
       <div class="rep-left">
-        <div id="grunfeld-label" class="lab-game-bar">Pick a White set-up above.</div>
+        <div id="grunfeld-label" class="lab-game-bar">Pick a White set-up.</div>
         <div id="grunfeld-board" class="board-holder"></div>
         <div id="grunfeld-nav" class="nav-slot"></div>
-        <div id="grunfeld-movebar" class="rep-movebar"></div>
-        <div class="panel-row">
-          <button id="btn-grunfeld-quiz" class="btn primary">Quiz me on Black's moves</button>
-          <button id="btn-grunfeld-blind" class="btn">Quiz against all types</button>
-          <button id="btn-grunfeld-play" class="btn">Send to Play &amp; Analyze</button>
-        </div>
-        <div class="panel-row"><span id="grunfeld-status" class="info-line"></span></div>
-        <div id="grunfeld-score" class="rep-score hidden"></div>
       </div>
 
-      <div class="rep-panels">
-        <div class="lab-panel" id="grunfeld-detail-panel">
-          <h3 id="grunfeld-look-name">The set-up</h3>
-          <div id="grunfeld-detail">
-            <p class="info-line">Choose a set-up to see the tell, the plan and the tactics that decide it.</p>
+      <div class="rep-right">
+        <div class="rep-coachbar">
+          <span class="rep-coach-avatar" aria-hidden="true">&#x265E;</span>
+          <div class="rep-coachbar-text">
+            <strong id="grunfeld-title">Gr&uuml;nfeld Defense</strong>
+            <span class="info-line" id="grunfeld-summary">Loading…</span>
           </div>
         </div>
-        <div class="lab-panel">
-          <h3>Your scheme, whatever they play</h3>
-          <div id="grunfeld-scheme"></div>
-          <h4 class="sub-head">Reading the board</h4>
-          <div id="grunfeld-reading"></div>
-          <div id="grunfeld-coach" class="coach-box hidden"></div>
+
+        <div class="rep-picker">
+          <div class="rep-picker-head">
+            <h3>What White shows you</h3>
+            <span class="info-line">You never choose the line — you recognise it. Each one is
+            named by the move that gives it away.</span>
+          </div>
+          <div id="grunfeld-looks" class="rep-looks">Loading…</div>
+        </div>
+
+        <div class="rep-controls">
+          <div id="grunfeld-movebar" class="rep-movebar"></div>
+          <div class="panel-row">
+            <button id="btn-grunfeld-quiz" class="btn primary">Quiz me on Black's moves</button>
+            <button id="btn-grunfeld-blind" class="btn">Quiz against all types</button>
+            <button id="btn-grunfeld-play" class="btn">Send to Play &amp; Analyze</button>
+          </div>
+          <div class="rep-status-row"><span id="grunfeld-status" class="info-line"></span></div>
+          <div id="grunfeld-score" class="rep-score hidden"></div>
+        </div>
+
+        <div class="rep-panels">
+          <div class="lab-panel" id="grunfeld-detail-panel">
+            <h3 id="grunfeld-look-name">The set-up</h3>
+            <div id="grunfeld-detail">
+              <p class="info-line">Choose a set-up to see the tell, the plan and the tactics that decide it.</p>
+            </div>
+          </div>
+          <div class="lab-panel">
+            <h3>Your scheme, whatever they play</h3>
+            <div id="grunfeld-scheme"></div>
+            <h4 class="sub-head">Reading the board</h4>
+            <div id="grunfeld-reading"></div>
+            <div id="grunfeld-coach" class="coach-box hidden"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1117,42 +1139,47 @@
 
   <!-- ===================== KINGSIDE ATTACKS ===================== -->
   <section id="tab-attacks" class="tab-panel rep-tab">
-    <div class="rep-coachbar">
-      <span class="rep-coach-avatar" aria-hidden="true">&#x2694;</span>
-      <div>
-        <strong id="attacks-title">Kingside attacks</strong>
-        <span class="info-line" id="attacks-summary">Loading…</span>
-      </div>
-    </div>
-
-    <div class="rep-picker">
-      <div class="rep-picker-head">
-        <h3>The patterns</h3>
-        <span class="info-line">What has to be true before each one works, how it goes, and
-        how it is stopped. Pick one, read it, then solve the positions.</span>
-      </div>
-      <div id="attacks-patterns" class="rep-looks">Loading…</div>
-    </div>
-
     <div class="rep-layout">
       <div class="rep-left">
-        <div id="attacks-puzzle-label" class="lab-game-bar">Pick a pattern above.</div>
+        <div id="attacks-puzzle-label" class="lab-game-bar">Pick a pattern.</div>
         <div id="attacks-board" class="board-holder"></div>
-        <div class="panel-row">
-          <button id="btn-attacks-next" class="btn primary">Next position</button>
-          <button id="btn-attacks-show" class="btn">Show the move</button>
-          <button id="btn-attacks-play" class="btn">Send to Play &amp; Analyze</button>
-        </div>
-        <div class="panel-row"><span id="attacks-status" class="info-line"></span></div>
-        <div id="attacks-score" class="rep-score hidden"></div>
-        <div id="attacks-answer" class="rep-answer hidden"></div>
       </div>
 
-      <div class="rep-panels">
-        <div class="lab-panel" id="attacks-theory-panel">
-          <h3 id="attacks-pattern-name">The pattern</h3>
-          <div id="attacks-theory">
-            <p class="info-line">Choose a pattern to see when it works and how it is defended.</p>
+      <div class="rep-right">
+        <div class="rep-coachbar">
+          <span class="rep-coach-avatar" aria-hidden="true">&#x2694;</span>
+          <div class="rep-coachbar-text">
+            <strong id="attacks-title">Kingside attacks</strong>
+            <span class="info-line" id="attacks-summary">Loading…</span>
+          </div>
+        </div>
+
+        <div class="rep-picker">
+          <div class="rep-picker-head">
+            <h3>The patterns</h3>
+            <span class="info-line">What has to be true before each one works, how it goes, and
+            how it is stopped. Pick one, read it, then solve the positions.</span>
+          </div>
+          <div id="attacks-patterns" class="rep-looks">Loading…</div>
+        </div>
+
+        <div class="rep-controls">
+          <div class="panel-row">
+            <button id="btn-attacks-next" class="btn primary">Next position</button>
+            <button id="btn-attacks-show" class="btn">Show the move</button>
+            <button id="btn-attacks-play" class="btn">Send to Play &amp; Analyze</button>
+          </div>
+          <div class="rep-status-row"><span id="attacks-status" class="info-line"></span></div>
+          <div id="attacks-score" class="rep-score hidden"></div>
+          <div id="attacks-answer" class="rep-answer hidden"></div>
+        </div>
+
+        <div class="rep-panels">
+          <div class="lab-panel" id="attacks-theory-panel">
+            <h3 id="attacks-pattern-name">The pattern</h3>
+            <div id="attacks-theory">
+              <p class="info-line">Choose a pattern to see when it works and how it is defended.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -1172,12 +1199,12 @@
 <!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
 <script src="vendor/chess.js?v=33"></script>
 <script src="js/engine.js?v=33"></script>
-<script src="api-shim.js?v=36"></script>
+<script src="api-shim.js?v=37"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=35"></script>
-<script src="app.js?v=36"></script>
-<script src="js/repertoire.js?v=36"></script>
-<script src="js/attacks.js?v=36"></script>
+<script src="app.js?v=37"></script>
+<script src="js/repertoire.js?v=37"></script>
+<script src="js/attacks.js?v=37"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});
