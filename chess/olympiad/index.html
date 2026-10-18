@@ -1,0 +1,1025 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Olympiad game matrix · Samarkand 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Young+Serif&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols+2&text=%E2%99%9A%E2%99%9B%E2%99%9C%E2%99%9D%E2%99%9E%E2%99%9F&display=swap" rel="stylesheet">
+<style>
+/* Layout: tournament-hall night. Masthead, one tab strip (Games / Blunders / Prevention guide), a shared filter bar, then the view.
+   Dark-first with brass-gold accents; boards in walnut and brass, drawn from Black's side. */
+:root{
+  --bg:#10141C; --surface:#161C27; --surface-2:#1C2432; --line:#2A3446; --ink:#ECE6D8; --muted:#9AA3B2;
+  --gold:#D8B25A; --gold-ink:#10141C; --gold-soft:#3A301A;
+  --bad:#E4705F; --bad-soft:#3D1F1C; --warn:#E3A348; --warn-soft:#3A2B15; --inacc:#8E9BB0;
+  --wpiece:#F6F0E2; --bpiece:#161616;
+  --sq-light:#CDB88C; --sq-dark:#8B6C40; --sq-coord:#10141C;
+  --res-w-bg:#EDE6D2; --res-w-ink:#10141C; --res-b-bg:#05070B; --res-b-ink:#ECE6D8; --res-d-bg:#2A3446; --res-d-ink:#C9D2E0;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --sans:"Instrument Sans", "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --glyph:"Noto Sans Symbols 2", "Segoe UI Symbol", "Apple Symbols", "DejaVu Sans", serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#F1F0EB; --surface:#FFFFFF; --surface-2:#F7F5EF; --line:#D8D4C8; --ink:#19202C; --muted:#586070;
+    --gold:#8A6717; --gold-ink:#FFFFFF; --gold-soft:#F2E7C9;
+    --bad:#B23C2C; --bad-soft:#F7E1DC; --warn:#9A5D0C; --warn-soft:#F6E8D2; --inacc:#66748A;
+    --sq-light:#E4D3AC; --sq-dark:#A7834F; --sq-coord:#19202C;
+    --res-w-bg:#FBF7EC; --res-w-ink:#19202C; --res-b-bg:#19202C; --res-b-ink:#F6F2E8; --res-d-bg:#E4E6EA; --res-d-ink:#3B4658;
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F1F0EB; --surface:#FFFFFF; --surface-2:#F7F5EF; --line:#D8D4C8; --ink:#19202C; --muted:#586070;
+  --gold:#8A6717; --gold-ink:#FFFFFF; --gold-soft:#F2E7C9;
+  --bad:#B23C2C; --bad-soft:#F7E1DC; --warn:#9A5D0C; --warn-soft:#F6E8D2; --inacc:#66748A;
+  --sq-light:#E4D3AC; --sq-dark:#A7834F; --sq-coord:#19202C;
+  --res-w-bg:#FBF7EC; --res-w-ink:#19202C; --res-b-bg:#19202C; --res-b-ink:#F6F2E8; --res-d-bg:#E4E6EA; --res-d-ink:#3B4658;
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;font-variant-numeric:tabular-nums}
+a{color:var(--gold)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.wrap{max-width:1500px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{text-wrap:balance}
+
+.mast{border-bottom:1px solid var(--line);background:var(--surface)}
+.mast .wrap{padding-block:26px 0;display:grid;gap:18px}
+.mast-top{display:flex;gap:24px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(28px,4vw,44px);line-height:1.05;margin:0;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:8px 0 0;max-width:68ch}
+.facts{display:flex;gap:22px;flex-wrap:wrap}
+.fact{display:flex;flex-direction:column;align-items:flex-end}
+.fact b{font-family:var(--display);font-weight:400;font-size:26px;line-height:1;color:var(--gold)}
+.fact span{font-size:12.5px;color:var(--muted)}
+.tabs{display:flex;gap:4px;overflow-x:auto}
+.tab{font:inherit;font-weight:600;background:none;border:0;color:var(--muted);padding:10px 14px 12px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--gold)}
+.tab:hover{color:var(--ink)}
+
+main .wrap{padding-block:22px 48px}
+.status{font-size:14px;color:var(--muted);min-height:1.5em;margin:0 0 10px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;min-width:0}
+.panel h2{font-family:var(--display);font-weight:400;font-size:19px;margin:0 0 10px}
+.panel .hint{font-size:13px;color:var(--muted);margin:-4px 0 10px}
+
+.controls{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px;display:grid;gap:12px}
+.crow{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end}
+.crow-label{font-size:12.5px;color:var(--gold);font-weight:600;flex-basis:100%;margin-bottom:-4px}
+.field{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--muted);min-width:0}
+.field input,.field select{font:inherit;font-size:14px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:7px 9px;min-width:0;max-width:100%}
+.field.search{flex:1 1 260px}.field.search input{width:100%}
+.field.num input{width:84px}
+.checks{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px}
+.checks label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.rep{background:var(--gold-soft);border-radius:6px;padding:4px 8px}
+.btn{font:inherit;font-weight:600;border:1px solid var(--gold);background:var(--gold);color:var(--gold-ink);padding:8px 14px;border-radius:6px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.small{padding:4px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+a.btn{text-decoration:none;display:inline-block}
+
+.summary{display:grid;grid-template-columns:minmax(260px,330px) 1fr;gap:16px;margin-bottom:16px}
+.bignum{font-family:var(--display);font-size:40px;line-height:1}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:14px;margin:12px 0 0}
+.kv dt{color:var(--muted)}.kv dd{margin:0;text-align:right;font-weight:600}
+.split{display:flex;height:12px;border-radius:3px;overflow:hidden;margin-top:12px;gap:2px}
+.split span{display:block}
+.legend{display:flex;gap:14px;font-size:12.5px;color:var(--muted);margin-top:6px;flex-wrap:wrap}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;border:1px solid var(--line)}
+.scrollx{overflow-x:auto}
+.otab{width:100%;border-collapse:collapse;font-size:13.5px}
+.otab th{font-weight:600;text-align:left;color:var(--muted);padding:5px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.otab td{padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.otab .n{text-align:right}
+.otab tr.pick{cursor:pointer}.otab tr.pick:hover td{background:var(--surface-2)}
+.otab tr.active td{background:var(--gold-soft)}
+.bar{display:flex;height:8px;width:120px;border-radius:2px;overflow:hidden;gap:1px}
+.hbar{height:10px;border-radius:0 3px 3px 0;background:var(--gold);min-width:2px}
+.ofoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:8px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.linkbtn{font:inherit;background:none;border:0;color:var(--gold);cursor:pointer;padding:0;text-decoration:underline}
+
+.meta{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 2px 8px;font-size:13.5px;color:var(--muted)}
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table.grid{border-collapse:collapse;width:100%;font-size:13.5px}
+table.games{min-width:1320px} table.blist{min-width:1080px}
+.grid thead th{position:sticky;top:0;background:var(--surface-2);text-align:left;font-weight:600;border-bottom:1px solid var(--line);padding:0;white-space:nowrap;z-index:1}
+.grid thead th button{all:unset;display:block;padding:9px 10px;cursor:pointer;width:100%;box-sizing:border-box}
+.grid thead th button:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.grid thead th[aria-sort] button::after{content:" ▲";font-size:10px;color:var(--gold)}
+.grid thead th[aria-sort="descending"] button::after{content:" ▼"}
+.grid td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.grid tbody tr.row{cursor:pointer}
+.grid tbody tr.row:hover td{background:var(--surface-2)}
+.grid tbody tr.row.open td{background:var(--gold-soft)}
+.grid tr.mine td:first-child{box-shadow:inset 3px 0 0 var(--gold)}
+.p{font-weight:600}.t{color:var(--muted);font-size:12.5px}.elo{color:var(--muted);font-weight:400}
+.n{text-align:right}
+.res{display:inline-block;min-width:44px;text-align:center;font-weight:700;border-radius:4px;padding:2px 6px;font-size:12.5px;border:1px solid var(--line)}
+.res.w{background:var(--res-w-bg);color:var(--res-w-ink)}.res.b{background:var(--res-b-bg);color:var(--res-b-ink)}.res.d{background:var(--res-d-bg);color:var(--res-d-ink)}
+.fam{font-weight:600}.arch{max-width:220px}.take{min-width:280px;max-width:420px}
+.tag{display:inline-block;font-size:11.5px;padding:1px 6px;border-radius:3px;background:var(--surface-2);border:1px solid var(--line);margin:2px 3px 0 0;color:var(--muted);white-space:nowrap}
+.tag.hot{background:var(--gold-soft);color:var(--ink);border-color:transparent}
+.tag.bad{background:var(--bad-soft);color:var(--ink);border-color:transparent}
+.errs{display:grid;grid-template-columns:auto auto;gap:2px 8px;font-size:12.5px;white-space:nowrap}
+.errs .side{color:var(--muted)}
+.cnt{display:inline-flex;align-items:center;gap:3px;margin-right:6px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.dot.B{background:var(--bad)}.dot.M{background:var(--warn)}.dot.I{background:var(--inacc)}
+.fchip{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--bad-soft);color:var(--ink);white-space:nowrap}
+.swing{white-space:nowrap;font-weight:600}
+.swing .arrow{color:var(--muted);font-weight:400;padding:0 3px}
+
+.detail>td{background:var(--surface-2);padding:18px}
+.dinner{position:sticky;left:18px;max-width:calc(100vw - 76px)}
+@media (min-width:1400px){.dinner{max-width:none;position:static}}
+.dhead{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline;margin-bottom:12px}
+.dhead h3{font-family:var(--display);font-weight:400;font-size:20px;margin:0}
+.dgrid{display:grid;grid-template-columns:minmax(280px,1fr) minmax(300px,1.25fr);gap:22px}
+.dgrid>*{min-width:0}
+.sect{font-family:var(--display);font-weight:400;font-size:17px;margin:0 0 8px}
+.dkv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:13.5px;margin:0 0 12px}
+.dkv dt{color:var(--muted)}.dkv dd{margin:0}
+.movelist{font-size:13px;line-height:1.8;max-height:240px;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 10px;word-spacing:2px}
+.movelist b{color:var(--muted);font-weight:500}
+.mv{padding:1px 3px;border-radius:3px}
+.mv.B{background:var(--bad-soft);color:var(--ink);font-weight:700;box-shadow:inset 0 -2px 0 var(--bad)}
+.mv.M{box-shadow:inset 0 -2px 0 var(--warn)}
+.evalwrap{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 8px 4px;margin-bottom:12px}
+.evalwrap svg{display:block;width:100%;height:auto}
+.evtip{position:absolute;pointer-events:none;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:4px 8px;font-size:12.5px;white-space:nowrap;transform:translate(-50%,-110%)}
+.read{white-space:pre-wrap;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:6px;padding:10px 12px;font-size:14px;min-height:2.5em}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 0;align-items:center}
+
+.callouts{display:grid;gap:14px;margin-top:4px}
+.callout{display:grid;grid-template-columns:minmax(200px,260px) 1fr;gap:18px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--bad);border-radius:8px;padding:14px}
+.callout>*{min-width:0}
+.callout h4{margin:0;font-size:16px;font-weight:700;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.callout .mvbig{font-family:var(--display);font-weight:400;font-size:20px}
+.callout p{margin:8px 0 0;max-width:72ch}
+.callout .better{font-size:14px}
+.callout .lines{font-size:13px;color:var(--muted);margin-top:6px}
+.callout .lines div{margin-top:2px}
+.prevent{margin-top:10px;background:var(--gold-soft);border-radius:6px;padding:9px 12px;font-size:14px}
+.prevent b{color:var(--ink)}
+.keynote{margin-top:10px;border:1px solid var(--gold);border-radius:6px;padding:10px 12px;font-size:14px}
+.keynote h5{margin:0 0 4px;font-size:13px;color:var(--gold);font-weight:700}
+.keynote p{margin:6px 0 0}
+.board svg{display:block;width:100%;height:auto;border-radius:4px}
+.practice{margin-top:10px;border:1px dashed var(--gold);border-radius:6px;padding:10px 12px}
+.practice h5{margin:0 0 2px;font-size:13px;color:var(--gold);font-weight:700}
+.practice .actions{margin-top:8px}
+.maiapick{display:inline-flex;gap:6px;align-items:center}
+.maiasel{font:inherit;font-size:13px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+.fenline{font-size:12px;color:var(--muted);word-break:break-all;margin-top:8px;user-select:all}
+.copybox{width:100%;min-height:90px;margin-top:6px;font:inherit;font-size:12px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:6px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.blegend{display:flex;gap:12px;font-size:12px;color:var(--muted);margin-top:6px;flex-wrap:wrap;align-items:center}
+.blegend i{display:inline-block;width:16px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+
+.bgrid{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-bottom:16px}
+.ftab{width:100%;border-collapse:collapse;font-size:13.5px}
+.ftab th{font-weight:600;text-align:left;color:var(--muted);padding:5px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.ftab td{padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.ftab .n{text-align:right}
+.ftab tr.pick{cursor:pointer}.ftab tr.pick:hover td{background:var(--surface-2)}
+.ftab tr.active td{background:var(--gold-soft)}
+.heat{width:100%;border-collapse:separate;border-spacing:2px;font-size:12.5px}
+.heat th{font-weight:600;color:var(--muted);text-align:left;padding:4px 6px;white-space:nowrap}
+.heat td{text-align:center;padding:5px 4px;border-radius:3px;min-width:52px}
+.ctx{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:4px}
+.ctxc{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.ctxc:hover{border-color:var(--gold)}
+.ctxc.active{border-color:var(--gold);background:var(--gold-soft)}
+.ctxc b{font-family:var(--display);font-weight:400;font-size:22px;display:block;line-height:1.1}
+.ctxc span{font-size:12.5px;color:var(--muted)}
+
+.keys{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:16px}
+.keycard{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.keycard:hover{border-color:var(--gold)}
+.keycard h3{font-family:var(--display);font-weight:400;font-size:17px;margin:0}
+.keycard p{margin:0;font-size:13.5px;color:var(--muted)}
+
+.guide{display:grid;gap:14px}
+.gitem{display:grid;grid-template-columns:minmax(200px,280px) 1fr;gap:18px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.gitem>*{min-width:0}
+.gitem h3{font-family:var(--display);font-weight:400;font-size:20px;margin:0 0 6px}
+.gstat{display:grid;grid-template-columns:1fr auto;gap:3px 10px;font-size:13.5px}
+.gstat dt{color:var(--muted)}.gstat dd{margin:0;text-align:right;font-weight:600}
+.habit{font-size:15px;max-width:72ch;margin:0}
+.gex{margin-top:10px;font-size:13.5px}
+.gex button{margin:4px 6px 0 0}
+.routine{background:var(--surface);border:1px solid var(--gold);border-radius:10px;padding:16px 18px;margin-bottom:16px}
+.routine h2{font-family:var(--display);font-weight:400;font-size:21px;margin:0 0 8px}
+.routine ol{margin:8px 0 0;padding-left:22px;display:grid;gap:6px;max-width:80ch}
+
+.pager{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:14px;font-size:14px}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+footer{color:var(--muted);font-size:13px;margin-top:26px;max-width:92ch;display:grid;gap:6px}
+footer p{margin:0}
+@media (max-width:900px){
+  .summary,.bgrid,.dgrid,.callout,.gitem{grid-template-columns:1fr}
+  .fact{align-items:flex-start}
+  .callout .board{max-width:300px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="mast-top">
+      <div>
+        <h1>Olympiad game matrix</h1>
+        <p class="sub">Every game of the 46th FIDE Chess Olympiad, Samarkand 2026, from the Lichess broadcast. Openings, Black's approach, and every engine-confirmed blunder: what went wrong and how to avoid it.</p>
+      </div>
+      <div class="facts" id="facts"></div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Views">
+      <button class="tab" role="tab" id="tab-games" aria-selected="true" aria-controls="view-games">Games</button>
+      <button class="tab" role="tab" id="tab-blunders" aria-selected="false" aria-controls="view-blunders">Blunders</button>
+      <button class="tab" role="tab" id="tab-guide" aria-selected="false" aria-controls="view-guide">Prevention guide</button>
+    </nav>
+  </div>
+</header>
+
+<main><div class="wrap">
+  <p class="status" id="status" role="status">Loading games…</p>
+
+  <section class="controls" id="controls" aria-label="Filters" hidden>
+    <div class="crow">
+      <div class="field search"><label for="q">Search players, teams, openings, ECO, takeaways</label><input id="q" type="search" placeholder="e.g. Sindarov, Najdorf, E97, India"></div>
+      <div class="field"><label for="fSec">Section</label><select id="fSec"><option value="">Both</option><option value="O">Open</option><option value="W">Women</option></select></div>
+      <div class="field"><label for="fRd">Round</label><select id="fRd"><option value="">All</option></select></div>
+      <div class="field"><label for="fBd">Board</label><select id="fBd"><option value="">All</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+      <div class="field"><label for="fTbl">Tables</label><select id="fTbl"><option value="">All</option><option value="10">Top 10</option><option value="25">Top 25</option><option value="50">Top 50</option></select></div>
+      <div class="field"><label for="fRes">Result</label><select id="fRes"><option value="">All</option><option value="1-0">White won</option><option value="1/2-1/2">Draw</option><option value="0-1">Black won</option><option value="dec">Decisive</option></select></div>
+      <div class="field"><label for="fFam">Opening</label><select id="fFam"><option value="">All openings</option></select></div>
+      <div class="field num"><label for="fElo">Min avg Elo</label><input id="fElo" type="number" step="50" min="0" placeholder="0"></div>
+      <label class="rep checks"><input type="checkbox" id="fRep"> My Black repertoire (King's Indian, Pirc, Modern)</label>
+      <div class="checks">
+        <label title="Players more than 500 rating points apart"><input type="checkbox" id="fGap"> Gap 500+</label>
+        <label title="The lower-rated player won, with more than 200 points between them"><input type="checkbox" id="fUp"> Upset 200+</label>
+      </div>
+    </div>
+    <div class="crow">
+      <div class="crow-label">Blunder filters</div>
+      <div class="field"><label for="bFam">Blunder family</label><select id="bFam"><option value="">All families</option></select></div>
+      <div class="field"><label for="bSide">Blundered by</label><select id="bSide"><option value="">Either side</option><option value="0">White</option><option value="1">Black</option></select></div>
+      <div class="field"><label for="bPhase">Phase</label><select id="bPhase"><option value="">Any phase</option><option value="0">Opening</option><option value="1">Middlegame</option><option value="2">Endgame</option></select></div>
+      <div class="field"><label for="bType">Move type</label><select id="bType"><option value="">Any move</option></select></div>
+      <div class="checks" id="bTags"></div>
+      <button class="btn ghost small" id="reset">Clear all filters</button>
+    </div>
+  </section>
+
+  <section id="view-games" role="tabpanel" aria-labelledby="tab-games" hidden>
+    <div class="summary">
+      <div class="panel" id="stats"></div>
+      <div class="panel">
+        <h2>Openings in the current view</h2>
+        <div class="scrollx"><table class="otab" id="otab"></table></div>
+        <div class="ofoot"><span>Select a row to filter by that opening.</span><button class="linkbtn" id="omore"></button></div>
+      </div>
+    </div>
+    <div class="meta"><span id="gcount"></span><span><button class="btn ghost small" id="gexport" hidden>Export games as CSV</button></span></div>
+    <div class="tablewrap">
+      <table class="grid games" id="gtable">
+        <thead><tr>
+          <th data-k="sec"><button>Sec</button></th>
+          <th data-k="rd"><button>Rd</button></th>
+          <th data-k="bd"><button>Bd</button></th>
+          <th data-k="white"><button>White</button></th>
+          <th data-k="black"><button>Black</button></th>
+          <th data-k="diff" class="n"><button>Elo gap</button></th>
+          <th data-k="open"><button>Opening</button></th>
+          <th data-k="arch"><button>Black's approach</button></th>
+          <th data-k="moves" class="n"><button>Moves</button></th>
+          <th data-k="resNum"><button>Result</button></th>
+          <th data-k="errTotal"><button>Errors</button></th>
+          <th data-k="take"><button>Takeaway</button></th>
+        </tr></thead>
+        <tbody id="gbody"></tbody>
+      </table>
+    </div>
+    <nav class="pager" id="gpager" aria-label="Game pages"></nav>
+  </section>
+
+  <section id="view-blunders" role="tabpanel" aria-labelledby="tab-blunders" hidden>
+    <h2 class="sect" id="keysTitle">Key blunders, analysed</h2>
+    <div class="keys" id="keys"></div>
+    <div class="bgrid">
+      <div class="panel">
+        <h2>Blunder families</h2>
+        <p class="hint">Engine-confirmed blunders in the current view. Select a family to filter.</p>
+        <div class="scrollx"><table class="ftab" id="ftab"></table></div>
+      </div>
+      <div class="panel">
+        <h2>When they happen</h2>
+        <p class="hint">Share of each family by game phase. Darker means more of that family's blunders.</p>
+        <div class="scrollx"><table class="heat" id="heat"></table></div>
+        <h2 style="margin-top:16px">Context</h2>
+        <div class="ctx" id="ctx"></div>
+      </div>
+    </div>
+    <div class="meta"><span id="bcount"></span><span><button class="btn ghost small" id="bexport" hidden>Export blunders as CSV</button></span></div>
+    <div class="tablewrap">
+      <table class="grid blist" id="btable">
+        <thead><tr>
+          <th data-k="rd"><button>Rd</button></th>
+          <th data-k="game"><button>Game</button></th>
+          <th data-k="moveNo" class="n"><button>Move</button></th>
+          <th data-k="sideName"><button>By</button></th>
+          <th data-k="famName"><button>Family</button></th>
+          <th data-k="loss" class="n"><button>Swing</button></th>
+          <th data-k="clk" class="n"><button>Clock</button></th>
+          <th data-k="mtypeName"><button>Move type</button></th>
+          <th data-k="tagCount"><button>Tags</button></th>
+        </tr></thead>
+        <tbody id="bbody"></tbody>
+      </table>
+    </div>
+    <nav class="pager" id="bpager" aria-label="Blunder pages"></nav>
+  </section>
+
+  <section id="view-guide" role="tabpanel" aria-labelledby="tab-guide" hidden>
+    <div class="routine" id="routine"></div>
+    <div class="guide" id="guide"></div>
+  </section>
+
+  <footer id="foot">
+    <p>Source: the Lichess broadcast of the Olympiad (both sections, rounds 1 to 11), with the evaluation Lichess recorded after every move. Moves were replayed and checked for legality before use.</p>
+    <p>How blunders are found: for each game, the three moves where the broadcast evaluation shows the biggest drop in the mover's winning chances (at least 0.20 on Lichess's scale) are re-analysed with Stockfish 16. A drop of 0.30 or more counts as a blunder, the threshold Lichess uses. Candidates that the quick search scored just under that line were searched again about three times deeper before being accepted or rejected. The engine's best move and refutation come from these searches. ACPL uses the broadcast evaluations.</p>
+    <p>Families and tags are pattern reads of the engine lines, not human annotation. "Decided the game" marks the loser's last blunder from a holdable position into a losing one, with no blunder by the winner afterwards. Positions are drawn from Black's side; use Flip board for White's.</p>
+  </footer>
+</div></main>
+<script>
+/* ===== Olympiad game matrix: data, filters, views ===== */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const PAGE = 100;
+const REP = new Set(["King's Indian", 'Pirc', 'Modern']);
+const TAGS = ['Opening', 'Middlegame', 'Endgame', 'Time pressure', 'Played fast', 'Long think', 'Winning to losing', 'Threw away a win',
+  'Draw to loss', 'Already worse', 'Ignored a threat', 'Unpunished', 'Decisive'];
+const TAG_FILTERS = [3, 4, 10, 7, 6, 8, 12, 11];
+const MTYPES = ['Pawn move', 'Piece move', 'Capture', 'Check', 'King move', 'Castling'];
+const FAMS = [
+  { key: 'mate-allowed', name: 'Walked into mate', what: 'The move allowed a forced mate.',
+    habit: "Before every move, list the opponent's checks and captures first. When your king's cover is thin or your back rank has no escape square, look for mating patterns before anything else." },
+  { key: 'mate-missed', name: 'Missed a mate', what: 'A forced mate was on the board and the player chose something else.',
+    habit: 'When the enemy king is exposed, go through every check before considering quiet moves. Forcing moves come first; a mate often starts with a sacrifice that looks unnatural.' },
+  { key: 'hung', name: 'Hung a piece', what: 'A piece was left where it could simply be taken, or given up for less than it was worth.',
+    habit: 'Run a blunder check before letting go of the piece: is everything defended at least as often as it is attacked, and by cheaper pieces? Look hardest at the piece you just moved and at whatever it used to guard.' },
+  { key: 'fork', name: 'Allowed a fork', what: 'One enemy piece ended up attacking two targets at once.',
+    habit: 'Loose pieces drop off. Look at every square an enemy knight or queen can reach next move and check whether it would hit two of your undefended pieces, or your king and a piece.' },
+  { key: 'pin', name: 'Allowed a pin or skewer', what: 'Two pieces stood on one line and a long-range piece attacked through them.',
+    habit: 'Avoid lining up your king, queen and rooks on the same file, rank or diagonal as an enemy bishop, rook or queen. If they already share a line, count what happens when that line is attacked.' },
+  { key: 'discovery', name: 'Allowed a discovered attack', what: 'A piece moved out of the way and uncovered an attack from the piece behind it.',
+    habit: 'When an enemy piece stands between their bishop, rook or queen and your king or queen, ask what happens if that piece moves away with a threat of its own.' },
+  { key: 'promo-allowed', name: 'Allowed a promotion', what: "The opponent's pawn could no longer be stopped.",
+    habit: 'Count pawn races concretely: moves to promote against moves to stop the pawn. Keep your king inside the square of a passed pawn and blockade passers early.' },
+  { key: 'promo-missed', name: 'Missed a promotion', what: 'A pawn could have been forced through and was not.',
+    habit: 'With a passed pawn near the last rank, look for deflections and sacrifices that clear its path before settling for a slow move.' },
+  { key: 'tactic-missed', name: 'Missed a tactic', what: 'A material-winning shot was available and the player passed on it.',
+    habit: "In tense positions (loose enemy pieces, an exposed king, an overloaded defender) search your forcing moves before picking a plan. The opponent's weaknesses were there to take." },
+  { key: 'combination', name: 'Allowed a combination', what: 'A forcing sequence won material without one simple motif.',
+    habit: "Checks, captures and threats: look at the opponent's forcing moves two moves deep, sacrifices included, before committing." },
+  { key: 'king', name: 'Exposed the king', what: 'The king was opened up to a series of checks.',
+    habit: "Don't open lines or loosen the pawns in front of your king while enemy pieces are aimed at it. Count attackers and defenders around the king before a committal pawn move." },
+  { key: 'endgame', name: 'Endgame misjudgment', what: 'An endgame move that changed the result without an immediate tactic.',
+    habit: 'In endgames the king is a fighting piece and passed pawns decide. Before a pawn move or a trade, calculate the resulting king-and-pawn ending to the end.' },
+  { key: 'positional', name: 'Positional or long-range error', what: "The evaluation swung without a tactic inside the engine's first few moves.",
+    habit: "Ask what the move gives up: squares, pawn structure, piece activity, the safety of your king. When no tactic is visible, compare your worst-placed piece with your opponent's best one." },
+];
+const FAM_BY_KEY = Object.fromEntries(FAMS.map((f, i) => [f.key, i]));
+
+let G = [], BL = [], META = {}, NOTES = {}, MOVES = null, DET = null;
+let tab = 'games', gsort = { k: 'rd', dir: 1 }, bsort = { k: 'loss', dir: -1 }, gpage = 0, bpage = 0;
+let openG = null, openB = null, focusGame = null, focusBlunder = null, famOpening = '', showAllOpenings = false;
+let ORIENT = 'b';
+let sampleFn = null, downloadsNs = null;
+const READS = {};
+
+/* ---------- loading ---------- */
+async function getJSON(path) {
+  const r = await fetch(path);
+  if (!r.ok) throw new Error(path + ' ' + r.status);
+  return r.json();
+}
+let movesP = null, detP = null;
+const loadMoves = () => movesP || (movesP = getJSON('data/moves.json').then(d => (MOVES = d)));
+const loadDetail = () => detP || (detP = getJSON('data/bdetail.json').then(d => (DET = d)));
+
+async function boot() {
+  try {
+    const [g, b] = await Promise.all([getJSON('data/games.json'), getJSON('data/blunders.json')]);
+    META = g.meta; NOTES = b.notes || {};
+    G = g.rows.map((r, i) => {
+      const [sec, rd, tbl, bd, white, black, wT, bT, wE, bE, wTi, bTi, res, eco, fam, sub, arch, traits, take, moves, url, st, match, upset, mP, pend] = r;
+      const o = { i, sec, rd, tbl, bd, white, black, wT, bT, wE, bE, wTi, bTi, res, eco, fam, sub, arch, traits, take, moves, url, st, match, upset, mP: mP || [], pend: !!pend, bl: [] };
+      o.diff = wE && bE ? wE - bE : null;
+      o.avg = wE && bE ? (wE + bE) / 2 : (wE || bE || 0);
+      o.resNum = res === '1-0' ? 1 : res === '0-1' ? 0 : 0.5;
+      o.open = fam + (sub ? ': ' + sub : '');
+      o.mine = REP.has(fam) || sub === 'KID setup';
+      o.errTotal = st[0] + st[1] + (st[2] + st[3]) / 100;
+      // rating tags: only when both players have a rating
+      o.gap500 = o.diff !== null && Math.abs(o.diff) > 500;
+      // forfeits and games abandoned in the first move or two are not over-the-board upsets
+      o.upset200 = o.diff !== null && moves >= 3 && ((res === '1-0' && o.diff < -200) || (res === '0-1' && o.diff > 200));
+      if (o.upset200) { const k = traits.indexOf('Upset'); if (k >= 0) traits.splice(k, 1); traits.unshift('Upset 200+'); }
+      if (o.gap500) traits.unshift('Gap 500+');
+      o.hay = [white, black, wT, bT, eco, o.open, arch, traits.join(' '), take, match, sec === 'O' ? 'open' : 'women'].join(' ').toLowerCase();
+      return o;
+    });
+    BL = b.rows.map((r, j) => {
+      const [gi, ply, side, fam, tags, mtype, loss, e0, e1, clk, spent] = r;
+      const g = G[gi];
+      const o = { j, gi, ply, side, fam, tags, mtype, loss, e0, e1, clk, spent };
+      o.moveNo = Math.floor(ply / 2) + 1 + (ply % 2 ? 0.5 : 0);
+      o.sideName = side ? 'Black' : 'White';
+      o.famName = FAMS[fam].name; o.mtypeName = MTYPES[mtype];
+      o.rd = g.rd; o.game = `${g.white} ${g.black}`; o.tagCount = tags.length;
+      o.phase = tags.includes(2) ? 2 : tags.includes(0) ? 0 : 1;
+      g.bl.push(j);
+      return o;
+    });
+    setupControls();
+    $('status').textContent = META.gamesPending ? `Engine verification is still running. Blunder analysis is complete for ${(G.length - META.gamesPending).toLocaleString()} of ${G.length.toLocaleString()} games, starting with the top tables; the rest will be added to this page.` : '';
+    $('controls').hidden = false;
+    renderFacts();
+    const h = (location.hash || '').replace('#', '');
+    switchTab(['games', 'blunders', 'guide'].includes(h) ? h : 'games', false);
+    setTimeout(() => { loadMoves(); loadDetail(); }, 400);
+  } catch (e) {
+    $('status').textContent = 'The game data could not be loaded. Reload the page to try again.';
+  }
+  hookCapabilities();
+}
+
+function renderFacts() {
+  const dec = BL.filter(b => b.tags.includes(12)).length;
+  $('facts').innerHTML = [
+    [G.length.toLocaleString(), 'games'], [BL.length.toLocaleString(), 'confirmed blunders'], [dec.toLocaleString(), 'games decided by a blunder']
+  ].map(([n, l]) => `<div class="fact"><b>${n}</b><span>${l}</span></div>`).join('');
+}
+
+/* ---------- controls ---------- */
+function setupControls() {
+  const rds = [...new Set(G.map(g => g.rd))].sort((a, b) => a - b);
+  $('fRd').innerHTML = '<option value="">All</option>' + rds.map(r => `<option>${r}</option>`).join('');
+  const fams = [...new Set(G.map(g => g.fam))].sort((a, b) => a.localeCompare(b));
+  $('fFam').innerHTML = '<option value="">All openings</option>' + fams.map(f => `<option>${esc(f)}</option>`).join('');
+  $('bFam').innerHTML = '<option value="">All families</option>' + FAMS.map((f, i) => `<option value="${i}">${esc(f.name)}</option>`).join('');
+  $('bType').innerHTML = '<option value="">Any move</option>' + MTYPES.map((m, i) => `<option value="${i}">${m}</option>`).join('');
+  $('bTags').innerHTML = TAG_FILTERS.map(t => `<label><input type="checkbox" id="bt${t}" data-t="${t}"> ${TAGS[t]}</label>`).join('');
+  const ids = ['q', 'fSec', 'fRd', 'fBd', 'fTbl', 'fRes', 'fFam', 'fElo', 'fRep', 'fGap', 'fUp', 'bFam', 'bSide', 'bPhase', 'bType', ...TAG_FILTERS.map(t => 'bt' + t)];
+  ids.forEach(id => { let t; $(id).addEventListener(id === 'q' || id === 'fElo' ? 'input' : 'change', () => { clearTimeout(t); t = setTimeout(() => { focusGame = null; apply(); }, id === 'q' ? 180 : 0); }); });
+  $('reset').onclick = () => {
+    $('q').value = ''; $('fElo').value = '';
+    ['fSec', 'fRd', 'fBd', 'fTbl', 'fRes', 'fFam', 'bFam', 'bSide', 'bPhase', 'bType'].forEach(i => $(i).value = '');
+    $('fRep').checked = false; $('fGap').checked = false; $('fUp').checked = false; TAG_FILTERS.forEach(t => $('bt' + t).checked = false);
+    focusGame = null; apply();
+  };
+}
+function readFilters() {
+  return {
+    q: $('q').value.trim().toLowerCase().split(/\s+/).filter(Boolean),
+    sec: $('fSec').value, rd: +$('fRd').value || 0, bd: +$('fBd').value || 0, tbl: +$('fTbl').value || 0, res: $('fRes').value,
+    fam: $('fFam').value, elo: +$('fElo').value || 0, rep: $('fRep').checked, gap: $('fGap').checked, up: $('fUp').checked,
+    bFam: $('bFam').value === '' ? null : +$('bFam').value, bSide: $('bSide').value === '' ? null : +$('bSide').value,
+    bPhase: $('bPhase').value === '' ? null : +$('bPhase').value, bType: $('bType').value === '' ? null : +$('bType').value,
+    bTags: TAG_FILTERS.filter(t => $('bt' + t).checked),
+  };
+}
+const gameOk = (g, F) => (!F.sec || g.sec === F.sec) && (!F.rd || g.rd === F.rd) && (!F.bd || g.bd === F.bd) && (!F.tbl || g.tbl <= F.tbl) &&
+  (!F.res || (F.res === 'dec' ? g.res !== '1/2-1/2' : g.res === F.res)) && (!F.fam || g.fam === F.fam) && g.avg >= F.elo &&
+  (!F.rep || g.mine) && (!F.gap || g.gap500) && (!F.up || g.upset200) && F.q.every(t => g.hay.includes(t));
+const blunderOk = (b, F, skipFam) => (skipFam || F.bFam === null || b.fam === F.bFam) && (F.bSide === null || b.side === F.bSide) &&
+  (F.bPhase === null || b.phase === F.bPhase) && (F.bType === null || b.mtype === F.bType) && F.bTags.every(t => b.tags.includes(t));
+const anyBlunderFilter = F => F.bFam !== null || F.bSide !== null || F.bPhase !== null || F.bType !== null || F.bTags.length > 0;
+
+let VG = [], VB = [], VB_NOFAM = [], F = null;
+function apply(keepPage) {
+  F = readFilters();
+  const gset = new Uint8Array(G.length);
+  for (const g of G) if (gameOk(g, F)) gset[g.i] = 1;
+  VB = []; VB_NOFAM = [];
+  for (const b of BL) {
+    if (!gset[b.gi]) continue;
+    if (blunderOk(b, F, true)) { VB_NOFAM.push(b); if (F.bFam === null || b.fam === F.bFam) VB.push(b); }
+  }
+  if (anyBlunderFilter(F)) { const hit = new Uint8Array(G.length); VB.forEach(b => hit[b.gi] = 1); VG = G.filter(g => hit[g.i]); }
+  else VG = G.filter(g => gset[g.i]);
+  if (focusGame !== null) VG = [G[focusGame]];
+  sortG(); sortB();
+  if (!keepPage) { gpage = 0; bpage = 0; }
+  render();
+}
+function cmp(a, b, k) {
+  let x = a[k], y = b[k];
+  if (x === null || x === undefined) x = -Infinity; if (y === null || y === undefined) y = -Infinity;
+  return typeof x === 'number' && typeof y === 'number' ? x - y : String(x).localeCompare(String(y));
+}
+function sortG() { const { k, dir } = gsort; VG.sort((a, b) => cmp(a, b, k) * dir || a.rd - b.rd || a.sec.localeCompare(b.sec) || a.tbl - b.tbl || a.bd - b.bd); }
+function sortB() { const { k, dir } = bsort; VB.sort((a, b) => cmp(a, b, k) * dir || G[a.gi].rd - G[b.gi].rd || a.gi - b.gi || a.ply - b.ply); }
+
+function switchTab(t, push = true) {
+  tab = t;
+  for (const n of ['games', 'blunders', 'guide']) {
+    $('tab-' + n).setAttribute('aria-selected', String(n === t));
+    $('view-' + n).hidden = n !== t;
+  }
+  try { if (push) history.replaceState(null, '', '#' + t); } catch (e) {}
+  apply(true);
+}
+['games', 'blunders', 'guide'].forEach(n => $('tab-' + n).addEventListener('click', () => switchTab(n)));
+window.addEventListener('hashchange', () => { const h = (location.hash || '').replace('#', ''); if (G.length && ['games', 'blunders', 'guide'].includes(h) && h !== tab) switchTab(h, false); });
+
+function render() {
+  if (tab === 'games') { renderStats(); renderOpenings(); renderGames(); }
+  else if (tab === 'blunders') { renderKeys(); renderFamilies(); renderHeat(); renderCtx(); renderBlunders(); }
+  else renderGuide();
+}
+
+/* ---------- small helpers ---------- */
+const pct = (n, d) => d ? Math.round(100 * n / d) : 0;
+const resChip = r => r === '1-0' ? '<span class="res w">1–0</span>' : r === '0-1' ? '<span class="res b">0–1</span>' : '<span class="res d">½–½</span>';
+const clockStr = s => s === null || s === undefined ? '–' : s >= 3600 ? `${Math.floor(s / 3600)}:${String(Math.floor(s % 3600 / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+const secName = s => s === 'O' ? 'Open' : 'Women';
+const moveLabel = (ply, san) => `${Math.floor(ply / 2) + 1}${ply % 2 ? '...' : '.'}${san}`;
+const tagChip = t => `<span class="tag${t === 12 ? ' bad' : [3, 10, 11].includes(t) ? ' hot' : ''}">${TAGS[t]}</span>`;
+function pager(el, page, total, onGo) {
+  const pages = Math.ceil(total / PAGE);
+  el.innerHTML = pages > 1 ? `<button class="btn ghost small" data-p="${page - 1}" ${page ? '' : 'disabled'}>Previous</button><span>Page ${page + 1} of ${pages}</span><button class="btn ghost small" data-p="${page + 1}" ${page < pages - 1 ? '' : 'disabled'}>Next</button>` : '';
+  el.onclick = e => { const b = e.target.closest('button[data-p]'); if (b) onGo(+b.dataset.p); };
+}
+function setSortHeaders(table, s) {
+  table.querySelectorAll('thead th').forEach(th => { if (th.dataset.k === s.k) th.setAttribute('aria-sort', s.dir > 0 ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort'); });
+}
+
+/* ---------- Games view ---------- */
+function renderStats() {
+  const n = VG.length, w = VG.filter(g => g.res === '1-0').length, b = VG.filter(g => g.res === '0-1').length, d = n - w - b;
+  const AG = VG.filter(g => !g.pend), an = AG.length;
+  const bl = AG.reduce((s, g) => s + g.st[0] + g.st[1], 0);
+  const withB = AG.filter(g => g.st[0] + g.st[1] > 0).length;
+  const dec = AG.filter(g => g.res !== '1/2-1/2');
+  const decB = dec.filter(g => (g.res === '1-0' ? g.st[1] : g.st[0]) > 0).length;
+  const avg = n ? (VG.reduce((s, g) => s + g.moves, 0) / n).toFixed(1) : '–';
+  $('stats').innerHTML = `<h2>Current view</h2>
+    <div class="bignum">${n.toLocaleString()}</div><div class="t">games${focusGame !== null ? ` (one game selected: <button class="linkbtn" id="unfocus">show all</button>)` : ''}</div>
+    <div class="split" aria-hidden="true"><span style="width:${pct(w, n)}%;background:var(--res-w-bg)"></span><span style="width:${pct(d, n)}%;background:var(--res-d-bg)"></span><span style="width:${pct(b, n)}%;background:var(--res-b-bg);outline:1px solid var(--line)"></span></div>
+    <div class="legend"><span><i class="sw" style="background:var(--res-w-bg)"></i>White ${pct(w, n)}%</span><span><i class="sw" style="background:var(--res-d-bg)"></i>Draw ${pct(d, n)}%</span><span><i class="sw" style="background:var(--res-b-bg)"></i>Black ${pct(b, n)}%</span></div>
+    <dl class="kv"><dt>Black's score</dt><dd>${n ? (100 * (b + d / 2) / n).toFixed(1) + '%' : '–'}</dd>
+    <dt>Average length</dt><dd>${avg} moves</dd>
+    <dt>Games with a blunder</dt><dd>${an ? pct(withB, an) + '%' : '–'}</dd>
+    <dt>Decisive games where the loser blundered</dt><dd>${dec.length ? pct(decB, dec.length) + '%' : '–'}</dd>
+    <dt>Blunders per game</dt><dd>${an ? (bl / an).toFixed(2) : '–'}</dd></dl>
+    ${an < n ? `<p class="t" style="margin:8px 0 0">Blunder figures cover the ${an.toLocaleString()} games analysed so far.</p>` : ''}`;
+  const u = $('unfocus'); if (u) u.onclick = () => { focusGame = null; focusBlunder = null; openG = null; apply(); };
+}
+function renderOpenings() {
+  const m = new Map();
+  for (const g of VG) {
+    const o = m.get(g.fam) || { n: 0, w: 0, d: 0, b: 0, bl: 0 };
+    o.n++; o.bl += g.st[0] + g.st[1]; if (g.res === '1-0') o.w++; else if (g.res === '0-1') o.b++; else o.d++;
+    m.set(g.fam, o);
+  }
+  const list = [...m.entries()].sort((a, b) => b[1].n - a[1].n);
+  const shown = showAllOpenings ? list : list.slice(0, 10);
+  const fam = $('fFam').value;
+  $('otab').innerHTML = `<thead><tr><th>Opening</th><th class="n">Games</th><th>White / draw / Black</th><th class="n">Black score</th><th class="n">Blunders per game</th></tr></thead><tbody>` +
+    shown.map(([f, o]) => `<tr class="pick${fam === f ? ' active' : ''}" data-f="${esc(f)}" tabindex="0"><td>${REP.has(f) ? '<span class="tag hot">yours</span> ' : ''}${esc(f)}</td><td class="n">${o.n}</td>
+      <td><div class="bar" title="White ${pct(o.w, o.n)}%, draw ${pct(o.d, o.n)}%, Black ${pct(o.b, o.n)}%"><span style="width:${pct(o.w, o.n)}%;background:var(--res-w-bg)"></span><span style="width:${pct(o.d, o.n)}%;background:var(--res-d-bg)"></span><span style="width:${pct(o.b, o.n)}%;background:var(--res-b-bg)"></span></div></td>
+      <td class="n">${(100 * (o.b + o.d / 2) / o.n).toFixed(0)}%</td><td class="n">${(o.bl / o.n).toFixed(2)}</td></tr>`).join('') + '</tbody>';
+  $('omore').hidden = list.length <= 10;
+  $('omore').textContent = showAllOpenings ? 'Show top 10' : `Show all ${list.length}`;
+}
+$('otab').addEventListener('click', e => { const tr = e.target.closest('tr.pick'); if (!tr) return; $('fFam').value = $('fFam').value === tr.dataset.f ? '' : tr.dataset.f; apply(); });
+$('otab').addEventListener('keydown', e => { const tr = e.target.closest('tr.pick'); if (tr && e.key === 'Enter') { $('fFam').value = $('fFam').value === tr.dataset.f ? '' : tr.dataset.f; apply(); } });
+$('omore').onclick = () => { showAllOpenings = !showAllOpenings; renderOpenings(); };
+
+function errCell(g) {
+  const s = g.st;
+  if (g.pend) return '<span class="t">Analysis in progress</span>';
+  const side = (lbl, B, M, acpl) => `<span class="side">${lbl}</span><span><span class="cnt" title="Blunders"><i class="dot B"></i>${B}</span><span class="t">ACPL ${acpl ?? '–'}</span></span>`;
+  return `<div class="errs">${side('W', s[0], s[2], s[6])}${side('B', s[1], s[3], s[7])}</div>`;
+}
+function renderGames() {
+  const start = gpage * PAGE, slice = VG.slice(start, start + PAGE);
+  $('gcount').textContent = VG.length ? `Showing ${(start + 1).toLocaleString()}–${(start + slice.length).toLocaleString()} of ${VG.length.toLocaleString()} games` : '';
+  setSortHeaders($('gtable'), gsort);
+  if (!slice.length) { $('gbody').innerHTML = `<tr><td colspan="12" class="empty">No games match these filters. Clear some filters or broaden the search.</td></tr>`; $('gpager').innerHTML = ''; return; }
+  $('gbody').innerHTML = slice.map(g => {
+    const tags = g.traits.map(t => `<span class="tag${t === 'Upset' || t === 'Upset 200+' || t === 'Gap 500+' || t === 'Checkmate' || t === 'Miniature' ? ' hot' : ''}">${esc(t)}</span>`).join('');
+    return `<tr class="row${g.mine ? ' mine' : ''}${openG === g.i ? ' open' : ''}" data-i="${g.i}" tabindex="0" aria-expanded="${openG === g.i}">
+      <td>${g.sec}</td><td>${g.rd}</td><td>${g.bd}<div class="t">T${g.tbl}</div></td>
+      <td><div class="p">${esc(g.wTi ? g.wTi + ' ' : '')}${esc(g.white)} <span class="elo">${g.wE || ''}</span></div><div class="t">${esc(g.wT)}</div></td>
+      <td><div class="p">${esc(g.bTi ? g.bTi + ' ' : '')}${esc(g.black)} <span class="elo">${g.bE || ''}</span></div><div class="t">${esc(g.bT)}</div></td>
+      <td class="n">${g.diff === null ? '–' : (g.diff > 0 ? '+' : '') + g.diff}</td>
+      <td><div class="fam">${esc(g.fam)}</div><div class="t">${esc(g.sub)}${g.eco ? ' (' + esc(g.eco) + ')' : ''}</div></td>
+      <td class="arch">${esc(g.arch)}</td><td class="n">${g.moves}</td><td>${resChip(g.res)}</td>
+      <td>${errCell(g)}</td>
+      <td class="take">${esc(g.take)}<div>${tags}</div></td></tr>` + (openG === g.i ? `<tr class="detail"><td colspan="12"><div class="dinner" id="gdetail">${detailSkeleton(g)}</div></td></tr>` : '');
+  }).join('');
+  pager($('gpager'), gpage, VG.length, p => { gpage = p; openG = null; renderGames(); $('gtable').scrollIntoView({ block: 'start' }); });
+  if (openG !== null && slice.some(g => g.i === openG)) fillDetail(G[openG]);
+}
+function toggleGame(i) { openG = openG === i ? null : i; renderGames(); }
+$('gbody').addEventListener('click', e => { if (e.target.closest('.detail')) return; const tr = e.target.closest('tr.row'); if (tr) toggleGame(+tr.dataset.i); });
+$('gbody').addEventListener('keydown', e => { if (e.target.closest('.detail')) return; const tr = e.target.closest('tr.row'); if (tr && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggleGame(+tr.dataset.i); } });
+$('gtable').querySelector('thead').addEventListener('click', e => {
+  const th = e.target.closest('th'); if (!th) return; const k = th.dataset.k;
+  gsort = { k, dir: gsort.k === k ? -gsort.dir : (['moves', 'diff', 'resNum', 'errTotal'].includes(k) ? -1 : 1) };
+  sortG(); gpage = 0; renderGames();
+});
+
+function detailSkeleton(g) {
+  return `<div class="dhead"><h3>${esc(g.white)} vs ${esc(g.black)}</h3><div class="actions" style="margin:0">${g.url ? `<a class="btn ghost small" href="${esc(g.url)}" target="_blank" rel="noopener">Open on Lichess</a>` : ''}</div></div>
+    <p class="t">Loading moves and blunder analysis…</p>`;
+}
+async function fillDetail(g) {
+  try { await Promise.all([loadMoves(), loadDetail()]); } catch (e) { const el = $('gdetail'); if (el) el.innerHTML = '<p class="t">The move data could not be loaded. Reload the page to try again.</p>'; return; }
+  const el = $('gdetail'); if (!el || openG !== g.i) return;
+  const [san, ev] = MOVES[g.i];
+  const sans = san ? san.split(' ') : [];
+  const bset = new Map(g.bl.map(j => [BL[j].ply, j]));
+  const mset = new Set();
+  let ml = '';
+  for (let i = 0; i < sans.length; i++) {
+    if (i % 2 === 0) ml += `<b>${i / 2 + 1}.</b> `;
+    const cls = bset.has(i) ? 'mv B' : mset.has(i) ? 'mv M' : 'mv';
+    ml += `<span class="${cls}"${bset.has(i) ? ` title="Blunder"` : mset.has(i) ? ' title="Mistake"' : ''}>${esc(sans[i])}${bset.has(i) ? '??' : mset.has(i) ? '?' : ''}</span> `;
+  }
+  const s = g.st;
+  const callouts = g.bl.length ? g.bl.map(j => calloutHTML(BL[j], true)).join('') : `<p class="t">${g.pend ? 'This game is still being analysed.' : 'No engine-confirmed blunders among the three biggest evaluation drops in this game.'}</p>`;
+  el.innerHTML = `<div class="dhead"><h3>${esc(g.white)} vs ${esc(g.black)}</h3>
+      <div class="actions" style="margin:0">${g.url ? `<a class="btn ghost small" href="${esc(g.url)}" target="_blank" rel="noopener">Open on Lichess</a>` : ''}</div></div>
+    <div class="dgrid">
+      <div>
+        <dl class="dkv">
+          <dt>Event</dt><dd>${secName(g.sec)} section, round ${g.rd}, table ${g.tbl}, board ${g.bd}</dd>
+          <dt>Match</dt><dd>${esc(g.match)}</dd>
+          <dt>Opening</dt><dd>${esc(g.open)}${g.eco ? ' (' + esc(g.eco) + ')' : ''}</dd>
+          <dt>Black's approach</dt><dd>${esc(g.arch)}</dd>
+          <dt>Errors</dt><dd>White ${s[0]} blunder${s[0] === 1 ? '' : 's'}, ACPL ${s[6] ?? '–'}. Black ${s[1]} blunder${s[1] === 1 ? '' : 's'}, ACPL ${s[7] ?? '–'}.</dd>
+        </dl>
+        <h4 class="sect">Moves</h4>
+        <div class="movelist">${ml}</div>
+      </div>
+      <div>
+        <h4 class="sect">Evaluation</h4>
+        <div class="evalwrap" id="evalwrap">${evalSVG(ev, g)}<div class="evtip" id="evtip" hidden></div></div>
+        <h4 class="sect">Claude's read</h4>
+        <div class="read" id="readOut">${READS[g.i] ? esc(READS[g.i]) : (sampleFn ? 'Ask for a narrative assessment: the plan Black chose, where the game turned, and what to learn from the blunders.' : 'Claude reads are available when this page is opened in Claude.')}</div>
+        <div class="actions">${sampleFn ? `<button class="btn" id="readBtn">${READS[g.i] ? 'Ask again' : "Get Claude's read"}</button><button class="btn ghost" id="stopBtn" hidden>Stop</button>` : ''}</div>
+      </div>
+    </div>
+    <h4 class="sect" style="margin-top:18px">Blunders in this game</h4>
+    <div class="callouts">${callouts}</div>`;
+  wireEval(ev, g, sans);
+  wireRead(g, sans);
+  wireBoards(el, () => fillDetail(g));
+  if (focusBlunder !== null) { const c = document.getElementById('bl-' + focusBlunder); if (c) c.scrollIntoView({ block: 'center' }); focusBlunder = null; }
+}
+
+/* ---------- eval graph ---------- */
+const decodeEv = ev => [...ev].map(c => c === '~' ? null : ((c.charCodeAt(0) - 63) / 30 - 1));
+function evalSVG(ev, g) {
+  const vals = decodeEv(ev), n = vals.length;
+  if (!n) return '<p class="t">No moves.</p>';
+  const W = 600, H = 130, L = 34, R = 6, T = 8, B = 20, pw = W - L - R, ph = H - T - B;
+  const x = i => L + (n === 1 ? pw / 2 : (i / (n - 1)) * pw), y = v => T + (1 - (v + 1) / 2) * ph;
+  let last = 0.05, pts = [];
+  vals.forEach((v, i) => { if (v !== null) last = v; pts.push([x(i), y(last)]); });
+  const area = `M${L},${T + ph} ` + pts.map(p => `L${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ') + ` L${x(n - 1).toFixed(1)},${T + ph} Z`;
+  const line = 'M' + pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' L');
+  const ticks = [];
+  for (let m = 10; m <= Math.ceil(n / 2); m += 10) { const i = m * 2 - 1; if (i < n) ticks.push(`<line x1="${x(i)}" x2="${x(i)}" y1="${T}" y2="${T + ph}" stroke="var(--line)" stroke-width="1"/><text x="${x(i)}" y="${H - 5}" font-size="10" fill="var(--muted)" text-anchor="middle">${m}</text>`); }
+  const marks = [];
+  g.bl.forEach(j => { const p = BL[j].ply; if (p < n) marks.push(`<circle class="bmark" data-j="${j}" cx="${pts[p][0]}" cy="${pts[p][1]}" r="6" fill="var(--bad)" stroke="var(--surface)" stroke-width="2" style="cursor:pointer"><title>Blunder: ${BL[j].famName}</title></circle>`); });
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="White's winning chances move by move, with blunders marked">
+    <rect x="${L}" y="${T}" width="${pw}" height="${ph}" fill="var(--res-b-bg)"/>
+    <path d="${area}" fill="var(--res-w-bg)"/>
+    ${ticks.join('')}
+    <line x1="${L}" x2="${L + pw}" y1="${y(0)}" y2="${y(0)}" stroke="var(--gold)" stroke-width="1" stroke-dasharray="3 3"/>
+    <path d="${line}" fill="none" stroke="var(--gold)" stroke-width="2"/>
+    <text x="${L - 4}" y="${T + 9}" font-size="10" fill="var(--muted)" text-anchor="end">White</text>
+    <text x="${L - 4}" y="${T + ph}" font-size="10" fill="var(--muted)" text-anchor="end">Black</text>
+    <line id="evx" x1="0" x2="0" y1="${T}" y2="${T + ph}" stroke="var(--ink)" stroke-width="1" opacity="0"/>
+    ${marks.join('')}
+    <rect id="evhit" x="${L}" y="${T}" width="${pw}" height="${ph}" fill="transparent"/>
+  </svg>`;
+}
+function wireEval(ev, g, sans) {
+  const wrap = $('evalwrap'); if (!wrap) return;
+  const svg = wrap.querySelector('svg'), tip = $('evtip'), hit = $('evhit'), cross = $('evx');
+  if (!svg || !hit) return;
+  const vals = decodeEv(ev), n = vals.length;
+  const W = 600, L = 34, R = 6, pw = W - L - R;
+  hit.addEventListener('mousemove', e => {
+    const r = svg.getBoundingClientRect(); const sx = (e.clientX - r.left) / r.width * W;
+    const i = Math.max(0, Math.min(n - 1, Math.round((sx - L) / pw * (n - 1))));
+    let v = vals[i]; for (let k = i; v === null && k >= 0; k--) v = vals[k];
+    const px = L + (n === 1 ? pw / 2 : i / (n - 1) * pw);
+    cross.setAttribute('x1', px); cross.setAttribute('x2', px); cross.setAttribute('opacity', '.5');
+    tip.hidden = false; tip.style.left = (px / W * r.width + 8) + 'px'; tip.style.top = '14px';
+    tip.textContent = `${moveLabel(i, sans[i] || '')}: White ${v === null ? '?' : Math.round(50 + 50 * v)}%`;
+  });
+  hit.addEventListener('mouseleave', () => { tip.hidden = true; cross.setAttribute('opacity', '0'); });
+  svg.querySelectorAll('.bmark').forEach(c => c.addEventListener('click', () => { const t = document.getElementById('bl-' + c.dataset.j); if (t) t.scrollIntoView({ block: 'center', behavior: 'smooth' }); }));
+  // markers sit above the hit layer; keep them reachable
+  svg.appendChild(hit); svg.querySelectorAll('.bmark').forEach(c => svg.appendChild(c));
+}
+
+/* ---------- board diagrams ---------- */
+const GLYPH = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' };
+let arrowSeq = 0;
+function sqIndex(name) { return (name.charCodeAt(0) - 97) + (parseInt(name[1]) - 1) * 8; }
+function boardSVG(fen, played, best) {
+  const S = 40, pos = {};
+  const rows = fen.split(' ')[0].split('/');
+  rows.forEach((row, ri) => { let f = 0; for (const ch of row) { if (/\d/.test(ch)) f += +ch; else { pos[(7 - ri) * 8 + f] = ch; f++; } } });
+  const xy = sq => { const f = sq % 8, r = Math.floor(sq / 8); return ORIENT === 'b' ? [(7 - f) * S, r * S] : [f * S, (7 - r) * S]; };
+  const id = 'ah' + (++arrowSeq);
+  let out = `<svg viewBox="0 0 ${8 * S} ${8 * S}" role="img" aria-label="Position before the blunder, from ${ORIENT === 'b' ? "Black's" : "White's"} side">
+    <defs><marker id="${id}r" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="3.2" markerHeight="3.2" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--bad)"/></marker>
+    <marker id="${id}g" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="3.2" markerHeight="3.2" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--gold)"/></marker></defs>`;
+  for (let sq = 0; sq < 64; sq++) {
+    const [x, y] = xy(sq), light = (Math.floor(sq / 8) + sq % 8) % 2 === 1;
+    out += `<rect x="${x}" y="${y}" width="${S}" height="${S}" fill="var(${light ? '--sq-light' : '--sq-dark'})"/>`;
+  }
+  const hl = (u, color) => { if (!u) return ''; return [u.slice(0, 2), u.slice(2, 4)].map(n => { const [x, y] = xy(sqIndex(n)); return `<rect x="${x}" y="${y}" width="${S}" height="${S}" fill="var(${color})" opacity=".32"/>`; }).join(''); };
+  out += hl(best, '--gold') + hl(played, '--bad');
+  // coordinates
+  for (let i = 0; i < 8; i++) {
+    const file = ORIENT === 'b' ? 7 - i : i, rank = ORIENT === 'b' ? i : 7 - i;
+    out += `<text x="${i * S + S - 3}" y="${8 * S - 3}" font-size="9" text-anchor="end" fill="var(--sq-coord)" opacity=".75">${String.fromCharCode(97 + file)}</text>`;
+    out += `<text x="3" y="${i * S + 10}" font-size="9" fill="var(--sq-coord)" opacity=".75">${rank + 1}</text>`;
+  }
+  for (const sq in pos) {
+    const ch = pos[sq], white = ch === ch.toUpperCase(), [x, y] = xy(+sq);
+    out += `<text x="${x + S / 2}" y="${y + S / 2 + 12}" font-size="33" text-anchor="middle" font-family='${"Noto Sans Symbols 2"}, "Segoe UI Symbol", "Apple Symbols", "DejaVu Sans", serif'
+      fill="var(${white ? '--wpiece' : '--bpiece'})" stroke="var(${white ? '--bpiece' : '--wpiece'})" stroke-width="${white ? 1.3 : 0.7}" paint-order="stroke">${GLYPH[ch.toLowerCase()]}︎</text>`;
+  }
+  const arrow = (u, m, color) => {
+    if (!u) return '';
+    const [x1, y1] = xy(sqIndex(u.slice(0, 2))), [x2, y2] = xy(sqIndex(u.slice(2, 4)));
+    const cx1 = x1 + S / 2, cy1 = y1 + S / 2, cx2 = x2 + S / 2, cy2 = y2 + S / 2;
+    const len = Math.hypot(cx2 - cx1, cy2 - cy1) || 1, k = (len - 13) / len;
+    return `<line x1="${cx1}" y1="${cy1}" x2="${cx1 + (cx2 - cx1) * k}" y2="${cy1 + (cy2 - cy1) * k}" stroke="var(${color})" stroke-width="7" stroke-linecap="round" opacity=".88" marker-end="url(#${id}${m})"/>`;
+  };
+  out += arrow(best, 'g', '--gold') + arrow(played, 'r', '--bad');
+  return out + '</svg>';
+}
+function wireBoards(root, rerender) {
+  root.querySelectorAll('.flip').forEach(b => b.onclick = e => { e.stopPropagation(); ORIENT = ORIENT === 'b' ? 'w' : 'b'; rerender(); });
+}
+
+/* ---------- blunder callout ---------- */
+function calloutHTML(b, inGame) {
+  const d = DET ? DET[b.j] : null, g = G[b.gi], f = FAMS[b.fam], note = NOTES[b.j];
+  if (!d) return `<article class="callout"><div></div><div><p class="t">Loading analysis…</p></div></article>`;
+  const [fen, uci, best, bestSan, ref, refSan, text, tipCtx, bestLine, refLine, label] = d;
+  const bestLbl = bestSan ? moveLabel(b.ply, bestSan) : '';
+  const player = b.side ? g.black : g.white;
+  return `<article class="callout" id="bl-${b.j}">
+    <div class="board">${boardSVG(fen, uci, best)}
+      <div class="blegend"><span><i style="background:var(--bad)"></i>Played</span><span><i style="background:var(--gold)"></i>Engine's move</span><button class="linkbtn flip">Flip board</button></div></div>
+    <div>
+      <h4><span class="mvbig">${esc(label)}??</span><span class="fchip">${esc(f.name)}</span><span class="swing">${esc(b.e0)}<span class="arrow">→</span>${esc(b.e1)}</span></h4>
+      <div class="t">${esc(b.sideName)} (${esc(player)})${b.clk !== null ? `, ${clockStr(b.clk)} on the clock` : ''}${b.spent !== null ? `, ${b.spent < 60 ? b.spent + ' s' : Math.round(b.spent / 60) + ' min'} spent` : ''}${inGame ? '' : `. ${esc(g.white)} vs ${esc(g.black)}, ${secName(g.sec)} round ${g.rd}`}</div>
+      <div>${b.tags.map(tagChip).join('')}<span class="tag">${esc(MTYPES[b.mtype])}</span></div>
+      <p>${esc(text)}</p>
+      ${bestLbl ? `<p class="better">Better was <b>${esc(bestLbl)}</b>.</p>` : ''}
+      <div class="lines">${refLine ? `<div>Engine line after the blunder: ${esc(refLine)}</div>` : ''}${bestLine ? `<div>Engine's best line: ${esc(bestLine)}</div>` : ''}</div>
+      <div class="prevent"><b>How to prevent it.</b> ${esc(f.habit)}${tipCtx ? ' ' + esc(tipCtx) : ''}</div>
+      ${practiceHTML(b, fen)}
+      ${note ? `<div class="keynote"><h5>Key blunder analysis</h5><p>${esc(note.analysis)}</p>${note.prevent ? `<p><b>Lesson:</b> ${esc(note.prevent)}</p>` : ''}</div>` : ''}
+      ${inGame ? '' : `<div class="actions"><button class="btn ghost small" data-open="${b.gi}" data-j="${b.j}">Show the whole game</button>${g.url ? `<a class="btn ghost small" href="${esc(g.url)}" target="_blank" rel="noopener">Open on Lichess</a>` : ''}</div>`}
+    </div></article>`;
+}
+function openGame(gi, j) {
+  focusGame = gi; openG = gi; focusBlunder = j ?? null;
+  switchTab('games');
+}
+
+
+/* ---------- play from here (Lichess) ---------- */
+const MAIA = [['maia1', 'Maia 1100'], ['maia5', 'Maia 1500'], ['maia9', 'Maia 1900']];
+const colorOf = b => b.side ? 'black' : 'white';
+const aiURL = (fen, color) => `https://lichess.org/?fen=${encodeURIComponent(fen)}&color=${color}#ai`;
+const maiaURL = (bot, fen, color) => `https://lichess.org/?user=${bot}&fen=${encodeURIComponent(fen)}&color=${color}&minutesPerSide=15&increment=10&gameMode=casual#friend`;
+const analysisURL = (fen, color) => `https://lichess.org/analysis/standard/${fen.replace(/ /g, '_')}?color=${color}`;
+function practiceHTML(b, fen) {
+  const c = colorOf(b);
+  return `<div class="practice"><h5>Play from here</h5>
+    <p class="t">The position before ${esc(DET[b.j][10])}, ${esc(b.sideName)} to move. Look for the better move, then play the position out.</p>
+    <div class="actions">
+      <a class="btn small" href="${esc(aiURL(fen, c))}" target="_blank" rel="noopener">Play vs Stockfish</a>
+      <span class="maiapick"><label class="vh" for="maia${b.j}">Maia strength</label><select id="maia${b.j}" class="maiasel" data-j="${b.j}">${MAIA.map(([v, l]) => `<option value="${v}"${v === 'maia5' ? ' selected' : ''}>${l}</option>`).join('')}</select>
+      <a class="btn ghost small maialink" id="maialink${b.j}" href="${esc(maiaURL('maia5', fen, c))}" target="_blank" rel="noopener">Challenge Maia</a></span>
+      <a class="btn ghost small" href="${esc(analysisURL(fen, c))}" target="_blank" rel="noopener">Analysis board</a>
+      <button class="btn ghost small copy" data-copy="fen" data-j="${b.j}">Copy FEN</button>
+      <button class="btn ghost small copy" data-copy="pgn" data-j="${b.j}">Copy PGN</button>
+    </div>
+    <div class="fenline" title="FEN">${esc(fen)}</div>
+    <textarea class="copybox" id="copybox${b.j}" readonly hidden aria-label="Text to copy"></textarea>
+    <p class="t" style="margin:6px 0 0">You play ${esc(b.sideName)}. Maia bots sometimes decline games from a set position; if one does, use Play vs Stockfish.</p></div>`;
+}
+function pgnFor(b) {
+  const g = G[b.gi], d = DET[b.j];
+  const sans = MOVES ? MOVES[b.gi][0].split(' ') : [];
+  let mv = '';
+  for (let i = 0; i < b.ply; i++) mv += (i % 2 === 0 ? `${i / 2 + 1}. ` : '') + sans[i] + ' ';
+  const head = [['Event', `46th Chess Olympiad 2026, ${secName(g.sec)}`], ['Site', 'Samarkand UZB'], ['Round', `${g.rd}.${g.tbl}.${g.bd}`],
+    ['White', g.white], ['Black', g.black], ['WhiteElo', g.wE || '?'], ['BlackElo', g.bE || '?'], ['Result', '*'], ['Annotator', 'Olympiad game matrix']];
+  return head.map(([k, v]) => `[${k} "${String(v).replace(/"/g, "'")}"]`).join('\n') + '\n\n' +
+    mv + `{ Position before ${d[10]}?? (${FAMS[b.fam].name}). Engine's move: ${d[3] || '?'}. } *\n`;
+}
+document.addEventListener('change', e => {
+  const s = e.target.closest('.maiasel'); if (!s) return;
+  const b = BL[+s.dataset.j], a = $('maialink' + b.j); if (a && DET) a.href = maiaURL(s.value, DET[b.j][0], colorOf(b));
+});
+document.addEventListener('click', e => {
+  const btn = e.target.closest('button.copy'); if (!btn) return;
+  e.stopPropagation();
+  const b = BL[+btn.dataset.j];
+  if (btn.dataset.copy === 'pgn' && !MOVES) { loadMoves(); btn.textContent = 'Loading moves…'; setTimeout(() => btn.textContent = 'Copy PGN', 1500); return; }
+  const text = btn.dataset.copy === 'fen' ? DET[b.j][0] : pgnFor(b);
+  const label = btn.textContent;
+  const fallback = () => { const t = $('copybox' + b.j); if (!t) return; t.hidden = false; t.value = text; t.focus(); t.select(); btn.textContent = 'Selected, press Ctrl+C'; setTimeout(() => btn.textContent = label, 2500); };
+  try {
+    navigator.clipboard.writeText(text).then(() => { btn.textContent = 'Copied'; setTimeout(() => btn.textContent = label, 1500); }, fallback);
+  } catch (err) { fallback(); }
+}, true);
+
+/* ---------- Blunders view ---------- */
+function renderKeys() {
+  const ids = Object.keys(NOTES).map(Number).filter(j => BL[j]);
+  $('keysTitle').hidden = !ids.length; $('keys').hidden = !ids.length;
+  $('keys').innerHTML = ids.map(j => {
+    const b = BL[j], g = G[b.gi], n = NOTES[j];
+    return `<button class="keycard" data-open="${b.gi}" data-j="${j}"><span class="t">${secName(g.sec)} round ${g.rd}, table ${g.tbl}, board ${g.bd}</span>
+      <h3>${esc(n.title)}</h3><p>${esc(g.white)} vs ${esc(g.black)}. ${esc(n.summary)}</p><div><span class="fchip">${esc(b.famName)}</span></div></button>`;
+  }).join('');
+}
+function famCounts(list) {
+  const c = FAMS.map(() => ({ n: 0, w: 0, tp: 0, un: 0, dec: 0, fast: 0 }));
+  for (const b of list) { const o = c[b.fam]; o.n++; if (!b.side) o.w++; if (b.tags.includes(3)) o.tp++; if (b.tags.includes(11)) o.un++; if (b.tags.includes(12)) o.dec++; if (b.tags.includes(4)) o.fast++; }
+  return c;
+}
+function renderFamilies() {
+  const c = famCounts(VB_NOFAM), total = VB_NOFAM.length, max = Math.max(1, ...c.map(o => o.n));
+  const order = FAMS.map((f, i) => i).filter(i => c[i].n).sort((a, b) => c[b].n - c[a].n);
+  $('ftab').innerHTML = `<thead><tr><th>Family</th><th class="n">Blunders</th><th style="min-width:130px">Share</th><th class="n">By White</th><th class="n">Time trouble</th><th class="n">Unpunished</th><th class="n">Decided</th></tr></thead><tbody>` +
+    order.map(i => { const o = c[i]; return `<tr class="pick${F.bFam === i ? ' active' : ''}" data-f="${i}" tabindex="0"><td>${esc(FAMS[i].name)}</td><td class="n">${o.n.toLocaleString()}</td>
+      <td><div style="display:flex;align-items:center;gap:6px"><div class="hbar" style="width:${Math.max(2, 100 * o.n / max)}px"></div><span class="t">${pct(o.n, total)}%</span></div></td>
+      <td class="n">${pct(o.w, o.n)}%</td><td class="n">${pct(o.tp, o.n)}%</td><td class="n">${pct(o.un, o.n)}%</td><td class="n">${o.dec.toLocaleString()}</td></tr>`; }).join('') +
+    `</tbody>` + (total ? '' : '<tbody><tr><td colspan="7" class="empty">No blunders match these filters.</td></tr></tbody>');
+}
+$('ftab').addEventListener('click', e => { const tr = e.target.closest('tr.pick'); if (!tr) return; $('bFam').value = $('bFam').value === tr.dataset.f ? '' : tr.dataset.f; apply(); });
+$('ftab').addEventListener('keydown', e => { const tr = e.target.closest('tr.pick'); if (tr && e.key === 'Enter') { $('bFam').value = $('bFam').value === tr.dataset.f ? '' : tr.dataset.f; apply(); } });
+function renderHeat() {
+  const c = FAMS.map(() => [0, 0, 0]);
+  VB_NOFAM.forEach(b => c[b.fam][b.phase]++);
+  const order = FAMS.map((f, i) => i).filter(i => c[i][0] + c[i][1] + c[i][2]).sort((a, b) => (c[b][0] + c[b][1] + c[b][2]) - (c[a][0] + c[a][1] + c[a][2]));
+  $('heat').innerHTML = `<thead><tr><th>Family</th><th>Opening</th><th>Middlegame</th><th>Endgame</th></tr></thead><tbody>` +
+    order.map(i => { const t = c[i][0] + c[i][1] + c[i][2]; return `<tr><th>${esc(FAMS[i].name)}</th>` + c[i].map(v => { const p = v / t; return `<td style="background:color-mix(in srgb, var(--gold) ${Math.round(p * 85)}%, var(--surface-2));color:${p > .55 ? 'var(--gold-ink)' : 'var(--ink)'}" title="${v} of ${t}">${Math.round(p * 100)}%</td>`; }).join('') + '</tr>'; }).join('') + '</tbody>';
+}
+function renderCtx() {
+  const n = VB.length;
+  const cards = [[3, 'played with 5 minutes or less'], [4, 'played in under a minute'], [10, 'the threat was already there'], [7, 'threw away a winning position'], [8, 'turned a draw into a loss'], [11, 'the opponent did not punish'], [12, 'decided the game']];
+  $('ctx').innerHTML = cards.map(([t, lbl]) => { const k = VB.filter(b => b.tags.includes(t)).length; const on = F.bTags.includes(t);
+    return `<button class="ctxc${on ? ' active' : ''}" data-t="${t}" aria-pressed="${on}"><b>${pct(k, n)}%</b><span>${k.toLocaleString()} ${lbl}</span></button>`; }).join('');
+}
+$('ctx').addEventListener('click', e => { const c = e.target.closest('.ctxc'); if (!c) return; const cb = $('bt' + c.dataset.t); cb.checked = !cb.checked; apply(); });
+
+function renderBlunders() {
+  const start = bpage * PAGE, slice = VB.slice(start, start + PAGE);
+  $('bcount').textContent = VB.length ? `Showing ${(start + 1).toLocaleString()}–${(start + slice.length).toLocaleString()} of ${VB.length.toLocaleString()} blunders` : '';
+  setSortHeaders($('btable'), bsort);
+  if (!slice.length) { $('bbody').innerHTML = `<tr><td colspan="9" class="empty">No blunders match these filters. Clear some filters to see more.</td></tr>`; $('bpager').innerHTML = ''; return; }
+  $('bbody').innerHTML = slice.map(b => {
+    const g = G[b.gi];
+    return `<tr class="row${openB === b.j ? ' open' : ''}${g.mine ? ' mine' : ''}" data-j="${b.j}" tabindex="0" aria-expanded="${openB === b.j}">
+      <td>${g.rd}<div class="t">${g.sec}</div></td>
+      <td><div class="p">${esc(g.white)} <span class="elo">${g.wE || ''}</span></div><div class="p">${esc(g.black)} <span class="elo">${g.bE || ''}</span></div><div class="t">T${g.tbl} B${g.bd}, ${esc(g.fam)} ${resChip(g.res)}</div></td>
+      <td class="n">${Math.floor(b.ply / 2) + 1}${b.ply % 2 ? '...' : '.'}</td>
+      <td>${b.sideName}</td>
+      <td><span class="fchip">${esc(b.famName)}</span></td>
+      <td class="n"><span class="swing">${esc(b.e0)}<span class="arrow">→</span>${esc(b.e1)}</span></td>
+      <td class="n">${clockStr(b.clk)}</td>
+      <td>${b.mtypeName}</td>
+      <td>${b.tags.map(tagChip).join('')}</td></tr>` + (openB === b.j ? `<tr class="detail"><td colspan="9"><div class="dinner" id="bdetail">${DET ? calloutHTML(b, false) : '<p class="t">Loading analysis…</p>'}</div></td></tr>` : '');
+  }).join('');
+  pager($('bpager'), bpage, VB.length, p => { bpage = p; openB = null; renderBlunders(); $('btable').scrollIntoView({ block: 'start' }); });
+  if (openB !== null) {
+    const el = $('bdetail');
+    if (el && !DET) loadDetail().then(() => { if (openB !== null) renderBlunders(); });
+    if (el && DET) wireBoards(el, () => renderBlunders());
+  }
+}
+$('bbody').addEventListener('click', e => { if (e.target.closest('.detail')) return; const tr = e.target.closest('tr.row'); if (tr) { const j = +tr.dataset.j; openB = openB === j ? null : j; renderBlunders(); } });
+$('bbody').addEventListener('keydown', e => { if (e.target.closest('.detail')) return; const tr = e.target.closest('tr.row'); if (tr && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); const j = +tr.dataset.j; openB = openB === j ? null : j; renderBlunders(); } });
+$('btable').querySelector('thead').addEventListener('click', e => {
+  const th = e.target.closest('th'); if (!th) return; const k = th.dataset.k;
+  bsort = { k, dir: bsort.k === k ? -bsort.dir : (['loss', 'tagCount', 'clk'].includes(k) ? -1 : 1) };
+  sortB(); bpage = 0; renderBlunders();
+});
+document.addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b) { e.stopPropagation(); openGame(+b.dataset.open, b.dataset.j !== undefined ? +b.dataset.j : null); } }, true);
+
+/* ---------- Prevention guide ---------- */
+function renderGuide() {
+  const list = VB_NOFAM, n = list.length, c = famCounts(list);
+  const share = pred => pct(list.filter(pred).length, n);
+  const opp = new Set([0, 2, 3, 4, 5, 6, 9, 10].map(Number));
+  const own = new Set([1, 7, 8]);
+  const steps = [
+    ["List the opponent's checks, captures and threats after your intended move.", "Covers walking into mate, hanging pieces, forks, pins, discoveries, combinations, unstoppable pawns and exposed kings.", share(b => opp.has(b.fam))],
+    ["Before any quiet move, look at your own checks and captures.", 'Covers missed mates, missed tactics and missed promotions.', share(b => own.has(b.fam))],
+    ["Ask what your opponent's last move threatened.", "In these blunders the winning reply was already available before the blunder was played.", share(b => b.tags.includes(10))],
+    ['Keep enough time for the moves before move 40.', 'Blunders played with five minutes or less on the clock.', share(b => b.tags.includes(3))],
+    ['Slow down when the position is sharp, even if the move looks obvious.', 'Blunders played in under a minute.', share(b => b.tags.includes(4))],
+    ['In endgames, calculate the king-and-pawn ending before trading or pushing.', 'Blunders played in the endgame phase.', share(b => b.phase === 2)],
+  ].sort((a, b) => b[2] - a[2]);
+  $('routine').innerHTML = `<h2>A blunder check built from these games</h2>
+    <p class="t" style="margin:0">Habits ordered by how many of the ${n.toLocaleString()} blunders in the current view each would have addressed. The groups overlap. Narrow the filters (your repertoire, a board, a rating band) to rebuild the list for that slice.</p>
+    <ol>${steps.map(([h, d, p]) => `<li><b>${esc(h)}</b> <span class="t">${esc(d)} ${p}% of blunders.</span></li>`).join('')}</ol>`;
+  const order = FAMS.map((f, i) => i).filter(i => c[i].n).sort((a, b) => c[b].n - c[a].n);
+  $('guide').innerHTML = order.map(i => {
+    const o = c[i], f = FAMS[i];
+    const ex = list.filter(b => b.fam === i).sort((a, b) => (G[b.gi].avg - G[a.gi].avg) || (b.loss - a.loss)).slice(0, 3);
+    return `<article class="gitem"><div><h3>${esc(f.name)}</h3>
+      <dl class="gstat"><dt>Blunders</dt><dd>${o.n.toLocaleString()} (${pct(o.n, n)}%)</dd><dt>By White</dt><dd>${pct(o.w, o.n)}%</dd><dt>Decided the game</dt><dd>${o.dec.toLocaleString()}</dd>
+      <dt>In time pressure</dt><dd>${pct(o.tp, o.n)}%</dd><dt>Played in under a minute</dt><dd>${pct(o.fast, o.n)}%</dd><dt>Unpunished</dt><dd>${pct(o.un, o.n)}%</dd></dl></div>
+      <div><p class="t" style="margin:0 0 6px">${esc(f.what)}</p><p class="habit"><b>How to prevent it.</b> ${esc(f.habit)}</p>
+      <div class="gex"><span class="t">Highest-rated examples in this view:</span><br>${ex.map(b => { const g = G[b.gi]; return `<button class="btn ghost small" data-open="${b.gi}" data-j="${b.j}">${esc(g.white.split(',')[0])} vs ${esc(g.black.split(',')[0])}, ${Math.floor(b.ply / 2) + 1}${b.ply % 2 ? '...' : '.'}</button>`; }).join('')}</div></div></article>`;
+  }).join('') || '<p class="empty">No blunders match these filters.</p>';
+}
+
+/* ---------- Claude's read ---------- */
+let ctl = null;
+function wireRead(g, sans) {
+  const btn = $('readBtn'), stop = $('stopBtn'); if (!btn) return;
+  stop.onclick = () => ctl?.abort();
+  btn.onclick = async () => {
+    const out = $('readOut'); ctl = new AbortController();
+    btn.disabled = true; stop.hidden = false; out.textContent = 'Thinking…';
+    let mv = ''; for (let i = 0; i < sans.length; i += 2) mv += `${i / 2 + 1}. ${sans[i]} ${sans[i + 1] || ''} `;
+    const bl = g.bl.map(j => { const d = DET[j]; return `- ${d[10]} (${FAMS[BL[j].fam].name}, eval ${BL[j].e0} to ${BL[j].e1}): ${d[6]} Best was ${d[3]}.`; }).join('\n');
+    const prompt = `You are a strong chess coach reviewing a game from the 46th FIDE Chess Olympiad (Samarkand, 2026).
+${secName(g.sec)} section, round ${g.rd}, board ${g.bd}. Match: ${g.match}.
+White: ${g.white} (${g.wE || 'unrated'}, ${g.wT}). Black: ${g.black} (${g.bE || 'unrated'}, ${g.bT}). Result: ${g.res}.
+Opening identified from the moves: ${g.open} (ECO ${g.eco || 'n/a'}).
+Moves: ${mv.trim()}
+Engine-confirmed blunders (Stockfish, with evaluations from White's point of view):
+${bl || '- none'}
+
+Write about 200 words of plain text, no headers or markdown, in three short paragraphs:
+1) The opening and the plan Black chose in response, and how White met it.
+2) The turning point, using the blunder list above as ground truth. Explain in practical terms why the blunder was natural to play and what the player overlooked. Do not invent variations beyond the engine lines given.
+3) Two concrete habits that would have prevented the key error, for a club player.`;
+    try {
+      const { text } = await sampleFn(prompt, { signal: ctl.signal, onText: ({ text }) => { out.textContent = text; } });
+      READS[g.i] = text; btn.textContent = 'Ask again';
+    } catch (e) {
+      if (e && e.text) out.textContent = e.text;
+      const msg = { not_granted: 'Claude reads were not allowed for this page.', rate_limited: 'Too many requests right now. Wait a minute, then try again.', cancelled: '' }[e?.code];
+      if (e?.code === 'not_granted') sampleFn = null;
+      if (msg !== '') out.textContent = (e?.text ? out.textContent + '\n\n' : '') + (msg || 'The read could not be completed. Try again.');
+    } finally { btn.disabled = false; stop.hidden = true; }
+  };
+}
+
+/* ---------- CSV exports ---------- */
+const q = v => { v = v === null || v === undefined ? '' : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+function gamesCSV() {
+  const head = ['Section', 'Round', 'Table', 'Board', 'White', 'White Elo', 'White team', 'Black', 'Black Elo', 'Black team', 'ECO', 'Opening', "Black's approach", 'Moves', 'Result', 'White blunders', 'Black blunders', 'White ACPL', 'Black ACPL', 'Takeaway', 'Lichess'];
+  return [head.map(q).join(','), ...VG.map(g => [secName(g.sec), g.rd, g.tbl, g.bd, g.white, g.wE, g.wT, g.black, g.bE, g.bT, g.eco, g.open, g.arch, g.moves, g.res, g.st[0], g.st[1], g.st[6], g.st[7], g.take, g.url].map(q).join(','))].join('\n');
+}
+function blundersCSV() {
+  const head = ['Section', 'Round', 'Table', 'Board', 'White', 'Black', 'Opening', 'Move', 'By', 'Family', 'Eval before', 'Eval after', 'Clock', 'Move type', 'Tags', 'Explanation', 'Better was', 'How to prevent it', 'FEN'];
+  return [head.map(q).join(','), ...VB.map(b => { const g = G[b.gi], d = DET[b.j]; return [secName(g.sec), g.rd, g.tbl, g.bd, g.white, g.black, g.open, d[10], b.sideName, b.famName, b.e0, b.e1, clockStr(b.clk), b.mtypeName, b.tags.map(t => TAGS[t]).join('; '), d[6], d[3] ? moveLabel(b.ply, d[3]) : '', FAMS[b.fam].habit + (d[7] ? ' ' + d[7] : ''), d[0]].map(q).join(','); })].join('\n');
+}
+async function save(filename, data) {
+  try { await downloadsNs.save({ filename, data }); $('status').textContent = 'Export ready.'; }
+  catch (e) { if (e?.code !== 'cancelled') $('status').textContent = 'The export could not be saved.'; }
+}
+$('gexport').onclick = () => save('olympiad-2026-games.csv', gamesCSV());
+$('bexport').onclick = async () => { await loadDetail(); save('olympiad-2026-blunders.csv', blundersCSV()); };
+
+/* ---------- capabilities ---------- */
+async function hookCapabilities() {
+  try {
+    if (!window.claude?.use) return;
+    const [s, d] = await Promise.all([window.claude.use('sample'), window.claude.use('downloads')]);
+    if (s) { sampleFn = s; if (openG !== null && tab === 'games') renderGames(); }
+    if (d) { downloadsNs = d; $('gexport').hidden = false; $('bexport').hidden = false; }
+  } catch (e) {}
+}
+boot();
+</script>
+
+</body></html>

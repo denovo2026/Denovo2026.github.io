@@ -1968,6 +1968,54 @@
     logActivity("masters", "lesson");
     return l;
   });
+  /* opening repertoires (Modern / Grünfeld) and kingside attacks          */
+  /* /api/repertoire/:slug        -> overview: everything except the heavy  */
+  /*                                 per-look plies/tactics/fen            */
+  /* /api/repertoire/:slug/:id    -> one look in full                      */
+  /* /api/attacks                 -> name, summary, patterns w/o puzzles   */
+  /*                                 (puzzle_count instead)                */
+  /* /api/attacks/:id             -> one pattern with its puzzles          */
+  var REPERTOIRES = { modern: "modern.json", grunfeld: "grunfeld.json" };
+  function repFile(slug) {
+    if (!Object.prototype.hasOwnProperty.call(REPERTOIRES, slug)) fail(404, "repertoire_not_found");
+    return loadData(REPERTOIRES[slug]);
+  }
+  route("GET", "/api/repertoire/:slug", async function (b, q, p) {
+    var d = clone(await repFile(p.slug));
+    d.slug = p.slug;
+    d.looks = (d.looks || []).map(function (l) {
+      return { id: l.id, name: l.name, eco: l.eco, frequency: l.frequency, tell: l.tell,
+        line_san: l.line_san || (l.moves || []).join(" "), moves_count: l.moves_count || (l.plies || l.moves || []).length,
+        structure: l.structure };
+    });
+    return d;
+  });
+  route("GET", "/api/repertoire/:slug/:id", async function (b, q, p) {
+    var d = await repFile(p.slug);
+    var l = (d.looks || []).find(function (x) { return x.id === p.id; });
+    if (!l) fail(404, "look_not_found");
+    logActivity("openings", "repertoire");
+    return clone(l);
+  });
+  route("GET", "/api/attacks", async function () {
+    var d = clone(await loadData("attacks.json"));
+    d.patterns = (d.patterns || []).map(function (pt) {
+      var o = {};
+      Object.keys(pt).forEach(function (k) { if (k !== "puzzles") o[k] = pt[k]; });
+      o.puzzle_count = (pt.puzzles || []).length;
+      return o;
+    });
+    return d;
+  });
+  route("GET", "/api/attacks/:id", async function (b, q, p) {
+    var d = await loadData("attacks.json");
+    var pt = (d.patterns || []).find(function (x) { return x.id === p.id; });
+    if (!pt) fail(404, "pattern_not_found");
+    var o = clone(pt);
+    o.puzzle_count = (o.puzzles || []).length;
+    logActivity("tactics", "attacks");
+    return o;
+  });
   route("GET", "/api/model-games/principles", async function () {
     var d = await loadData("masters.json");
     return { principles: Array.from(new Set(d.games.map(function (g) { return g.principle; }))) };

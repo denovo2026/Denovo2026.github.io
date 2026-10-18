@@ -285,6 +285,9 @@ function switchTab(name) {
   if (name === "endgames") initEndgames();
   if (name === "masters") initMasters();
   if (name === "progress") initProgress();
+  if (name === "modern" && typeof initModern === "function") initModern();
+  if (name === "grunfeld" && typeof initGrunfeld === "function") initGrunfeld();
+  if (name === "attacks" && typeof initAttacks === "function") initAttacks();
 }
 
 document.querySelectorAll(".tab-btn").forEach(b =>
