@@ -50,6 +50,12 @@ function createRepertoireTab(cfg) {
     revealed: true,    // true whenever the identity is on show
     toldYou: false,    // did a wrong move force the answer out?
     lastBlindId: null, // so two runs in a row are not the same line
+
+    // v41: memory
+    first: {},         // ply index -> first try right? (this run)
+    transposed: 0,
+    progress: {},      // look id -> saved result (first tries, due date)
+    posIndex: null,    // position key -> look name, for transpositions
   };
 
   const repBoard = new Board($(P + "-board"), { onMove: onRepMove });
@@ -128,6 +134,7 @@ function createRepertoireTab(cfg) {
     S.branch = null;
     S.quiz = true;
     S.score = { asked: 0, right: 0 };
+    S.first = {}; S.transposed = 0;
     S.ply = 0;
     $(P + "-score").classList.remove("hidden");
     $("btn-" + P + "-quiz").textContent = "Stop the quiz";
@@ -207,7 +214,9 @@ function createRepertoireTab(cfg) {
     repGoToPly(S.ply);
     if (S.ply >= plies.length) {
       const s = S.score;
-      let msg = "Line complete — " + s.right + " of " + s.asked + " found.";
+      const rec = S.branch ? null : repRecordResult();
+      let msg = "Line complete — " + s.right + " of " + s.asked + " found."
+        + (rec ? " First tries " + rec.right + "/" + rec.total + (rec.next ? " · next drill " + rec.next : "") + "." : "");
       if (S.blind) {
         if (!S.revealed) repReveal();
         msg += S.toldYou
@@ -236,7 +245,18 @@ function createRepertoireTab(cfg) {
       const guess = uciCandidate(repBoard, from, to);
       S.score.asked++;
       ccLogAnswer("openings", "repertoire");
-      if (guess === want.uci) {
+      const tr = guess === want.uci ? null : await repTransposition(guess, plies);
+      if (!(S.ply in S.first)) S.first[S.ply] = guess === want.uci || !!tr;
+      if (tr) {
+        S.score.right++; S.transposed++;
+        renderRepScore();
+        S.ply++;
+        repGoToPly(S.ply);
+        const msg = "Fine — that transposes" + (tr.to ? " to " + tr.to : "") + ". The book order here is "
+          + want.san + "; carrying on with the book move.";
+        repAdvanceWhite();
+        if (S.quiz) repSetStatus(msg + " " + $(P + "-status").textContent, "good");
+      } else if (guess === want.uci) {
         S.score.right++;
         renderRepScore();
         S.ply++;
@@ -263,6 +283,98 @@ function createRepertoireTab(cfg) {
       }
     } finally {
       S.busy = false;
+    }
+  }
+
+  /* ---- v41: memory, transpositions, spaced repetition ----------------- */
+  const posKey = (fen) => fen.split(" ").slice(0, 3).join(" ");
+  async function repPositionIndex() {
+    if (S.posIndex) return S.posIndex;
+    const idx = {};
+    for (const l of (S.data ? S.data.looks : [])) {
+      try {
+        const full = l.id === (S.look && S.look.id) ? S.look : await apiGet(API + "/" + l.id);
+        (full.plies || []).forEach(p => { if (p.side === "black" && !idx[posKey(p.fen)]) idx[posKey(p.fen)] = full.name; });
+      } catch (_) { /* skip */ }
+    }
+    S.posIndex = idx;
+    return idx;
+  }
+  function playUci(ch, uci) {
+    try { return ch.move({ from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] || "q" }); } catch (_) { return null; }
+  }
+  /* a different move is still fine when it reaches a book position: either a
+     known position of this repertoire, or the same position as the book after
+     Black's next two moves are swapped (…d6 before …Bg7 and so on) */
+  async function repTransposition(guess, plies) {
+    if (!guess || typeof Chess === "undefined") return null;
+    const here = repFenAt(S.ply);
+    const ch = new Chess(here);
+    if (!playUci(ch, guess)) return null;
+    const after = posKey(ch.fen());
+    const nextBlack = plies[S.ply + 2];
+    if (nextBlack && nextBlack.side === "black" && guess === nextBlack.uci) {
+      const sw = new Chess(here);
+      if (playUci(sw, guess) && playUci(sw, plies[S.ply + 1].uci) && playUci(sw, plies[S.ply].uci)
+          && posKey(sw.fen()) === posKey(nextBlack.fen)) return { to: null };
+    }
+    const idx = await repPositionIndex();
+    if (idx[after]) return { to: idx[after] === S.look.name ? null : idx[after] };
+    return null;
+  }
+  function repRecordResult() {
+    const keys = Object.keys(S.first);
+    if (!keys.length || !S.look) return null;
+    const right = keys.filter(k => S.first[k]).length, total = keys.length;
+    const missed = keys.filter(k => !S.first[k]).map(k => repPlies()[k] && repPlies()[k].san).filter(Boolean);
+    const out = { right, total, next: right === total ? "later" : "tomorrow" };
+    fetch(API.replace(/^\//, "") + "/" + S.look.id + "/result", { method: "POST",
+      body: JSON.stringify({ right, total, missed, transposed: S.transposed, blind: S.blind, name: S.look.name }) })
+      .then(r => r.json()).then(p => { if (p && p.id) { S.progress[p.id] = p; renderRepLooks(); } })
+      .catch(() => {});
+    return out;
+  }
+  async function repLoadProgress() {
+    try {
+      const r = await apiGet("/api/repertoire-progress?slug=" + cfg.slug);
+      S.progress = {};
+      (r.lines || []).forEach(l => { S.progress[l.id] = l; });
+    } catch (_) { /* no memory yet */ }
+  }
+  function repDueText(p) {
+    if (!p) return "New";
+    const days = repDaysUntil(p.due);
+    const when = days <= 0 ? "due now" : days === 1 ? "due tomorrow" : "in " + days + " days";
+    return (p.last_right === p.last_total ? "✓ " : "") + p.last_right + "/" + p.last_total + " · " + when;
+  }
+  /* missed lines first, then lines never tried, then the most overdue */
+  async function repDrillDue() {
+    // the tab may still be loading its first set-up — let that land first
+    for (let i = 0; i < 60 && !(S.data && S.look); i++) await new Promise(r => setTimeout(r, 100));
+    if (!S.data) return;
+    await repLoadProgress();
+    const now = Date.now();
+    const looks = S.data.looks.map(l => ({ l, p: S.progress[l.id] }));
+    const rank = (x) => !x.p ? 1 : (Date.parse(x.p.due) <= now ? (x.p.last_right < x.p.last_total ? 0 : 2) : 3);
+    looks.sort((a, b) => rank(a) - rank(b) || (a.p && b.p ? Date.parse(a.p.due) - Date.parse(b.p.due) : 0));
+    const pick = looks[0];
+    await loadRepLook(pick.l.id);
+    repStartQuiz();
+    repSetStatus((rank(pick) === 0 ? "You missed this one last time — " : rank(pick) === 1 ? "A line you have not drilled yet — "
+      : rank(pick) === 2 ? "Due for review — " : "Nothing is due; drilling your weakest line — ")
+      + pick.l.name + ". Black to play.");
+  }
+  function repPlayThePlan() {
+    if (!S.look) return;
+    if (S.quiz) repStopQuiz("");
+    const plies = S.look.plies || [];
+    const fen = plies.length ? plies[plies.length - 1].fen : PLAY_START_FEN;
+    if (typeof startPracticeFrom === "function") {
+      startPracticeFrom(fen, S.data.side || "black");
+      const plan = (S.look.plans || [])[0];
+      if (plan) $("rehearsal-banner").textContent = S.look.name + " — play the plan against the engine at your level. " + plan;
+    } else {
+      sendFenToPlay(fen, S.data.side || "black", "Final position of " + S.look.name + ".");
     }
   }
 
@@ -297,7 +409,9 @@ function createRepertoireTab(cfg) {
       card.innerHTML =
         '<span class="ml-head"><strong>' + escapeHtml(look.name) + "</strong>"
         + '<span class="chip">' + escapeHtml(look.frequency) + "</span></span>"
-        + '<span class="ml-tell">' + escapeHtml(look.tell) + "</span>";
+        + '<span class="ml-tell">' + escapeHtml(look.tell) + "</span>"
+        + (guessing ? "" : '<span class="rep-mem ' + (!S.progress[look.id] ? "new" : S.progress[look.id].last_right === S.progress[look.id].last_total ? "ok" : "miss") + '">'
+          + escapeHtml(repDueText(S.progress[look.id])) + "</span>");
       card.title = look.line_san;
       card.addEventListener("click", () => loadRepLook(look.id));
       host.appendChild(card);
@@ -336,6 +450,11 @@ function createRepertoireTab(cfg) {
           + '<div class="mt-line">' + escapeHtml(t.line_san) + "</div>"
           + "<div>" + escapeHtml(t.point) + "</div></div>";
       }
+    }
+    const oly = repOlympiadLink(cfg.slug, look.id);
+    if (oly) {
+      html += '<div class="rep-oly"><a class="btn mini" href="' + oly.href + '" target="_blank" rel="noopener">'
+        + escapeHtml(oly.label) + " &#x2197;</a></div>";
     }
     if (look.watch) {
       html += "<h4 class='sub-head'>What goes wrong</h4>"
@@ -399,6 +518,8 @@ function createRepertoireTab(cfg) {
   });
 
   $("btn-" + P + "-blind").addEventListener("click", repStartBlindQuiz);
+  $("btn-" + P + "-due").addEventListener("click", repDrillDue);
+  $("btn-" + P + "-plan").addEventListener("click", repPlayThePlan);
 
 
   $("btn-" + P + "-play").addEventListener("click", () => {
@@ -431,12 +552,13 @@ function createRepertoireTab(cfg) {
       box.textContent = S.data.coach_note;
       box.classList.remove("hidden");
     }
+    await repLoadProgress();
     renderRepLooks();
     if (S.data.looks.length) loadRepLook(S.data.looks[0].id);
   }
 
 
-  return { init: initRep, state: S };
+  return { init: initRep, state: S, drillDue: repDrillDue, loadProgress: repLoadProgress };
 }
 
 /* The Modern Defense and Grünfeld Defense tabs — one implementation, two data sets. */
@@ -448,4 +570,25 @@ const initGrunfeld = () => GrunfeldTab.init();
 /* v40: count a training day only after a real answer on this trainer */
 function ccLogAnswer(pillar, kind) {
   try { fetch("api/activity/answer", { method: "POST", body: JSON.stringify({ pillar: pillar, kind: kind }) }); } catch (_) {}
+}
+
+/* v41: each set-up -> the Olympiad games that reached it (URL filter) */
+const REP_OLYMPIAD = {
+  modern: { fam: "Modern", q: { "150-attack": "150 attack", austrian: "austrian", "classical-quiet": "classical" } },
+  grunfeld: { fam: "Grünfeld", q: { "exchange-classical": "exchange", "exchange-modern": "exchange", fianchetto: "fianchetto",
+    russian: "vs. system", bf4: "vs. system", bg5: "vs. system" } },
+};
+function repOlympiadLink(slug, id) {
+  const m = REP_OLYMPIAD[slug];
+  if (!m) return null;
+  const q = m.q[id];
+  const href = "./olympiad/?fam=" + encodeURIComponent(m.fam) + (q ? "&q=" + encodeURIComponent(q) : "") + "#games";
+  return { href, label: q ? "Olympiad games with this set-up" : "All Olympiad " + m.fam + " games" };
+}
+
+/* whole calendar days from today to an ISO date (0 = today or overdue) */
+function repDaysUntil(iso) {
+  const a = new Date(); a.setHours(0, 0, 0, 0);
+  const b = new Date(iso); b.setHours(0, 0, 0, 0);
+  return Math.round((b - a) / 86400000);
 }

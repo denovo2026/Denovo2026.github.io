@@ -290,7 +290,7 @@ function switchTab(name) {
   if (name === "sparring") initSparring();
   if (name === "endgames") initEndgames();
   if (name === "masters") initMasters();
-  if (name === "progress") initProgress();
+  if (name === "progress") { initProgress(); if (typeof renderProgressOpenings === "function") renderProgressOpenings(); }
   if (name === "games" && typeof loadLibrary === "function" && !Games.list.length) loadLibrary();
   if (name === "modern" && typeof initModern === "function") initModern();
   if (name === "grunfeld" && typeof initGrunfeld === "function") initGrunfeld();
@@ -7716,12 +7716,13 @@ const PLAN_PILLARS = [
   { key: "sparring", label: "Sparring" },
   { key: "endgame", label: "Endgame" },
   { key: "masters", label: "Masters" },
+  { key: "openings", label: "Openings" },
 ];
 
 /* Today-card priority: due re-tests first, then today's flashcards. */
 const PLAN_KIND_PRIORITY = {
   retest: 0, flashcards: 1, postmortem: 2, cycle: 3, placement: 4,
-  lesson: 5, pack_session: 6, gtm: 7, motif_focus: 8, opening_repair: 9,
+  lesson: 5, pack_session: 6, gtm: 7, motif_focus: 8, opening_repair: 9, opening_drill: 2,
   analysis: 10, onboarding: 11,
 };
 
@@ -7766,6 +7767,9 @@ function planPillarVisual(key, pillar, metrics) {
   } else if (key === "endgame" && m.endgame) {
     metric = m.endgame.lessons_passed + "/" + m.endgame.lessons_total;
     trend = m.endgame.passed_trend || [];
+  } else if (key === "openings" && m.openings) {
+    metric = m.openings.known_pct != null ? m.openings.known_pct + "%" : null;
+    trend = m.openings.trend || [];
   } else if (key === "masters" && m.masters) {
     metric = m.masters.best_score != null ? String(m.masters.best_score) : null;
     trend = m.masters.scores || [];
@@ -7836,7 +7840,8 @@ function renderPlanToday(host, plan) {
     btn.className = "btn mini";
     btn.textContent = "Open";
     const tab = a.item.ref && a.item.ref.tab;
-    btn.addEventListener("click", () => { if (tab) switchTab(tab); });
+    if (a.item.ref && a.item.ref.drill) btn.setAttribute("data-opening-drill", a.item.ref.drill);
+    else btn.addEventListener("click", () => { if (tab) switchTab(tab); });
     row.appendChild(tag);
     row.appendChild(lbl);
     row.appendChild(btn);
@@ -7924,7 +7929,8 @@ function planItemCard(it) {
   if (!it.done && it.ref && it.ref.tab) {
     card.classList.add("clickable");
     card.title = "Open the " + it.ref.tab + " tab";
-    card.addEventListener("click", () => switchTab(it.ref.tab));
+    if (it.ref.drill) card.setAttribute("data-opening-drill", it.ref.drill);
+    else card.addEventListener("click", () => switchTab(it.ref.tab));
   }
   return card;
 }
@@ -8435,4 +8441,34 @@ let __ccStreakT = null;
 window.addEventListener("cc-activity", () => {
   clearTimeout(__ccStreakT);
   __ccStreakT = setTimeout(() => { if (typeof loadStreak === "function") loadStreak().then(() => renderStreak()); }, 250);
+});
+
+
+/* ------------------------------------------------------------------ */
+/* v41: opening-line memory on Progress; Plan items open the drill     */
+/* ------------------------------------------------------------------ */
+async function renderProgressOpenings() {
+  const host = $("progress-openings");
+  if (!host) return;
+  let r;
+  try { r = await apiGet("/api/repertoire-progress"); } catch (_) { return; }
+  if (!r.lines || !r.lines.length) return;
+  const now = Date.now();
+  const row = (l) => {
+    const days = repDaysUntil(l.due);
+    const cls = l.last_right === l.last_total ? "ok" : "miss";
+    return '<div class="po-row"><span class="po-name">' + escapeHtml(l.name || l.id) + ' <span class="muted">' + escapeHtml(l.slug === "grunfeld" ? "Grünfeld" : "Modern") + "</span></span>"
+      + '<span class="rep-mem ' + cls + '">' + l.last_right + "/" + l.last_total + "</span>"
+      + '<span class="muted">' + (days <= 0 ? "due now" : days === 1 ? "tomorrow" : "in " + days + " d") + "</span></div>";
+  };
+  host.innerHTML = '<div class="info-line">' + r.known + " of " + r.total_lines + " lines known first try · " + r.due_count + " due · "
+    + r.tried + " drilled</div>" + r.lines.slice().sort((a, b) => Date.parse(a.due) - Date.parse(b.due)).map(row).join("");
+}
+document.addEventListener("click", (e) => {
+  // Plan "Openings" item: open the trainer straight into the due drill
+  const b = e.target.closest && e.target.closest("[data-opening-drill]");
+  if (!b) return;
+  const slug = b.getAttribute("data-opening-drill");
+  switchTab(slug);
+  setTimeout(() => { const T = slug === "grunfeld" ? GrunfeldTab : ModernTab; T.init().then(() => T.drillDue()); }, 50);
 });

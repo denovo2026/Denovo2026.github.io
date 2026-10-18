@@ -450,6 +450,7 @@ async function boot() {
     $('status').textContent = META.gamesPending ? `Engine verification is still running. Blunder analysis is complete for ${(G.length - META.gamesPending).toLocaleString()} of ${G.length.toLocaleString()} games, starting with the top tables; the rest will be added to this page.` : '';
     $('controls').hidden = false;
     renderFacts();
+    applyUrlFilters();
     const h = (location.hash || '').replace('#', '');
     switchTab(['games', 'blunders', 'guide'].includes(h) ? h : 'games', false);
     setTimeout(() => { loadMoves(); loadDetail(); }, 400);
@@ -483,6 +484,19 @@ function setupControls() {
     $('fRep').checked = false; $('fGap').checked = false; $('fUp').checked = false; TAG_FILTERS.forEach(t => $('bt' + t).checked = false);
     focusGame = null; apply();
   };
+}
+/* URL filters (?fam=Modern&q=austrian&rep=1&res=0-1&sec=O&elo=2400) so other pages can link straight to a slice */
+function applyUrlFilters() {
+  let u; try { u = new URLSearchParams(location.search); } catch (e) { return; }
+  if (![...u.keys()].length) return;
+  const fam = u.get('fam');
+  if (fam && [...$('fFam').options].some(o => o.value === fam)) $('fFam').value = fam;
+  if (u.get('q')) $('q').value = u.get('q');
+  if (u.get('rep') === '1') $('fRep').checked = true;
+  if (u.get('res')) $('fRes').value = u.get('res');
+  if (u.get('sec')) $('fSec').value = u.get('sec');
+  if (u.get('elo')) $('fElo').value = u.get('elo');
+  apply();
 }
 function readFilters() {
   return {

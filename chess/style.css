@@ -1462,3 +1462,16 @@ select.opp-level { font-size: 0.92rem; }
 .gtm-game-row.my-side { border-color: var(--accent-ring); }
 .plan-side-note { color: var(--accent-text); }
 @media (max-width: 600px) { .me-label { display: none; } .me-btn { padding: 0 8px; } .me-pop { right: 6px; left: 6px; min-width: 0; } }
+
+/* v41: opening memory */
+.rep-mem { display: inline-block; margin-top: 4px; font-size: 0.72rem; font-weight: 600; border-radius: 999px; padding: 1px 7px;
+  border: 1px solid var(--border-strong); color: var(--text-2); white-space: nowrap; }
+.rep-mem.ok { color: var(--accent-text); border-color: var(--accent-ring); background: var(--accent-soft); }
+.rep-mem.miss { color: var(--warn-text); border-color: rgba(245,185,66,.45); background: var(--warn-soft); }
+.rep-oly { margin: 6px 0 2px; }
+.po-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 3px 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
+.po-row:last-child { border-bottom: 0; }
+@media (min-width: 1100px) {
+  /* v41: six pillars (Openings added) on one row */
+  .plan-board { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+}

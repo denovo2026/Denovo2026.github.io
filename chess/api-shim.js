@@ -1560,7 +1560,8 @@
     } else {
       var a = await analysePos(fen, { depth: 12, movetime: 1500, multipv: topN, priority: "high" });
       var best = capCp(evCp(a.lines[0].eval));
-      var ok = a.lines.filter(function (l) { return best - capCp(evCp(l.eval)) <= 80; });
+      var tol = { casual: 220, club: 140, advanced: 90, expert: 60, masters: 40 }[levelOf(b.opponent_level)] || 80; // v41: play at the chosen level
+      var ok = a.lines.filter(function (l) { return best - capCp(evCp(l.eval)) <= tol; });
       var w = ok.map(function (l, i2) { return 1 / (i2 + 1); }), ws = w.reduce(function (p, q) { return p + q; }, 0), r2 = Math.random() * ws, idx = 0;
       for (; idx < w.length - 1; idx++) { r2 -= w[idx]; if (r2 <= 0) break; }
       choice = { uci: ok[idx].moves_uci[0], rank: idx + 1, pct: null, games: null };
@@ -2016,6 +2017,35 @@
     if (!l) fail(404, "look_not_found");
     return clone(l);
   });
+  /* v41: first-try memory per opening line, spaced repetition */
+  var REP_STEPS = [1, 3, 7, 14, 30, 60];
+  function repProg() { return S.get("repProgress", {}); }
+  route("POST", "/api/repertoire/:slug/:id/result", function (b, q, p) {
+    var all = repProg(), key = p.slug + "/" + p.id;
+    var r = all[key] || { slug: p.slug, id: p.id, name: b.name || p.id, attempts: 0, step: -1, history: [] };
+    var total = Math.max(1, parseInt(b.total, 10) || 1), right = clamp(parseInt(b.right, 10) || 0, 0, total);
+    r.attempts++; r.name = b.name || r.name;
+    r.last_right = right; r.last_total = total; r.last_at = nowIso(); r.missed = (b.missed || []).slice(0, 10);
+    r.best = Math.max(r.best || 0, Math.round(100 * right / total));
+    // missed -> tomorrow; known first try -> 3, 7, 14, 30, 60 days
+    if (right === total) r.step = Math.min(REP_STEPS.length - 1, Math.max(1, (r.step == null ? 0 : r.step) + 1)); else r.step = 0;
+    r.interval = REP_STEPS[Math.max(0, r.step)];
+    var due = new Date(); due.setHours(4, 0, 0, 0); due.setDate(due.getDate() + r.interval);
+    r.due = due.toISOString();
+    r.history = (r.history || []).concat([{ at: r.last_at, right: right, total: total }]).slice(-30);
+    all[key] = r; S.set("repProgress", all);
+    return r;
+  });
+  async function repProgressSummary(slug) {
+    var all = repProg(), lines = Object.keys(all).map(function (k) { return all[k]; }).filter(function (l) { return !slug || l.slug === slug; });
+    var totalLines = 0;
+    for (var s2 of ["modern", "grunfeld"]) { if (slug && slug !== s2) continue; try { totalLines += ((await repFile(s2)).looks || []).length; } catch (_) {} }
+    var now = Date.now();
+    return { lines: lines, total_lines: totalLines, tried: lines.length,
+      known: lines.filter(function (l) { return l.last_right === l.last_total; }).length,
+      due_count: lines.filter(function (l) { return Date.parse(l.due) <= now; }).length + Math.max(0, totalLines - lines.length) };
+  }
+  route("GET", "/api/repertoire-progress", async function (b, q) { return await repProgressSummary(q.slug || null); });
   route("GET", "/api/attacks", async function () {
     var d = clone(await loadData("attacks.json"));
     d.patterns = (d.patterns || []).map(function (pt) {
@@ -2160,6 +2190,22 @@
     // masters
     pillars.masters = { target_sessions: PILLAR_TARGET.masters, done_sessions: Math.min(PILLAR_TARGET.masters, daysOf(doneBy("masters")).size),
       items: [{ label: "Guess-the-move: one master game", kind: "gtm", done: doneBy("masters", ["gtm"]).length > 0, due: null, ref: { tab: "masters" } }] };
+    // v41: openings — due lines from the first-try memory
+    var rp = repProg(), rpLines = Object.keys(rp).map(function (k) { return rp[k]; });
+    var nowMs = Date.now();
+    var dueBy = { modern: 0, grunfeld: 0 };
+    rpLines.forEach(function (l) { if (Date.parse(l.due) <= nowMs) dueBy[l.slug] = (dueBy[l.slug] || 0) + 1; });
+    var newBy = { modern: Math.max(0, 7 - rpLines.filter(function (l) { return l.slug === "modern"; }).length),
+      grunfeld: Math.max(0, 7 - rpLines.filter(function (l) { return l.slug === "grunfeld"; }).length) };
+    var opDone = doneBy("openings");
+    var opItems = ["modern", "grunfeld"].map(function (sl) {
+      var n = dueBy[sl] + newBy[sl], nm = sl === "modern" ? "Modern" : "Grünfeld";
+      return { label: "Openings: " + nm + " — " + (n ? n + " line" + (n === 1 ? "" : "s") + " to drill (" + dueBy[sl] + " due, " + newBy[sl] + " new)" : "all lines fresh"),
+        kind: "opening_drill", done: n === 0 || acts.some(function (a) { return a.pillar === "openings" && a.date === today && a.kind === "repertoire"; }) && dueBy[sl] === 0,
+        due: null, ref: { tab: sl, drill: sl } };
+    });
+    if (dueBy.modern + dueBy.grunfeld) reasons.push((dueBy.modern + dueBy.grunfeld) + " opening line(s) due for review");
+    pillars.openings = { target_sessions: 3, done_sessions: Math.min(3, daysOf(opDone).size), items: opItems };
     var planned = 0, completed = 0;
     Object.keys(pillars).forEach(function (k) { planned += pillars[k].target_sessions; completed += pillars[k].done_sessions; });
     return { week_of: week, reasons: reasons, pillars: pillars, adherence: { completed: completed, planned: planned, pct: planned ? Math.round(100 * completed / planned) : 0 } };
@@ -2198,6 +2244,9 @@
       tactics: { retention_7d: fcStats().retention_7d, cycle_accuracy: cyc.slice(-12).map(function (c) { return c.accuracy; }) },
       sparring: { pass_rate: passes + fails ? passes / (passes + fails) : null, pass_trend: [], attempts: spAttempts.length },
       endgame: { lessons_passed: egPassed, lessons_total: 10, passed_trend: trend.slice(-12) },
+      openings: (function () { var rp = repProg(), ls = Object.keys(rp).map(function (k) { return rp[k]; });
+        return { known_pct: ls.length ? Math.round(100 * ls.filter(function (l) { return l.last_right === l.last_total; }).length / 14) : null,
+          trend: ls.reduce(function (a, l) { return a.concat(l.history || []); }, []).sort(function (x, y) { return x.at < y.at ? -1 : 1; }).slice(-12).map(function (h) { return Math.round(100 * h.right / h.total); }) }; })(),
       masters: { best_score: gh.length ? Math.max.apply(null, gh.map(function (h) { return h.score; })) : null, scores: gh.slice(-12).map(function (h) { return h.score; }) },
     };
   });
