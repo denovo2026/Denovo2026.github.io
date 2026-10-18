@@ -1501,3 +1501,51 @@ select.opp-level { font-size: 0.92rem; }
 .calc-guess-row input { width: 56px; }
 .calc-blind { display: inline-flex; gap: 6px; align-items: center; }
 @media (min-width: 961px) { #tab-calc { --board-chrome: 48px; } }
+
+
+/* ================= v43: grouped navigation ================= */
+.tabs.grouped { align-items: flex-end; gap: 0; }
+.tab-groups { display: flex; gap: 2px; flex: 0 0 auto; align-items: center; padding-bottom: 5px; }
+.grp-btn {
+  font: inherit; font-size: 0.84rem; font-weight: 650; letter-spacing: 0.01em;
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid transparent; background: transparent; color: var(--text-2);
+  padding: 4px 11px; min-height: 30px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  transition: color 0.15s var(--ease), background 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+.grp-btn:hover { color: var(--text); background: var(--surface-2); }
+.grp-btn.active { color: var(--accent); background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 35%, transparent); }
+.grp-ic { font-size: 0.95em; line-height: 1; opacity: 0.85; font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", "DejaVu Sans", var(--font); }
+.tab-sep { flex: 0 0 1px; align-self: center; height: 22px; background: var(--border); margin: 0 10px 5px; }
+.tab-subs { display: flex; gap: 2px; flex: 1 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; align-items: flex-end; }
+.tab-subs::-webkit-scrollbar { display: none; }
+.tab-subs > [data-group]:not(.in-group) { display: none; }
+.tab-subs .tab-link { flex: 0 0 auto; }
+@media (min-width: 701px) and (max-width: 960px) {
+  .grp-lbl { display: none; }
+  .grp-btn { padding: 4px 9px; }
+}
+/* phone: sections become a bottom bar, sub-tabs stay at the top */
+@media (max-width: 700px) {
+  .tab-sep { display: none; }
+  .tab-groups {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; padding: 4px 4px calc(4px + env(safe-area-inset-bottom, 0));
+    background: color-mix(in srgb, var(--surface) 94%, transparent);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px);
+    border-top: 1px solid var(--border);
+  }
+  .grp-btn { flex-direction: column; gap: 2px; border-radius: 12px; min-height: 48px; padding: 4px 2px; font-size: 0.72rem; justify-content: center; border: 0; }
+  .grp-btn.active { background: var(--accent-soft); }
+  .grp-ic { font-size: 1.25rem; opacity: 1; }
+  /* a backdrop-filter on the header would make it the containing block of the fixed bar */
+  .app-header { -webkit-backdrop-filter: none; backdrop-filter: none; background: color-mix(in srgb, var(--bg) 97%, transparent); }
+  body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0)); }
+  .mine-toast { bottom: calc(72px + env(safe-area-inset-bottom, 0)); }
+  .tab-subs .tab-btn { min-height: 40px; }
+}
+
+.calc-type { display: flex; gap: 6px; margin: 0 0 6px; }
+.calc-type input { flex: 1 1 auto; min-width: 0; font: inherit; font-size: 0.86rem; padding: 5px 9px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--surface-2); color: var(--text); }
+.calc-type .btn { padding: 4px 12px; }

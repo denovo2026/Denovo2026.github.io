@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=42">
+<link rel="stylesheet" href="style.css?v=43">
 </head>
 <body>
 <header class="app-header">
@@ -56,23 +56,33 @@
       </span>
     </div>
   </div>
-  <nav class="tabs" aria-label="Sections">
-    <button class="tab-btn" data-tab="plan">Plan</button>
-    <button class="tab-btn active" data-tab="play">Play &amp; Analyze</button>
-    <button class="tab-btn" data-tab="puzzles">Puzzles</button>
-    <button class="tab-btn" data-tab="cycles">Cycles</button>
-    <button class="tab-btn" data-tab="sparring">Sparring</button>
-    <button class="tab-btn" data-tab="endgames">Endgames</button>
-    <button class="tab-btn" data-tab="masters">Masters</button>
-    <button class="tab-btn" data-tab="modern">Modern</button>
-    <button class="tab-btn" data-tab="grunfeld">Gr&uuml;nfeld</button>
-    <button class="tab-btn" data-tab="attacks">Attacks</button>
-    <button class="tab-btn" data-tab="calc">Calculation</button>
-    <button class="tab-btn" data-tab="games">My Games</button>
-    <button class="tab-btn" data-tab="learn">Learn</button>
-    <button class="tab-btn" data-tab="progress">Progress</button>
-    <button class="tab-btn" data-tab="lab">Strategy Lab</button>
-    <a class="tab-link" href="./olympiad/" title="Olympiad game matrix · Samarkand 2026 (opens the Olympiad explorer)">Olympiad <span class="tab-link-arrow" aria-hidden="true">&#x2197;</span></a>
+  <nav class="tabs grouped" aria-label="Sections">
+    <div class="tab-groups" role="tablist" aria-label="Sections">
+      <button class="grp-btn" type="button" role="tab" aria-selected="false" data-group="today"><span class="grp-ic" aria-hidden="true">&#9788;</span><span class="grp-lbl">Today</span></button>
+      <button class="grp-btn active" type="button" role="tab" aria-selected="true" data-group="play"><span class="grp-ic" aria-hidden="true">&#9822;</span><span class="grp-lbl">Play</span></button>
+      <button class="grp-btn" type="button" role="tab" aria-selected="false" data-group="train"><span class="grp-ic" aria-hidden="true">&#9889;&#xFE0E;</span><span class="grp-lbl">Train</span></button>
+      <button class="grp-btn" type="button" role="tab" aria-selected="false" data-group="openings"><span class="grp-ic" aria-hidden="true">&#9820;</span><span class="grp-lbl">Openings</span></button>
+      <button class="grp-btn" type="button" role="tab" aria-selected="false" data-group="study"><span class="grp-ic" aria-hidden="true">&#9998;</span><span class="grp-lbl">Study</span></button>
+    </div>
+    <span class="tab-sep" aria-hidden="true"></span>
+    <div class="tab-subs" id="tab-subs">
+      <button class="tab-btn" data-tab="plan" data-group="today">Plan</button>
+      <button class="tab-btn" data-tab="progress" data-group="today">Progress</button>
+      <button class="tab-btn active in-group" data-tab="play" data-group="play">Play &amp; Analyze</button>
+      <button class="tab-btn in-group" data-tab="lab" data-group="play">Strategy Lab</button>
+      <button class="tab-btn in-group" data-tab="games" data-group="play">My Games</button>
+      <button class="tab-btn" data-tab="puzzles" data-group="train">Puzzles</button>
+      <button class="tab-btn" data-tab="cycles" data-group="train">Cycles</button>
+      <button class="tab-btn" data-tab="sparring" data-group="train">Sparring</button>
+      <button class="tab-btn" data-tab="endgames" data-group="train">Endgames</button>
+      <button class="tab-btn" data-tab="attacks" data-group="train">Attacks</button>
+      <button class="tab-btn" data-tab="calc" data-group="train">Calculation</button>
+      <button class="tab-btn" data-tab="modern" data-group="openings">Modern</button>
+      <button class="tab-btn" data-tab="grunfeld" data-group="openings">Gr&uuml;nfeld</button>
+      <button class="tab-btn" data-tab="masters" data-group="study">Masters</button>
+      <button class="tab-btn" data-tab="learn" data-group="study">Learn</button>
+      <a class="tab-link" data-group="study" href="./olympiad/" title="Olympiad game matrix · Samarkand 2026 (opens the Olympiad explorer)">Olympiad <span class="tab-link-arrow" aria-hidden="true">&#x2197;</span></a>
+    </div>
   </nav>
 </header>
 <script>
@@ -1198,6 +1208,7 @@
             <label class="calc-blind"><input id="calc-blind" type="checkbox" checked> Blindfold (the board stays still)</label>
           </div>
           <div id="calc-slots" class="calc-slots"></div>
+          <form id="calc-type" class="calc-type" autocomplete="off"><input id="calc-san" type="text" spellcheck="false" placeholder="…or type the move, e.g. Nf5" aria-label="Type the next move of your line"><button class="btn" type="submit">Add</button></form>
           <div class="panel-row">
             <button id="btn-calc-check" class="btn primary">Check my line</button>
             <button id="btn-calc-undo" class="btn">Undo last</button>
@@ -1290,13 +1301,13 @@
 <!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
 <script src="vendor/chess.js?v=33"></script>
 <script src="js/engine.js?v=33"></script>
-<script src="api-shim.js?v=42"></script>
+<script src="api-shim.js?v=43"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=35"></script>
-<script src="app.js?v=42"></script>
-<script src="js/repertoire.js?v=42"></script>
-<script src="js/attacks.js?v=42"></script>
-<script src="js/calc.js?v=42"></script>
+<script src="app.js?v=43"></script>
+<script src="js/repertoire.js?v=43"></script>
+<script src="js/attacks.js?v=43"></script>
+<script src="js/calc.js?v=43"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});

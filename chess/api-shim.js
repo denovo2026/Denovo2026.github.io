@@ -757,6 +757,11 @@
   }
   function puzzleWhy(p) {
     var themes = (p.themes && p.themes.length ? p.themes : [p.theme]);
+    if (p.origin === "olympiad") {
+      var oq = "In the game " + (p.played_san || "another move") + " was played here (" + (p.fam_name || "a blunder") + "). What did it allow, and what does " + p.solution_san[0] + " take away from the opponent?";
+      return { text: oq, question: oq, line: p.solution_san.join(" ") + (p.best_line ? "  (engine: " + p.best_line + ")" : ""),
+        principle: p.habit ? { id: "olympiad", title: "Habit: " + (p.fam_name || "blunder check"), text: p.habit } : knowledgeFor(themes) };
+    }
     var q = puzzleQuestion(p, themes);
     return { text: q, question: q, line: p.solution_san.join(" "), principle: knowledgeFor(themes) };
   }
@@ -788,6 +793,13 @@
       inRange.filter(function (p) { return !seen.has(p.id); }),
       inRange,
     ];
+    // v43: a fresh "Train these blunders" batch from the Olympiad comes first, in the order it was sent
+    if (S.get("puzzlePrefer", null) === "olympiad") {
+      var oly = pool.filter(function (p) { return p.origin === "olympiad" && !seen.has(p.id) && !(hist[p.id] && (hist[p.id].solved || hist[p.id].revealed)); })
+        .sort(function (x, y) { return (x.batch_ix || 0) - (y.batch_ix || 0); });
+      if (oly.length) return pubPuzzle(oly[0]);
+      S.del("puzzlePrefer");
+    }
     var choice = null;
     for (var i = 0; i < tiers.length && !choice; i++) if (tiers[i].length) choice = pick(tiers[i]);
     if (!choice) fail(404, "no_puzzles");
@@ -811,7 +823,7 @@
     var p = await findPuzzle(b.id);
     var moves = b.moves_uci || [];
     var sol = p.moves_uci;
-    var progress = 0, wrong = false;
+    var progress = 0, wrong = false, altOk = false;
     var ch = tryChess(p.fen);
     for (var i = 0; i < moves.length; i++) {
       var expect = sol[2 * i];
@@ -824,6 +836,15 @@
       // any mating move is accepted as the final solving move
       var test = tryChess(ch.fen()), m = test && tryMove(test, moves[i]);
       if (m && test.isCheckmate() && 2 * i + 1 >= sol.length - 1) { progress++; continue; }
+      if (p.origin === "olympiad" && sol.length === 1 && i === 0 && m) {
+        try {
+          var root = await analysePos(p.fen, { depth: 12, movetime: 1200, multipv: 1, priority: "high" });
+          var aft = await analysePos(test.fen(), { depth: 12, movetime: 1200, multipv: 1, priority: "high" });
+          var bestCp = root.lines[0] ? capCp(evCp(root.lines[0].eval)) : null;
+          var mineCp = aft.terminal ? (test.isCheckmate() ? 1500 : 0) : (aft.lines[0] ? -capCp(evCp(aft.lines[0].eval)) : null);
+          if (bestCp !== null && mineCp !== null && bestCp - mineCp <= 40) { progress++; altOk = true; continue; }
+        } catch (_) { /* fall through: treat as wrong */ }
+      }
       wrong = true; break;
     }
     var solverMoves = Math.ceil(sol.length / 2);
@@ -844,7 +865,7 @@
     return {
       id: p.id, solved: solved, progress: wrong ? progress : progress,
       correct_line_san: p.solution_san, total_moves: solverMoves,
-      message: solved ? "Solved! Well done." : wrong ? "Not the best move — try again." : "Correct — keep going.",
+      message: solved ? (altOk ? "Good — that holds the position too (within 0.4). The engine's first choice was " + p.solution_san[0] + "." : "Solved! Well done.") : wrong ? "Not the best move — try again." : "Correct — keep going.",
       why: solved ? puzzleWhy(p) : null,
     };
   });
@@ -2663,6 +2684,64 @@
     var coach = opp.counts.total > you.counts.total ? "They have more forcing moves than you. Before you calculate your own attack, list their checks and captures."
       : "Start with your checks, then captures, then threats — and give each one their best reply.";
     return { you: you, opponent: opp, coach: { coach: "Coach", commentary: coach } };
+  });
+
+
+  /* ---------- v43: Olympiad "Train these blunders" ---------- */
+  var OLY_THEME = { "mate-allowed": "defensiveMove", "mate-missed": "mate", hung: "hangingPiece", fork: "defensiveMove", pin: "defensiveMove",
+    discovery: "defensiveMove", "promo-allowed": "defensiveMove", "promo-missed": "promotion", "tactic-missed": "tactic", combination: "defensiveMove",
+    king: "defensiveMove", endgame: "endgame", positional: "quietMove" };
+  var OLY_MOTIF = { "mate-allowed": "allowed_mate", "mate-missed": "missed_mate", hung: "hanging_piece", fork: "allowed_tactic", pin: "allowed_tactic",
+    discovery: "allowed_tactic", "promo-allowed": "ignored_threat", "promo-missed": "missed_capture", "tactic-missed": "missed_capture",
+    combination: "allowed_tactic", king: "ignored_threat", endgame: "endgame_technique", positional: "positional" };
+  var OLY_SET_ID = "set-olympiad";
+  route("POST", "/api/olympiad/train", function (b) {
+    var items = (b.items || []).slice(0, 40), puzzles = [], cardsIn = [], batch = Date.now();
+    items.forEach(function (it, ix) {
+      var ch = tryChess(it.fen);
+      if (!ch || !it.best_uci) return;
+      var best = moveFacts(it.fen, it.best_uci);
+      if (!best) return;
+      var played = it.played_uci ? moveFacts(it.fen, it.played_uci) : null;
+      var fen = ch.fen(), theme = OLY_THEME[it.fam] || "quietMove";
+      var swing = Math.abs(parseFloat(String(it.e0 || "0").replace("\u2212", "-")) - parseFloat(String(it.e1 || "0").replace("\u2212", "-"))) || 0;
+      puzzles.push({
+        id: "o:" + hashStr(fen.split(" ").slice(0, 4).join(" ") + it.best_uci), fen: fen, side_to_move: sideName(fen.split(" ")[1]),
+        moves_uci: [it.best_uci], solution_san: [best.san], rating: clamp(Math.round(1350 + Math.min(swing, 6) * 60), 1200, 1900),
+        theme: theme, themes: [theme], source: "user", origin: "olympiad", batch: batch, batch_ix: ix,
+        played_san: played ? played.san : null, fam_name: String(it.fam_name || "").slice(0, 60), habit: String(it.habit || "").slice(0, 400),
+        best_line: String(it.best_line || "").slice(0, 120),
+        context: ("Olympiad 2026 \u00b7 " + String(it.game || "").slice(0, 80) + (it.rd ? ", round " + it.rd : "") + ": " + (it.label || "") +
+          " was played here (" + (it.fam_name || "blunder") + ", " + (it.e0 || "") + " \u2192 " + (it.e1 || "") + "). Find the better move."),
+        created_at: nowIso(),
+      });
+      cardsIn.push({ fen_before: fen, best_uci: it.best_uci, uci: it.played_uci || null, motif: OLY_MOTIF[it.fam] || "positional",
+        title: "Olympiad: " + (it.label || "") + " (" + (it.fam_name || "blunder") + ")", explanation: String(it.habit || "").slice(0, 400) });
+    });
+    // re-sent positions go back to the front of the queue
+    var store = S.get("userPuzzles", []), byId = {};
+    puzzles.forEach(function (p) { byId[p.id] = p; });
+    var hadIds = new Set(store.map(function (p) { return p.id; }));
+    store = store.filter(function (p) { return !byId[p.id]; }).concat(puzzles);
+    S.set("userPuzzles", store.slice(-1500));
+    var hist = S.get("puzzleHistory", {});
+    puzzles.forEach(function (p) { if (hist[p.id]) { delete hist[p.id].solved; delete hist[p.id].revealed; } });
+    S.set("puzzleHistory", hist);
+    S.set("puzzlePrefer", "olympiad");
+    var r = addCards(cardsIn, "olympiad");
+    var byCard = {}; cards().forEach(function (c) { byCard[c.id] = c; });
+    var all = sets(), set = all.find(function (x) { return x.id === OLY_SET_ID; });
+    if (!set) { set = { id: OLY_SET_ID, name: "Olympiad blunders", kind: "source", value: "olympiad", cards: [], cycles: [], prs: {}, created_at: nowIso() }; all.push(set); }
+    var have = new Set(set.cards.map(function (c) { return c.id; }));
+    cardsIn.forEach(function (m) {
+      var c = byCard["c" + hashStr(tryChess(m.fen_before).fen() + m.best_uci)];
+      if (c && !have.has(c.id)) { have.add(c.id); set.cards.push({ id: c.id, fen_before: c.fen_before, best_uci: c.best_uci, best_san: c.best_san,
+        played_san: c.played_san, played_uci: c.played_uci, title: c.title, hint: c.hint, motif: c.motif, explanation: c.explanation }); }
+    });
+    set.cards = set.cards.slice(-60);
+    saveSets(all);
+    return { received: items.length, puzzles_added: puzzles.filter(function (p) { return !hadIds.has(p.id); }).length, puzzles_queued: puzzles.length,
+      cards_added: r.added, cards_present: r.already_present, set_size: set.cards.length };
   });
 
   window.__CC_SHIM_ROUTES__ = ROUTES.length;

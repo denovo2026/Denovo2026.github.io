@@ -1,5 +1,6 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Olympiad game matrix · Samarkand 2026</title>
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Young+Serif&display=swap" rel="stylesheet">
@@ -225,6 +226,61 @@ footer p{margin:0}
   .callout .board{max-width:300px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ===== v43: Chess Coach "Midnight Emerald" skin + compact filter bar ===== */
+html:root, html:root:not([data-theme="dark"]), html:root[data-theme="light"]{
+  --bg:#0d1117; --surface:#161b22; --surface-2:#1c232c; --line:#2a333f; --ink:#e6edf3; --muted:#9ba5b0;
+  --gold:#10b981; --gold-ink:#04140d; --gold-soft:rgba(16,185,129,.14);
+  --bad:#f87171; --bad-soft:rgba(248,113,113,.13); --warn:#f5b942; --warn-soft:rgba(245,185,66,.13); --inacc:#8e9bb0;
+  --sq-light:#dee3e6; --sq-dark:#8ca2ad; --sq-coord:#0d1117;
+  --res-w-bg:#e6edf3; --res-w-ink:#0d1117; --res-b-bg:#05070b; --res-b-ink:#e6edf3; --res-d-bg:#2a333f; --res-d-ink:#c9d2e0;
+  --display:"Instrument Sans", "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  color-scheme:dark;
+}
+h1{font-weight:700;letter-spacing:-.02em}
+.panel h2,.sect{font-weight:650}
+.fact b{font-weight:700}
+.mast{background:linear-gradient(180deg,#111821 0%,var(--surface) 100%)}
+.mast .wrap{padding-block:14px 0;gap:10px}
+.sub{font-size:14px;margin-top:4px}
+.cc-back{color:var(--gold);margin-bottom:2px;font-size:14px}
+.btn{border-radius:8px}
+.btn:not(.ghost):hover{filter:brightness(1.08)}
+.controls{position:sticky;top:0;z-index:20;padding:8px 12px;gap:6px;margin-bottom:12px;border-radius:12px;
+  background:color-mix(in srgb,var(--surface) 92%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.crow{gap:6px 10px;align-items:center}
+.crow-label{flex-basis:auto;margin:0 2px 0 0;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.field{flex-direction:row;align-items:center;gap:5px;font-size:12px;white-space:nowrap}
+.field input,.field select{font-size:13px;padding:4px 7px;border-radius:7px;height:30px}
+.field.search{flex:1 1 220px}
+.field.search label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.field.num input{width:70px}
+.checks{gap:4px 12px;font-size:12.5px}
+.checks input{accent-color:var(--gold)}
+.ftoggle{display:none}
+.status:empty{display:none}
+.field select{max-width:150px}
+#fFam{max-width:180px}
+.field.search{flex:1 1 180px}
+.tagdrop{position:relative;font-size:13px}
+.tagdrop summary{list-style:none;cursor:pointer;height:30px;display:flex;align-items:center;gap:4px;padding:0 10px;border:1px solid var(--line);border-radius:7px;background:var(--surface-2);color:var(--ink)}
+.tagdrop summary::-webkit-details-marker{display:none}
+.tagdrop summary::after{content:"\25BE";color:var(--muted);font-size:11px}
+.tagdrop[open] summary{border-color:var(--gold)}
+.tagdrop .checks{position:absolute;z-index:30;top:36px;left:0;width:max-content;max-width:min(560px,90vw);padding:10px 12px;display:grid;grid-template-columns:repeat(2,auto);gap:6px 18px;
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.fcount{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:var(--gold);color:var(--gold-ink);font-size:11px;text-align:center}
+.fcount:empty{display:none}
+#btrain{margin-left:8px}
+#btrain[disabled]{opacity:.5;cursor:default}
+@media (max-width:700px){
+  .wrap{padding-inline:12px}
+  .ftoggle{display:inline-block}
+  .controls:not(.open) .crow.main > :not(.search):not(.ftoggle){display:none}
+  .controls:not(.open) .crow.bl{display:none}
+  .field.search{flex:1 1 160px}
+  .meta{flex-wrap:wrap;gap:6px}
+}
 </style>
 
 <header class="mast">
@@ -249,8 +305,9 @@ footer p{margin:0}
   <p class="status" id="status" role="status">Loading games…</p>
 
   <section class="controls" id="controls" aria-label="Filters" hidden>
-    <div class="crow">
-      <div class="field search"><label for="q">Search players, teams, openings, ECO, takeaways</label><input id="q" type="search" placeholder="e.g. Sindarov, Najdorf, E97, India"></div>
+    <div class="crow main">
+      <div class="field search"><label for="q">Search players, teams, openings, ECO, takeaways</label><input id="q" type="search" placeholder="Search players, teams, openings, ECO…"></div>
+      <button class="btn ghost small ftoggle" id="fToggle" type="button" aria-expanded="false" aria-controls="controls">Filters<span class="fcount" id="fCount"></span></button>
       <div class="field"><label for="fSec">Section</label><select id="fSec"><option value="">Both</option><option value="O">Open</option><option value="W">Women</option></select></div>
       <div class="field"><label for="fRd">Round</label><select id="fRd"><option value="">All</option></select></div>
       <div class="field"><label for="fBd">Board</label><select id="fBd"><option value="">All</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
@@ -258,19 +315,19 @@ footer p{margin:0}
       <div class="field"><label for="fRes">Result</label><select id="fRes"><option value="">All</option><option value="1-0">White won</option><option value="1/2-1/2">Draw</option><option value="0-1">Black won</option><option value="dec">Decisive</option></select></div>
       <div class="field"><label for="fFam">Opening</label><select id="fFam"><option value="">All openings</option></select></div>
       <div class="field num"><label for="fElo">Min avg Elo</label><input id="fElo" type="number" step="50" min="0" placeholder="0"></div>
-      <label class="rep checks"><input type="checkbox" id="fRep"> My Black repertoire (Modern, Grünfeld)</label>
+      <label class="rep checks"><input type="checkbox" id="fRep"> My repertoire (Modern, Grünfeld)</label>
       <div class="checks">
         <label title="Players more than 500 rating points apart"><input type="checkbox" id="fGap"> Gap 500+</label>
         <label title="The lower-rated player won, with more than 200 points between them"><input type="checkbox" id="fUp"> Upset 200+</label>
       </div>
     </div>
-    <div class="crow">
-      <div class="crow-label">Blunder filters</div>
+    <div class="crow bl">
+      <div class="crow-label">Blunders</div>
       <div class="field"><label for="bFam">Blunder family</label><select id="bFam"><option value="">All families</option></select></div>
       <div class="field"><label for="bSide">Blundered by</label><select id="bSide"><option value="">Either side</option><option value="0">White</option><option value="1">Black</option></select></div>
       <div class="field"><label for="bPhase">Phase</label><select id="bPhase"><option value="">Any phase</option><option value="0">Opening</option><option value="1">Middlegame</option><option value="2">Endgame</option></select></div>
       <div class="field"><label for="bType">Move type</label><select id="bType"><option value="">Any move</option></select></div>
-      <div class="checks" id="bTags"></div>
+      <details class="tagdrop" id="bTagsDrop"><summary>Tags<span class="fcount" id="bTagCount"></span></summary><div class="checks" id="bTags"></div></details>
       <button class="btn ghost small" id="reset">Clear all filters</button>
     </div>
   </section>
@@ -324,7 +381,7 @@ footer p{margin:0}
         <div class="ctx" id="ctx"></div>
       </div>
     </div>
-    <div class="meta"><span id="bcount"></span><span><button class="btn ghost small" id="bexport" hidden>Export blunders as CSV</button></span></div>
+    <div class="meta"><span id="bcount"></span><span><button class="btn ghost small" id="bexport" hidden>Export blunders as CSV</button><button class="btn small" id="btrain" type="button" title="Send these positions (up to 40, in the current order) to Chess Coach as puzzles and flashcards">Train these blunders</button></span></div>
     <div class="tablewrap">
       <table class="grid blist" id="btable">
         <thead><tr>
@@ -516,8 +573,14 @@ const blunderOk = (b, F, skipFam) => (skipFam || F.bFam === null || b.fam === F.
 const anyBlunderFilter = F => F.bFam !== null || F.bSide !== null || F.bPhase !== null || F.bType !== null || F.bTags.length > 0;
 
 let VG = [], VB = [], VB_NOFAM = [], F = null;
+function filterCount(F) {
+  return F.q.length + [F.sec, F.rd, F.bd, F.tbl, F.res, F.fam, F.elo].filter(Boolean).length + [F.rep, F.gap, F.up].filter(Boolean).length +
+    [F.bFam, F.bSide, F.bPhase, F.bType].filter(v => v !== null).length + F.bTags.length;
+}
 function apply(keepPage) {
   F = readFilters();
+  try { const n = filterCount(F) - F.q.length; $('fCount').textContent = n ? String(n) : ''; } catch (e) {}
+  try { $('bTagCount').textContent = F.bTags.length ? String(F.bTags.length) : ''; } catch (e) {}
   const gset = new Uint8Array(G.length);
   for (const g of G) if (gameOk(g, F)) gset[g.i] = 1;
   VB = []; VB_NOFAM = [];
@@ -914,6 +977,7 @@ $('ctx').addEventListener('click', e => { const c = e.target.closest('.ctxc'); i
 
 function renderBlunders() {
   const start = bpage * PAGE, slice = VB.slice(start, start + PAGE);
+  { const tb = $('btrain'), n = Math.min(VB.length, TRAIN_MAX); tb.disabled = !n; tb.textContent = n ? `Train these ${n} blunders` : 'Train these blunders'; }
   $('bcount').textContent = VB.length ? `Showing ${(start + 1).toLocaleString()}–${(start + slice.length).toLocaleString()} of ${VB.length.toLocaleString()} blunders` : '';
   setSortHeaders($('btable'), bsort);
   if (!slice.length) { $('bbody').innerHTML = `<tr><td colspan="9" class="empty">No blunders match these filters. Clear some filters to see more.</td></tr>`; $('bpager').innerHTML = ''; return; }
@@ -1024,6 +1088,31 @@ async function save(filename, data) {
   catch (e) { if (e?.code !== 'cancelled') $('status').textContent = 'The export could not be saved.'; }
 }
 $('gexport').onclick = () => save('olympiad-2026-games.csv', gamesCSV());
+
+/* v43: hand the current blunder list to Chess Coach as puzzles + flashcards */
+const TRAIN_MAX = 40;
+document.addEventListener('click', e => { const d = $('bTagsDrop'); if (d && d.open && !d.contains(e.target)) d.open = false; });
+$('fToggle').onclick = () => { const c = $('controls'), o = !c.classList.contains('open'); c.classList.toggle('open', o); $('fToggle').setAttribute('aria-expanded', String(o)); };
+$('btrain').onclick = async () => {
+  const btn = $('btrain'); if (!VB.length) return;
+  btn.disabled = true; btn.textContent = 'Preparing…';
+  try {
+    await loadDetail();
+    const seen = new Set(), items = [];
+    for (const b of VB) {
+      if (items.length >= TRAIN_MAX) break;
+      const d = DET[b.j]; if (!d || !d[0] || !d[2] || seen.has(d[0])) continue;
+      seen.add(d[0]);
+      const g = G[b.gi], f = FAMS[b.fam];
+      items.push({ fen: d[0], played_uci: d[1], best_uci: d[2], best_san: d[3], label: d[10], best_line: d[8] || '',
+        fam: f.key, fam_name: f.name, habit: f.habit, game: `${g.white} – ${g.black}`, rd: g.rd, side: b.side, e0: b.e0, e1: b.e1 });
+    }
+    localStorage.setItem('cc-olympiad-train', JSON.stringify({ created_at: new Date().toISOString(), items }));
+    location.href = '../?train=olympiad';
+  } catch (e) {
+    btn.disabled = false; btn.textContent = 'Could not prepare — try again';
+  }
+};
 $('bexport').onclick = async () => { await loadDetail(); save('olympiad-2026-blunders.csv', blundersCSV()); };
 
 /* ---------- capabilities ---------- */

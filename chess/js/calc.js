@@ -57,12 +57,17 @@ async function calcNew() {
     calcSetStatus("No positions for that source yet: " + e.message, "warn");
   }
 }
-async function onCalcMove(from, to) {
+async function onCalcMove(from, to, typed) {
   if (!Calc.fen || Calc.busy) return;
   if (Calc.moves.length >= calcPlies()) { calcBoard.setFen(calcBlind() ? Calc.fen : Calc.shadowFen); calcSetStatus("That is the full line — check it, or undo a move.", "warn"); return; }
-  const uci = uciCandidate(calcBoard, from, to);
-  let san = null, next = null;
-  try { const ch = new Chess(Calc.shadowFen); const m = ch.move({ from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] || "q" }); san = m.san; next = ch.fen(); } catch (_) { san = null; }
+  let uci = null, san = null, next = null;
+  try {
+    const ch = new Chess(Calc.shadowFen);
+    let m;
+    if (typed) m = ch.move(typed.replace(/[!?]+$/, "").replace(/0/g, "O"));
+    else { const u = uciCandidate(calcBoard, from, to); m = ch.move({ from: u.slice(0, 2), to: u.slice(2, 4), promotion: u[4] || "q" }); }
+    san = m.san; next = ch.fen(); uci = m.from + m.to + (m.promotion || ""); from = m.from; to = m.to;
+  } catch (_) { san = null; }
   if (!san) { calcBoard.setFen(calcBlind() ? Calc.fen : Calc.shadowFen); calcBoard.shake && calcBoard.shake(); calcSetStatus("Not legal in the position you are imagining.", "warn"); return; }
   Calc.moves.push({ uci, san });
   Calc.shadowFen = next;
@@ -152,3 +157,12 @@ $("calc-depth").addEventListener("input", () => { $("calc-depth-val").textConten
 $("calc-blind").addEventListener("change", () => { if (Calc.fen) calcBoard.setFen(calcBlind() ? Calc.fen : Calc.shadowFen); });
 let calcInitDone = false;
 function initCalc() { if (calcInitDone) return; calcInitDone = true; calcRenderSlots(); calcNew(); }
+
+/* v43: in blindfold the pieces you already moved are not on the board, so moves can also be typed */
+$("calc-type").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const v = $("calc-san").value.trim();
+  if (!v) return;
+  const before = Calc.moves.length;
+  onCalcMove(null, null, v).then(() => { if (Calc.moves.length > before) $("calc-san").value = ""; });
+});

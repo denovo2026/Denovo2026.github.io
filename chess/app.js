@@ -279,7 +279,29 @@ function parsePgn(pgn) {
 
 /* ================= tab switching ================= */
 
+/* v43: five sections (Today / Play / Train / Openings / Study), each with its own sub-tabs */
+const TAB_GROUPS = {
+  today: ["plan", "progress"],
+  play: ["play", "lab", "games"],
+  train: ["puzzles", "cycles", "sparring", "endgames", "attacks", "calc"],
+  openings: ["modern", "grunfeld"],
+  study: ["masters", "learn"],
+};
+function tabGroupOf(name) {
+  for (const g in TAB_GROUPS) if (TAB_GROUPS[g].includes(name)) return g;
+  return "play";
+}
+function showTabGroup(g) {
+  document.querySelectorAll(".grp-btn").forEach(b => {
+    const on = b.dataset.group === g;
+    b.classList.toggle("active", on); b.setAttribute("aria-selected", on ? "true" : "false");
+  });
+  document.querySelectorAll("#tab-subs [data-group]").forEach(b => b.classList.toggle("in-group", b.dataset.group === g));
+}
 function switchTab(name) {
+  const grp = tabGroupOf(name);
+  showTabGroup(grp);
+  try { localStorage.setItem("cc-last-tab-" + grp, name); localStorage.setItem("cc-last-tab", name); } catch (_) { /* */ }
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === "tab-" + name));
   if (name === "plan") initPlan();
@@ -300,6 +322,17 @@ function switchTab(name) {
 
 document.querySelectorAll(".tab-btn").forEach(b =>
   b.addEventListener("click", () => switchTab(b.dataset.tab)));
+document.querySelectorAll(".grp-btn").forEach(b => b.addEventListener("click", () => {
+  const g = b.dataset.group, list = TAB_GROUPS[g] || [];
+  let last = null;
+  try { last = localStorage.getItem("cc-last-tab-" + g); } catch (_) { /* */ }
+  const cur = (document.querySelector(".tab-btn.active") || {}).dataset;
+  if (cur && tabGroupOf(cur.tab) === g) return; // already in this section
+  switchTab(list.includes(last) ? last : list[0]);
+  if (window.innerWidth <= 700) window.scrollTo({ top: 0 });
+  const act = document.querySelector(".tab-btn.active");
+  if (act && act.scrollIntoView) try { act.scrollIntoView({ block: "nearest", inline: "nearest" }); } catch (_) { /* */ }
+}));
 
 /* ================= reusable move-navigation controls =================
    createNavControls(slotId, { onNav(dir), isActive() }) builds
@@ -8489,3 +8522,36 @@ document.addEventListener("click", (e) => {
   switchTab(slug);
   setTimeout(() => { const T = slug === "grunfeld" ? GrunfeldTab : ModernTab; T.init().then(() => T.drillDue()); }, 50);
 });
+
+
+/* ------------------------------------------------------------------ */
+/* v43: "Train these blunders" hand-off from the Olympiad explorer     */
+/* ------------------------------------------------------------------ */
+(async function olympiadHandoff() {
+  let u;
+  try { u = new URLSearchParams(location.search); } catch (_) { return; }
+  if (u.get("train") !== "olympiad") return;
+  let pack = null;
+  try { pack = JSON.parse(localStorage.getItem("cc-olympiad-train") || "null"); } catch (_) { pack = null; }
+  try { localStorage.removeItem("cc-olympiad-train"); } catch (_) { /* */ }
+  try { history.replaceState(null, "", location.pathname + location.hash); } catch (_) { /* */ }
+  if (!pack || !Array.isArray(pack.items) || !pack.items.length) return;
+  try {
+    const r = await apiPost("/api/olympiad/train", { items: pack.items, label: pack.label || "" });
+    switchTab("puzzles");
+    const n = document.createElement("div");
+    n.className = "mine-toast oly-toast"; n.setAttribute("role", "status");
+    if (document.querySelector(".mine-toast")) n.style.bottom = (window.innerWidth <= 700 ? 140 : 86) + "px";
+    n.textContent = "Added " + r.puzzles_added + " Olympiad blunder positions to Puzzles and " + r.cards_added +
+      " flashcards (Cycles: \u201cOlympiad blunders\u201d, " + r.set_size + " positions). Find the better move.";
+    document.body.appendChild(n);
+    setTimeout(() => n.classList.add("out"), 7000);
+    setTimeout(() => n.remove(), 7800);
+    const empty = $("puzzle-empty");
+    if (empty) empty.classList.add("hidden");
+    const nb = $("btn-new-puzzle");
+    if (nb) nb.click();
+  } catch (e) {
+    console.warn("olympiad hand-off failed", e);
+  }
+})();
