@@ -166,6 +166,7 @@ async function onAttacksMove(from, to) {
   try {
     const guess = uciCandidate(attacksBoard, from, to);
     Attacks.score.asked++;
+    if (typeof ccLogAnswer === "function") ccLogAnswer("tactics", "attacks");
     if (guess === p.solution_uci) {
       Attacks.score.right++;
       renderAttacksScore();

@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=39">
+<link rel="stylesheet" href="style.css?v=40">
 </head>
 <body>
 <header class="app-header">
@@ -35,6 +35,20 @@
       <h1>Chess Coach <span class="brand-ai">AI</span></h1>
     </div>
     <div class="header-tools">
+      <button id="btn-me" class="icon-btn me-btn" type="button" aria-haspopup="true" aria-expanded="false" title="My side and level (used by Play, Sparring, Masters and Strategy Lab)"><span class="icon-btn-glyph" aria-hidden="true">♚</span><span id="me-label" class="me-label">Black · Club</span></button>
+      <div id="me-pop" class="me-pop hidden" role="dialog" aria-label="My side and level">
+        <div class="me-row"><span class="me-k">I play</span>
+          <span class="seg" role="group"><button type="button" class="seg-btn" data-side="black">♚ Black</button><button type="button" class="seg-btn" data-side="white">♔ White</button></span></div>
+        <div class="me-row"><label class="me-k" for="me-level">My level</label>
+          <select id="me-level" class="opp-level">
+            <option value="casual">Casual (~1300)</option>
+            <option value="club" selected>Club (1500–1900)</option>
+            <option value="advanced">Advanced (2000–2200)</option>
+            <option value="expert">Expert (2200+)</option>
+            <option value="masters">Masters (OTB)</option>
+          </select></div>
+        <div class="info-line muted">Used by Play, Sparring, Masters and Strategy Lab.</div>
+      </div>
       <button id="btn-sound-toggle" class="icon-btn" type="button" aria-pressed="true" title="Move sounds: on (click to mute)"><span class="icon-btn-glyph" aria-hidden="true">🔊</span><span class="sr-only">Toggle move sounds</span></button>
       <button id="btn-theme-toggle" class="icon-btn" type="button" title="Switch to light theme"><span class="icon-btn-glyph" aria-hidden="true">☀</span><span class="sr-only">Toggle light/dark theme</span></button>
       <span class="health-indicator">
@@ -168,6 +182,7 @@
             <div class="info-line">Play an opening against the app's most common replies. Pick a mode to start:</div>
             <div class="panel-row">
               <button id="btn-mode-modern" class="btn rehearsal-mode-btn">▶ Modern Defense <span class="muted">(you play Black)</span></button>
+              <button id="btn-mode-grunfeld" class="btn rehearsal-mode-btn">▶ Grünfeld Defense <span class="muted">(you play Black)</span></button>
               <button id="btn-mode-scotch" class="btn rehearsal-mode-btn">▶ Scotch Gambit <span class="muted">(you play White)</span></button>
               <button id="btn-mode-qga" class="btn rehearsal-mode-btn">▶ Queen's Gambit Accepted <span class="muted">(you play Black)</span></button>
               <button id="btn-mode-qgaw" class="btn rehearsal-mode-btn">▶ Queen's Gambit Accepted <span class="muted">(you play White)</span></button>
@@ -255,7 +270,7 @@
         </div>
         <div class="play-side-b">
         <div class="panel-card engine-card">
-          <h3 class="card-title">Top lines <span class="muted">engine</span></h3>
+          <h3 class="card-title">Top lines <span class="muted" title="Same view as the eval bar: + means White is better, − means Black is better">engine · White's view (+ = White better)</span></h3>
           <ol id="lines-list" class="lines-list"></ol>
           <div id="tb-chip" class="tb-chip hidden">
             <span id="tb-chip-label"></span>
@@ -669,7 +684,7 @@
         </div>
         <div class="panel-row">
           <label for="gtm-elo">Your rating (for the human-move lens):</label>
-          <select id="gtm-elo" class="opp-level">
+          <select id="gtm-elo">
             <option value="1200">~1200</option>
             <option value="1500" selected>~1500</option>
             <option value="1600">~1600</option>
@@ -1204,12 +1219,12 @@
 <!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
 <script src="vendor/chess.js?v=33"></script>
 <script src="js/engine.js?v=33"></script>
-<script src="api-shim.js?v=39"></script>
+<script src="api-shim.js?v=40"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=35"></script>
-<script src="app.js?v=39"></script>
-<script src="js/repertoire.js?v=39"></script>
-<script src="js/attacks.js?v=39"></script>
+<script src="app.js?v=40"></script>
+<script src="js/repertoire.js?v=40"></script>
+<script src="js/attacks.js?v=40"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});

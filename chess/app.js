@@ -134,6 +134,12 @@ function evalText(ev) {
   return (v > 0 ? "+" : "") + v.toFixed(2);
 }
 
+/* v40: side-to-move eval → White's view (matches the eval bar) */
+function whitePovEval(ev, side) {
+  return (ev && typeof ev === "object" && side === "b" && typeof ev.value === "number")
+    ? Object.assign({}, ev, { value: -ev.value }) : ev;
+}
+
 /* eval is from side-to-move POV → white-win percentage for the bar */
 function evalToWhitePct(ev, sideToMove) {
   if (!ev) return 50;
@@ -457,6 +463,15 @@ function planMovesText(plan) {
 }
 
 function renderPlanPanel(ctx, plan) {
+  if (plan && plan.for_side_note) setTimeout(() => {
+    const p = ctx.panel();
+    if (p && !p.querySelector(".plan-side-note")) {
+      const d = document.createElement("div");
+      d.className = "info-line plan-side-note";
+      d.textContent = "Plan for " + (plan.bottom_side === "black" ? "Black" : "White") + " (the side to move).";
+      p.prepend(d);
+    }
+  }, 0);
   const host = ctx.panel();
   host.innerHTML = "";
   host.classList.remove("hidden");
@@ -655,18 +670,14 @@ async function requestPlan(ctx) {
   const sideToMove = fen.split(" ")[1] === "b" ? "black" : "white";
   const panel = ctx.panel();
   panel.classList.remove("hidden");
-  if (bottomSide !== sideToMove) {
-    ctx.state.plan = null;
-    ctx.board.clearArrows(); // drop any stale plan overlay from before a flip
-    panel.innerHTML = '<div class="info-line">' + bottomSideMsg(fen) + "</div>";
-    return;
-  }
-  panel.innerHTML = '<div class="info-line">Calculating your plan…</div>';
+  // v40: plan for the side to move, whichever way the board faces
+  panel.innerHTML = '<div class="info-line">Calculating the plan for ' + (sideToMove === "black" ? "Black" : "White") + '…</div>';
   try {
-    const plan = await fetchStrategyPlan(fen, bottomSide, ctx.playerMoves);
+    const plan = await fetchStrategyPlan(fen, sideToMove, ctx.playerMoves);
     // board moved on while the engine thought — drop the stale response
-    if (ctx.getFen() !== fen || ctx.getBottomSide() !== bottomSide) return;
-    plan.bottom_side = bottomSide; // not echoed by the API — keep for the panel
+    if (ctx.getFen() !== fen) return;
+    plan.bottom_side = sideToMove; // not echoed by the API — keep for the panel
+    plan.for_side_note = bottomSide !== sideToMove;
     ctx.state.plan = plan;
     if (plan.terminal) ctx.board.clearArrows();
     else ctx.board.drawPlan(plan.main_line, { bottomSide: "player" });
@@ -1341,7 +1352,7 @@ async function analyzePlayPosition() {
     list.innerHTML = "";
     for (const line of a.lines) {
       const li = document.createElement("li");
-      li.textContent = evalText(line.eval) + "  " + line.moves_san.join(" ");
+      li.textContent = evalText(whitePovEval(line.eval, fenSide(fen))) + "  " + line.moves_san.join(" ");
       list.appendChild(li);
     }
     playBoard.clearArrows();
@@ -1845,7 +1856,8 @@ async function initMaia() {
 function renderMaiaAvailability() {
   const off = Maia.available === false;
   const note = $("maia-note");
-  note.classList.toggle("hidden", !off);
+  // v40: the web build never has Maia — don't show a permanent "off" notice
+  note.classList.toggle("hidden", !off || !!(State.config && State.config.static_build) || location.protocol !== "file:");
   if (off) {
     if (Maia.status && Maia.status.reason) {
       // surface the backend's real reason (textContent only — contains a path)
@@ -1995,6 +2007,7 @@ $("btn-new-game").addEventListener("click", () => {
   // the named opening modes keep surviving "New game" as before
   if (Rehearsal.active === "custom") rehearsalExit();
   playResetTo(PLAY_START_FEN);
+  if (!Rehearsal.active && typeof mySide === "function") playBoard.setOrientation(mySide());
   $("play-fen-input").value = "";
   $("play-fen-status").textContent = "";
   // "New game" re-starts the run from move 1 — re-show the guided highlight
@@ -2045,6 +2058,15 @@ const REHEARSAL_MODES = {
     skipFen: "rnbqk1nr/ppppppbp/6p1/8/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 1 3", // after 1.e4 g6 2.d4 Bg7
     banner: "Modern Defense — you are Black. The app walks through 1.e4 g6 2.d4 Bg7 with you — your moves are highlighted; then it plays the most common replies.",
     hint: "White opens — then it's your move.",
+  },
+  grunfeld: {
+    userSide: "black",
+    startFen: PLAY_START_FEN, // app (White) moves first
+    line: ["d2d4", "g8f6", "c2c4", "g7g6", "b1c3", "d7d5"],
+    lineSan: ["d4", "Nf6", "c4", "g6", "Nc3", "d5"],
+    skipFen: "rnbqkb1r/ppp1pp1p/5np1/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq d6 0 4", // after 1.d4 Nf6 2.c4 g6 3.Nc3 d5
+    banner: "Grünfeld Defense — you are Black. The app walks through 1.d4 Nf6 2.c4 g6 3.Nc3 d5 with you — your moves are highlighted; then it plays the most common replies.",
+    hint: "White opens — aim for 1.d4 Nf6 2.c4 g6 3.Nc3 d5, or skip straight there.",
   },
   scotch: {
     userSide: "white",
@@ -2241,6 +2263,7 @@ function renderRehearsalPanel() {
     $("rehearsal-banner").textContent = mode.banner;
     $("rehearsal-mode-tag").textContent = {
       modern: "Modern Defense",
+      grunfeld: "Grünfeld Defense",
       scotch: "Scotch Gambit",
       qga: "Queen's Gambit Accepted",
       qgaw: "Queen's Gambit Accepted (White)",
@@ -2518,6 +2541,7 @@ $("rehearsal-toggle").addEventListener("click", () => {
   $("rehearsal-toggle").setAttribute("aria-expanded", String(!closed));
 });
 $("btn-mode-modern").addEventListener("click", () => rehearsalStart("modern"));
+$("btn-mode-grunfeld").addEventListener("click", () => rehearsalStart("grunfeld"));
 $("btn-mode-scotch").addEventListener("click", () => rehearsalStart("scotch"));
 $("btn-mode-qga").addEventListener("click", () => rehearsalStart("qga"));
 $("btn-mode-qgaw").addEventListener("click", () => rehearsalStart("qgaw"));
@@ -2775,12 +2799,16 @@ function markTrainedToday() {
     }
   } catch (_) { /* storage unavailable */ }
   renderStreak();
+  if (typeof loadStreak === "function") loadStreak();
 }
 
 function renderStreak() {
   const el = $("puzzle-streak");
   const server = (FC.stats && FC.stats.current_streak) || 0;
-  const n = Math.max(localStreak(), server); // see module comment: max()
+  // v40: one streak everywhere — the unified training streak when it is known
+  let unified = null;
+  try { unified = Plan24.streak; } catch (_) { unified = null; } // Plan24 is declared further down
+  const n = unified ? unified.current : Math.max(localStreak(), server);
   el.textContent = "🔥 Streak: " + n + (n === 1 ? " day" : " days");
   el.classList.toggle("hidden", n === 0);
 }
@@ -4130,7 +4158,7 @@ async function sparringGenerate() {
   const status = $("sparring-gen-status");
   status.textContent = "Generating — verifying goals (tablebase/engine)…";
   try {
-    await apiPost("/api/sparring/packs/generate", {});
+    await apiPost("/api/sparring/packs/generate", { side: typeof mySide === "function" ? mySide() : null });
     status.textContent = "";
     await loadSparringAll();
   } catch (e) {
@@ -5055,9 +5083,12 @@ function renderGtmLibrary() {
     host.appendChild(d);
     return;
   }
-  for (const g of GTM.games) {
+  // v40: games where you sit on your usual side come first
+  const side = typeof mySide === "function" ? mySide() : "white";
+  const ordered = GTM.games.slice().sort((a, b) => (b.user_side === side) - (a.user_side === side));
+  for (const g of ordered) {
     const row = document.createElement("div");
-    row.className = "cycle-set-row gtm-game-row";
+    row.className = "cycle-set-row gtm-game-row" + (g.user_side === side ? " my-side" : "");
     const head = document.createElement("div");
     head.className = "panel-row";
     const name = document.createElement("b");
@@ -8345,3 +8376,63 @@ window.addEventListener("cc-mine-imported", (ev) => {
 });
 refreshMineBar();
 loadLibrary();
+
+
+/* ------------------------------------------------------------------ */
+/* v40: one shared "I play Black/White" + "My level" setting           */
+/* ------------------------------------------------------------------ */
+const MY_SIDE_KEY = "my_side";
+const LEVEL_ELO = { casual: 1200, club: 1500, advanced: 2000, expert: 2200, masters: 2500 };
+function mySide() {
+  try { const v = localStorage.getItem(MY_SIDE_KEY); if (v === "white" || v === "black") return v; } catch (_) {}
+  return "black";
+}
+function renderMe() {
+  const side = mySide(), lvl = getOpponentLevel();
+  const short = { casual: "Casual", club: "Club", advanced: "Advanced", expert: "Expert", masters: "Masters" }[lvl] || "Club";
+  $("me-label").textContent = (side === "black" ? "Black" : "White") + " · " + short;
+  document.querySelectorAll("#me-pop .seg-btn").forEach(b => b.classList.toggle("active", b.dataset.side === side));
+  const g = $("gtm-elo");
+  if (g) {
+    const elo = String(LEVEL_ELO[lvl] || 1500);
+    if (![...g.options].some(o => o.value === elo)) { const o = document.createElement("option"); o.value = elo; o.textContent = "~" + elo; g.appendChild(o); }
+    g.value = elo;
+  }
+}
+function setMySide(side) {
+  try { localStorage.setItem(MY_SIDE_KEY, side); } catch (_) {}
+  renderMe();
+  // a fresh board follows the setting straight away
+  if (!Rehearsal.active && Play.moves.length === 0) playBoard.setOrientation(side);
+  if (typeof labBoard !== "undefined" && Lab && !Lab.plan) labBoard.setOrientation(side);
+  if (GTM && GTM.games && GTM.games.length) renderGtmLibrary();
+}
+$("btn-me").addEventListener("click", (e) => {
+  e.stopPropagation();
+  const pop = $("me-pop"), open = pop.classList.toggle("hidden") === false;
+  $("btn-me").setAttribute("aria-expanded", open ? "true" : "false");
+});
+document.addEventListener("click", (e) => {
+  const pop = $("me-pop");
+  if (!pop.classList.contains("hidden") && !pop.contains(e.target) && e.target !== $("btn-me")) {
+    pop.classList.add("hidden"); $("btn-me").setAttribute("aria-expanded", "false");
+  }
+});
+document.querySelectorAll("#me-pop .seg-btn").forEach(b => b.addEventListener("click", () => setMySide(b.dataset.side)));
+$("me-level").addEventListener("change", () => { onOppLevelChange($("me-level").value); renderMe(); });
+document.querySelectorAll("select.opp-level").forEach(el => el.addEventListener("change", renderMe));
+$("gtm-elo").addEventListener("change", () => {
+  const n = parseInt($("gtm-elo").value, 10);
+  const lvl = n < 1400 ? "casual" : n < 1950 ? "club" : n < 2150 ? "advanced" : n < 2400 ? "expert" : "masters";
+  onOppLevelChange(lvl); renderMe();
+});
+syncOppLevelSelects();
+renderMe();
+if (!Rehearsal.active && Play.moves.length === 0 && Play.startFen === PLAY_START_FEN) playBoard.setOrientation(mySide());
+if (typeof labBoard !== "undefined") labBoard.setOrientation(mySide());
+// v40: the Plan / Progress streak chips refresh whenever a real answer is logged
+let __ccStreakT = null;
+window.addEventListener("cc-activity", () => {
+  clearTimeout(__ccStreakT);
+  __ccStreakT = setTimeout(() => { if (typeof loadStreak === "function") loadStreak().then(() => renderStreak()); }, 250);
+});

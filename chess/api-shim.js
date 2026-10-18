@@ -681,6 +681,7 @@
     log.push({ date: utcDay(), at: nowIso(), pillar: pillar, kind: kind });
     if (log.length > 5000) log = log.slice(-5000);
     S.set("activity", log);
+    try { window.dispatchEvent(new CustomEvent("cc-activity", { detail: { pillar: pillar, kind: kind } })); } catch (_) {}
   }
   function weekStart(d) { // Monday (UTC) of the week containing d
     var x = d ? new Date(d + "T00:00:00Z") : new Date(utcDay() + "T00:00:00Z");
@@ -1233,7 +1234,7 @@
     var own = S.get("sparringOwn", []);
     return d.sparring.concat(own);
   }
-  route("POST", "/api/sparring/packs/generate", async function () {
+  route("POST", "/api/sparring/packs/generate", async function (b) {
     var all = await spScenarios();
     var s = spState();
     // own scenarios: small endgame positions from mistake cards, goal from the tablebase
@@ -1253,6 +1254,10 @@
     }
     S.set("sparringOwn", own);
     var fresh = all.filter(function (sc) { return !spSide(s, sc.id, sc.user_side).passed; });
+    if (b && (b.side === "white" || b.side === "black")) {
+      var mineSide = fresh.filter(function (sc) { return sc.user_side === b.side; });
+      if (mineSide.length >= 4) fresh = mineSide.concat(fresh.filter(function (sc) { return sc.user_side !== b.side; }).slice(0, 2));
+    }
     var pool = (fresh.length >= 4 ? fresh : all).slice().sort(function () { return Math.random() - 0.5; });
     var ownFirst = pool.filter(function (x) { return x.own; }).concat(pool.filter(function (x) { return !x.own; }));
     var chosen = ownFirst.slice(0, 6);
@@ -2009,7 +2014,6 @@
     var d = await repFile(p.slug);
     var l = (d.looks || []).find(function (x) { return x.id === p.id; });
     if (!l) fail(404, "look_not_found");
-    logActivity("openings", "repertoire");
     return clone(l);
   });
   route("GET", "/api/attacks", async function () {
@@ -2028,7 +2032,6 @@
     if (!pt) fail(404, "pattern_not_found");
     var o = clone(pt);
     o.puzzle_count = (o.puzzles || []).length;
-    logActivity("tactics", "attacks");
     return o;
   });
   route("GET", "/api/model-games/principles", async function () {
@@ -2198,8 +2201,15 @@
       masters: { best_score: gh.length ? Math.max.apply(null, gh.map(function (h) { return h.score; })) : null, scores: gh.slice(-12).map(function (h) { return h.score; }) },
     };
   });
+  // v40: a streak day needs a real answer (viewing a game review or opening a tab does not count)
+  var STREAK_SKIP = { analysis: 1 };
+  route("POST", "/api/activity/answer", function (b) {
+    var pillar = { openings: "openings", tactics: "tactics" }[b.pillar] || "tactics";
+    logActivity(pillar, String(b.kind || "answer").slice(0, 32));
+    return { ok: true };
+  });
   route("GET", "/api/training-plan/streak", function () {
-    var days = new Set(S.get("activity", []).map(function (a) { return a.date; }));
+    var days = new Set(S.get("activity", []).filter(function (a) { return !STREAK_SKIP[a.kind]; }).map(function (a) { return a.date; }));
     var today = utcDay(), cur = 0, d = days.has(today) ? today : addDays(today, -1);
     while (days.has(d)) { cur++; d = addDays(d, -1); }
     var best = 0, run = 0, sorted = Array.from(days).sort(), prev = null;
@@ -2326,7 +2336,7 @@
       var cct = a.terminal ? { checks: [], captures: [], threats: [] } : cctOf(fen);
       reply = (!msg ? "Hi! Before choosing a move: what checks, captures and threats are there? " : "") +
         facts + (cct.threats.length ? " Watch out: " + cct.threats.map(function (t) { return t.san + " (" + t.why + ")"; }).slice(0, 2).join("; ") + "." : "") +
-        (msg ? " (Free-form chat needs a local LLM — enable it in Settings. This answer is from the engine.)" : "");
+        "";
     }
     hist.push({ role: "assistant", content: reply });
     if (hist.length > 20) hist.splice(0, hist.length - 20);

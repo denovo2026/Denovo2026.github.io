@@ -45,6 +45,7 @@ a{color:var(--gold)}
 h1,h2,h3{text-wrap:balance}
 
 .mast{border-bottom:1px solid var(--line);background:var(--surface)}
+.cc-back{display:inline-block;margin-bottom:6px;font-weight:600;color:#0f8a5f;text-decoration:none}.cc-back:hover{text-decoration:underline}
 .mast .wrap{padding-block:26px 0;display:grid;gap:18px}
 .mast-top{display:flex;gap:24px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}
 h1{font-family:var(--display);font-weight:400;font-size:clamp(28px,4vw,44px);line-height:1.05;margin:0;letter-spacing:-.01em}
@@ -230,6 +231,7 @@ footer p{margin:0}
   <div class="wrap">
     <div class="mast-top">
       <div>
+        <a class="cc-back" href="../">&larr; Chess Coach</a>
         <h1>Olympiad game matrix</h1>
         <p class="sub">Every game of the 46th FIDE Chess Olympiad, Samarkand 2026, from the Lichess broadcast. Openings, Black's approach, and every engine-confirmed blunder: what went wrong and how to avoid it.</p>
       </div>
@@ -256,7 +258,7 @@ footer p{margin:0}
       <div class="field"><label for="fRes">Result</label><select id="fRes"><option value="">All</option><option value="1-0">White won</option><option value="1/2-1/2">Draw</option><option value="0-1">Black won</option><option value="dec">Decisive</option></select></div>
       <div class="field"><label for="fFam">Opening</label><select id="fFam"><option value="">All openings</option></select></div>
       <div class="field num"><label for="fElo">Min avg Elo</label><input id="fElo" type="number" step="50" min="0" placeholder="0"></div>
-      <label class="rep checks"><input type="checkbox" id="fRep"> My Black repertoire (King's Indian, Pirc, Modern)</label>
+      <label class="rep checks"><input type="checkbox" id="fRep"> My Black repertoire (Modern, Grünfeld)</label>
       <div class="checks">
         <label title="Players more than 500 rating points apart"><input type="checkbox" id="fGap"> Gap 500+</label>
         <label title="The lower-rated player won, with more than 200 points between them"><input type="checkbox" id="fUp"> Upset 200+</label>
@@ -358,7 +360,7 @@ footer p{margin:0}
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const PAGE = 100;
-const REP = new Set(["King's Indian", 'Pirc', 'Modern']);
+const REP = new Set(['Modern', 'Grünfeld']);
 const TAGS = ['Opening', 'Middlegame', 'Endgame', 'Time pressure', 'Played fast', 'Long think', 'Winning to losing', 'Threw away a win',
   'Draw to loss', 'Already worse', 'Ignored a threat', 'Unpunished', 'Decisive'];
 const TAG_FILTERS = [3, 4, 10, 7, 6, 8, 12, 11];
@@ -421,7 +423,7 @@ async function boot() {
       o.avg = wE && bE ? (wE + bE) / 2 : (wE || bE || 0);
       o.resNum = res === '1-0' ? 1 : res === '0-1' ? 0 : 0.5;
       o.open = fam + (sub ? ': ' + sub : '');
-      o.mine = REP.has(fam) || sub === 'KID setup';
+      o.mine = REP.has(fam);
       o.errTotal = st[0] + st[1] + (st[2] + st[3]) / 100;
       // rating tags: only when both players have a rating
       o.gap500 = o.diff !== null && Math.abs(o.diff) > 500;

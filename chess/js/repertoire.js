@@ -235,6 +235,7 @@ function createRepertoireTab(cfg) {
     try {
       const guess = uciCandidate(repBoard, from, to);
       S.score.asked++;
+      ccLogAnswer("openings", "repertoire");
       if (guess === want.uci) {
         S.score.right++;
         renderRepScore();
@@ -443,3 +444,8 @@ const ModernTab = createRepertoireTab({ slug: "modern", prefix: "modern" });
 const initModern = () => ModernTab.init();
 const GrunfeldTab = createRepertoireTab({ slug: "grunfeld", prefix: "grunfeld" });
 const initGrunfeld = () => GrunfeldTab.init();
+
+/* v40: count a training day only after a real answer on this trainer */
+function ccLogAnswer(pillar, kind) {
+  try { fetch("api/activity/answer", { method: "POST", body: JSON.stringify({ pillar: pillar, kind: kind }) }); } catch (_) {}
+}
