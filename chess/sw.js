@@ -1,8 +1,8 @@
 /* Chess Coach AI service worker: network-first for the app shell (so updates
    land immediately), cache fallback for offline use. Cross-origin requests
    (lichess / chess.com / LLM) are never cached. */
-var CACHE = "chesscoach-v33";
-var SHELL = ["./", "index.html", "style.css?v=33", "app.js?v=33", "board.js?v=33", "pieces.js?v=33",
+var CACHE = "chesscoach-v35";
+var SHELL = ["./", "index.html", "style.css?v=35", "app.js?v=35", "board.js?v=35", "pieces.js?v=33",
   "api-shim.js?v=33", "js/engine.js?v=33", "vendor/chess.js?v=33",
   "vendor/stockfish/stockfish-19-lite-single.js", "vendor/stockfish/stockfish-19-lite-single.wasm",
   "data/puzzles.json", "data/masters.json", "data/lessons.json", "data/endgames.json",

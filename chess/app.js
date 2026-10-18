@@ -57,13 +57,13 @@ function setEngineBanner(msg, tone) {
 /* red: nothing can serve analysis at all */
 function engineUnavailableText(engineError) {
   return "Engine unavailable — " + (engineError || "no engine found") +
-    ". Run Fix-Engine.bat for repair.";
+    ". The in-browser engine failed to load — try refreshing the page.";
 }
 
 /* amber/info: local engine broken but cloud analysis still works */
 function cloudFallbackText(engineError) {
   return "Local engine unusable (" + (engineError || "unknown") +
-    ") — using online analysis. Run Fix-Engine.bat to repair the local engine.";
+    ") — using online analysis. Refresh the page to retry the in-browser engine.";
 }
 
 /* health dot + "(online)" badge in the header */
@@ -841,14 +841,14 @@ function wireLlmSettings() {
    Zero-hallucination: the voice ONLY reads strings the app already shows —
    it never adds a chess claim. Backend: edge-tts (lv-LV-NilsNeural,
    online) with a pyttsx3/SAPI offline fallback; both are OPTIONAL
-   (Install-Voice-Optional.bat). When the voice is off or unavailable every
+   (not available in the web version). When the voice is off or unavailable every
    speaker button stays hidden — no dead UI. */
 
 const Voice = {
   enabled: false,   // voice_enabled in the server config
   available: false, // a provider (edge or sapi) is importable server-side
   playing: false,   // one clip at a time — overlapping requests are dropped
-  hintShown: false, // the Install-Voice-Optional.bat hint appears once
+  hintShown: false, // the "voice unavailable" hint appears once
   // analysis keys whose brilliant flash already fired (confetti + speak
   // happen ONCE per analysis, not on every renderGameAnalysis re-render)
   celebratedFlashes: new Set(),
@@ -894,7 +894,7 @@ async function speakText(text, btn) {
     });
     if (r.status === 403 || r.status === 503) {
       // voice switched off server-side, or no provider installed — hide the
-      // dead buttons and (once) point at the installer
+      // dead buttons and (once) explain the voice is unavailable
       Voice.enabled = false;
       Voice.available = false;
       syncSpeakButtons();
@@ -936,8 +936,8 @@ function voiceInstallHintOnce() {
   if (Voice.hintShown) return;
   Voice.hintShown = true;
   const el = $("voice-hint");
-  el.textContent = "Coach voice is silent — run Install-Voice-Optional.bat, " +
-    "then enable Coach voice in Settings.";
+  el.textContent = "Coach voice is unavailable in the web version — " +
+    "the coach's advice is shown as text instead.";
   el.classList.remove("hidden");
 }
 
@@ -952,7 +952,7 @@ function wireVoice() {
       await apiPost("/api/config", { voice_enabled: enabled });
       Voice.enabled = enabled;
       // re-probe availability BEFORE syncing the buttons: the user may have
-      // run Install-Voice-Optional.bat while the app was up, or a 403/503
+      // gained a voice provider while the app was up, or a 403/503
       // hid the buttons — toggling must reflect the CURRENT truth, not the
       // startup probe. loadVoiceStatus also syncs the buttons.
       await loadVoiceStatus();
@@ -960,7 +960,7 @@ function wireVoice() {
         $("voice-status").textContent = enabled
           ? "Voice on — speaker buttons appear next to coach texts. ✓"
           : "Voice off.";
-      } // else: loadVoiceStatus already showed the installer hint
+      } // else: loadVoiceStatus already showed the "unavailable" hint
     } catch (e) {
       $("voice-status").textContent = "Save failed: " + e.message;
     }
@@ -975,7 +975,7 @@ function wireVoice() {
       $("voice-status").textContent = "Save failed: " + e.message;
     }
   });
-  // V34: provider picker (Auto / Nils online / Offline clone / Windows)
+  // V34: provider picker (Auto / Nils online / Offline clone / system voice)
   $("voice-provider").addEventListener("change", async () => {
     try {
       await apiPost("/api/config", { voice_provider: $("voice-provider").value });
@@ -1000,10 +1000,10 @@ async function loadVoiceStatus() {
     const avail = [];
     if (p.edge) avail.push("Nils (online)");
     if (p.xtts) avail.push("Offline clone");
-    if (p.sapi) avail.push("Windows voice (offline)");
+    if (p.sapi) avail.push("System voice (offline)");
     $("voice-status").textContent = !s.available
-      ? "No voice package installed — run Install-Voice-Optional.bat (optional); " +
-        "Install-Voice-Offline-Optional.bat adds the offline clone."
+      ? "Coach voice is unavailable in the web version — " +
+        "coach texts are shown on screen only."
       : "Available: " + avail.join(" + ") + ".";
   } catch (_) { /* status unreadable — buttons stay hidden */ }
   syncSpeakButtons();
@@ -1216,12 +1216,60 @@ function hideFeedbackChip() {
   $("feedback-chip").classList.add("hidden");
 }
 
+/* redesign: annotation glyph + one-line plain-English "why" for the chip,
+   built only from fields /api/move/feedback already returns
+   (classification, cpl, best_san, eval_after — mover's POV). */
+const FEEDBACK_ICON = {
+  brilliant: "!!", great: "!", best: "★", good: "✓",
+  inaccuracy: "?!", mistake: "?", blunder: "??",
+};
+
+function feedbackEvalPhrase(ev) {
+  if (!ev || typeof ev !== "object") return "";
+  if (ev.type === "mate") {
+    const n = Math.abs(ev.value);
+    return ev.value > 0 ? "You now have mate in " + n + "." : "Your opponent now has mate in " + n + ".";
+  }
+  if (typeof ev.value !== "number") return "";
+  const p = ev.value / 100;
+  if (Math.abs(p) < 0.3) return "The position is roughly level.";
+  const who = p > 0 ? "you" : "your opponent";
+  const size = Math.abs(p) >= 3 ? "winning" : Math.abs(p) >= 1.2 ? "clearly better" : "slightly better";
+  return "Now " + (p > 0 ? "+" : "−") + Math.abs(p).toFixed(1) + " — " + who + " " +
+    (who === "you" ? "are " : "is ") + size + ".";
+}
+
+function feedbackWhy(r) {
+  const pawns = (r.cpl || 0) / 100;
+  const pw = pawns.toFixed(1) + " pawn" + (pawns >= 0.95 && pawns < 1.05 ? "" : "s");
+  const best = r.best_san ? r.best_san : "the engine's choice";
+  let why;
+  switch (r.classification) {
+    case "brilliant": why = "A sound sacrifice the engine confirms — the strongest move on the board."; break;
+    case "great": why = "The only move that keeps your edge — the alternatives were clearly worse."; break;
+    case "best": why = "This matches the engine's top choice."; break;
+    case "good": why = r.cpl > 0 ? "Solid. " + best + " was a touch more precise." : "A solid, sensible move."; break;
+    case "inaccuracy": why = "Gives away about " + pw + " of value — " + best + " kept more."; break;
+    case "mistake": why = "Costs about " + pw + ". There was a clearly stronger move — tap Hint to see it."; break;
+    case "blunder": why = "A serious error (about " + pw + " lost). Ask what your opponent threatens now, or tap Hint for the better move."; break;
+    default: why = "";
+  }
+  let ev = feedbackEvalPhrase(r.eval_after);
+  if (ev && r.cpl >= 50 && /— you are/.test(ev)) ev = ev.replace("— you are", "— you are still");
+  return ev ? why + " " + ev : why;
+}
+
 function showFeedbackChip(r) {
   const chip = $("feedback-chip");
-  chip.className = "feedback-chip " + (FEEDBACK_TONE[r.classification] || "yellow");
+  chip.className = "feedback-chip " + (FEEDBACK_TONE[r.classification] || "yellow") +
+    " q-" + String(r.classification || "good").replace(/[^a-z]/g, "");
   $("feedback-label").textContent =
     FEEDBACK_LABEL[r.classification] || r.classification;
   $("feedback-cpl").textContent = r.cpl > 0 ? "−" + r.cpl + " cp" : "";
+  const icon = $("feedback-icon");
+  if (icon) icon.textContent = FEEDBACK_ICON[r.classification] || "•";
+  const why = $("feedback-why");
+  if (why) why.textContent = feedbackWhy(r);
   // Hint only on poor moves — it flashes the best-move arrow, no take-back
   $("btn-feedback-hint").classList.toggle("hidden",
     !(r.classification === "mistake" || r.classification === "blunder"));
@@ -1269,7 +1317,13 @@ function setEvalBar(ev, side, result) {
     ? (result === "1-0" ? 100 : result === "0-1" ? 0 : 50)
     : evalToWhitePct(ev, side);
   $("eval-fill").style.height = pct + "%";
-  $("eval-label").textContent = evalText(ev);
+  // redesign: the bar is drawn from White's side, so label it from White's
+  // side too (the engine eval is side-to-move POV)
+  const whiteEv = (ev && typeof ev === "object" && side === "b" && typeof ev.value === "number")
+    ? Object.assign({}, ev, { value: -ev.value }) : ev;
+  $("eval-label").textContent = evalText(whiteEv);
+  const bar = $("eval-fill").parentElement;
+  if (bar) { bar.classList.toggle("white-ahead", pct >= 50); bar.title = "Evaluation (White's view): " + evalText(whiteEv); }
 }
 
 async function analyzePlayPosition() {
@@ -1793,7 +1847,7 @@ function renderMaiaAvailability() {
       // surface the backend's real reason (textContent only — contains a path)
       note.textContent = "Human-move predictions off — " + Maia.status.reason;
     } else {
-      note.textContent = "Human-move predictions off — run Install-Maia-Optional.bat to enable.";
+      note.textContent = "Human-move predictions off — Maia models are not available in the web version.";
     }
   }
   $("maia-panel").classList.toggle("hidden", Maia.available !== true);
@@ -3493,11 +3547,16 @@ function renderCycleSets() {
   const host = $("cycle-set-list");
   host.innerHTML = "";
   if (!CY.sets.length) {
-    const d = document.createElement("div");
-    d.className = "info-line muted";
-    d.textContent = "No cycle sets yet — create one above. Sets are frozen " +
-      "snapshots of your mistake deck: later deck changes never alter them.";
-    host.appendChild(d);
+    host.appendChild(emptyStateCard({
+      icon: "🔁", title: "No cycle sets yet",
+      text: "A cycle set is a frozen snapshot of your mistake deck that you solve again and again, faster each pass. " +
+        "Name a set above, choose which cards to include, then click Create set. " +
+        "Need cards first? Review a game in My Games and add its mistakes from the Puzzles tab.",
+      actions: [
+        { label: "Name my first set", primary: true, onClick: () => { const i = $("cycle-set-name"); if (i) { i.focus(); i.scrollIntoView({ block: "center", behavior: "smooth" }); } } },
+        { label: "Go to My Games", tab: "games" },
+      ],
+    }));
     return;
   }
   for (const s of CY.sets) {
@@ -4007,12 +4066,14 @@ function renderSparringPacks() {
   const host = $("sparring-pack-list");
   host.innerHTML = "";
   if (!SP.packs.length) {
-    const d = document.createElement("div");
-    d.className = "info-line muted";
-    d.textContent = "No sparring packs yet — generate one. With mistake " +
-      "cards in your deck the pack includes positions from your own games; " +
-      "otherwise it is built from curated model positions.";
-    host.appendChild(d);
+    host.appendChild(emptyStateCard({
+      icon: "🥊", title: "No sparring packs yet",
+      text: "A pack is a set of positions with a clear goal — win it or hold the draw — that you play out against an opponent at your level. " +
+        "With mistake cards in your deck the pack uses positions from your own games; otherwise it starts from curated model positions.",
+      actions: [
+        { label: "Generate my first pack", primary: true, onClick: () => { const b = $("btn-sparring-generate"); if (b && !b.disabled) b.click(); } },
+      ],
+    }));
     return;
   }
   for (const pack of SP.packs) {
@@ -5467,6 +5528,17 @@ function renderGamesList() {
   // while a coach-locked post-mortem owns the tab, every engine-verdict
   // entry point stays inert so the lock cannot be bypassed (or lost)
   const pmLocked = typeof PM !== "undefined" && PM.active;
+  if (!Games.list.length) {
+    host.appendChild(emptyStateCard({
+      icon: "♟", title: "Import your games",
+      text: "Pull your recent games from chess.com or lichess (enter your username above), or paste a PGN. " +
+        "Then run a game review to find your key mistakes, start a post-mortem, or turn them into puzzles and flashcards.",
+      actions: [
+        { label: "Enter my username", primary: true, onClick: () => { const i = $("import-username"); if (i) { const src = $("import-source"); if (src && src.value === "pgn") { src.value = "chesscom"; src.dispatchEvent(new Event("change")); } i.focus(); } } },
+        { label: "Paste a PGN", onClick: () => { const src = $("import-source"); if (src) { src.value = "pgn"; src.dispatchEvent(new Event("change")); const t = $("import-pgn-text"); if (t) t.focus(); } } },
+      ],
+    }));
+  }
   Games.list.forEach((g, i) => {
     const d = document.createElement("div");
     d.className = "game-item";
@@ -7067,8 +7139,11 @@ async function loadCycleSummaryCard() {
   try {
     const r = await apiGet("/api/cycles/summary");
     if (!r.latest) {
-      host.innerHTML = '<div class="info-line muted">No cycles yet — ' +
-        'build a set in the Cycles tab and run your first pass.</div>';
+      host.appendChild(emptyStateCard({
+        compact: true, icon: "🔁", title: "No cycles yet",
+        text: "Build a set in the Cycles tab and run your first pass — your speed and accuracy per pass will show here.",
+        actions: [{ label: "Open Cycles", tab: "cycles" }],
+      }));
       return;
     }
     const l = r.latest;
@@ -7131,8 +7206,12 @@ async function loadPostmortemCalibration() {
     const rows = (r.history || []).filter(h => typeof h.score === "number");
     host.innerHTML = "";
     if (!rows.length) {
-      host.innerHTML = '<div class="info-line muted">No post-mortems yet — ' +
-        'start one from a game review in My Games.</div>';
+      host.innerHTML = "";
+      host.appendChild(emptyStateCard({
+        compact: true, icon: "🕵", title: "No post-mortems yet",
+        text: "Pick a game in My Games and start a post-mortem: mark the moments you think were critical before the engine reveals the truth. Your calibration score is tracked here.",
+        actions: [{ label: "Go to My Games", tab: "games" }],
+      }));
       return;
     }
     const values = rows.map(h => h.score).slice(-30);
@@ -7235,7 +7314,11 @@ function renderGlance(summary, fc) {
   const host = $("progress-glance");
   host.innerHTML = "";
   if (!summary && !fc) {
-    host.innerHTML = '<div class="info-line muted">No progress data yet.</div>';
+    host.appendChild(emptyStateCard({
+      compact: true, icon: "📈", title: "No progress data yet",
+      text: "Import and review a game, or solve a few puzzles — your weekly numbers appear here.",
+      actions: [{ label: "Import games", tab: "games" }, { label: "Solve a puzzle", tab: "puzzles" }],
+    }));
     return;
   }
   host.appendChild(glanceStat(summary ? summary.games_imported : null, "games imported"));
@@ -7277,7 +7360,12 @@ function renderAccuracyTrend(summary) {
   const values = ((summary && summary.accuracy_trend) || [])
     .map(p => p.accuracy).filter(v => typeof v === "number").slice(-30);
   if (values.length < 2) {
-    host.innerHTML = '<div class="info-line muted">Analyze games in My Games to build your accuracy trend.</div>';
+    host.innerHTML = "";
+    host.appendChild(emptyStateCard({
+      compact: true, icon: "🎯", title: "No accuracy trend yet",
+      text: "Review at least two games in My Games — each review adds an accuracy point to this chart.",
+      actions: [{ label: "Go to My Games", tab: "games" }],
+    }));
     return;
   }
   host.appendChild(sparkBlock(values, v => v.toFixed(1) + "%"));
@@ -7869,8 +7957,8 @@ $("btn-progress-today-plan").addEventListener("click", () => switchTab("plan"));
    endpoints — flavor text only, no chess claims. */
 
 /* muted palette for the confetti burst (pure decoration, no text) */
-const CONFETTI_COLORS = ["#c98f2e", "#b58863", "#8a7a5c", "#4e7d4e",
-  "#5b7290", "#ddd2bd"];
+const CONFETTI_COLORS = ["#10b981", "#34d399", "#3b82f6", "#f59e0b",
+  "#a855f7", "#e2e8f0"];
 
 function confettiBurst(count) {
   const host = $("confetti-host");
@@ -8053,3 +8141,143 @@ function checkWeekClosed(plan) {
   confettiBurst(30);
   speakCelebration(banner.textContent); // V26: read the banner ONCE
 }
+
+/* ================= redesign UX layer (theme, sound, empty states) =================
+   Additive and defensive: every piece is wrapped so a failure here can never
+   break the engine, shim or tab logic above. */
+
+/* friendly empty-state card: { icon, title, text, compact, actions:[{label, primary, tab, onClick}] } */
+function emptyStateCard(o) {
+  const card = document.createElement("div");
+  card.className = "empty-state" + (o.compact ? " compact" : "");
+  const icon = document.createElement("div");
+  icon.className = "es-icon";
+  icon.setAttribute("aria-hidden", "true");
+  icon.textContent = o.icon || "♟";
+  const body = document.createElement("div");
+  body.className = "es-body";
+  const t = document.createElement("div");
+  t.className = "es-title";
+  t.textContent = o.title || "";
+  const p = document.createElement("div");
+  p.className = "es-text";
+  p.textContent = o.text || "";
+  body.appendChild(t);
+  body.appendChild(p);
+  if (o.actions && o.actions.length) {
+    const row = document.createElement("div");
+    row.className = "es-actions";
+    for (const a of o.actions) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "btn" + (a.primary ? " primary" : "");
+      b.textContent = a.label;
+      if (a.tab) b.dataset.gotoTab = a.tab;
+      if (a.onClick) b.addEventListener("click", a.onClick);
+      row.appendChild(b);
+    }
+    body.appendChild(row);
+  }
+  card.appendChild(icon);
+  card.appendChild(body);
+  return card;
+}
+
+(function redesignUx() {
+  /* ---- theme toggle (localStorage "chesscoach:theme") ---- */
+  try {
+    const btn = $("btn-theme-toggle");
+    const apply = (t) => {
+      document.documentElement.setAttribute("data-theme", t);
+      const m = document.getElementById("meta-theme-color");
+      if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
+      if (btn) {
+        btn.querySelector(".icon-btn-glyph").textContent = t === "light" ? "☾" : "☀";
+        btn.title = t === "light" ? "Switch to dark theme" : "Switch to light theme";
+      }
+    };
+    apply(document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark");
+    if (btn) btn.addEventListener("click", () => {
+      const next = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
+      try { localStorage.setItem("chesscoach:theme", next); } catch (_) { /* */ }
+      apply(next);
+    });
+  } catch (_) { /* theme is cosmetic */ }
+
+  /* ---- move-sound mute toggle (localStorage "chesscoach:sound") ---- */
+  try {
+    const btn = $("btn-sound-toggle");
+    const sync = () => {
+      const muted = typeof BoardSound !== "undefined" && BoardSound.muted;
+      btn.querySelector(".icon-btn-glyph").textContent = muted ? "🔇" : "🔊";
+      btn.setAttribute("aria-pressed", muted ? "false" : "true");
+      btn.title = muted ? "Move sounds: muted (click to unmute)" : "Move sounds: on (click to mute)";
+      btn.classList.toggle("off", muted);
+    };
+    if (btn && typeof BoardSound !== "undefined") {
+      sync();
+      btn.addEventListener("click", () => {
+        BoardSound.setMuted(!BoardSound.muted);
+        sync();
+        if (!BoardSound.muted) BoardSound.play("move");
+      });
+    } else if (btn) {
+      btn.classList.add("hidden");
+    }
+  } catch (_) { /* */ }
+
+  /* ---- "go to tab" CTA buttons inside empty states (event delegation) ---- */
+  document.addEventListener("click", (e) => {
+    const b = e.target && e.target.closest ? e.target.closest("[data-goto-tab]") : null;
+    if (!b) return;
+    e.preventDefault();
+    try {
+      switchTab(b.dataset.gotoTab);
+      const tb = document.querySelector('.tab-btn[data-tab="' + b.dataset.gotoTab + '"]');
+      if (tb && tb.scrollIntoView) tb.scrollIntoView({ block: "nearest", inline: "center" });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (_) { /* */ }
+  });
+
+  /* keep the active tab visible in the horizontally-scrolling tab bar */
+  document.querySelectorAll(".tab-btn").forEach(b => b.addEventListener("click", () => {
+    try { b.scrollIntoView({ block: "nearest", inline: "nearest" }); } catch (_) { /* */ }
+  }));
+
+  /* ---- Puzzles: intro card until the first puzzle is requested ---- */
+  try {
+    const empty = $("puzzle-empty");
+    const hide = () => empty && empty.classList.add("hidden");
+    // any path that loads a puzzle (Plan items, deep links…) rewrites the info line
+    const info = $("puzzle-info");
+    if (info && typeof MutationObserver !== "undefined") {
+      const initial = info.textContent;
+      new MutationObserver(() => { if (info.textContent !== initial) hide(); })
+        .observe(info, { childList: true, characterData: true, subtree: true });
+    }
+    const start = $("btn-puzzle-empty-start");
+    if (start) start.addEventListener("click", () => { hide(); $("btn-new-puzzle").click(); });
+    $("btn-new-puzzle").addEventListener("click", hide);
+  } catch (_) { /* */ }
+
+  /* ---- Home / End jump to the first / last move on the active board ---- */
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Home" && e.key !== "End") return;
+    const t = e.target;
+    if (t && ((t.closest && t.closest("input, textarea, select")) || t.isContentEditable)) return;
+    if (typeof Review !== "undefined" && Review.active) return;
+    for (const ctl of NavRegistry) {
+      if (ctl.isActive && ctl.isActive()) {
+        const dir = e.key === "Home" ? "start" : "end";
+        if (ctl.btns[dir] && !ctl.btns[dir].disabled) { e.preventDefault(); ctl.onNav(dir); }
+        return;
+      }
+    }
+  });
+
+  /* ---- My Games: show the import guide on first paint if the list is empty ---- */
+  try {
+    const host = $("games-list");
+    if (host && !host.children.length && typeof Games !== "undefined" && !Games.list.length) renderGamesList();
+  } catch (_) { /* */ }
+})();

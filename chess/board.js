@@ -5,8 +5,63 @@
 
 const FILES = "abcdefgh";
 
-/* muted categorical palette for numbered next-move arrows */
-const NUMBERED_COLORS = ["#c98f2e", "#7a9a6d", "#c07a5a", "#6d7f8f", "#96708a"];
+/* categorical palette for numbered next-move arrows (tuned for the
+   emerald-accent theme; readable on both board palettes) */
+const NUMBERED_COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#a855f7", "#ef4444"];
+
+/* ---- tiny WebAudio move sounds (no audio files) ----------------------
+   move / capture / check blips, synthesized on demand. Muted state lives
+   in localStorage "chesscoach:sound" ("off" = muted). Fully defensive:
+   any failure (no AudioContext, autoplay policy) is silently ignored. */
+const BoardSound = {
+  ctx: null,
+  muted: (function () { try { return localStorage.getItem("chesscoach:sound") === "off"; } catch (_) { return false; } })(),
+  setMuted(m) {
+    this.muted = !!m;
+    try { localStorage.setItem("chesscoach:sound", m ? "off" : "on"); } catch (_) {}
+  },
+  _ac() {
+    if (this.ctx) return this.ctx;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    this.ctx = new AC();
+    return this.ctx;
+  },
+  _tone(ac, t0, freq, dur, type, gain) {
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t0);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(gain, t0 + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(ac.destination);
+    o.start(t0); o.stop(t0 + dur + 0.02);
+  },
+  play(kind) {
+    if (this.muted) return;
+    try {
+      // only after a user gesture has happened (autoplay policy)
+      if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return;
+      const ac = this._ac(); if (!ac) return;
+      if (ac.state === "suspended") ac.resume().catch(() => {});
+      const t = ac.currentTime + 0.01;
+      if (kind === "capture") {
+        this._tone(ac, t, 300, 0.09, "triangle", 0.22);
+        this._tone(ac, t + 0.045, 190, 0.11, "triangle", 0.18);
+      } else if (kind === "check") {
+        this._tone(ac, t, 660, 0.09, "sine", 0.16);
+        this._tone(ac, t + 0.09, 880, 0.14, "sine", 0.14);
+      } else {
+        this._tone(ac, t, 420, 0.07, "triangle", 0.16);
+      }
+    } catch (_) { /* sound is decoration only */ }
+  },
+};
+window.BoardSound = BoardSound;
+
+/* chess.js helper (vendor global) — null if unavailable or FEN invalid */
+function _boardChess(fen) {
+  try { return (typeof Chess === "function") ? new Chess(fen) : null; } catch (_) { return null; }
+}
 
 /* neutral warm gray for opponent moves inside a plan overlay */
 const OPP_ARROW_COLOR = "#8a8378";
@@ -94,6 +149,7 @@ class Board {
   }
 
   setFen(fen) {
+    this._prevCount = Object.keys(this.position || {}).length;
     this.fen = fen;
     this.position = {};
     const placement = fen.split(" ")[0];
@@ -127,15 +183,42 @@ class Board {
     }
     // re-apply highlights
     for (const sq in this.squares) {
-      this.squares[sq].classList.remove("last-from", "last-to", "selected", "marked", "guided");
+      this.squares[sq].classList.remove("last-from", "last-to", "selected", "marked", "guided",
+        "legal-target", "legal-capture", "in-check");
     }
     if (this.lastMove) {
       if (this.squares[this.lastMove.from]) this.squares[this.lastMove.from].classList.add("last-from");
       if (this.squares[this.lastMove.to]) this.squares[this.lastMove.to].classList.add("last-to");
     }
     if (this.selected && this.squares[this.selected]) this.squares[this.selected].classList.add("selected");
+    this._renderHints();
     for (const sq of this.marked) if (this.squares[sq]) this.squares[sq].classList.add("marked");
     for (const sq of this.guided) if (this.squares[sq]) this.squares[sq].classList.add("guided");
+  }
+
+  /* legal-move dots for the selected piece + check highlight on the king.
+     Purely visual (the backend still validates every move); silently
+     skipped when chess.js is missing or the FEN is not a legal position. */
+  _renderHints() {
+    const ch = _boardChess(this.fen);
+    if (!ch) return;
+    try {
+      if (this.selected && this.interactive) {
+        const code = this.position[this.selected];
+        if (code && code[0] === ch.turn()) {
+          for (const m of ch.moves({ square: this.selected, verbose: true })) {
+            const d = this.squares[m.to];
+            if (d) d.classList.add(m.captured ? "legal-capture" : "legal-target");
+          }
+        }
+      }
+      if (ch.inCheck()) {
+        const k = ch.turn() + "K";
+        for (const sq in this.position) {
+          if (this.position[sq] === k && this.squares[sq]) this.squares[sq].classList.add("in-check");
+        }
+      }
+    } catch (_) { /* hints are decoration only */ }
   }
 
   setInteractive(v) {
@@ -154,8 +237,18 @@ class Board {
   flip() { this.setOrientation(this.orientation === "white" ? "black" : "white"); }
 
   setLastMove(from, to) {
+    const prev = this.lastMove;
     this.lastMove = from && to ? { from, to } : null;
     this._renderPieces();
+    // move sound: only for a NEW last move on a visible board
+    if (this.lastMove && !(prev && prev.from === from && prev.to === to) &&
+        this.container.offsetParent !== null && typeof BoardSound !== "undefined") {
+      const ch = _boardChess(this.fen);
+      let kind = "move";
+      try { if (ch && ch.inCheck()) kind = "check"; } catch (_) {}
+      if (kind === "move" && this._prevCount && Object.keys(this.position).length < this._prevCount) kind = "capture";
+      BoardSound.play(kind);
+    }
   }
 
   setMarked(sqs) {

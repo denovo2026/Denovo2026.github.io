@@ -4,28 +4,45 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="Chess Coach AI — in-browser chess trainer (Stockfish WASM, runs fully client-side).">
-<meta name="theme-color" content="#c98f2e">
+<meta name="theme-color" id="meta-theme-color" content="#0d1117">
+<meta name="color-scheme" content="dark light">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Chess Coach">
 <meta name="format-detection" content="telephone=no">
 <title>Chess Coach AI</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="style.css?v=33">
+<script>
+/* theme boot (runs before first paint so there is no light/dark flash) */
+(function () {
+  var t = "dark";
+  try { var v = localStorage.getItem("chesscoach:theme"); if (v === "light" || v === "dark") t = v; } catch (_) {}
+  document.documentElement.setAttribute("data-theme", t);
+  var m = document.getElementById("meta-theme-color");
+  if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
+})();
+</script>
+<link rel="stylesheet" href="style.css?v=35">
 </head>
 <body>
-<!-- V29: ambient ghost-piece background (pure decoration, aria-hidden, non-interactive) -->
-<div id="bg-ambient" aria-hidden="true">
-  <span class="bg-glyph bg-glyph-queen">&#x265B;</span>
-  <span class="bg-glyph bg-glyph-rook">&#x265C;</span>
-  <span class="bg-glyph bg-glyph-knight">&#x265E;</span>
-</div>
 <header class="app-header">
-  <h1>Chess Coach AI</h1>
-  <nav class="tabs">
+  <div class="header-bar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">&#x265E;</span>
+      <h1>Chess Coach <span class="brand-ai">AI</span></h1>
+    </div>
+    <div class="header-tools">
+      <button id="btn-sound-toggle" class="icon-btn" type="button" aria-pressed="true" title="Move sounds: on (click to mute)"><span class="icon-btn-glyph" aria-hidden="true">🔊</span><span class="sr-only">Toggle move sounds</span></button>
+      <button id="btn-theme-toggle" class="icon-btn" type="button" title="Switch to light theme"><span class="icon-btn-glyph" aria-hidden="true">☀</span><span class="sr-only">Toggle light/dark theme</span></button>
+      <span class="health-indicator">
+        <span id="health-dot" class="health-dot" title="Engine: checking…"></span><span id="health-badge" class="health-badge hidden">(online)</span>
+      </span>
+    </div>
+  </div>
+  <nav class="tabs" aria-label="Sections">
     <button class="tab-btn" data-tab="plan">Plan</button>
     <button class="tab-btn active" data-tab="play">Play &amp; Analyze</button>
     <button class="tab-btn" data-tab="puzzles">Puzzles</button>
@@ -38,13 +55,10 @@
     <button class="tab-btn" data-tab="progress">Progress</button>
     <button class="tab-btn" data-tab="lab">Strategy Lab</button>
   </nav>
-  <span class="health-indicator">
-    <span id="health-dot" class="health-dot" title="Engine: checking…"></span><span id="health-badge" class="health-badge hidden">(online)</span>
-  </span>
 </header>
 
 <div id="engine-banner" class="banner amber hidden">
-  Engine unavailable — no engine found. Run Fix-Engine.bat for repair.
+  Engine unavailable — the in-browser engine failed to load. Try refreshing the page.
 </div>
 <div id="error-banner" class="banner red hidden"></div>
 
@@ -91,9 +105,15 @@
         <div class="board-nav-col">
           <div id="play-board" class="board-holder"></div>
           <div id="play-nav" class="nav-slot"></div>
-          <div id="feedback-chip" class="feedback-chip hidden">
-            <span id="feedback-label"></span>
-            <span id="feedback-cpl" class="muted"></span>
+          <div id="feedback-chip" class="feedback-chip hidden" role="status" aria-live="polite">
+            <span id="feedback-icon" class="fb-badge" aria-hidden="true"></span>
+            <div class="fb-body">
+              <div class="fb-head">
+                <span id="feedback-label"></span>
+                <span id="feedback-cpl" class="muted"></span>
+              </div>
+              <div id="feedback-why" class="fb-why"></div>
+            </div>
             <button id="btn-feedback-hint" class="btn mini hidden" title="Flash the best move on the board">Hint</button>
           </div>
           <div id="play-history-note" class="info-line hidden"></div>
@@ -171,43 +191,33 @@
             </div>
           </div>
         </div>
-        <div class="panel-row">
-          <button id="btn-new-game" class="btn">New game</button>
-          <button id="btn-flip" class="btn">Flip board</button>
+        <div class="panel-card controls-card">
+          <div class="panel-row">
+            <button id="btn-new-game" class="btn">New game</button>
+            <button id="btn-flip" class="btn">Flip board</button>
+          </div>
+          <div class="panel-row">
+            <label for="depth-input">Depth</label>
+            <input id="depth-input" type="number" min="8" max="22" value="14">
+            <button id="btn-analyze-pos" class="btn primary">Analyze position</button>
+            <!-- V30: restored from pre-V25 — the plan also lives in the
+                 Strategy Lab (#btn-lab-plan); both doors stay. -->
+            <button id="btn-show-plan" class="btn toggle" title="Engine-best plan for you vs. the replies players at your level actually make — now with the goal and the reason behind each move.">Show my plan</button>
+            <select id="opponent-level" class="opp-level" title="Whose likely replies to show — human moves at this level">
+              <option value="casual">Casual (~1300)</option>
+              <option value="club" selected>Club (1500–1900)</option>
+              <option value="advanced">Advanced (2000–2200)</option>
+              <option value="expert">Expert (2200+)</option>
+              <option value="masters">Masters (OTB)</option>
+            </select>
+          </div>
         </div>
-        <div class="panel-row">
-          <label for="depth-input">Depth</label>
-          <input id="depth-input" type="number" min="8" max="22" value="14">
-          <button id="btn-analyze-pos" class="btn primary">Analyze position</button>
-          <!-- V30: restored from pre-V25 — the plan also lives in the
-               Strategy Lab (#btn-lab-plan); both doors stay. -->
-          <button id="btn-show-plan" class="btn toggle" title="Engine-best plan for you vs. the replies players at your level actually make — now with the goal and the reason behind each move.">Show my plan</button>
-          <select id="opponent-level" class="opp-level" title="Whose likely replies to show — human moves at this level">
-            <option value="casual">Casual (~1300)</option>
-            <option value="club" selected>Club (1500–1900)</option>
-            <option value="advanced">Advanced (2000–2200)</option>
-            <option value="expert">Expert (2200+)</option>
-            <option value="masters">Masters (OTB)</option>
-          </select>
-        </div>
-        <h3>Top lines</h3>
-        <ol id="lines-list" class="lines-list"></ol>
-        <div id="tb-chip" class="tb-chip hidden">
-          <span id="tb-chip-label"></span>
-          <div id="tb-moves" class="info-line"></div>
-        </div>
-        <div id="maia-note" class="info-line muted hidden"></div>
-        <div id="maia-panel" class="maia-panel hidden">
-          <h3 id="maia-title">Human moves</h3>
-          <div id="maia-moves" class="maia-moves"></div>
-        </div>
-        <div id="plan-panel" class="plan-panel hidden"></div>
         <!-- V25 (DUP-2): ONE unified coach panel — the mode chips pick
              Quick take (/api/coach/comment), Socratic (/api/coach/discuss)
              or Free chat (/api/coach/chat); one input area serves all
              three. The old standalone #btn-coach-comment and
              #btn-discuss-coach buttons were removed (endpoints kept). -->
-        <div id="coach-chat" class="chat-panel">
+        <div id="coach-chat" class="chat-panel panel-card coach-card">
           <div class="chat-head">
             <span>💬 Ask the coach</span>
             <button id="btn-chat-new" class="btn mini" title="Start a fresh conversation about the current position">New conversation</button>
@@ -227,73 +237,91 @@
             <button id="btn-chat-send" class="btn primary">Send</button>
           </div>
         </div>
-        <h3>Moves</h3>
-        <div id="play-moves" class="move-list"></div>
-        <div class="panel-row fen-row">
-          <input id="play-fen-input" type="text" spellcheck="false" placeholder="Paste FEN here…">
-          <button id="btn-load-fen" class="btn">Load FEN</button>
-          <button id="btn-play-practice" class="btn">▶ Practice from here</button>
-          <button id="btn-play-copy-fen" class="btn">⧉ Copy FEN</button>
-          <button id="btn-play-makepuzzle" class="btn">🧩 Make puzzle from here</button>
-          <span id="play-copy-status" class="info-line"></span>
-          <span id="play-fen-status" class="info-line"></span>
+        <div class="panel-card engine-card">
+          <h3 class="card-title">Top lines <span class="muted">engine</span></h3>
+          <ol id="lines-list" class="lines-list"></ol>
+          <div id="tb-chip" class="tb-chip hidden">
+            <span id="tb-chip-label"></span>
+            <div id="tb-moves" class="info-line"></div>
+          </div>
+          <div id="maia-note" class="info-line muted hidden"></div>
+          <div id="maia-panel" class="maia-panel hidden">
+            <h3 id="maia-title">Human moves</h3>
+            <div id="maia-moves" class="maia-moves"></div>
+          </div>
+          <div id="plan-panel" class="plan-panel hidden"></div>
         </div>
-        <div class="panel-row lichess-row">
-          <button id="btn-lichess-settings" class="btn-link" title="Settings">
-            ⚙ Lichess stats <span id="lichess-check" class="check hidden" title="Token saved">✓</span>
-          </button>
+        <div class="panel-card moves-card">
+          <h3 class="card-title">Moves <span class="muted kbd-hint">← → to step</span></h3>
+          <div id="play-moves" class="move-list"></div>
         </div>
-        <div id="lichess-settings" class="lichess-settings hidden">
-          <label for="lichess-token-input">Lichess API token <span class="muted">(optional — enables “most common human moves” stats)</span></label>
-          <div class="panel-row">
-            <input id="lichess-token-input" type="password" spellcheck="false" autocomplete="off" placeholder="lip_…">
-            <button id="btn-lichess-save" class="btn">Save</button>
+        <div class="panel-card tools-card">
+          <div class="panel-row fen-row">
+            <input id="play-fen-input" type="text" spellcheck="false" placeholder="Paste FEN here…">
+            <button id="btn-load-fen" class="btn">Load FEN</button>
+            <button id="btn-play-practice" class="btn">▶ Practice from here</button>
+            <button id="btn-play-copy-fen" class="btn">⧉ Copy FEN</button>
+            <button id="btn-play-makepuzzle" class="btn">🧩 Make puzzle from here</button>
+            <span id="play-copy-status" class="info-line"></span>
+            <span id="play-fen-status" class="info-line"></span>
           </div>
-          <div class="info-line">Create one free at lichess.org → Preferences → API access tokens. <span id="lichess-save-status"></span></div>
-          <label for="cfg-lichess-username">Your usernames <span class="muted">(rating history, openings report, progress)</span></label>
-          <div class="panel-row">
-            <input id="cfg-lichess-username" type="text" spellcheck="false" autocomplete="off" placeholder="lichess username">
-            <input id="cfg-chesscom-username" type="text" spellcheck="false" autocomplete="off" placeholder="chess.com username">
-            <button id="btn-cfg-usernames-save" class="btn">Save</button>
+          <div class="panel-row lichess-row">
+            <button id="btn-lichess-settings" class="btn-link" title="Settings">
+              ⚙ Lichess stats <span id="lichess-check" class="check hidden" title="Token saved">✓</span>
+            </button>
           </div>
-          <div class="info-line"><span id="cfg-usernames-status"></span></div>
-          <div class="settings-divider">AI coach (local LLM)</div>
-          <label class="llm-toggle" for="llm-enabled">
-            <input id="llm-enabled" type="checkbox">
-            Enable AI coach (needs a local LLM server)
-          </label>
-          <div class="panel-row">
-            <input id="llm-url-input" type="text" spellcheck="false" placeholder="http://127.0.0.1:8080">
-            <button id="btn-llm-save" class="btn">Save</button>
-            <button id="btn-llm-test" class="btn">Test connection</button>
+          <div id="lichess-settings" class="lichess-settings hidden">
+            <label for="lichess-token-input">Lichess API token <span class="muted">(optional — enables “most common human moves” stats)</span></label>
+            <div class="panel-row">
+              <input id="lichess-token-input" type="password" spellcheck="false" autocomplete="off" placeholder="lip_…">
+              <button id="btn-lichess-save" class="btn">Save</button>
+            </div>
+            <div class="info-line">Create one free at lichess.org → Preferences → API access tokens. <span id="lichess-save-status"></span></div>
+            <label for="cfg-lichess-username">Your usernames <span class="muted">(rating history, openings report, progress)</span></label>
+            <div class="panel-row">
+              <input id="cfg-lichess-username" type="text" spellcheck="false" autocomplete="off" placeholder="lichess username">
+              <input id="cfg-chesscom-username" type="text" spellcheck="false" autocomplete="off" placeholder="chess.com username">
+              <button id="btn-cfg-usernames-save" class="btn">Save</button>
+            </div>
+            <div class="info-line"><span id="cfg-usernames-status"></span></div>
+            <div class="settings-divider">AI coach (local LLM)</div>
+            <label class="llm-toggle" for="llm-enabled">
+              <input id="llm-enabled" type="checkbox">
+              Enable AI coach (needs a local LLM server)
+            </label>
+            <div class="panel-row">
+              <input id="llm-url-input" type="text" spellcheck="false" placeholder="http://127.0.0.1:8080">
+              <button id="btn-llm-save" class="btn">Save</button>
+              <button id="btn-llm-test" class="btn">Test connection</button>
+            </div>
+            <label for="llm-model-input">Model name <span class="muted">(Ollama: your model, e.g. llama3.1 — LM Studio/llama.cpp can leave this)</span></label>
+            <div class="panel-row">
+              <input id="llm-model-input" type="text" spellcheck="false" placeholder="local-coach">
+            </div>
+            <div class="info-line"><span id="llm-status"></span></div>
+            <div id="llm-no-restart-hint" class="info-line muted hidden">Enabled — takes effect immediately, no restart needed.</div>
+            <div class="settings-divider">Coach voice (Latvian accent)</div>
+            <label class="llm-toggle" for="voice-enabled">
+              <input id="voice-enabled" type="checkbox">
+              Enable coach voice (reads the coach's text aloud)
+            </label>
+            <label class="llm-toggle" for="persona-enabled">
+              <input id="persona-enabled" type="checkbox">
+              Latvian coach wording (broken English)
+            </label>
+            <div class="panel-row">
+              <label for="voice-provider" class="muted">Voice:</label>
+              <select id="voice-provider">
+                <option value="auto">Auto</option>
+                <option value="edge">Nils (online)</option>
+                <option value="xtts">Offline clone</option>
+                <option value="sapi">System voice (unavailable on web)</option>
+              </select>
+            </div>
+            <div class="info-line"><span id="voice-status"></span></div>
+            <div class="info-line muted">Coach voice is unavailable in the web version — coach texts are shown on screen only. (The voice, when available, only reads text the app already shows — it never adds new advice.)</div>
+            <div class="info-line muted">Run a local server: LM Studio → Developer → Start Server (port 8080), or llama.cpp: llama-server -m model.gguf --port 8080, or Ollama (URL http://127.0.0.1:11434 + your model name below). The app calls your server at its /v1/chat/completions endpoint (OpenAI-compatible). When enabled, the AI coach rewrites plan goals and coach comments in friendlier language; if the server is off, the built-in explanations keep working. Recommended: a small model is plenty (Llama 3.2 3B / Qwen2.5 3B, ~2 GB) — the coach only rewords verified engine analysis, never invents moves.</div>
           </div>
-          <label for="llm-model-input">Model name <span class="muted">(Ollama: your model, e.g. llama3.1 — LM Studio/llama.cpp can leave this)</span></label>
-          <div class="panel-row">
-            <input id="llm-model-input" type="text" spellcheck="false" placeholder="local-coach">
-          </div>
-          <div class="info-line"><span id="llm-status"></span></div>
-          <div id="llm-no-restart-hint" class="info-line muted hidden">Enabled — takes effect immediately, no restart needed.</div>
-          <div class="settings-divider">Coach voice (Latvian accent)</div>
-          <label class="llm-toggle" for="voice-enabled">
-            <input id="voice-enabled" type="checkbox">
-            Enable coach voice (reads the coach's text aloud)
-          </label>
-          <label class="llm-toggle" for="persona-enabled">
-            <input id="persona-enabled" type="checkbox">
-            Latvian coach wording (broken English)
-          </label>
-          <div class="panel-row">
-            <label for="voice-provider" class="muted">Voice:</label>
-            <select id="voice-provider">
-              <option value="auto">Auto</option>
-              <option value="edge">Nils (online)</option>
-              <option value="xtts">Offline clone</option>
-              <option value="sapi">Windows voice</option>
-            </select>
-          </div>
-          <div class="info-line"><span id="voice-status"></span></div>
-          <div class="info-line muted">Optional — install it once with Install-Voice-Optional.bat, and Install-Voice-Offline-Optional.bat for the offline cloned voice (no internet needed when speaking). The voice only reads text the app already shows — it never adds new advice.</div>
-          <div class="info-line muted">Run a local server: LM Studio → Developer → Start Server (port 8080), or llama.cpp: llama-server -m model.gguf --port 8080, or Ollama (URL http://127.0.0.1:11434 + your model name below). The app calls your server at its /v1/chat/completions endpoint (OpenAI-compatible). When enabled, the AI coach rewrites plan goals and coach comments in friendlier language; if the server is off, the built-in explanations keep working. Recommended: a small model is plenty (Llama 3.2 3B / Qwen2.5 3B, ~2 GB) — the coach only rewords verified engine analysis, never invents moves.</div>
         </div>
       </aside>
     </div>
@@ -323,6 +351,14 @@
           <button id="btn-puzzle-hint" class="btn" disabled title="Get a hint — first click names the piece, second its square (never the full move)">Hint</button>
           <button id="btn-show-solution" class="btn">Show solution</button>
           <span id="puzzle-streak" class="streak-chip hidden" title="Days in a row with at least one puzzle solved or flashcard reviewed"></span>
+        </div>
+        <div id="puzzle-empty" class="empty-state">
+          <div class="es-icon" aria-hidden="true">🧩</div>
+          <div class="es-body">
+            <div class="es-title">Sharpen your tactics</div>
+            <div class="es-text">Solve curated puzzles from the built-in library — pick a rating band, find the best move, and use Hint if you get stuck. You can also turn your own games into drills below.</div>
+            <div class="es-actions"><button id="btn-puzzle-empty-start" class="btn primary" type="button">Start my first puzzle</button></div>
+          </div>
         </div>
         <div id="puzzle-info" class="info-line">Load a puzzle to begin.</div>
         <div id="puzzle-status" class="banner hidden"></div>
@@ -375,10 +411,15 @@
           <input type="checkbox" id="fc-interleave" checked> Interleave games &amp; motifs
         </label>
         <div id="fc-add-status" class="info-line"></div>
-        <div id="fc-empty" class="info-line hidden">
-          No flashcards yet. Cards are built from your own mistakes: open
-          My Games, run <b>Review mistakes</b> on a game, then come back
-          here and click <b>Add from last mistake scan</b>.
+        <div id="fc-empty" class="empty-state compact hidden">
+          <div class="es-icon" aria-hidden="true">🗂</div>
+          <div class="es-body">
+            <div class="es-title">No flashcards yet</div>
+            <div class="es-text">Cards are built from your own mistakes: open
+            My Games, run <b>Review mistakes</b> on a game, then come back
+            here and click <b>Add from last mistake scan</b>.</div>
+            <div class="es-actions"><button class="btn" type="button" data-goto-tab="games">Go to My Games</button></div>
+          </div>
         </div>
         <div id="fc-practice" class="hidden">
           <div id="fc-motif-quiz" class="fc-motif-quiz hidden">
@@ -883,7 +924,7 @@
       </div>
       <div class="lab-panel" id="progress-openings-card">
         <h3>Openings report</h3>
-        <div id="openings-empty" class="info-line hidden">
+        <div id="openings-empty" class="info-line empty-inline hidden">
           No imported games yet — import your games in My Games to build this report.
           <button id="btn-openings-import" class="btn mini">Go to My Games</button>
         </div>
@@ -979,8 +1020,8 @@
 <script src="js/engine.js?v=33"></script>
 <script src="api-shim.js?v=33"></script>
 <script src="pieces.js?v=33"></script>
-<script src="board.js?v=33"></script>
-<script src="app.js?v=33"></script>
+<script src="board.js?v=35"></script>
+<script src="app.js?v=35"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});
