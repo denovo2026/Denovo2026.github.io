@@ -1,0 +1,176 @@
+{
+ "lessons": [
+  {
+   "id": "center-control",
+   "title": "Fight for the centre",
+   "principle": "Opening principles",
+   "difficulty": "beginner",
+   "summary": "Why central pawns and knights matter in the first moves.",
+   "weakness": [
+    "opening",
+    "development"
+   ],
+   "steps": [
+    {
+     "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+     "text": "The four central squares (d4, e4, d5, e5) are the most valuable real estate on the board. Pieces placed there control the most squares."
+    },
+    {
+     "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+     "text": "Start by occupying the centre with a pawn — it frees your bishop and queen at the same time.",
+     "task": "Play 1.e4",
+     "solution_uci": "e2e4"
+    },
+    {
+     "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+     "text": "Black mirrored you. Now develop a piece toward the centre with tempo — attack the e5 pawn.",
+     "task": "Develop the king's knight with tempo",
+     "solution_uci": "g1f3"
+    },
+    {
+     "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+     "text": "Black defended with ...Nc6. Both sides now fight over d4/e5 — every developing move should add pressure on the centre."
+    }
+   ],
+   "steps_count": 4
+  },
+  {
+   "id": "castle-early",
+   "title": "Castle early",
+   "principle": "King safety",
+   "difficulty": "beginner",
+   "summary": "Get the king out of the centre before the position opens.",
+   "weakness": [
+    "king safety"
+   ],
+   "steps": [
+    {
+     "fen": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+     "text": "Both sides have developed their kingside pieces. The e-file may open soon — a king on e1 would be exposed."
+    },
+    {
+     "fen": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+     "text": "Castle now: the king tucks away on g1 and the rook joins the game.",
+     "task": "Castle kingside",
+     "solution_uci": "e1g1"
+    },
+    {
+     "fen": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQ1RK1 b kq - 5 4",
+     "text": "Done in one move: king safety plus a rook that can reach the centre files. Aim to castle within the first 10 moves in most openings."
+    }
+   ],
+   "steps_count": 3
+  },
+  {
+   "id": "knight-fork",
+   "title": "The knight fork",
+   "principle": "Tactics",
+   "difficulty": "beginner",
+   "summary": "One knight, two targets.",
+   "weakness": [
+    "fork",
+    "missed tactic"
+   ],
+   "steps": [
+    {
+     "fen": "r3k3/8/8/1N6/8/8/8/4K3 w - - 0 1",
+     "text": "Knights attack in an L-shape, and they can attack two pieces at once without being blocked. Look for squares that hit the king and another piece."
+    },
+    {
+     "fen": "r3k3/8/8/1N6/8/8/8/4K3 w - - 0 1",
+     "text": "Find the square where the knight checks the king AND attacks the rook.",
+     "task": "Fork king and rook",
+     "solution_uci": "b5c7"
+    },
+    {
+     "fen": "r3k3/2N5/8/8/8/8/8/4K3 b - - 1 1",
+     "text": "The king must move, and the knight takes the rook next move. Always check knight jumps that land with check."
+    }
+   ],
+   "steps_count": 3
+  },
+  {
+   "id": "back-rank",
+   "title": "Back-rank mate",
+   "principle": "Tactics",
+   "difficulty": "beginner",
+   "summary": "A king boxed in by its own pawns.",
+   "weakness": [
+    "back rank",
+    "missed mate"
+   ],
+   "steps": [
+    {
+     "fen": "6k1/5ppp/8/8/8/8/5PPP/3R2K1 w - - 0 1",
+     "text": "Black's king is trapped behind its own pawns on f7, g7 and h7. If a rook or queen reaches the 8th rank with check, it is mate."
+    },
+    {
+     "fen": "6k1/5ppp/8/8/8/8/5PPP/3R2K1 w - - 0 1",
+     "text": "Deliver the back-rank mate.",
+     "task": "Mate in one",
+     "solution_uci": "d1d8"
+    },
+    {
+     "fen": "3R2k1/5ppp/8/8/8/8/5PPP/6K1 b - - 1 1",
+     "text": "Checkmate. Defend against this in your own games by making 'luft' (h3/h6) or keeping a rook on the back rank."
+    }
+   ],
+   "steps_count": 3
+  },
+  {
+   "id": "the-pin",
+   "title": "Pin it",
+   "principle": "Tactics",
+   "difficulty": "intermediate",
+   "summary": "Freeze a piece in front of its king.",
+   "weakness": [
+    "pin"
+   ],
+   "steps": [
+    {
+     "fen": "4k3/8/2n5/8/8/8/8/4KB2 w - - 0 1",
+     "text": "A pin attacks a piece that cannot move without exposing something more valuable behind it — here, the king on e8."
+    },
+    {
+     "fen": "4k3/8/2n5/8/8/8/8/4KB2 w - - 0 1",
+     "text": "Line your bishop up with the knight and the king.",
+     "task": "Pin the knight to the king",
+     "solution_uci": "f1b5"
+    },
+    {
+     "fen": "4k3/8/2n5/1B6/8/8/8/4K3 b - - 1 1",
+     "text": "The knight on c6 is now absolutely pinned — it cannot legally move. Pile up on pinned pieces to win them."
+    }
+   ],
+   "steps_count": 3
+  },
+  {
+   "id": "ladder-mate",
+   "title": "Two-rook ladder mate",
+   "principle": "Endgame technique",
+   "difficulty": "beginner",
+   "summary": "Rooks working together on adjacent ranks.",
+   "weakness": [
+    "endgame",
+    "missed mate"
+   ],
+   "steps": [
+    {
+     "fen": "7k/R7/8/8/8/8/8/1R4K1 w - - 0 1",
+     "text": "The rook on a7 cuts the king off on the 8th rank. The second rook only needs to give check on that rank."
+    },
+    {
+     "fen": "7k/R7/8/8/8/8/8/1R4K1 w - - 0 1",
+     "text": "Finish the ladder.",
+     "task": "Mate in one",
+     "solution_uci": "b1b8"
+    },
+    {
+     "fen": "1R5k/R7/8/8/8/8/8/6K1 b - - 1 1",
+     "text": "Mate: one rook guards the 7th rank, the other checks on the 8th. The same 'ladder' works with queen + rook."
+    }
+   ],
+   "steps_count": 3
+  }
+ ]
+}

@@ -1,0 +1,184 @@
+{
+ "canon": [
+  {
+   "tier": 1,
+   "id": "eg1-queen-mate",
+   "title": "Queen checkmate",
+   "theme": "K+Q vs K",
+   "fen": "8/8/8/4k3/8/8/8/4K2Q w - - 0 1",
+   "goal": "win",
+   "user_side": "white",
+   "explanation": "Use the queen to shrink the king's box a knight's move away, bring your own king up, then mate on the edge. Watch out for stalemate!"
+  },
+  {
+   "tier": 1,
+   "id": "eg1-rook-mate",
+   "title": "Rook checkmate",
+   "theme": "K+R vs K",
+   "fen": "8/8/8/4k3/8/8/8/R3K3 w - - 0 1",
+   "goal": "win",
+   "user_side": "white",
+   "explanation": "Cut the king off with the rook, walk your king into opposition, then check along the edge. Tempo rook moves keep the opposition."
+  },
+  {
+   "tier": 1,
+   "id": "eg1-kp-opposition",
+   "title": "King in front of the pawn",
+   "theme": "K+P vs K",
+   "fen": "4k3/8/4K3/4P3/8/8/8/8 w - - 0 1",
+   "goal": "win",
+   "user_side": "white",
+   "explanation": "With your king on the 6th rank in front of the pawn you win no matter who moves — step aside with the king (Kd6/Kf6), never push the pawn too early."
+  },
+  {
+   "tier": 1,
+   "id": "eg1-kp-defend",
+   "title": "Hold the king-and-pawn ending",
+   "theme": "K+P vs K (defence)",
+   "fen": "4k3/8/8/4P3/4K3/8/8/8 b - - 0 1",
+   "goal": "hold",
+   "user_side": "black",
+   "explanation": "Stay in front of the pawn and take the opposition when the enemy king approaches. Retreat straight back, never to the side."
+  },
+  {
+   "tier": 2,
+   "id": "eg2-lucena",
+   "title": "Lucena position",
+   "theme": "Rook endgame",
+   "fen": "1K1k4/1P6/8/8/8/8/r7/2R5 w - - 0 1",
+   "goal": "win",
+   "user_side": "white",
+   "explanation": "Cut the black king off, then 'build a bridge': rook to the 4th rank so it can block checks on your king."
+  },
+  {
+   "tier": 2,
+   "id": "eg2-philidor",
+   "title": "Philidor defence",
+   "theme": "Rook endgame (defence)",
+   "fen": "4k3/7R/r7/3PK3/8/8/8/8 b - - 0 1",
+   "goal": "hold",
+   "user_side": "black",
+   "explanation": "Keep your rook on the 6th rank until the pawn advances, then drop the rook to the back and check from behind."
+  },
+  {
+   "tier": 2,
+   "id": "eg2-q-vs-pawn",
+   "title": "Queen vs pawn on the 7th",
+   "theme": "Q vs P",
+   "fen": "8/8/8/8/8/1K6/3pk3/7Q w - - 0 1",
+   "goal": "win",
+   "user_side": "white",
+   "explanation": "Check and pin until the enemy king is forced in front of its own pawn, then gain a tempo to bring your king closer."
+  },
+  {
+   "tier": 3,
+   "id": "eg3-r-vs-b",
+   "title": "Rook vs bishop — hold",
+   "theme": "R vs B (defence)",
+   "fen": "8/8/8/3kb3/8/8/8/3RK3 b - - 0 1",
+   "goal": "hold",
+   "user_side": "black",
+   "explanation": "Run your king to the corner of the colour your bishop does NOT control, and keep the bishop close."
+  },
+  {
+   "tier": 3,
+   "id": "eg3-wrong-bishop",
+   "title": "The wrong bishop",
+   "theme": "B+RP vs K (defence)",
+   "fen": "7k/8/6KP/8/8/8/8/3B4 b - - 0 1",
+   "goal": "hold",
+   "user_side": "black",
+   "explanation": "The bishop cannot control h8 — shuttle between g8 and h8 and the rook pawn can never promote."
+  },
+  {
+   "tier": 3,
+   "id": "eg3-bn-mate",
+   "title": "Bishop and knight mate",
+   "theme": "K+B+N vs K",
+   "fen": "8/8/8/8/3k4/8/8/2BNK3 w - - 0 1",
+   "goal": "win",
+   "user_side": "white",
+   "explanation": "Drive the king to a corner of your bishop's colour (W-manoeuvre with the knight). You have 50 moves — plan carefully."
+  }
+ ],
+ "sparring": [
+  {
+   "id": "sp-kp-win",
+   "theme": "King & pawn conversion",
+   "fen": "4k3/8/8/8/8/8/4P3/4K3 w - - 0 1",
+   "goal": "win",
+   "user_side": "white"
+  },
+  {
+   "id": "sp-kp-hold",
+   "theme": "Opposition defence",
+   "fen": "8/4k3/8/4P3/4K3/8/8/8 w - - 0 1",
+   "goal": "hold",
+   "user_side": "black"
+  },
+  {
+   "id": "sp-lucena",
+   "theme": "Lucena rook ending",
+   "fen": "1K1k4/1P6/8/8/8/8/r7/2R5 w - - 0 1",
+   "goal": "win",
+   "user_side": "white"
+  },
+  {
+   "id": "sp-philidor",
+   "theme": "Philidor defence",
+   "fen": "4k3/7R/r7/3PK3/8/8/8/8 b - - 0 1",
+   "goal": "hold",
+   "user_side": "black"
+  },
+  {
+   "id": "sp-rook-defence",
+   "theme": "Rook vs rook + pawn",
+   "fen": "8/1k6/8/8/8/5K2/r4P2/6R1 b - - 0 1",
+   "goal": "hold",
+   "user_side": "black"
+  },
+  {
+   "id": "sp-bishop-pawn",
+   "theme": "Same-colour bishops + pawn",
+   "fen": "8/8/1k6/2b5/8/4BK2/5P2/8 b - - 0 1",
+   "goal": "win",
+   "user_side": "white"
+  },
+  {
+   "id": "sp-q-vs-p",
+   "theme": "Queen vs pawn",
+   "fen": "8/8/8/8/8/1K6/3pk3/7Q w - - 0 1",
+   "goal": "win",
+   "user_side": "white"
+  },
+  {
+   "id": "sp-wrong-bishop",
+   "theme": "Wrong-bishop fortress",
+   "fen": "7k/8/6KP/8/8/8/8/3B4 b - - 0 1",
+   "goal": "hold",
+   "user_side": "black"
+  },
+  {
+   "id": "sp-queen-mate",
+   "theme": "Queen checkmate",
+   "fen": "8/8/8/4k3/8/8/8/4K2Q w - - 0 1",
+   "goal": "win",
+   "user_side": "white"
+  },
+  {
+   "id": "sp-r-vs-b",
+   "theme": "Rook vs bishop fortress",
+   "fen": "8/8/8/3kb3/8/8/8/3RK3 b - - 0 1",
+   "goal": "hold",
+   "user_side": "black"
+  }
+ ],
+ "placement": [
+  "eg1-kp-opposition",
+  "eg1-kp-defend",
+  "eg2-lucena",
+  "eg2-philidor",
+  "eg3-r-vs-b",
+  "eg2-q-vs-pawn"
+ ]
+}

@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="Chess Coach AI — in-browser chess trainer (Stockfish WASM, runs fully client-side).">
+<meta name="theme-color" content="#c98f2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Chess Coach">
+<meta name="format-detection" content="telephone=no">
+<title>Chess Coach AI</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css?v=33">
+</head>
+<body>
+<!-- V29: ambient ghost-piece background (pure decoration, aria-hidden, non-interactive) -->
+<div id="bg-ambient" aria-hidden="true">
+  <span class="bg-glyph bg-glyph-queen">&#x265B;</span>
+  <span class="bg-glyph bg-glyph-rook">&#x265C;</span>
+  <span class="bg-glyph bg-glyph-knight">&#x265E;</span>
+</div>
+<header class="app-header">
+  <h1>Chess Coach AI</h1>
+  <nav class="tabs">
+    <button class="tab-btn" data-tab="plan">Plan</button>
+    <button class="tab-btn active" data-tab="play">Play &amp; Analyze</button>
+    <button class="tab-btn" data-tab="puzzles">Puzzles</button>
+    <button class="tab-btn" data-tab="cycles">Cycles</button>
+    <button class="tab-btn" data-tab="sparring">Sparring</button>
+    <button class="tab-btn" data-tab="endgames">Endgames</button>
+    <button class="tab-btn" data-tab="masters">Masters</button>
+    <button class="tab-btn" data-tab="games">My Games</button>
+    <button class="tab-btn" data-tab="learn">Learn</button>
+    <button class="tab-btn" data-tab="progress">Progress</button>
+    <button class="tab-btn" data-tab="lab">Strategy Lab</button>
+  </nav>
+  <span class="health-indicator">
+    <span id="health-dot" class="health-dot" title="Engine: checking…"></span><span id="health-badge" class="health-badge hidden">(online)</span>
+  </span>
+</header>
+
+<div id="engine-banner" class="banner amber hidden">
+  Engine unavailable — no engine found. Run Fix-Engine.bat for repair.
+</div>
+<div id="error-banner" class="banner red hidden"></div>
+
+<main>
+
+  <!-- ===================== TRAINING PLAN (V20) ===================== -->
+  <section id="tab-plan" class="tab-panel">
+    <div id="plan-streak-row" class="panel-row">
+      <span id="streak-chip" class="streak-chip hidden"></span>
+      <span id="streak-note" class="info-line muted"></span>
+    </div>
+    <div id="streak-milestone" class="banner amber hidden">
+      <span id="streak-milestone-text"></span>
+      <button id="btn-streak-milestone-dismiss" class="btn mini">Dismiss</button>
+    </div>
+    <div id="week-closed-banner" class="banner amber hidden"></div>
+    <div class="plan-top">
+      <div class="lab-panel" id="plan-today-card">
+        <h3>Today <span class="muted">most relevant right now</span></h3>
+        <div id="plan-today"></div>
+      </div>
+      <div class="lab-panel" id="plan-adherence-card">
+        <h3>Adherence <span class="muted">planned vs completed</span></h3>
+        <div id="plan-adherence"></div>
+        <div id="plan-adherence-trend"></div>
+      </div>
+    </div>
+    <div id="plan-reasons" class="info-line plan-reasons"></div>
+    <div id="plan-week-note" class="info-line muted">Weeks run Mon–Sun (UTC)</div>
+    <div id="plan-board" class="plan-board"></div>
+    <div class="lab-panel" id="plan-heatmap-card">
+      <h3>Training year <span class="muted">one square per day</span></h3>
+      <div id="plan-heatmap-months" class="heatmap-months"></div>
+      <div id="plan-heatmap" class="heatmap-grid"></div>
+      <div id="plan-heatmap-caption" class="info-line muted"></div>
+    </div>
+  </section>
+
+  <!-- ===================== PLAY & ANALYZE ===================== -->
+  <section id="tab-play" class="tab-panel active">
+    <div class="play-layout">
+      <div class="board-col">
+        <div class="eval-bar"><div id="eval-fill" class="eval-fill"></div><span id="eval-label" class="eval-label"></span></div>
+        <div class="board-nav-col">
+          <div id="play-board" class="board-holder"></div>
+          <div id="play-nav" class="nav-slot"></div>
+          <div id="feedback-chip" class="feedback-chip hidden">
+            <span id="feedback-label"></span>
+            <span id="feedback-cpl" class="muted"></span>
+            <button id="btn-feedback-hint" class="btn mini hidden" title="Flash the best move on the board">Hint</button>
+          </div>
+          <div id="play-history-note" class="info-line hidden"></div>
+        </div>
+      </div>
+      <aside class="side-panel">
+        <div id="review-panel" class="rehearsal-panel review-panel hidden">
+          <div class="review-head">
+            <span>🔍 Mistake Review</span>
+            <span id="review-counter" class="rehearsal-tag"></span>
+          </div>
+          <div id="review-game" class="info-line"></div>
+          <div id="review-title" class="review-title"></div>
+          <div class="panel-row">
+            <span id="review-class" class="chip"></span>
+            <span id="review-moves" class="info-line"></span>
+          </div>
+          <div id="review-eval" class="info-line"></div>
+          <div id="review-maia" class="info-line"></div>
+          <div id="review-explain" class="coach-box"></div>
+          <button id="btn-speak-review-explain" class="btn mini speak-btn hidden" type="button" title="Read aloud (coach voice)">🔊</button>
+          <div id="review-pv" class="line-preview"></div>
+          <div class="panel-row">
+            <button id="btn-review-prev" class="btn" title="Previous mistake (←)">◀ Prev</button>
+            <button id="btn-review-next" class="btn" title="Next mistake (→)">Next ▶</button>
+            <button id="btn-review-exit" class="btn">Exit review</button>
+          </div>
+          <div class="info-line"><span class="arrow-legend red">➤</span> played move · <span class="arrow-legend green">➤</span> best move</div>
+        </div>
+        <div id="rehearsal-panel" class="rehearsal-panel">
+          <button id="rehearsal-toggle" class="rehearsal-head" aria-expanded="false">
+            <span>⚔ Opening Rehearsal — practice modes</span>
+            <span id="rehearsal-mode-tag" class="rehearsal-tag hidden"></span>
+            <span id="rehearsal-caret" class="rehearsal-caret">▸</span>
+          </button>
+          <div id="rehearsal-body" class="hidden">
+            <div class="info-line">Play an opening against the app's most common replies. Pick a mode to start:</div>
+            <div class="panel-row">
+              <button id="btn-mode-modern" class="btn rehearsal-mode-btn">▶ Modern Defense <span class="muted">(you play Black)</span></button>
+              <button id="btn-mode-scotch" class="btn rehearsal-mode-btn">▶ Scotch Gambit <span class="muted">(you play White)</span></button>
+              <button id="btn-mode-qga" class="btn rehearsal-mode-btn">▶ Queen's Gambit Accepted <span class="muted">(you play Black)</span></button>
+              <button id="btn-mode-qgaw" class="btn rehearsal-mode-btn">▶ Queen's Gambit Accepted <span class="muted">(you play White)</span></button>
+            </div>
+            <div id="rehearsal-active" class="hidden">
+              <div id="rehearsal-banner" class="rehearsal-banner"></div>
+              <div class="panel-row">
+                <label for="rehearsal-topn">App picks randomly among the top</label>
+                <select id="rehearsal-topn">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
+                <span class="muted">most common replies</span>
+                <span class="muted">(after the guided line)</span>
+              </div>
+              <div class="panel-row">
+                <button id="btn-rehearsal-skip" class="btn" title="Jump straight to the opening position">Skip to opening</button>
+                <button id="btn-rehearsal-takeback" class="btn" title="Undo your last move and the app's reply (b)">Take back</button>
+                <button id="btn-rehearsal-restart" class="btn">Restart mode</button>
+                <button id="btn-rehearsal-exit" class="btn">Exit mode</button>
+                <button id="btn-rehearsal-hide-guide" class="btn hidden" title="Hide the guided-line highlight for the rest of this run (self-testing)">Hide guide</button>
+              </div>
+              <div id="rehearsal-status" class="rehearsal-status info-line"></div>
+            </div>
+            <div class="panel-row">
+              <button id="btn-rehearsal-pgn" class="btn">Load PGN</button>
+              <span id="rehearsal-pgn-status" class="info-line"></span>
+            </div>
+            <div id="rehearsal-pgn-box" class="hidden">
+              <textarea id="rehearsal-pgn-input" rows="5" spellcheck="false" placeholder="Paste a PGN here…"></textarea>
+              <div class="panel-row">
+                <button id="btn-rehearsal-pgn-load" class="btn primary">Load onto board</button>
+                <button id="btn-rehearsal-pgn-cancel" class="btn">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-row">
+          <button id="btn-new-game" class="btn">New game</button>
+          <button id="btn-flip" class="btn">Flip board</button>
+        </div>
+        <div class="panel-row">
+          <label for="depth-input">Depth</label>
+          <input id="depth-input" type="number" min="8" max="22" value="14">
+          <button id="btn-analyze-pos" class="btn primary">Analyze position</button>
+          <!-- V30: restored from pre-V25 — the plan also lives in the
+               Strategy Lab (#btn-lab-plan); both doors stay. -->
+          <button id="btn-show-plan" class="btn toggle" title="Engine-best plan for you vs. the replies players at your level actually make — now with the goal and the reason behind each move.">Show my plan</button>
+          <select id="opponent-level" class="opp-level" title="Whose likely replies to show — human moves at this level">
+            <option value="casual">Casual (~1300)</option>
+            <option value="club" selected>Club (1500–1900)</option>
+            <option value="advanced">Advanced (2000–2200)</option>
+            <option value="expert">Expert (2200+)</option>
+            <option value="masters">Masters (OTB)</option>
+          </select>
+        </div>
+        <h3>Top lines</h3>
+        <ol id="lines-list" class="lines-list"></ol>
+        <div id="tb-chip" class="tb-chip hidden">
+          <span id="tb-chip-label"></span>
+          <div id="tb-moves" class="info-line"></div>
+        </div>
+        <div id="maia-note" class="info-line muted hidden"></div>
+        <div id="maia-panel" class="maia-panel hidden">
+          <h3 id="maia-title">Human moves</h3>
+          <div id="maia-moves" class="maia-moves"></div>
+        </div>
+        <div id="plan-panel" class="plan-panel hidden"></div>
+        <!-- V25 (DUP-2): ONE unified coach panel — the mode chips pick
+             Quick take (/api/coach/comment), Socratic (/api/coach/discuss)
+             or Free chat (/api/coach/chat); one input area serves all
+             three. The old standalone #btn-coach-comment and
+             #btn-discuss-coach buttons were removed (endpoints kept). -->
+        <div id="coach-chat" class="chat-panel">
+          <div class="chat-head">
+            <span>💬 Ask the coach</span>
+            <button id="btn-chat-new" class="btn mini" title="Start a fresh conversation about the current position">New conversation</button>
+          </div>
+          <div id="coach-modes" class="coach-modes">
+            <button id="coach-mode-quick" type="button" class="coach-mode-chip" title="Quick take: one verified coach comment on the current position">Quick take</button>
+            <button id="coach-mode-socratic" type="button" class="coach-mode-chip" title="Socratic: think through the position together — candidate moves, checks, captures, threats, pros and cons">Socratic</button>
+            <button id="coach-mode-chat" type="button" class="coach-mode-chip active" title="Free chat: an open conversation about this position">Free chat</button>
+          </div>
+          <div id="coach-comment" class="coach-box hidden"></div>
+          <div id="discuss-panel" class="discuss-panel hidden"></div>
+          <div id="chat-messages" class="chat-messages"></div>
+          <div id="voice-hint" class="info-line muted hidden"></div>
+          <div id="chat-chips" class="chat-chips"></div>
+          <div class="chat-input-row">
+            <input id="chat-input" type="text" autocomplete="off" spellcheck="false" placeholder="Ask the coach about this position…">
+            <button id="btn-chat-send" class="btn primary">Send</button>
+          </div>
+        </div>
+        <h3>Moves</h3>
+        <div id="play-moves" class="move-list"></div>
+        <div class="panel-row fen-row">
+          <input id="play-fen-input" type="text" spellcheck="false" placeholder="Paste FEN here…">
+          <button id="btn-load-fen" class="btn">Load FEN</button>
+          <button id="btn-play-practice" class="btn">▶ Practice from here</button>
+          <button id="btn-play-copy-fen" class="btn">⧉ Copy FEN</button>
+          <button id="btn-play-makepuzzle" class="btn">🧩 Make puzzle from here</button>
+          <span id="play-copy-status" class="info-line"></span>
+          <span id="play-fen-status" class="info-line"></span>
+        </div>
+        <div class="panel-row lichess-row">
+          <button id="btn-lichess-settings" class="btn-link" title="Settings">
+            ⚙ Lichess stats <span id="lichess-check" class="check hidden" title="Token saved">✓</span>
+          </button>
+        </div>
+        <div id="lichess-settings" class="lichess-settings hidden">
+          <label for="lichess-token-input">Lichess API token <span class="muted">(optional — enables “most common human moves” stats)</span></label>
+          <div class="panel-row">
+            <input id="lichess-token-input" type="password" spellcheck="false" autocomplete="off" placeholder="lip_…">
+            <button id="btn-lichess-save" class="btn">Save</button>
+          </div>
+          <div class="info-line">Create one free at lichess.org → Preferences → API access tokens. <span id="lichess-save-status"></span></div>
+          <label for="cfg-lichess-username">Your usernames <span class="muted">(rating history, openings report, progress)</span></label>
+          <div class="panel-row">
+            <input id="cfg-lichess-username" type="text" spellcheck="false" autocomplete="off" placeholder="lichess username">
+            <input id="cfg-chesscom-username" type="text" spellcheck="false" autocomplete="off" placeholder="chess.com username">
+            <button id="btn-cfg-usernames-save" class="btn">Save</button>
+          </div>
+          <div class="info-line"><span id="cfg-usernames-status"></span></div>
+          <div class="settings-divider">AI coach (local LLM)</div>
+          <label class="llm-toggle" for="llm-enabled">
+            <input id="llm-enabled" type="checkbox">
+            Enable AI coach (needs a local LLM server)
+          </label>
+          <div class="panel-row">
+            <input id="llm-url-input" type="text" spellcheck="false" placeholder="http://127.0.0.1:8080">
+            <button id="btn-llm-save" class="btn">Save</button>
+            <button id="btn-llm-test" class="btn">Test connection</button>
+          </div>
+          <label for="llm-model-input">Model name <span class="muted">(Ollama: your model, e.g. llama3.1 — LM Studio/llama.cpp can leave this)</span></label>
+          <div class="panel-row">
+            <input id="llm-model-input" type="text" spellcheck="false" placeholder="local-coach">
+          </div>
+          <div class="info-line"><span id="llm-status"></span></div>
+          <div id="llm-no-restart-hint" class="info-line muted hidden">Enabled — takes effect immediately, no restart needed.</div>
+          <div class="settings-divider">Coach voice (Latvian accent)</div>
+          <label class="llm-toggle" for="voice-enabled">
+            <input id="voice-enabled" type="checkbox">
+            Enable coach voice (reads the coach's text aloud)
+          </label>
+          <label class="llm-toggle" for="persona-enabled">
+            <input id="persona-enabled" type="checkbox">
+            Latvian coach wording (broken English)
+          </label>
+          <div class="panel-row">
+            <label for="voice-provider" class="muted">Voice:</label>
+            <select id="voice-provider">
+              <option value="auto">Auto</option>
+              <option value="edge">Nils (online)</option>
+              <option value="xtts">Offline clone</option>
+              <option value="sapi">Windows voice</option>
+            </select>
+          </div>
+          <div class="info-line"><span id="voice-status"></span></div>
+          <div class="info-line muted">Optional — install it once with Install-Voice-Optional.bat, and Install-Voice-Offline-Optional.bat for the offline cloned voice (no internet needed when speaking). The voice only reads text the app already shows — it never adds new advice.</div>
+          <div class="info-line muted">Run a local server: LM Studio → Developer → Start Server (port 8080), or llama.cpp: llama-server -m model.gguf --port 8080, or Ollama (URL http://127.0.0.1:11434 + your model name below). The app calls your server at its /v1/chat/completions endpoint (OpenAI-compatible). When enabled, the AI coach rewrites plan goals and coach comments in friendlier language; if the server is off, the built-in explanations keep working. Recommended: a small model is plenty (Llama 3.2 3B / Qwen2.5 3B, ~2 GB) — the coach only rewords verified engine analysis, never invents moves.</div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== PUZZLES ===================== -->
+  <section id="tab-puzzles" class="tab-panel">
+    <div class="play-layout">
+      <div class="board-nav-col">
+        <div id="puzzle-board" class="board-holder"></div>
+        <div class="board-actions">
+          <button id="btn-puzzle-practice" class="btn">▶ Practice from here</button>
+          <button id="btn-puzzle-copy-fen" class="btn">⧉ Copy FEN</button>
+          <span id="puzzle-copy-status" class="info-line"></span>
+        </div>
+      </div>
+      <aside class="side-panel">
+        <div class="panel-row">
+          <label for="puzzle-rating">Rating</label>
+          <select id="puzzle-rating">
+            <option value="any">Any</option>
+            <option value="600-1000">600–1000</option>
+            <option value="1000-1400">1000–1400</option>
+            <option value="1400-9999">1400+</option>
+          </select>
+          <button id="btn-new-puzzle" class="btn primary">New puzzle</button>
+          <button id="btn-puzzle-hint" class="btn" disabled title="Get a hint — first click names the piece, second its square (never the full move)">Hint</button>
+          <button id="btn-show-solution" class="btn">Show solution</button>
+          <span id="puzzle-streak" class="streak-chip hidden" title="Days in a row with at least one puzzle solved or flashcard reviewed"></span>
+        </div>
+        <div id="puzzle-info" class="info-line">Load a puzzle to begin.</div>
+        <div id="puzzle-status" class="banner hidden"></div>
+        <div id="puzzle-progress" class="info-line"></div>
+        <div id="puzzle-hint" class="info-line hidden"></div>
+        <button id="btn-speak-puzzle-hint" class="btn mini speak-btn hidden" type="button" title="Read aloud (coach voice)">🔊</button>
+        <div id="puzzle-why" class="coach-box hidden"></div>
+        <button id="btn-speak-puzzle-why" class="btn mini speak-btn hidden" type="button" title="Read aloud (coach voice)">🔊</button>
+        <!-- V25 (DUP-3): ONE "Build drills" panel — the scope selector
+             picks This PGN or the Game library; single-game builds persist
+             into the same user puzzle store as library builds. -->
+        <h3>Build drills from my games</h3>
+        <div class="panel-row">
+          <label for="build-scope">Source</label>
+          <select id="build-scope" title="Mine a single pasted PGN or your imported game library">
+            <option value="pgn" selected>This PGN</option>
+            <option value="library">Game library</option>
+          </select>
+        </div>
+        <div id="build-pgn-block">
+          <textarea id="pgn-build-input" rows="5" placeholder="Paste a PGN here…"></textarea>
+          <div class="panel-row">
+            <button id="btn-build-puzzles" class="btn">Build from PGN</button>
+            <button id="btn-build-from-last" class="btn">Use last analyzed game</button>
+          </div>
+          <div id="build-status" class="info-line"></div>
+        </div>
+        <div id="build-library-block" class="hidden">
+          <div class="panel-row">
+            <label for="build-lib-max">Games</label>
+            <select id="build-lib-max" title="How many of your newest library games to mine for puzzles">
+              <option value="25">25</option>
+              <option value="50" selected>50</option>
+              <option value="100">100</option>
+              <option value="200">200</option>
+            </select>
+            <button id="btn-build-library" class="btn">Build from library</button>
+          </div>
+          <div id="build-lib-status" class="info-line"></div>
+        </div>
+        <div id="puzzle-lib-info" class="info-line"></div>
+        <h3>Mistake Flashcards</h3>
+        <div id="fc-stats" class="info-line"></div>
+        <div id="fc-quarantined" class="info-line hidden"></div>
+        <div class="panel-row">
+          <button id="btn-fc-add" class="btn" disabled title="Add every mistake from the last mistake scan to your deck">Add from last mistake scan</button>
+          <button id="btn-fc-start" class="btn primary" disabled>Start review</button>
+        </div>
+        <label class="panel-row fc-interleave-row" title="Mix cards across games and motifs (recommended: interleaved practice beats blocked practice); every 3rd card asks you to name the motif first">
+          <input type="checkbox" id="fc-interleave" checked> Interleave games &amp; motifs
+        </label>
+        <div id="fc-add-status" class="info-line"></div>
+        <div id="fc-empty" class="info-line hidden">
+          No flashcards yet. Cards are built from your own mistakes: open
+          My Games, run <b>Review mistakes</b> on a game, then come back
+          here and click <b>Add from last mistake scan</b>.
+        </div>
+        <div id="fc-practice" class="hidden">
+          <div id="fc-motif-quiz" class="fc-motif-quiz hidden">
+            <div class="info-line">Name the motif first:</div>
+            <div id="fc-motif-options" class="panel-row"></div>
+            <div id="fc-motif-note" class="banner hidden"></div>
+          </div>
+          <div id="fc-prompt" class="fc-prompt"></div>
+          <div id="fc-hint" class="info-line hidden"></div>
+          <button id="btn-speak-fc-hint" class="btn mini speak-btn hidden" type="button" title="Read aloud (coach voice)">🔊</button>
+          <div id="fc-result" class="banner hidden"></div>
+          <div id="fc-explain" class="coach-box hidden"></div>
+          <button id="btn-speak-fc-explain" class="btn mini speak-btn hidden" type="button" title="Read aloud (coach voice)">🔊</button>
+          <div id="fc-grades" class="panel-row hidden">
+            <button class="btn fc-grade" data-grade="again" title="Shortcut: 1">Again (1)</button>
+            <button class="btn fc-grade" data-grade="hard" title="Shortcut: 2">Hard (2)</button>
+            <button class="btn fc-grade" data-grade="good" title="Shortcut: 3">Good (3)</button>
+            <button class="btn fc-grade" data-grade="easy" title="Shortcut: 4">Easy (4)</button>
+          </div>
+          <div class="panel-row">
+            <button id="btn-fc-hint" class="btn" disabled title="Show a hint before you answer (names the piece, never the move)">Hint</button>
+            <button id="btn-fc-exit" class="btn">Exit review</button>
+          </div>
+        </div>
+        <div id="fc-done" class="info-line hidden"></div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== CYCLES (Woodpecker mode) ===================== -->
+  <section id="tab-cycles" class="tab-panel">
+    <div class="play-layout">
+      <div class="board-nav-col">
+        <div id="cycle-board" class="board-holder"></div>
+        <div class="board-actions">
+          <span id="cycle-timer" class="info-line"></span>
+        </div>
+      </div>
+      <aside class="side-panel">
+        <h3>Woodpecker cycle sets</h3>
+        <div class="info-line">
+          Pin a fixed set of your mistake cards and solve it in repeated
+          passes ("cycles") — each pass should get faster and more accurate.
+          Aim for <b>60–75%</b> first-pass accuracy; space cycles
+          <b>1–3 days</b> apart.
+        </div>
+        <div class="panel-row">
+          <input id="cycle-set-name" type="text" placeholder="Set name">
+          <select id="cycle-set-kind" title="Which cards to freeze into the set">
+            <option value="last_n">Last N mistakes</option>
+            <option value="source">By source game</option>
+            <option value="motif">By motif</option>
+            <option value="all_due">All due (snapshot)</option>
+          </select>
+          <input id="cycle-set-value" type="text" placeholder="N / source / motif">
+          <button id="btn-cycle-create" class="btn primary">Create set</button>
+        </div>
+        <div id="cycle-create-status" class="info-line"></div>
+        <div id="cycle-warn" class="banner amber hidden"></div>
+        <div id="cycle-set-list"></div>
+        <div id="cycle-run" class="hidden">
+          <h3 id="cycle-run-title"></h3>
+          <div id="cycle-progress" class="info-line"></div>
+          <div id="cycle-prompt" class="fc-prompt"></div>
+          <div id="cycle-hint" class="info-line hidden"></div>
+          <button id="btn-speak-cycle-hint" class="btn mini speak-btn hidden" type="button" title="Read aloud (coach voice)">🔊</button>
+          <div id="cycle-result" class="banner hidden"></div>
+          <div class="panel-row">
+            <button id="btn-cycle-hint" class="btn" disabled title="Show a hint before you answer (names the piece, never the move)">Hint</button>
+            <button id="btn-cycle-next" class="btn primary hidden">Next card</button>
+            <button id="btn-cycle-giveup" class="btn hidden">Give up</button>
+            <button id="btn-cycle-abort" class="btn">Abort cycle</button>
+          </div>
+        </div>
+        <div id="cycle-summary" class="hidden">
+          <h3>Cycle complete</h3>
+          <div id="cycle-summary-stats" class="glance-grid"></div>
+          <div id="cycle-prs" class="pr-lines"></div>
+          <div id="cycle-target" class="info-line"></div>
+          <div id="cycle-guardrail" class="coach-box hidden"></div>
+          <div id="cycle-charts"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== SPARRING (V17) ===================== -->
+  <section id="tab-sparring" class="tab-panel">
+    <div class="play-layout">
+      <div class="board-nav-col">
+        <div id="sparring-board" class="board-holder"></div>
+        <div class="board-actions">
+          <span id="sparring-board-note" class="info-line"></span>
+        </div>
+      </div>
+      <aside class="side-panel">
+        <h3>Play-it-out sparring packs</h3>
+        <div class="info-line">
+          Goal-based position training: each scenario has a verified goal
+          (<b>win</b> it or <b>hold</b> the draw) — play it out against an
+          opponent at your level, from both sides eventually. Failed
+          scenarios come back for re-tests after 1, 3 and 7 days.
+        </div>
+        <div class="panel-row">
+          <button id="btn-sparring-generate" class="btn primary" title="Build a pack from your mistake deck (goal-verified positions) plus curated model positions">Generate pack</button>
+          <select id="sparring-level" class="opp-level" title="Opponent strength — Maia at this level when installed, else skill-limited Stockfish">
+            <option value="casual">Casual (~1300)</option>
+            <option value="club" selected>Club (1500–1900)</option>
+            <option value="advanced">Advanced (2000–2200)</option>
+            <option value="expert">Expert (2200+)</option>
+            <option value="masters">Masters (OTB)</option>
+          </select>
+        </div>
+        <div id="sparring-gen-status" class="info-line"></div>
+        <div id="sparring-progress"></div>
+        <div id="sparring-pack-list"></div>
+        <div id="sparring-run" class="hidden">
+          <h3 id="sparring-run-title"></h3>
+          <div id="sparring-brief" class="fc-prompt"></div>
+          <div id="sparring-status" class="info-line"></div>
+          <div id="sparring-hint" class="coach-box hidden"></div>
+          <button id="btn-speak-sparring-hint" class="btn mini speak-btn hidden" type="button" title="Read aloud (coach voice)">🔊</button>
+          <div id="sparring-feedback" class="banner hidden"></div>
+          <div class="panel-row">
+            <button id="btn-sparring-hint" class="btn" disabled title="Hint for the best move in this position (tablebase/engine-verified — never shows the move itself)">Hint</button>
+            <button id="btn-sparring-claim-win" class="btn" disabled title="Claim the win — the server verifies the position is decisive (mate, tablebase win or a big eval)">Claim win</button>
+            <button id="btn-sparring-claim-draw" class="btn" disabled title="Claim the draw — the server verifies the position is drawn or level">Claim draw</button>
+            <button id="btn-sparring-resign" class="btn">Resign</button>
+          </div>
+          <div class="panel-row">
+            <button id="btn-sparring-restart" class="btn">Restart scenario</button>
+            <button id="btn-sparring-mirror" class="btn" title="Play this same position from the other side — the defending mirror">Practice defending side</button>
+            <button id="btn-sparring-next" class="btn primary hidden">Next scenario</button>
+            <button id="btn-sparring-exit" class="btn">Exit pack</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== ENDGAMES (V19: canon curriculum + leak detector) ===================== -->
+  <section id="tab-endgames" class="tab-panel">
+    <div class="play-layout">
+      <div class="board-nav-col">
+        <div id="endgame-board" class="board-holder"></div>
+        <div class="board-actions">
+          <span id="endgame-board-note" class="info-line"></span>
+        </div>
+      </div>
+      <aside class="side-panel">
+        <h3>Endgame canon curriculum</h3>
+        <div class="info-line">
+          The essential theoretical endings in three tiers — every lesson
+          goal is <b>tablebase-verified</b>. Read the technique, then play
+          the position out against the engine: pass a lesson to unlock the
+          next, finish a tier to unlock the next tier. Key positions go
+          into your flashcard deck for spaced review.
+        </div>
+        <div id="endgame-summary"></div>
+        <div class="lab-panel eg-panel">
+          <h3>Placement test</h3>
+          <div class="info-line">
+            Six tablebase-verified play-outs (two per tier) recommend the
+            tier you should start from.
+          </div>
+          <div class="panel-row">
+            <button id="btn-endgame-placement" class="btn" title="Play six positions across the tiers — the pass pattern recommends your starting tier">Start placement test</button>
+          </div>
+          <div id="endgame-placement-status" class="info-line"></div>
+        </div>
+        <div id="endgame-tiers"></div>
+        <div id="endgame-run" class="hidden">
+          <h3 id="endgame-run-title"></h3>
+          <div id="endgame-explain" class="coach-box"></div>
+          <div id="endgame-brief" class="fc-prompt"></div>
+          <div id="endgame-status" class="info-line"></div>
+          <div id="endgame-hint" class="coach-box hidden"></div>
+          <button id="btn-speak-endgame-hint" class="btn mini speak-btn hidden" type="button" title="Read aloud (coach voice)">🔊</button>
+          <div id="endgame-feedback" class="banner hidden"></div>
+          <div class="panel-row">
+            <button id="btn-endgame-hint" class="btn" disabled title="Hint for the best move in this position (tablebase-verified — never shows the move itself)">Hint</button>
+            <button id="btn-endgame-claim-win" class="btn" disabled title="Claim the win — the server verifies the position is decisive (mate, tablebase win or a big eval)">Claim win</button>
+            <button id="btn-endgame-claim-draw" class="btn" disabled title="Claim the draw — the server verifies the position is drawn or level">Claim draw</button>
+            <button id="btn-endgame-resign" class="btn">Resign</button>
+          </div>
+          <div class="panel-row">
+            <button id="btn-endgame-restart" class="btn">Restart</button>
+            <button id="btn-endgame-next" class="btn primary hidden">Next lesson</button>
+            <button id="btn-endgame-exit" class="btn">Exit</button>
+          </div>
+        </div>
+        <div class="lab-panel eg-panel">
+          <h3>Endgame leaks in your games</h3>
+          <div class="info-line">
+            Scan your stored games for endgames the tablebase says you
+            should have won or held — and get the lessons that fix them.
+          </div>
+          <div class="panel-row">
+            <button id="btn-endgame-leaks" class="btn" title="Scan your imported games: positions reaching 7 or fewer pieces are checked against the tablebase">Scan my games</button>
+            <button id="btn-endgame-leaks-rescan" class="btn" title="Re-verify every game, ignoring cached results — useful after a scan ran while the tablebase/engine was unreachable">Rescan</button>
+          </div>
+          <div id="endgame-leaks-status" class="info-line"></div>
+          <div id="endgame-leaks"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== MASTERS (V18: Play Like the Master) ===================== -->
+  <section id="tab-masters" class="tab-panel">
+    <div class="play-layout">
+      <div class="board-nav-col">
+        <div id="gtm-board" class="board-holder"></div>
+        <div class="board-actions">
+          <span id="gtm-board-note" class="info-line"></span>
+        </div>
+      </div>
+      <aside class="side-panel">
+        <h3>Play Like the Master</h3>
+        <div class="info-line">
+          Guess-the-move on classic games: you play the <b>winner's</b>
+          moves from the early middlegame. After each guess the reveal
+          contrasts <b>what the master played</b>, <b>what the engine
+          prefers</b> and <b>what a player at your level would play</b> —
+          with partial credit for moves as good as the master's.
+        </div>
+        <div class="panel-row">
+          <label for="gtm-elo">Your rating (for the human-move lens):</label>
+          <select id="gtm-elo" class="opp-level">
+            <option value="1200">~1200</option>
+            <option value="1500" selected>~1500</option>
+            <option value="1600">~1600</option>
+            <option value="2000">~2000</option>
+            <option value="2200">~2200</option>
+            <option value="2500">~2500</option>
+          </select>
+        </div>
+        <div id="gtm-history"></div>
+        <div id="gtm-library"></div>
+        <div id="gtm-run" class="hidden">
+          <h3 id="gtm-run-title"></h3>
+          <div id="gtm-run-meta" class="info-line"></div>
+          <div id="gtm-prompt" class="fc-prompt"></div>
+          <div id="gtm-hint" class="info-line hidden"></div>
+          <button id="btn-speak-gtm-hint" class="btn mini speak-btn hidden" type="button" title="Read aloud (coach voice)">🔊</button>
+          <div class="panel-row">
+            <button id="btn-gtm-hint" class="btn" disabled title="Hint about the master's move (names the piece, never the move — no scoring penalty)">Hint</button>
+          </div>
+          <div id="gtm-moves" class="gtm-moves"></div>
+          <div id="gtm-reveal" class="rehearsal-panel hidden">
+            <div class="panel-row">
+              <span id="gtm-grade" class="chip"></span>
+              <span id="gtm-credit" class="info-line"></span>
+            </div>
+            <div id="gtm-your" class="info-line"></div>
+            <div id="gtm-master" class="info-line"></div>
+            <div id="gtm-engine" class="info-line"></div>
+            <div id="gtm-maia" class="info-line"></div>
+            <div class="panel-row">
+              <button id="btn-gtm-debrief" class="btn" title="Ask the coach about this position — opens a coached debrief">Ask coach why</button>
+              <button id="btn-gtm-continue" class="btn primary">Continue</button>
+            </div>
+            <div id="gtm-debrief" class="coach-box hidden"></div>
+            <button id="btn-speak-gtm-debrief" class="btn mini speak-btn hidden" type="button" title="Read aloud (coach voice)">🔊</button>
+          </div>
+          <div class="panel-row">
+            <button id="btn-gtm-finish" class="btn" title="End the session now and see your master-match score">Finish session</button>
+            <button id="btn-gtm-exit" class="btn">Exit</button>
+          </div>
+          <div id="gtm-summary" class="hidden">
+            <div id="gtm-score" class="gtm-score"></div>
+            <div id="gtm-summary-line" class="info-line"></div>
+            <div id="gtm-grade-strip" class="gtm-strip"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== MY GAMES ===================== -->
+  <section id="tab-games" class="tab-panel">
+    <div class="games-import panel-row">
+      <select id="import-source">
+        <option value="chesscom">chess.com</option>
+        <option value="lichess">lichess</option>
+        <option value="pgn">Noctie.ai / PGN file</option>
+      </select>
+      <input id="import-username" type="text" placeholder="username">
+      <select id="import-months" class="hidden" title="How many months of chess.com games to import into your library">
+        <option value="1">last 1 month</option>
+        <option value="3" selected>last 3 months</option>
+        <option value="6">last 6 months</option>
+        <option value="12">last 12 months</option>
+        <option value="0">All history (slow)</option>
+      </select>
+      <button id="btn-fetch-games" class="btn primary">Fetch games</button>
+      <span id="import-status" class="info-line"></span>
+    </div>
+    <div id="pgn-import-block" class="pgn-import hidden">
+      <div class="info-line">In Noctie.ai, open your game &rarr; export/copy the PGN &rarr; paste it here.</div>
+      <textarea id="import-pgn-text" rows="6" placeholder="Paste PGN from Noctie.ai here — multiple games OK"></textarea>
+      <div class="panel-row">
+        <input id="import-pgn-file" type="file" accept=".pgn,text/plain">
+      </div>
+    </div>
+    <div id="game-review-panel" class="game-review hidden">
+      <div class="review-head">
+        <span>📋 Game review — Highlights</span>
+        <button id="btn-gr-close" class="btn nav-x" title="Close review">✕</button>
+      </div>
+      <div id="gr-game" class="info-line"></div>
+      <div class="panel-row"><span id="gr-accuracy" class="gr-accuracy"></span></div>
+      <div id="gr-summary" class="coach-box"></div>
+      <div id="gr-classbar" class="gr-classbar"></div>
+      <h3>Key moments</h3>
+      <div id="gr-moments"></div>
+      <div class="panel-row">
+        <button id="btn-gr-retry" class="btn">Retry mistakes</button>
+        <!-- NO post-mortem button here: this panel only exists AFTER the
+             engine review rendered accuracy + key moments (the answer key).
+             Post-mortems start from the per-row button in the games list,
+             BEFORE any engine verdict is shown. -->
+        <span id="gr-status" class="info-line"></span>
+      </div>
+    </div>
+    <div id="pm-panel" class="game-review hidden">
+      <div class="review-head">
+        <span>🕵 Post-mortem — commit first</span>
+        <button id="btn-pm-close" class="btn nav-x" title="Exit post-mortem">✕</button>
+      </div>
+      <div id="pm-game" class="info-line"></div>
+      <div id="pm-locked">
+        <div class="info-line">Step through the game on the board — every engine verdict is hidden. Mark the 1–7 moments you believe were critical, say why, rate your confidence, then commit. The engine's truth is revealed only AFTER you submit.</div>
+        <div class="panel-row">
+          <button id="btn-pm-mark" class="btn primary">Mark critical moment at current ply</button>
+          <span id="pm-ply-label" class="info-line"></span>
+        </div>
+        <div class="panel-row">
+          <label for="pm-confidence">Confidence</label>
+          <select id="pm-confidence">
+            <option value="1">1 — guessing</option>
+            <option value="2">2 — unsure</option>
+            <option value="3" selected>3 — fairly sure</option>
+            <option value="4">4 — confident</option>
+            <option value="5">5 — certain</option>
+          </select>
+        </div>
+        <textarea id="pm-annotation" rows="2" maxlength="280" spellcheck="false" placeholder="Why is this moment critical? What did you think of the move? (max 280 chars)"></textarea>
+        <h3>Your marks <span id="pm-marks-count" class="muted"></span></h3>
+        <div id="pm-marks"></div>
+        <div class="panel-row">
+          <button id="btn-pm-submit" class="btn primary" disabled>Commit analysis &amp; reveal the truth</button>
+          <span id="pm-status" class="info-line"></span>
+        </div>
+      </div>
+      <div id="pm-reveal" class="hidden">
+        <div id="pm-score" class="pm-score"></div>
+        <div id="pm-coach-note" class="coach-box"></div>
+        <h3>Your marks — the verdict</h3>
+        <div id="pm-feedback"></div>
+        <h3>Moments you missed</h3>
+        <div id="pm-missed"></div>
+        <div class="panel-row">
+          <button id="btn-pm-debrief" class="btn hidden">Discuss the biggest miss with the coach</button>
+        </div>
+      </div>
+    </div>
+    <div class="games-layout">
+      <div class="games-board-col">
+        <div id="game-board" class="board-holder"></div>
+        <div id="game-nav" class="nav-slot"></div>
+        <div class="board-actions">
+          <button id="btn-game-practice" class="btn">▶ Practice from here</button>
+          <button id="btn-game-copy-fen" class="btn">⧉ Copy FEN</button>
+          <span id="game-copy-status" class="info-line"></span>
+        </div>
+        <div id="game-summary" class="hidden">
+          <div class="accuracy-row">
+            <span class="acc-circle" id="acc-white"></span>
+            <span class="acc-circle black" id="acc-black"></span>
+          </div>
+          <div id="game-brilliant-flash" class="banner amber hidden"></div>
+          <div id="game-coach-summary" class="coach-box"></div>
+          <div class="panel-row">
+            <button id="btn-game-to-lab" class="btn">Open in Strategy Lab</button>
+          </div>
+        </div>
+      </div>
+      <div class="games-side">
+        <div id="profile-strip" class="profile-strip hidden"></div>
+        <div class="panel-row">
+          <!-- V25 (DUP-4): the per-row "Game review" button is THE analysis
+               action — the old selection-armed analyze button hit the
+               same /api/analyze/game endpoint and was removed. -->
+          <button id="btn-game-to-puzzles" class="btn" disabled>Make puzzles from this game</button>
+          <span id="game-analysis-status" class="info-line"></span>
+        </div>
+        <h3>Imported games</h3>
+        <div id="games-list" class="games-list"></div>
+        <h3>Moves</h3>
+        <div id="game-moves" class="move-list tall"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LEARN ===================== -->
+  <section id="tab-learn" class="tab-panel">
+    <div id="learn-home">
+      <h2>Lessons</h2>
+      <div id="lessons-list" class="card-grid"></div>
+      <h2>Model Games</h2>
+      <div id="principle-chips" class="chip-row"></div>
+      <div id="model-games-list" class="card-grid"></div>
+    </div>
+
+    <div id="lesson-player" class="hidden">
+      <div class="panel-row">
+        <button id="btn-lesson-close" class="btn">← Back to lessons</button>
+        <h2 id="lesson-title"></h2>
+        <span id="lesson-progress" class="info-line"></span>
+      </div>
+      <div class="play-layout">
+        <div id="lesson-board" class="board-holder"></div>
+        <aside class="side-panel">
+          <div id="lesson-step-text" class="lesson-text"></div>
+          <div id="lesson-task-hint" class="banner amber hidden"></div>
+          <div class="panel-row">
+            <button id="btn-lesson-prev" class="btn">← Prev</button>
+            <button id="btn-lesson-next" class="btn primary">Next →</button>
+          </div>
+          <div class="board-actions">
+            <button id="btn-lesson-practice" class="btn">▶ Practice from here</button>
+            <button id="btn-lesson-copy-fen" class="btn">⧉ Copy FEN</button>
+            <span id="lesson-copy-status" class="info-line"></span>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div id="mg-viewer" class="hidden">
+      <div class="panel-row">
+        <button id="btn-mg-close" class="btn">← Back</button>
+        <h2 id="mg-title"></h2>
+      </div>
+      <div class="play-layout">
+        <div id="mg-board" class="board-holder"></div>
+        <aside class="side-panel">
+          <div id="mg-summary" class="info-line"></div>
+          <div id="mg-nav" class="nav-slot"></div>
+          <div class="board-actions">
+            <button id="btn-mg-practice" class="btn">▶ Practice from here</button>
+            <button id="btn-mg-copy-fen" class="btn">⧉ Copy FEN</button>
+            <span id="mg-copy-status" class="info-line"></span>
+          </div>
+          <div id="mg-move-label" class="info-line"></div>
+          <!-- V25 (DUP-2): no third coach surface here — this seeds the
+               Play tab's unified coach panel (position + prefilled chat) -->
+          <div id="mg-comment" class="coach-box">Step through the game, then ask the coach about the position you are looking at.</div>
+          <div class="panel-row">
+            <button id="btn-mg-ask-coach" class="btn" title="Open this position on the Play board with a coach question ready to send">💬 Ask the coach about this position</button>
+          </div>
+          <div id="mg-moves" class="move-list tall"></div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PROGRESS ===================== -->
+  <section id="tab-progress" class="tab-panel">
+    <div class="lab-panel" id="progress-plan-link-card">
+      <button id="btn-progress-today-plan" class="btn">Today's plan →</button>
+      <span class="info-line muted">Your daily items live on the Plan tab.</span>
+    </div>
+    <div class="progress-grid">
+      <div class="lab-panel" id="progress-rating-card">
+        <h3>Rating history</h3>
+        <div id="progress-rating-note" class="info-line muted hidden"></div>
+        <div id="progress-rating-settings-row" class="panel-row hidden">
+          <button id="btn-progress-settings" class="btn mini">Open settings</button>
+        </div>
+        <div id="progress-rating-charts"></div>
+      </div>
+      <div class="lab-panel" id="progress-glance-card">
+        <h3>This week at a glance</h3>
+        <div id="progress-glance" class="glance-grid"></div>
+      </div>
+      <div class="lab-panel" id="progress-trend-card">
+        <h3>Accuracy trend <span class="muted">(last 30 analyses)</span></h3>
+        <div id="progress-trend"></div>
+      </div>
+      <div class="lab-panel" id="progress-cycles-card">
+        <h3>Latest cycle <span class="muted">(Woodpecker sets)</span></h3>
+        <div id="progress-cycles"></div>
+      </div>
+      <div class="lab-panel" id="progress-endgame-card">
+        <h3>Endgame curriculum <span class="muted">(V19 canon)</span></h3>
+        <div id="progress-endgame"></div>
+      </div>
+      <div class="lab-panel" id="progress-calibration-card">
+        <h3>Post-mortem calibration <span class="muted">(last 30)</span></h3>
+        <div id="pm-calibration-trend"></div>
+      </div>
+      <div class="lab-panel" id="progress-openings-card">
+        <h3>Openings report</h3>
+        <div id="openings-empty" class="info-line hidden">
+          No imported games yet — import your games in My Games to build this report.
+          <button id="btn-openings-import" class="btn mini">Go to My Games</button>
+        </div>
+        <div id="openings-table-wrap"></div>
+        <div id="openings-leaks"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== STRATEGY LAB ===================== -->
+  <section id="tab-lab" class="tab-panel">
+    <div class="lab-layout">
+      <div class="lab-left">
+        <div id="lab-game-bar" class="lab-game-bar hidden">
+          <span id="lab-game-label"></span>
+          <button id="btn-lab-unload" class="btn nav-x" title="Unload game — back to free-position mode">✕</button>
+        </div>
+        <div id="lab-board" class="board-holder"></div>
+        <div id="lab-nav" class="nav-slot"></div>
+        <div class="panel-row">
+          <textarea id="lab-fen-input" rows="2" placeholder="Paste FEN here…"></textarea>
+        </div>
+        <div class="panel-row">
+          <button id="btn-lab-load-fen" class="btn">Load FEN</button>
+          <button id="btn-lab-load-current" class="btn">Load current position</button>
+          <button id="btn-lab-flip" class="btn">Flip board</button>
+          <button id="btn-lab-practice" class="btn">▶ Practice from here</button>
+          <button id="btn-lab-copy-fen" class="btn">⧉ Copy FEN</button>
+          <button id="btn-lab-makepuzzle" class="btn">🧩 Make puzzle from here</button>
+          <span id="lab-copy-status" class="info-line"></span>
+          <span id="lab-status" class="info-line"></span>
+        </div>
+      </div>
+      <div class="lab-panels">
+        <div class="lab-panel">
+          <h3>What if I pass? (Zero move)</h3>
+          <button id="btn-nullmove" class="btn primary">Analyze the threat</button>
+          <div id="nullmove-result" class="hidden">
+            <div id="nm-note" class="info-line"></div>
+            <div id="nm-line" class="coach-box"></div>
+          </div>
+        </div>
+        <div class="lab-panel">
+          <h3>Play it out</h3>
+          <div class="panel-row">
+            <label for="lines-slider">Moves ahead: <span id="lines-slider-val">4</span></label>
+            <input id="lines-slider" type="range" min="3" max="6" value="4">
+            <button id="btn-playout" class="btn primary">Get lines</button>
+          </div>
+          <div id="lines-results" class="lab-lines"></div>
+          <div class="panel-row">
+            <button id="btn-line-play" class="btn" disabled>Play</button>
+            <button id="btn-line-pause" class="btn" disabled>Pause</button>
+            <button id="btn-line-reset" class="btn" disabled>Reset</button>
+          </div>
+        </div>
+        <div class="lab-panel">
+          <h3>My plan</h3>
+          <div class="panel-row">
+            <button id="btn-lab-plan" class="btn primary" title="Engine-best plan for you vs. the replies players at your level actually make — with the goal and the reason behind each move.">Show my plan</button>
+            <select id="lab-opponent-level" class="opp-level" title="Whose likely replies to show — human moves at this level">
+              <option value="casual">Casual (~1300)</option>
+              <option value="club" selected>Club (1500–1900)</option>
+              <option value="advanced">Advanced (2000–2200)</option>
+              <option value="expert">Expert (2200+)</option>
+              <option value="masters">Masters (OTB)</option>
+            </select>
+          </div>
+          <div id="lab-plan-result" class="plan-panel hidden"></div>
+        </div>
+        <div class="lab-panel">
+          <h3>Master suggestions</h3>
+          <button id="btn-suggest" class="btn primary">Coach suggestions</button>
+          <div id="suggest-cards" class="card-grid"></div>
+          <div id="master-note" class="coach-box hidden"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="pfh-menu" role="menu" hidden>
+  <button type="button" class="btn" data-side="white">▶ Play as White</button>
+  <button type="button" class="btn" data-side="black">▶ Play as Black</button>
+</div>
+
+<!-- V24: pure-decoration confetti host (divs carry no text) -->
+<div id="confetti-host" aria-hidden="true"></div>
+
+<!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
+<script src="vendor/chess.js?v=33"></script>
+<script src="js/engine.js?v=33"></script>
+<script src="api-shim.js?v=33"></script>
+<script src="pieces.js?v=33"></script>
+<script src="board.js?v=33"></script>
+<script src="app.js?v=33"></script>
+<script>
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  navigator.serviceWorker.register("sw.js").catch(function () {});
+}
+</script>
+</body>
+</html>
