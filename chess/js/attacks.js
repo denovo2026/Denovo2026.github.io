@@ -19,7 +19,45 @@ const Attacks = {
   solved: false,
   busy: false,
   score: { asked: 0, right: 0 },
+  // v42: the whole line, not just the first move
+  seq: [],           // uci moves of the line (attacker, defender, attacker…)
+  step: 0,           // index into seq of the move being asked
+  fenNow: null,      // position on the board while solving
+  clean: true,       // every attacker move found first try so far
+  missed: false,     // a miss was already sent to the flashcards
 };
+
+/* the stored line ("39.Rxh7 Rxh7 40.Qxe6+ Kh8 …") -> uci moves, at most 3 of the attacker's */
+function attacksLine(p) {
+  const out = [];
+  try {
+    const ch = new Chess(p.fen);
+    const toks = String(p.line_san || "").split(/\s+/).map(t => t.replace(/^\d+\.+/, "")).filter(Boolean);
+    for (const t of toks) {
+      const m = ch.move(t);
+      if (!m) break;
+      out.push(m.from + m.to + (m.promotion || ""));
+      if (out.length >= 5) break;
+    }
+  } catch (_) { /* fall back to the first move */ }
+  if (!out.length || out[0] !== p.solution_uci) return [p.solution_uci];
+  // the line must end on an attacker move
+  return out.length % 2 === 0 ? out.slice(0, -1) : out;
+}
+function attacksFenAfter(fen, uci) {
+  try { const ch = new Chess(fen); ch.move({ from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] || "q" }); return ch.fen(); }
+  catch (_) { return null; }
+}
+function attacksSendMiss(p, fen, best, played) {
+  if (Attacks.missed) return;
+  Attacks.missed = true;
+  try {
+    fetch("api/misses/add", { method: "POST", body: JSON.stringify({ source: "attacks", items: [{
+      fen_before: fen, best_uci: best, uci: played || null,
+      title: (Attacks.pattern ? Attacks.pattern.name : "Attack") + " — " + p.white + " vs " + p.black,
+      explanation: p.note || "", motif: "missed_check" }] }) });
+  } catch (_) { /* best effort */ }
+}
 
 const attacksBoard = new Board($("attacks-board"), { onMove: onAttacksMove });
 
@@ -121,6 +159,7 @@ function showPuzzle() {
   }
   attacksBoard.setFen(p.fen);
   attacksBoard.clearArrows();
+  Attacks.seq = attacksLine(p); Attacks.step = 0; Attacks.fenNow = p.fen; Attacks.clean = true; Attacks.missed = false;
   // drawn from the attacker's side: the side to move is the one attacking
   attacksBoard.setOrientation(fenSide(p.fen) === "w" ? "white" : "black");
   attacksBoard.setLastMove(null, null);
@@ -128,8 +167,9 @@ function showPuzzle() {
   $("attacks-puzzle-label").textContent =
     p.white + " vs " + p.black + " — " + p.section + ", round " + p.round
     + ". " + mover + " to play and attack.";
+  const own = Math.ceil(Attacks.seq.length / 2);
   attacksSetStatus("Position " + (Attacks.at + 1) + " of "
-    + Attacks.queue.length + ". Find the move.");
+    + Attacks.queue.length + ". " + (own > 1 ? "Work out the line: " + own + " moves of yours, nothing is shown until you have them all." : "Find the move."));
 }
 
 function renderAttacksScore() {
@@ -165,17 +205,42 @@ async function onAttacksMove(from, to) {
   Attacks.busy = true;
   try {
     const guess = uciCandidate(attacksBoard, from, to);
-    Attacks.score.asked++;
+    const want = Attacks.seq[Attacks.step];
+    const own = Math.ceil(Attacks.seq.length / 2), n = Attacks.step / 2 + 1;
+    if (Attacks.step === 0) Attacks.score.asked++;
     if (typeof ccLogAnswer === "function") ccLogAnswer("tactics", "attacks");
-    if (guess === p.solution_uci) {
-      Attacks.score.right++;
+    // any mate is as good as the stored move
+    const after = attacksFenAfter(Attacks.fenNow, guess);
+    const mates = after && (() => { try { return new Chess(after).isCheckmate(); } catch (_) { return false; } })();
+    if (guess === want || mates) {
+      Attacks.fenNow = after;
+      attacksBoard.setFen(after);
+      attacksBoard.setLastMove(guess.slice(0, 2), guess.slice(2, 4));
+      Attacks.step += 2;
+      if (Attacks.step >= Attacks.seq.length || mates) {
+        if (Attacks.clean) Attacks.score.right++;
+        renderAttacksScore();
+        attacksSetStatus((own > 1 ? "That is the whole line — " + own + " of " + own + "." : "That is the move.")
+          + (Attacks.clean ? "" : " (Not all first try, so it goes to your flashcards.)"), "good");
+        revealAnswer(Attacks.clean);
+        return;
+      }
       renderAttacksScore();
-      attacksSetStatus("That is the move.", "good");
-      revealAnswer(true);
+      const reply = Attacks.seq[Attacks.step - 1];
+      await new Promise(r => setTimeout(r, 350));
+      const fenReply = attacksFenAfter(Attacks.fenNow, reply);
+      let replySan = reply;
+      try { const c = new Chess(Attacks.fenNow); replySan = c.move({ from: reply.slice(0, 2), to: reply.slice(2, 4), promotion: reply[4] || "q" }).san; } catch (_) {}
+      Attacks.fenNow = fenReply;
+      attacksBoard.setFen(fenReply);
+      attacksBoard.setLastMove(reply.slice(0, 2), reply.slice(2, 4));
+      attacksSetStatus("Right (" + n + " of " + own + "). The reply is " + replySan + " — now your next move.", "good");
     } else {
+      Attacks.clean = false;
+      attacksSendMiss(p, Attacks.fenNow, want, guess);
       renderAttacksScore();
-      attacksBoard.setFen(p.fen);   // a wrong move left up teaches the wrong picture
-      attacksSetStatus("Not that one. Read the preconditions on the right — "
+      attacksBoard.setFen(Attacks.fenNow);   // a wrong move left up teaches the wrong picture
+      attacksSetStatus("Not that one" + (Attacks.step ? " (move " + n + " of " + own + ")" : "") + ". Read the preconditions on the right — "
         + "the move is there because one of them is met.", "warn");
     }
   } finally {
@@ -197,8 +262,9 @@ $("btn-attacks-next").addEventListener("click", () => {
 $("btn-attacks-show").addEventListener("click", () => {
   if (!currentPuzzle()) return;
   if (!Attacks.solved) {
-    Attacks.score.asked++;
+    if (Attacks.step === 0) Attacks.score.asked++;
     renderAttacksScore();
+    attacksSendMiss(currentPuzzle(), Attacks.fenNow || currentPuzzle().fen, Attacks.seq[Attacks.step] || currentPuzzle().solution_uci, null);
   }
   attacksSetStatus("Here it is — now find why it works.");
   revealAnswer(false);

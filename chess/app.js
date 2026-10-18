@@ -292,6 +292,7 @@ function switchTab(name) {
   if (name === "masters") initMasters();
   if (name === "progress") { initProgress(); if (typeof renderProgressOpenings === "function") renderProgressOpenings(); }
   if (name === "games" && typeof loadLibrary === "function" && !Games.list.length) loadLibrary();
+  if (name === "calc" && typeof initCalc === "function") initCalc();
   if (name === "modern" && typeof initModern === "function") initModern();
   if (name === "grunfeld" && typeof initGrunfeld === "function") initGrunfeld();
   if (name === "attacks" && typeof initAttacks === "function") initAttacks();
@@ -2918,7 +2919,13 @@ function updatePuzzleHintButton() {
 function showPuzzleWhy(why, context) {
   if (!why || !why.text) return;
   const box = $("puzzle-why");
-  box.textContent = "Why: " + why.text + (context ? " " + context : "");
+  // v42: answer the question yourself first; the line and the principle come after
+  box.innerHTML = '<div class="why-q"><b>Think first:</b> ' + escapeHtml(why.question || why.text) + "</div>"
+    + '<button type="button" class="btn mini why-show">Show the idea</button>'
+    + '<div class="why-a hidden">' + (why.line ? '<div class="mt-line">Line: ' + escapeHtml(why.line) + "</div>" : "")
+    + (why.principle ? '<div class="why-principle"><b>' + escapeHtml(why.principle.title) + ".</b> " + escapeHtml(why.principle.text) + "</div>" : "")
+    + (context ? '<div class="info-line">' + escapeHtml(context) + "</div>" : "") + "</div>";
+  box.querySelector(".why-show").addEventListener("click", (e) => { box.querySelector(".why-a").classList.remove("hidden"); e.target.remove(); });
   box.classList.remove("hidden");
   syncSpeakButtons();
 }
@@ -6434,7 +6441,7 @@ function renderLessons() {
     c.dataset.lessonId = l.id;
     c.innerHTML = "<h4>" + escapeHtml(l.title) + "</h4>" +
       '<div class="card-meta">' + escapeHtml(l.principle) + " · " + escapeHtml(l.difficulty || "") +
-      " · " + (l.steps_count || "?") + " steps</div>" +
+      " · " + (l.steps_count || "?") + " steps" + (l.tasks ? " · " + l.tasks + " moves to find" : "") + "</div>" +
       '<div class="card-summary">' + escapeHtml(l.summary || "") + "</div>";
     c.addEventListener("click", () => openLesson(l.id));
     host.appendChild(c);
@@ -6466,7 +6473,10 @@ function showLessonStep() {
   lessonBoard.clearArrows();
   lessonBoard.setMarked([]);
   lessonBoard.setInteractive(!!step.task);
-  $("lesson-step-text").textContent = step.text;
+  // v42: with a move to find, the explanation waits until you have found it
+  Learn.misses = 0;
+  $("lesson-step-text").textContent = step.task ? "Find the move first — the explanation appears when you do." : step.text;
+  $("lesson-step-text").classList.toggle("muted", !!step.task);
   $("lesson-progress").textContent = "Step " + (Learn.stepIdx + 1) + " / " + l.steps.length;
   $("btn-lesson-prev").disabled = Learn.stepIdx === 0;
   $("btn-lesson-next").textContent = Learn.stepIdx === l.steps.length - 1 ? "Finish" : "Next →";
@@ -6492,12 +6502,19 @@ async function onLessonMove(from, to) {
     if (!r.legal) { lessonBoard.shake(); return; }
     if (step.solution_uci && uci !== step.solution_uci) {
       lessonBoard.shake();
+      Learn.misses = (Learn.misses || 0) + 1;
+      if (Learn.misses === 1) {
+        try { apiPost("/api/misses/add", { source: "lesson", items: [{ fen_before: step.fen, best_uci: step.solution_uci, uci, title: "Lesson — " + l.title, explanation: step.text, motif: "positional" }] }); } catch (_) {}
+      }
       const hint = $("lesson-task-hint");
       hint.className = "banner red";
-      hint.textContent = "Not quite — try again. Hint: " + step.task;
+      hint.textContent = "Not quite — try again. " + (Learn.misses >= 2 ? "Hint: " + step.task + " Look at the " + step.solution_uci.slice(0, 2) + " piece." : "Hint: " + step.task);
       return;
     }
     Learn.taskSolved = true;
+    $("lesson-step-text").textContent = step.text;
+    $("lesson-step-text").classList.remove("muted");
+    try { apiPost("/api/activity/answer", { pillar: "masters", kind: "lesson_task" }); } catch (_) {}
     lessonBoard.setFen(r.fen_after);
     lessonBoard.setLastMove(from, to);
     lessonBoard.setInteractive(false);

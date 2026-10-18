@@ -726,13 +726,39 @@
     if (!p) fail(404, "puzzle_not_found");
     return p;
   }
+  /* v42: no assembled "works because" sentence — a question to answer first,
+     the line, and the matching principle from knowledge.json */
+  var THEME_KNOW = { fork: "k-tc-02", pin: "k-tc-02", skewer: "k-tc-02", discoveredAttack: "k-tc-02", discoveredCheck: "k-tc-02",
+    hangingPiece: "k-tc-02", doubleCheck: "k-tc-02", trappedPiece: "k-tc-02", xRayAttack: "k-tc-02", capturingDefender: "k-tc-02",
+    deflection: "k-tc-02", interference: "k-tc-02", clearance: "k-tc-02",
+    mateIn1: "k-ks-02", mateIn2: "k-ks-02", mateIn3: "k-ks-02", mateIn4: "k-ks-02", mate: "k-ks-02", exposedKing: "k-ks-02",
+    attackingF2F7: "k-ks-02", sacrifice: "k-ks-02", backRankMate: "k-ks-02", smotheredMate: "k-ks-02", attraction: "k-ks-02",
+    rookEndgame: "k-eg-03", pawnEndgame: "k-eg-04", zugzwang: "k-eg-04", bishopEndgame: "k-eg-04", knightEndgame: "k-eg-04",
+    queenEndgame: "k-eg-05", queenRookEndgame: "k-eg-05", advancedPawn: "k-eg-01", promotion: "k-eg-01",
+    quietMove: "k-me-01", defensiveMove: "k-me-01", intermezzo: "k-me-01" };
+  var KNOW = null;
+  loadData("knowledge.json").then(function (d) { KNOW = {}; (d.entries || []).forEach(function (e) { KNOW[e.id] = e; }); }).catch(function () {});
+  function knowledgeFor(themes) {
+    if (!KNOW) return null;
+    for (var i = 0; i < themes.length; i++) { var e = KNOW[THEME_KNOW[themes[i]]]; if (e) return { id: e.id, title: e.title, text: e.text }; }
+    return null;
+  }
+  function puzzleQuestion(p, themes) {
+    var s = p.solution_san, side = p.side_to_move === "black" ? "Black" : "White", has = function (t) { return themes.indexOf(t) !== -1; };
+    var first = s[0], after = s.length > 2 ? s[0] + " " + s[1] : first;
+    if (themes.some(function (t) { return /^mate/.test(t) || /Mate$/.test(t); })) return "Before you read on: after " + first + ", which squares can the king still use, and what covers each one?";
+    if (has("fork") || has("doubleCheck") || has("discoveredAttack") || has("discoveredCheck")) return "Name the two things " + first + " hits at once. Which one can the opponent not save?";
+    if (has("pin") || has("skewer") || has("xRayAttack")) return "After " + first + ", which piece is stuck on its line, and what stands behind it?";
+    if (has("deflection") || has("attraction") || has("capturingDefender") || has("interference") || has("clearance")) return "Which defender does " + first + " pull away or cut off, and what was it guarding?";
+    if (has("quietMove") || has("zugzwang") || has("defensiveMove")) return first + " is not a check or a capture. What does it stop, or what does it threaten next?";
+    if (themes.some(function (t) { return /Endgame$/.test(t); })) return "Why is " + first + " the right square in this ending? What goes wrong with the natural alternative?";
+    if (has("sacrifice") || has("exposedKing")) return "What does " + side + " get back for the material after " + after + "?";
+    return s.length > 2 ? "After " + after + ", what is the follow-up, and why can the reply not avoid it?" : "What did " + first + " attack that was not defended enough?";
+  }
   function puzzleWhy(p) {
-    var first = p.solution_san[0];
     var themes = (p.themes && p.themes.length ? p.themes : [p.theme]);
-    var reasons = themes.map(function (t) { return THEME_WHY[t]; }).filter(Boolean).slice(0, 2);
-    var text = first + " works because " + (reasons.length ? reasons.join(", and ") : "it is the most forcing move") + ".";
-    if (p.solution_san.length > 1) text += " Full line: " + p.solution_san.join(" ") + ".";
-    return { text: text };
+    var q = puzzleQuestion(p, themes);
+    return { text: q, question: q, line: p.solution_san.join(" "), principle: knowledgeFor(themes) };
   }
   function pubPuzzle(p) {
     return { id: p.id, fen: p.fen, side_to_move: p.side_to_move, theme: THEME_LABEL(p.theme), rating: p.rating,
@@ -807,6 +833,12 @@
     h.attempts = (h.attempts || 0) + 1; h.last = nowIso();
     if (solved) { h.solved = true; h.solved_at = nowIso(); }
     if (wrong) h.failed = (h.failed || 0) + 1;
+    if (wrong && !h.miss_sent) {
+      h.miss_sent = true;
+      try { var mc = tryChess(p.fen); for (var mi = 0; mi < progress; mi++) { tryMove(mc, sol[2 * mi]); if (sol[2 * mi + 1]) tryMove(mc, sol[2 * mi + 1]); }
+        addMisses([{ fen_before: mc.fen(), best_uci: sol[2 * progress], uci: moves[progress], title: "Puzzle " + THEME_LABEL(p.theme) + " (" + p.rating + ")",
+          explanation: puzzleWhy(p).question, motif: /mate/i.test(p.theme) ? "missed_mate" : "missed_capture" }], "puzzle"); } catch (_) {}
+    }
     hist[p.id] = h; S.set("puzzleHistory", hist);
     if (solved) logActivity("tactics", "puzzle");
     return {
@@ -820,7 +852,11 @@
   route("POST", "/api/puzzle/reveal", async function (b) {
     var p = await findPuzzle(b.id);
     var hist = S.get("puzzleHistory", {});
-    hist[p.id] = Object.assign(hist[p.id] || {}, { revealed: true, last: nowIso() });
+    if (!(hist[p.id] && hist[p.id].miss_sent)) {
+      try { addMisses([{ fen_before: p.fen, best_uci: p.moves_uci[0], title: "Puzzle " + THEME_LABEL(p.theme) + " (" + p.rating + ")", explanation: puzzleWhy(p).question,
+        motif: /mate/i.test(p.theme) ? "missed_mate" : "missed_capture" }], "puzzle"); } catch (_) {}
+    }
+    hist[p.id] = Object.assign(hist[p.id] || {}, { revealed: true, last: nowIso(), miss_sent: true });
     S.set("puzzleHistory", hist);
     return { id: p.id, solution_san: p.solution_san, solution_uci: p.moves_uci, why: puzzleWhy(p), context: p.context || null };
   });
@@ -975,6 +1011,23 @@
   function pubCard(c) { var o = clone(c); return o; }
 
   route("GET", "/api/flashcards/stats", function () { return fcStats(); });
+  /* v42: a miss anywhere (attacks, puzzles, calculation, lessons) becomes a
+     flashcard and joins the rolling "Training misses" Woodpecker set */
+  var MISS_SET_ID = "set-misses";
+  function addMisses(items, source) {
+    var r = addCards(items.map(function (m) { return Object.assign({ force_due: true }, m); }), source || "miss");
+    var byId = {}; cards().forEach(function (c) { byId[c.id] = c; });
+    var ids = items.map(function (m) { return "c" + hashStr((tryChess(m.fen_before) ? tryChess(m.fen_before).fen() : m.fen_before) + m.best_uci); });
+    var all = sets(), s = all.find(function (x) { return x.id === MISS_SET_ID; });
+    if (!s) { s = { id: MISS_SET_ID, name: "Training misses", kind: "source", value: "miss", cards: [], cycles: [], prs: {}, created_at: nowIso() }; all.push(s); }
+    var have = new Set(s.cards.map(function (c) { return c.id; }));
+    ids.forEach(function (id) { var c = byId[id]; if (c && !have.has(id)) { have.add(id); s.cards.push({ id: c.id, fen_before: c.fen_before, best_uci: c.best_uci, best_san: c.best_san,
+      played_san: c.played_san, played_uci: c.played_uci, title: c.title, hint: c.hint, motif: c.motif, explanation: c.explanation }); } });
+    s.cards = s.cards.slice(-60);
+    saveSets(all);
+    return { added: r.added, already_present: r.already_present, set_size: s.cards.length };
+  }
+  route("POST", "/api/misses/add", function (b) { return addMisses(b.items || [], String(b.source || "miss").slice(0, 24)); });
   route("POST", "/api/flashcards/add", function (b) {
     var r = addCards(b.mistakes || [], b.source || "");
     return { added: r.added, already_present: r.already_present, skipped_invalid: r.skipped_invalid };
@@ -1978,16 +2031,37 @@
   /* ------------------------------------------------------------------ */
   /* lessons / model games / profile / openings / progress               */
   /* ------------------------------------------------------------------ */
+  // v42: the coach's lessons (Pawn Breaks, Prophylaxis, …) come first, ordered by his weak spots
+  var LESSON_ORDER = ["L06", "L07", "L05", "L04", "L03", "L08", "L02", "L01"];
+  async function allLessons() {
+    var base = (await loadData("lessons.json")).lessons, coach = [];
+    try { coach = clone(await loadData("coach_lessons.json")); } catch (_) {}
+    coach.sort(function (a, b) { return LESSON_ORDER.indexOf(a.id) - LESSON_ORDER.indexOf(b.id); });
+    coach.forEach(function (l) { l.principle = String(l.principle || "").replace(/-/g, " ").replace(/^./, function (c) { return c.toUpperCase(); }); l.coach = true; });
+    return coach.concat(base);
+  }
+  /* a step without a task gets one when the next step is one legal move away */
+  function lessonWithTasks(l) {
+    l = clone(l);
+    for (var i = 0; i < l.steps.length; i++) {
+      var st = l.steps[i];
+      if (st.task || !l.steps[i + 1]) continue;
+      var ch = tryChess(st.fen), next = l.steps[i + 1].fen.split(" ").slice(0, 3).join(" ");
+      if (!ch) continue;
+      var hit = ch.moves({ verbose: true }).find(function (m) { var t = tryChess(st.fen); t.move(m.san); return t.fen().split(" ").slice(0, 3).join(" ") === next; });
+      if (hit) { st.task = "Find the move that comes next — " + (st.fen.split(" ")[1] === "w" ? "White" : "Black") + " to play."; st.solution_uci = hit.from + hit.to + (hit.promotion || ""); st.derived = true; }
+    }
+    return l;
+  }
   route("GET", "/api/lessons", async function () {
-    var d = await loadData("lessons.json");
-    return { lessons: d.lessons.map(function (l) { return { id: l.id, title: l.title, principle: l.principle, difficulty: l.difficulty, steps_count: l.steps.length, summary: l.summary }; }) };
+    var all = await allLessons();
+    return { lessons: all.map(function (l) { return { id: l.id, title: l.title, principle: l.principle, difficulty: l.difficulty, steps_count: l.steps.length, summary: l.summary,
+      tasks: lessonWithTasks(l).steps.filter(function (s) { return s.task; }).length, coach: !!l.coach }; }) };
   });
   route("GET", "/api/lessons/:id", async function (b, q, p) {
-    var d = await loadData("lessons.json");
-    var l = d.lessons.find(function (x) { return x.id === p.id; });
+    var l = (await allLessons()).find(function (x) { return x.id === p.id; });
     if (!l) fail(404, "lesson_not_found");
-    logActivity("masters", "lesson");
-    return l;
+    return lessonWithTasks(l);
   });
   /* opening repertoires (Modern / Grünfeld) and kingside attacks          */
   /* /api/repertoire/:slug        -> overview: everything except the heavy  */
@@ -2253,7 +2327,7 @@
   // v40: a streak day needs a real answer (viewing a game review or opening a tab does not count)
   var STREAK_SKIP = { analysis: 1 };
   route("POST", "/api/activity/answer", function (b) {
-    var pillar = { openings: "openings", tactics: "tactics" }[b.pillar] || "tactics";
+    var pillar = { openings: "openings", tactics: "tactics", masters: "masters" }[b.pillar] || "tactics";
     logActivity(pillar, String(b.kind || "answer").slice(0, 32));
     return { ok: true };
   });
@@ -2495,6 +2569,101 @@
     if (st && st.first_import) window.dispatchEvent(new CustomEvent("cc-mine-imported", { detail: st }));
     return st;
   }).catch(function (e) { console.info("[chesscoach] my data not loaded:", e && e.message); });
+
+  /* ------------------------------------------------------------------ */
+  /* v42: Calculation trainer (ported from the newer frontend, client-side) */
+  /* ------------------------------------------------------------------ */
+  function nullMoveFen(fen) { var p = mkChess(fen).fen().split(" "); p[1] = p[1] === "w" ? "b" : "w"; p[3] = "-"; return p.join(" "); }
+  route("POST", "/api/calc/position", async function (b) {
+    var src = b.source || "mixed", seen = new Set(b.seen_ids || []), pool = [];
+    if (src === "puzzle" || src === "mixed") {
+      var pz = (await loadData("puzzles.json")).puzzles.filter(function (p) { return p.moves_uci.length >= 3; });
+      pz.forEach(function (p) { pool.push({ id: "p:" + p.id, fen: p.fen, label: "Curated tactic (" + THEME_LABEL(p.theme) + ", " + p.rating + ")", src: "puzzle" }); });
+    }
+    if (src === "mygame" || src === "mixed") {
+      cards().filter(function (c) { return /^my-|miss|puzzle|attacks/.test(c.source || ""); }).forEach(function (c) {
+        pool.push({ id: "c:" + c.id, fen: c.fen_before, label: c.source === "my-cards" || c.source === "my-games" ? "From your games" : "From your misses", src: "mygame" }); });
+    }
+    if (src === "mixed") {
+      var at = await loadData("attacks.json");
+      (at.patterns || []).forEach(function (pt) { (pt.puzzles || []).forEach(function (q, i) { pool.push({ id: "a:" + pt.id + i, fen: q.fen, label: "Kingside attack — " + pt.name, src: "attacks" }); }); });
+    }
+    if (!pool.length) fail(404, "no_positions");
+    var fresh = pool.filter(function (x) { return !seen.has(x.id); });
+    var choice = pick(fresh.length ? fresh : pool);
+    var c = cctOf(choice.fen);
+    return { id: choice.id, fen: mkChess(choice.fen).fen(), label: choice.label, source: choice.src,
+      forcing_counts: { total: new Set(c.checks.concat(c.captures.map(function (x) { return x.san; }))).size } };
+  });
+  function moveKind(fen, uci) { var f = moveFacts(fen, uci); return !f ? "quiet" : f.mate ? "mate" : f.check ? "check" : f.captured ? "capture" : "quiet"; }
+  route("POST", "/api/calc/solution", async function (b) {
+    var fen = mkChess(b.fen).fen(), plies = clamp(b.plies || 5, 1, 9);
+    var a = await analysePos(fen, { depth: 14, movetime: 2500, multipv: 1, priority: "high", pvLen: plies });
+    var line = [], cur = fen, pv = (a.lines[0] && a.lines[0].moves_uci) || [];
+    for (var i = 0; i < Math.min(plies, pv.length); i++) { var f = moveFacts(cur, pv[i]); if (!f) break; line.push({ uci: pv[i], san: f.san, kind: moveKind(cur, pv[i]) }); cur = f.fen_after; }
+    return { line: line, eval: a.eval };
+  });
+  route("POST", "/api/calc/check", async function (b) {
+    var fen = mkChess(b.fen).fen(), moves = (b.moves_uci || []).slice(0, 9);
+    var steps = [], cur = fen, clean = 0, cleanBroken = false, correct = 0;
+    for (var i = 0; i < moves.length; i++) {
+      var f = moveFacts(cur, moves[i]);
+      if (!f) { steps.push({ ply: i + 1, side: i % 2 ? "them" : "you", played_uci: moves[i], verdict: "illegal" }); cleanBroken = true; break; }
+      var pre = await analysePos(cur, { depth: 12, movetime: 1500, multipv: 1, priority: "high" });
+      var bestCp = capCp(evCp(pre.eval));
+      var post = await analysePos(f.fen_after, { depth: 12, movetime: 1500, multipv: 1, priority: "high" });
+      var afterCp = post.terminal ? (post.reason === "checkmate" ? 1500 : 0) : capCp(-evCp(post.eval));
+      var loss = moves[i] === pre.best ? 0 : Math.max(0, Math.round(bestCp - afterCp));
+      var verdict = loss === 0 ? "best" : loss <= 40 ? "good" : loss < 100 ? "inaccuracy" : loss < 250 ? "mistake" : "blunder";
+      var ok = loss <= 40;
+      if (ok) correct++;
+      if (!ok) cleanBroken = true;
+      if (!cleanBroken && i % 2 === 0) clean++;
+      steps.push({ ply: i + 1, side: i % 2 ? "them" : "you", played_uci: moves[i], played_san: f.san, verdict: verdict, best_san: pre.best_san, best_uci: pre.best, loss_cp: loss, fen_before: cur });
+      cur = f.fen_after;
+      if (post.terminal) break;
+    }
+    var sol = await dispatch("POST", "/api/calc/solution", { fen: fen, plies: Math.max(moves.length, 3) });
+    var firstBad = steps.find(function (s) { return s.verdict !== "best" && s.verdict !== "good"; });
+    if (firstBad && firstBad.best_uci && firstBad.verdict !== "illegal") {
+      addMisses([{ fen_before: firstBad.fen_before, best_uci: firstBad.best_uci, uci: firstBad.played_uci, title: "Calculation — ply " + firstBad.ply + " (" + (firstBad.side === "you" ? "your move" : "their reply") + ")",
+        explanation: "In your calculated line, " + firstBad.played_san + " was a " + firstBad.verdict + "; " + firstBad.best_san + " was the move.", motif: "positional" }], "calc");
+    }
+    var coach = !steps.length ? null : firstBad
+      ? "Your line held for " + clean + " move" + (clean === 1 ? "" : "s") + ". It broke at ply " + firstBad.ply + ": " + (firstBad.side === "them"
+        ? "you expected " + firstBad.played_san + ", but the opponent has " + firstBad.best_san + ". Check their forcing replies before you go deeper."
+        : firstBad.played_san + " gives away " + (firstBad.loss_cp / 100).toFixed(1) + "; " + firstBad.best_san + " was stronger.")
+      : "Clean all the way — every ply holds up against the engine.";
+    logActivity("tactics", "calc");
+    return { steps: steps, correct_plies: correct, clean_depth_moves: clean, solution: sol, coach: coach ? { coach: "Coach", commentary: coach } : null };
+  });
+  route("POST", "/api/calc/census", async function (b) {
+    var fen = mkChess(b.fen).fen();
+    function side(f) {
+      var ch = tryChess(f); if (!ch) return { counts: { total: 0 }, moves: [] };
+      var list = [];
+      ch.moves({ verbose: true }).forEach(function (m) {
+        var t = tryChess(f); t.move(m.san);
+        var kind = t.isCheckmate() ? "mate" : t.inCheck() ? "check" : m.captured ? "capture" : m.promotion ? "promotion" : null;
+        if (!kind) {
+          // a threat: after the move, it attacks an undefended or bigger piece
+          var t2 = tryChess(nullMoveFen(t.fen()));
+          if (t2 && !t.inCheck()) {
+            var hits = t2.moves({ verbose: true }).filter(function (r) { return r.from === m.to && r.captured && (PIECE_VAL[r.captured] > (PIECE_VAL[m.piece] || 0) || !t.moves({ verbose: true }).some(function (d) { return d.to === r.to; })); });
+            if (hits.length) kind = "threat";
+          }
+        }
+        if (kind) list.push({ san: m.san, kind: kind, uci: m.from + m.to + (m.promotion || "") });
+      });
+      var counts = { total: list.length };
+      list.forEach(function (x) { counts[x.kind === "mate" ? "check" : x.kind] = (counts[x.kind === "mate" ? "check" : x.kind] || 0) + 1; });
+      return { counts: counts, moves: list.slice(0, 14), hidden: Math.max(0, list.length - 14) };
+    }
+    var you = side(fen), opp = mkChess(fen).inCheck() ? { counts: { total: 0 }, moves: [], note: "You are in check — they have no free move." } : side(nullMoveFen(fen));
+    var coach = opp.counts.total > you.counts.total ? "They have more forcing moves than you. Before you calculate your own attack, list their checks and captures."
+      : "Start with your checks, then captures, then threats — and give each one their best reply.";
+    return { you: you, opponent: opp, coach: { coach: "Coach", commentary: coach } };
+  });
 
   window.__CC_SHIM_ROUTES__ = ROUTES.length;
   window.ChessCoachShim = { dispatch: dispatch, storage: S, version: SHIM_VERSION,

@@ -1475,3 +1475,29 @@ select.opp-level { font-size: 0.92rem; }
   /* v41: six pillars (Openings added) on one row */
   .plan-board { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
 }
+
+/* v42: work out moves first */
+.why-q { margin-bottom: 6px; }
+.why-a { margin-top: 6px; display: grid; gap: 6px; }
+.why-principle { border-left: 3px solid var(--accent); padding-left: 8px; }
+.calc-slots { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 6px; }
+.calc-slot { display: inline-flex; flex-direction: column; align-items: center; min-width: 54px; padding: 4px 8px; border: 1px dashed var(--border-strong);
+  border-radius: 8px; font-family: var(--mono, monospace); font-size: 0.9rem; color: var(--text-2); }
+.calc-slot.filled { border-style: solid; color: var(--text); background: var(--surface-2); }
+.calc-slot.next { border-color: var(--accent); }
+.calc-slot-who { font-size: 0.65rem; text-transform: uppercase; letter-spacing: .04em; color: var(--text-3); }
+.calc-steps { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 6px 0; }
+.calc-steps th, .calc-steps td { text-align: left; padding: 3px 6px; border-bottom: 1px solid var(--border); }
+.calc-steps tr.v-best td, .calc-steps tr.v-good td { color: var(--accent-text); }
+.calc-steps tr.v-mistake td, .calc-steps tr.v-blunder td, .calc-steps tr.v-illegal td { color: var(--danger); }
+.calc-steps tr.v-inaccuracy td { color: var(--warn-text); }
+.calc-census { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
+.census-col h4 { margin: 0 0 4px; }
+.census-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.census-item { font-family: var(--mono, monospace); font-size: 0.8rem; padding: 1px 6px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--border); }
+.census-item.kind-check, .census-item.kind-mate { border-color: var(--danger); }
+.census-item.kind-capture { border-color: var(--warn); }
+.census-item.kind-threat { border-color: var(--info); }
+.calc-guess-row input { width: 56px; }
+.calc-blind { display: inline-flex; gap: 6px; align-items: center; }
+@media (min-width: 961px) { #tab-calc { --board-chrome: 48px; } }

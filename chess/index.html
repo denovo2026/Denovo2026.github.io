@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=41">
+<link rel="stylesheet" href="style.css?v=42">
 </head>
 <body>
 <header class="app-header">
@@ -67,6 +67,7 @@
     <button class="tab-btn" data-tab="modern">Modern</button>
     <button class="tab-btn" data-tab="grunfeld">Gr&uuml;nfeld</button>
     <button class="tab-btn" data-tab="attacks">Attacks</button>
+    <button class="tab-btn" data-tab="calc">Calculation</button>
     <button class="tab-btn" data-tab="games">My Games</button>
     <button class="tab-btn" data-tab="learn">Learn</button>
     <button class="tab-btn" data-tab="progress">Progress</button>
@@ -1166,6 +1167,68 @@
   </section>
 
   <!-- ===================== KINGSIDE ATTACKS ===================== -->
+  <!-- ===================== CALCULATION (v42) ===================== -->
+  <section id="tab-calc" class="tab-panel rep-tab">
+    <div class="rep-layout">
+      <div class="rep-left">
+        <div id="calc-label" class="lab-game-bar">Load a position to start.</div>
+        <div id="calc-board" class="board-holder"></div>
+      </div>
+      <div class="rep-right">
+        <div class="rep-coachbar">
+          <span class="rep-coach-avatar" aria-hidden="true">&#x265E;</span>
+          <div class="rep-coachbar-text">
+            <strong>Calculation</strong>
+            <span class="info-line">Work the whole line out before anything moves: your move, their best answer, your move.</span>
+          </div>
+        </div>
+        <div class="rep-controls">
+          <div class="panel-row">
+            <button id="btn-calc-new" class="btn primary">New drill</button>
+            <select id="calc-source" title="Where drill positions come from">
+              <option value="mixed">Mixed</option>
+              <option value="puzzle">Curated tactics</option>
+              <option value="mygame">From my games and misses</option>
+            </select>
+            <button id="btn-calc-current" class="btn" title="Use the position on the Play & Analyze board">Use Play position</button>
+          </div>
+          <div class="panel-row">
+            <label for="calc-depth">Moves ahead: <span id="calc-depth-val">3</span></label>
+            <input id="calc-depth" type="range" min="2" max="4" value="3">
+            <label class="calc-blind"><input id="calc-blind" type="checkbox" checked> Blindfold (the board stays still)</label>
+          </div>
+          <div id="calc-slots" class="calc-slots"></div>
+          <div class="panel-row">
+            <button id="btn-calc-check" class="btn primary">Check my line</button>
+            <button id="btn-calc-undo" class="btn">Undo last</button>
+            <button id="btn-calc-clear" class="btn">Clear</button>
+            <button id="btn-calc-reveal" class="btn">Reveal solution</button>
+          </div>
+          <div class="rep-status-row"><span id="calc-status" class="info-line"></span></div>
+        </div>
+        <div class="rep-panels">
+          <div class="lab-panel">
+            <h3>Your line, graded</h3>
+            <div id="calc-verdict" class="calc-verdict hidden"></div>
+            <div id="calc-coach" class="coach-box hidden"></div>
+          </div>
+          <div class="lab-panel">
+            <h3>Forcing-move census</h3>
+            <p class="info-line">Count them yourself first: checks, captures, threats, for you and for them. Then reveal.</p>
+            <div class="panel-row calc-guess-row">
+              <label>Yours <input id="calc-guess-you" type="number" min="0" max="60" value="0"></label>
+              <label>Theirs <input id="calc-guess-them" type="number" min="0" max="60" value="0"></label>
+              <button id="btn-calc-census" class="btn">Reveal census</button>
+            </div>
+            <div id="calc-census-guess" class="info-line"></div>
+            <div id="calc-census" class="calc-census"></div>
+            <div id="calc-census-coach" class="coach-box hidden"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="tab-attacks" class="tab-panel rep-tab">
     <div class="rep-layout">
       <div class="rep-left">
@@ -1227,12 +1290,13 @@
 <!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
 <script src="vendor/chess.js?v=33"></script>
 <script src="js/engine.js?v=33"></script>
-<script src="api-shim.js?v=41"></script>
+<script src="api-shim.js?v=42"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=35"></script>
-<script src="app.js?v=41"></script>
-<script src="js/repertoire.js?v=41"></script>
-<script src="js/attacks.js?v=41"></script>
+<script src="app.js?v=42"></script>
+<script src="js/repertoire.js?v=42"></script>
+<script src="js/attacks.js?v=42"></script>
+<script src="js/calc.js?v=42"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});
