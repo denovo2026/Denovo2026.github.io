@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=38">
+<link rel="stylesheet" href="style.css?v=39">
 </head>
 <body>
 <header class="app-header">
@@ -301,6 +301,9 @@
               <button id="btn-cfg-usernames-save" class="btn">Save</button>
             </div>
             <div class="info-line"><span id="cfg-usernames-status"></span></div>
+            <div class="settings-divider">My training data</div>
+            <div class="panel-row"><span class="mine-status info-line"></span>
+              <button class="btn mini btn-mine-reload">Reload my training data</button></div>
             <div class="settings-divider">AI coach (local LLM)</div>
             <label class="llm-toggle" for="llm-enabled">
               <input id="llm-enabled" type="checkbox">
@@ -735,6 +738,8 @@
       </select>
       <button id="btn-fetch-games" class="btn primary">Fetch games</button>
       <span id="import-status" class="info-line"></span>
+      <span class="mine-bar"><span class="mine-status mine-chip" data-short="1">Loading your data…</span>
+      <button class="btn mini btn-mine-reload" title="Re-import your bundled mistake cards and analysed games (resets their review progress)">Reload my training data</button></span>
     </div>
     <div id="pgn-import-block" class="pgn-import hidden">
       <div class="info-line">In Noctie.ai, open your game &rarr; export/copy the PGN &rarr; paste it here.</div>
@@ -1199,12 +1204,12 @@
 <!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
 <script src="vendor/chess.js?v=33"></script>
 <script src="js/engine.js?v=33"></script>
-<script src="api-shim.js?v=38"></script>
+<script src="api-shim.js?v=39"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=35"></script>
-<script src="app.js?v=38"></script>
-<script src="js/repertoire.js?v=38"></script>
-<script src="js/attacks.js?v=38"></script>
+<script src="app.js?v=39"></script>
+<script src="js/repertoire.js?v=39"></script>
+<script src="js/attacks.js?v=39"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});

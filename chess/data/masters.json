@@ -119,6 +119,156 @@
    "plies": 35,
    "user_side": "white",
    "start_ply": 10
+  },
+  {
+   "id": "mg-g04",
+   "title": "Steinitz's King March",
+   "white": "Wilhelm Steinitz",
+   "black": "Curt von Bardeleben",
+   "event": "Hastings 1895",
+   "year": "1895",
+   "result": "1-0",
+   "principle": "Positional accumulation",
+   "themes": [
+    "positional",
+    "accumulation"
+   ],
+   "summary": "Steinitz accumulates small advantages — better structure, better pieces, central control — until the position wins itself. The founding document of positional chess.",
+   "pgn": "[Event \"Hastings 1895\"]\n[Date \"1895.??.??\"]\n[White \"Wilhelm Steinitz\"]\n[Black \"Curt von Bardeleben\"]\n[Result \"1-0\"]\n\n1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 Nf6 5. d4 exd4 6. cxd4 Bb4+ 7. Nc3 d5 8. exd5 Nxd5 9. O-O Be6 10. Bg5 Be7 11. Bxd5 Bxd5 12. Nxd5 Qxd5 13. Bxe7 Nxe7 14. Re1 f6 15. Qe2 Qd7 16. Rac1 c6 17. d5 cxd5 18. Nd4 Kf7 19. Ne6 Rhc8 20. Qg4 g6 21. Ng5+ Ke8 22. Rxe7+ Kf8 23. Rf7+ Kg8 24. Rg7+ Kh8 25. Rxh7+ 1-0",
+   "plies": 49,
+   "user_side": "white",
+   "start_ply": 12
+  },
+  {
+   "id": "mg-g06",
+   "title": "Capablanca's King March",
+   "white": "Jose Raul Capablanca",
+   "black": "Savielly Tartakower",
+   "event": "New York 1924",
+   "year": "1924",
+   "result": "1-0",
+   "principle": "Endgame technique",
+   "themes": [
+    "endgame",
+    "technique"
+   ],
+   "summary": "In a famous rook ending Capablanca marches his king up the board, sacrifices pawns for activity, and converts with machine-like clarity. Endgames are won with the king.",
+   "pgn": "[Event \"New York 1924\"]\n[Date \"1924.??.??\"]\n[White \"Jose Raul Capablanca\"]\n[Black \"Savielly Tartakower\"]\n[Result \"1-0\"]\n\n1. d4 e6 2. Nf3 f5 3. c4 Nf6 4. Bg5 Be7 5. Nc3 O-O 6. e3 b6 7. Bd3 Bb7 8. O-O Qe8 9. Qe2 Ne4 10. Bxe7 Nxc3 11. bxc3 Qxe7 12. a4 Bxf3 13. Qxf3 Nc6 14. Rfb1 Rae8 15. Qh3 Rf6 16. f4 Na5 17. Qf3 d6 18. Re1 Qd7 19. e4 fxe4 20. Qxe4 g6 21. g3 Kf8 22. Kg2 Rf7 23. h4 d5 24. cxd5 exd5 25. Qxe8+ Qxe8 26. Rxe8+ Kxe8 27. h5 Rf6 28. hxg6 hxg6 29. Rh1 Kf8 30. Rh7 Rc6 31. g4 Nc4 32. g5 Ne3+ 33. Kf3 Nf5 34. Bxf5 gxf5 35. Kg3 Rxc3+ 36. Kh4 Rf3 37. g6 Rxf4+ 38. Kg5 Re4 39. Kf6 Kg8 40. Rg7+ Kh8 41. Rxc7 Re8 42. Kxf5 Re4 43. Kf6 Rf4+ 44. Ke5 Rg4 45. g7+ Kg8 46. Rxa7 Rg1 47. Kxd5 Rc1 48. Kd6 Rc2 49. d5 Rc1 50. Rc7 Ra1 51. Kc6 Rxa4 52. d6 1-0",
+   "plies": 103,
+   "user_side": "white",
+   "start_ply": 12
+  },
+  {
+   "id": "mg-g07",
+   "title": "The Squeeze",
+   "white": "Anatoly Karpov",
+   "black": "Wolfgang Unzicker",
+   "event": "Nice Olympiad 1974",
+   "year": "1974",
+   "result": "1-0",
+   "principle": "Prophylaxis",
+   "themes": [
+    "prophylaxis"
+   ],
+   "summary": "Karpov denies Black every drop of counterplay — 14.a4, 16.b4, the blockading 24.Ba7! — and only then attacks. The model game of prophylactic thinking.",
+   "pgn": "[Event \"Nice Olympiad 1974\"]\n[Date \"1974.??.??\"]\n[White \"Anatoly Karpov\"]\n[Black \"Wolfgang Unzicker\"]\n[Result \"1-0\"]\n\n1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Na5 10. Bc2 c5 11. d4 Qc7 12. Nbd2 Nc6 13. d5 Nd8 14. a4 Rb8 15. axb5 axb5 16. b4 Nb7 17. Nf1 Bd7 18. Be3 Ra8 19. Qd2 Rfc8 20. Bd3 g6 21. Ng3 Bf8 22. Ra2 c4 23. Bb1 Qd8 24. Ba7 Ne8 25. Bc2 Nc7 26. Rea1 Qe7 27. Bb1 Be8 28. Ne2 Nd8 29. Nh2 Bg7 30. f4 f6 31. f5 g5 32. Bc2 Bf7 33. Ng3 Nb7 34. Bd1 h6 35. Bh5 Qe8 36. Qd1 Nd8 37. Ra3 Kf8 38. R1a2 Kg8 39. Ng4 Kf8 40. Ne3 Kg8 41. Bxf7+ Nxf7 42. Qh5 Nd8 43. Qg6 Kh8 44. Nh5 1-0",
+   "plies": 87,
+   "user_side": "white",
+   "start_ply": 12
+  },
+  {
+   "id": "mg-g08",
+   "title": "Rubinstein's Rook Endgame",
+   "white": "Akiba Rubinstein",
+   "black": "Emanuel Lasker",
+   "event": "St Petersburg 1909",
+   "year": "1909",
+   "result": "1-0",
+   "principle": "Rook endgames",
+   "themes": [
+    "rook",
+    "endgames"
+   ],
+   "summary": "Rubinstein outplays the world champion and converts a rook ending that became textbook material: cut off the king, activate your own, and push the passed pawn.",
+   "pgn": "[Event \"St Petersburg 1909\"]\n[Date \"1909.??.??\"]\n[White \"Akiba Rubinstein\"]\n[Black \"Emanuel Lasker\"]\n[Result \"1-0\"]\n\n1. d4 d5 2. Nf3 Nf6 3. c4 e6 4. Bg5 c5 5. cxd5 exd5 6. Nc3 cxd4 7. Nxd4 Nc6 8. e3 Be7 9. Bb5 Bd7 10. Bxf6 Bxf6 11. Nxd5 Bxd4 12. exd4 Qg5 13. Bxc6 Bxc6 14. Ne3 O-O-O 15. O-O Rhe8 16. Rc1 Rxe3 17. Rxc6+ bxc6 18. Qc1 Rxd4 19. fxe3 Rd7 20. Qxc6+ Kd8 21. Rf4 f5 22. Qc5 Qe7 23. Qxe7+ Kxe7 24. Rxf5 Rd1+ 25. Kf2 Rd2+ 26. Kf3 Rxb2 27. Ra5 Rb7 28. Ra6 Kf8 29. e4 Rc7 30. h4 Kf7 31. g4 Kf8 32. Kf4 Ke7 33. h5 h6 34. Kf5 Kf7 35. e5 Rb7 36. Rd6 Ke7 37. Ra6 Kf7 38. Rd6 Kf8 39. Rc6 Kf7 40. a3 1-0",
+   "plies": 79,
+   "user_side": "white",
+   "start_ply": 12
+  },
+  {
+   "id": "mg-g09",
+   "title": "Petrosian's Positional Exchange Sacrifice",
+   "white": "Samuel Reshevsky",
+   "black": "Tigran Petrosian",
+   "event": "Zurich Candidates 1953",
+   "year": "1953",
+   "result": "1/2-1/2",
+   "principle": "Exchange sacrifice",
+   "themes": [
+    "exchange",
+    "sacrifice"
+   ],
+   "summary": "Petrosian's immortal ...Re6! gives up a rook for a minor piece purely for control of dark squares and long-term safety. Quality of squares over quantity of material.",
+   "pgn": "[Event \"Zurich Candidates 1953\"]\n[Date \"1953.??.??\"]\n[White \"Samuel Reshevsky\"]\n[Black \"Tigran Petrosian\"]\n[Result \"1/2-1/2\"]\n\n1. d4 Nf6 2. c4 e6 3. Nc3 Bb4 4. e3 O-O 5. Bd3 d5 6. Nf3 c5 7. O-O Nc6 8. a3 Bxc3 9. bxc3 b6 10. cxd5 exd5 11. Bb2 c4 12. Bc2 Bg4 13. Qe1 Ne4 14. Nd2 Nxd2 15. Qxd2 Bh5 16. f3 Bg6 17. e4 Qd7 18. Rae1 dxe4 19. fxe4 Rfe8 20. Qf4 b5 21. Bd1 Re7 22. Bg4 Qe8 23. e5 a5 24. Re3 Rd8 25. Rfe1 Re6 26. a4 Ne7 27. Bxe6 fxe6 28. Qf1 Nd5 29. Rf3 Bd3 30. Rxd3 cxd3 31. Qxd3 b4 32. cxb4 axb4 33. a5 Ra8 34. Ra1 Qc6 35. Bc1 Qc7 36. a6 Qb6 37. Bd2 b3 38. Qc4 h6 39. h3 b2 40. Rb1 Kh8 41. Be1 1/2-1/2",
+   "plies": 81,
+   "user_side": "white",
+   "start_ply": 12
+  },
+  {
+   "id": "mg-g10",
+   "title": "Kasparov's Immortal",
+   "white": "Garry Kasparov",
+   "black": "Veselin Topalov",
+   "event": "Wijk aan Zee 1999",
+   "year": "1999",
+   "result": "1-0",
+   "principle": "Dynamic attack",
+   "themes": [
+    "dynamic",
+    "attack"
+   ],
+   "summary": "Kasparov's 24.Rxd4!! begins one of the deepest combinations ever played, chasing Black's king across the whole board. Calculation plus courage in its purest form.",
+   "pgn": "[Event \"Wijk aan Zee 1999\"]\n[Date \"1999.01.20\"]\n[White \"Garry Kasparov\"]\n[Black \"Veselin Topalov\"]\n[Result \"1-0\"]\n\n1. e4 d6 2. d4 Nf6 3. Nc3 g6 4. Be3 Bg7 5. Qd2 c6 6. f3 b5 7. Nge2 Nbd7 8. Bh6 Bxh6 9. Qxh6 Bb7 10. a3 e5 11. O-O-O Qe7 12. Kb1 a6 13. Nc1 O-O-O 14. Nb3 exd4 15. Rxd4 c5 16. Rd1 Nb6 17. g3 Kb8 18. Na5 Ba8 19. Bh3 d5 20. Qf4+ Ka7 21. Rhe1 d4 22. Nd5 Nbxd5 23. exd5 Qd6 24. Rxd4 cxd4 25. Re7+ Kb6 26. Qxd4+ Kxa5 27. b4+ Ka4 28. Qc3 Qxd5 29. Ra7 Bb7 30. Rxb7 Qc4 31. Qxf6 Kxa3 32. Qxa6+ Kxb4 33. c3+ Kxc3 34. Qa1+ Kd2 35. Qb2+ Kd1 36. Bf1 Rd2 37. Rd7 Rxd7 38. Bxc4 bxc4 39. Qxh8 Rd3 40. Qa8 c3 41. Qa4+ Ke1 42. f4 f5 43. Kc1 Rd2 44. Qa7 1-0",
+   "plies": 87,
+   "user_side": "white",
+   "start_ply": 12
+  },
+  {
+   "id": "mg-g11",
+   "title": "Tal Takes the Initiative",
+   "white": "Mikhail Botvinnik",
+   "black": "Mikhail Tal",
+   "event": "World Championship, Moscow 1960",
+   "year": "1960",
+   "result": "0-1",
+   "principle": "Initiative",
+   "themes": [
+    "initiative"
+   ],
+   "summary": "In the game that decided the 1960 world championship match, Tal sacrifices to seize the initiative and never gives it back. Threats are a resource — use them first.",
+   "pgn": "[Event \"World Championship, Moscow 1960\"]\n[Date \"1960.??.??\"]\n[White \"Mikhail Botvinnik\"]\n[Black \"Mikhail Tal\"]\n[Result \"0-1\"]\n\n1. c4 Nf6 2. Nf3 g6 3. g3 Bg7 4. Bg2 O-O 5. d4 d6 6. Nc3 Nbd7 7. O-O e5 8. e4 c6 9. h3 Qb6 10. d5 cxd5 11. cxd5 Nc5 12. Ne1 Bd7 13. Nd3 Nxd3 14. Qxd3 Rfc8 15. Rb1 Nh5 16. Be3 Qb4 17. Qe2 Rc4 18. Rfc1 Rac8 19. Kh2 f5 20. exf5 Bxf5 21. Ra1 Nf4 22. gxf4 exf4 23. Bd2 Qxb2 24. Rab1 f3 25. Rxb2 fxe2 26. Rb3 Rd4 27. Be1 Be5+ 28. Kg1 Bf4 29. Nxe2 Rxc1 30. Nxd4 Rxe1+ 31. Bf1 Be4 32. Ne2 Be5 33. f4 Bf6 34. Rxb7 Bxd5 35. Rc7 Bxa2 36. Rxa7 Bc4 37. Ra8+ Kf7 38. Ra7+ Ke6 39. Ra3 d5 40. Kf2 Bh4+ 41. Kg2 Kd6 42. Ng3 Bxg3 43. Bxc4 dxc4 44. Kxg3 Kd5 45. Ra7 c3 46. Rc7 Kd4 0-1",
+   "plies": 92,
+   "user_side": "black",
+   "start_ply": 12
+  },
+  {
+   "id": "mg-g12",
+   "title": "Carlsen's Endgame Grind",
+   "white": "Viswanathan Anand",
+   "black": "Magnus Carlsen",
+   "event": "World Championship, Chennai 2013",
+   "year": "2013",
+   "result": "0-1",
+   "principle": "Endgame grind",
+   "themes": [
+    "endgame",
+    "grind"
+   ],
+   "summary": "Game 6 of Chennai 2013: Carlsen squeezes a microscopic endgame edge for 60+ moves until it becomes a full point. Modern endgame technique: create targets, never hurry.",
+   "pgn": "[Event \"World Championship, Chennai 2013\"]\n[Date \"2013.??.??\"]\n[White \"Viswanathan Anand\"]\n[Black \"Magnus Carlsen\"]\n[Result \"0-1\"]\n\n1. e4 e5 2. Nf3 Nc6 3. Bb5 Nf6 4. d3 Bc5 5. c3 O-O 6. O-O Re8 7. Re1 a6 8. Ba4 b5 9. Bb3 d6 10. Bg5 Be6 11. Nbd2 h6 12. Bh4 Bxb3 13. axb3 Nb8 14. h3 Nbd7 15. Nh2 Qe7 16. Ndf1 Bb6 17. Ne3 Qe6 18. b4 a5 19. bxa5 Bxa5 20. Nhg4 Bb6 21. Bxf6 Nxf6 22. Nxf6+ Qxf6 23. Qg4 Bxe3 24. fxe3 Qe7 25. Rf1 c5 26. Kh2 c4 27. d4 Rxa1 28. Rxa1 Qb7 29. Rd1 Qc6 30. Qf5 exd4 31. Rxd4 Re5 32. Qf3 Qc7 33. Kh1 Qe7 34. Qg4 Kh7 35. Qf4 g6 36. Kh2 Kg7 37. Qf3 Re6 38. Qg3 Rxe4 39. Qxd6 Rxe3 40. Qxe7 Rxe7 41. Rd5 Rb7 42. Rd6 f6 43. h4 Kf7 44. h5 gxh5 45. Rd5 Kg6 46. Kg3 Rb6 47. Rc5 f5 48. Kh4 Re6 49. Rxb5 Re4+ 50. Kh3 Kg5 51. Rb8 h4 52. Rg8+ Kh5 53. Rf8 Rf4 54. Rc8 Rg4 55. Rf8 Rg3+ 56. Kh2 Kg5 57. Rg8+ Kf4 58. Rc8 Ke3 59. Rxc4 f4 60. Ra4 h3 61. gxh3 Rg6 62. c4 f3 63. Ra3+ Ke2 64. b4 f2 65. Ra2+ Kf3 66. Ra3+ Kf4 67. Ra8 Rg1 0-1",
+   "plies": 134,
+   "user_side": "black",
+   "start_ply": 12
   }
  ]
 }

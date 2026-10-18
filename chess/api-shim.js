@@ -74,9 +74,11 @@
     return { ok: true, available: false, items: [], entries: [], games: [], lines: [], moves: [], note: "not available in the static build", path: path };
   }
 
+  var MINE_READY = null; // v39: bundled "my data" import; every API call waits for it once
   async function dispatch(method, url, body) {
     var u = new URL(url, location.href);
     var path = u.pathname.replace(/^.*?(\/api\/)/, "/api/");
+    if (MINE_READY && path.indexOf("/api/mine/") !== 0) { try { await MINE_READY; } catch (_) {} }
     var query = {};
     u.searchParams.forEach(function (v, k) { query[k] = v; });
     for (var i = 0; i < ROUTES.length; i++) {
@@ -368,6 +370,8 @@
     missed_mate: "Missed a forced mate", allowed_mate: "Allowed a forced mate",
     hanging_piece: "Left material hanging", missed_capture: "Missed a winning capture",
     missed_check: "Missed a forcing check", positional: "Positional / strategic error",
+    ignored_threat: "Ignored the opponent's threat", allowed_tactic: "Allowed a tactic",
+    opening_slip: "Opening slip", endgame_technique: "Endgame technique",
   };
   function mistakeFacts(fenBefore, uci, bestUci, evBefore, afterLines) {
     var played = moveFacts(fenBefore, uci) || { san: uci };
@@ -412,7 +416,14 @@
     lichess_username: "", chesscom_username: "", lichess_token: "",
     llm_enabled: false, llm_url: "", llm_model: "",
     voice_enabled: false, persona_enabled: false, voice_provider: "auto",
+    my_names: "",
   };
+  // v39: every name the player uses in imported games (config usernames + bundled "my data" names)
+  function myNames() {
+    var c = getConfig();
+    return [c.lichess_username, c.chesscom_username].concat(String(c.my_names || "").split(","))
+      .map(function (x) { return String(x || "").trim().toLowerCase(); }).filter(Boolean);
+  }
   function getConfig() { return Object.assign({}, CONFIG_DEFAULTS, S.get("config", {})); }
   function publicConfig() {
     var c = getConfig();
@@ -547,6 +558,8 @@
     if (analysisMem[key]) return analysisMem[key];
     var stored = S.get("analysis:" + key);
     if (stored) { analysisMem[key] = stored; return stored; }
+    var mineA = await mineAnalysis(pgnHash(pgn));
+    if (mineA) { analysisMem[key] = mineA; return mineA; }
     depth = clamp(depth || 12, 6, 16);
     var fens = [g.start_fen].concat(g.moves.map(function (m) { return m.fen; }));
     var evals = [];
@@ -1225,14 +1238,17 @@
     var s = spState();
     // own scenarios: small endgame positions from mistake cards, goal from the tablebase
     var own = S.get("sparringOwn", []), ownIds = new Set(own.map(function (o) { return o.id; }));
-    var cand = cards().filter(function (c) { return pieceCount(c.fen_before) <= 7 && !ownIds.has("own-" + c.id); }).slice(0, 4);
+    // v39: endgames reached in his own games (him to move) come first, then small positions from mistake cards
+    var cand = S.get("mineEndgames", []).map(function (e) { return { id: "eg" + hashStr(e.fen), fen_before: e.fen, theme: "From your game " + e.label }; })
+      .concat(cards().filter(function (c) { return pieceCount(c.fen_before) <= 7; }))
+      .filter(function (c) { return !ownIds.has("own-" + c.id); }).slice(0, 4);
     for (var i = 0; i < cand.length; i++) {
       var tb = await tbProbe(cand[i].fen_before);
       if (!tb || !tb.category) continue;
       var turn = cand[i].fen_before.split(" ")[1];
       var goal = tb.category === "win" ? "win" : tb.category === "draw" ? "hold" : null;
       if (!goal) continue;
-      var sc = { id: "own-" + cand[i].id, theme: "From your games", fen: cand[i].fen_before, goal: goal, user_side: sideName(turn), own: true };
+      var sc = { id: "own-" + cand[i].id, theme: cand[i].theme || "From your games", fen: cand[i].fen_before, goal: goal, user_side: sideName(turn), own: true };
       own.push(sc); all.push(sc);
     }
     S.set("sparringOwn", own);
@@ -1449,7 +1465,7 @@
     var games = S.get("games", []);
     var cache = b.rescan ? {} : S.get("egLeakCache", {});
     var cfg = getConfig();
-    var names = [cfg.lichess_username, cfg.chesscom_username].filter(Boolean).map(function (x) { return x.toLowerCase(); });
+    var names = myNames();
     var out = { games_total: games.length, games_scanned: 0, games_cached: 0, games_degraded: 0, leaks: [], by_class: {} };
     for (var i = 0; i < games.length; i++) {
       var g = games[i], key = g.pgn_hash || hashStr(g.pgn);
@@ -1740,8 +1756,7 @@
   });
 
   function userSideOf(white, black) {
-    var cfg = getConfig();
-    var names = [cfg.lichess_username, cfg.chesscom_username].filter(Boolean).map(function (x) { return x.toLowerCase(); });
+    var names = myNames();
     if (names.indexOf(String(white || "").toLowerCase()) !== -1) return "white";
     if (names.indexOf(String(black || "").toLowerCase()) !== -1) return "black";
     return null;
@@ -2026,7 +2041,8 @@
       .map(function (g) { return { id: g.id, title: g.title, white: g.white, black: g.black, year: g.year, event: g.event, result: g.result, principle: g.principle, summary: g.summary, pgn: g.pgn }; }) };
   });
 
-  var MOTIF_LESSON = { missed_mate: "back-rank", allowed_mate: "back-rank", hanging_piece: "knight-fork", missed_capture: "knight-fork", missed_check: "the-pin", positional: "center-control" };
+  var MOTIF_LESSON = { missed_mate: "back-rank", allowed_mate: "back-rank", hanging_piece: "knight-fork", missed_capture: "knight-fork", missed_check: "the-pin", positional: "center-control",
+    ignored_threat: "knight-fork", allowed_tactic: "the-pin", opening_slip: "center-control", endgame_technique: "center-control" };
   route("GET", "/api/profile/summary", function () {
     var idx = analysisIndex();
     var accs = [], blunders = 0, motifs = {};
@@ -2116,6 +2132,14 @@
     var tac = fc.concat([{ label: "Complete a Woodpecker cycle", kind: "cycle", done: doneBy("tactics", ["cycle"]).length > 0, due: null, ref: { tab: "cycles" } },
       { label: "Solve 10 puzzles", kind: "motif_focus", done: doneBy("tactics", ["puzzle"]).length >= 10, due: null, ref: { tab: "puzzles" } }]);
     if (st.due_today > 10) reasons.push(st.due_today + " flashcards due");
+    var focus = cardFocus();
+    if (focus.length) {
+      var gm = gameMissFocus();
+      reasons.unshift("your " + focus.reduce(function (a, f) { return a + f.n; }, 0) + " mistake cards: " + focus.slice(0, 4).map(function (f) { return f.n + "× " + f.label.toLowerCase(); }).join(", ") +
+        (gm.length ? "; your analysed games add " + gm.slice(0, 2).map(function (f) { return f.n + "× " + f.label.toLowerCase(); }).join(" and ") : "") +
+        " — so this week leads with flashcards and the “My mistakes” Woodpecker cycle");
+      tac.unshift({ label: "Focus: " + focus[0].label + " (" + focus[0].n + " of your cards)", kind: "motif_focus_mine", done: doneBy("tactics", ["cycle", "flashcards"]).length > 0, due: null, ref: { tab: "cycles" } });
+    }
     pillars.tactics = { target_sessions: PILLAR_TARGET.tactics, done_sessions: Math.min(PILLAR_TARGET.tactics, daysOf(doneBy("tactics")).size), items: tac };
     // sparring
     var sp = spState(), due = 0;
@@ -2138,6 +2162,15 @@
     return { week_of: week, reasons: reasons, pillars: pillars, adherence: { completed: completed, planned: planned, pct: planned ? Math.round(100 * completed / planned) : 0 } };
   }
   route("GET", "/api/training-plan", function () { return planFor(weekStart()); });
+  // v39: category counts of the player's own mistake cards (bundled cards + misses from his games)
+  function focusBy(src) {
+    var by = {};
+    cards().forEach(function (c) { if (c.source === src) by[c.motif] = (by[c.motif] || 0) + 1; });
+    return Object.keys(by).map(function (k) { return { motif: k, label: MOTIF_LABELS[k] || k, n: by[k] }; })
+      .sort(function (a, b) { return (b.n - a.n) || ((a.motif === "positional") - (b.motif === "positional")); });
+  }
+  function cardFocus() { return focusBy("my-cards"); }
+  function gameMissFocus() { return focusBy("my-games").filter(function (f) { return f.motif !== "positional"; }); }
   route("GET", "/api/training-plan/adherence", function () {
     var acts = S.get("activity", []);
     var first = acts.length ? weekStart(acts[0].date) : weekStart();
@@ -2306,6 +2339,103 @@
   route("GET", "/api/maia/status", function () { return { available: false, reason: "Maia human-move models are not available in the static web build." }; });
   route("POST", "/api/maia/human-moves", function () { fail(503, "maia_unavailable"); });
   route("GET", "/api/human/stats", function () { return { available: false, moves: [] }; });
+
+  /* ------------------------------------------------------------------ */
+  /* v39: the player's own training data, bundled under data/mine/        */
+  /* First visit imports it into browser storage; /api/mine/reload resets */
+  /* ------------------------------------------------------------------ */
+  var MINE_SET_ID = "set-mine";
+  async function mineAnalysis(hash) {
+    var idx = S.get("mineIdx", null);
+    if (!idx || !idx[hash]) return null;
+    try {
+      var a = clone(await loadData("mine/analyses/" + idx[hash] + ".json"));
+      a.pgn_hash = hash;
+      return a;
+    } catch (_) { return null; }
+  }
+  async function importMine(force) {
+    var gj = await loadData("mine/games.json"), cj = await loadData("mine/cards.json");
+    if (!force && S.get("mineVersion") === gj.version) return mineStatus();
+    var first = !S.get("mineVersion");
+    // 1. names + level (only the non-secret prefs from his config)
+    var cfg = S.get("config", {});
+    var names = String(cfg.my_names || "").split(",").map(function (x) { return x.trim(); }).filter(Boolean);
+    (gj.me || []).forEach(function (n) { if (names.map(function (x) { return x.toLowerCase(); }).indexOf(n.toLowerCase()) === -1) names.push(n); });
+    cfg.my_names = names.join(",");
+    if (gj.level && !cfg.level) cfg.level = gj.level;
+    S.set("config", cfg);
+    // 2. games -> library (+ hash -> bundled analysis file)
+    var mineIdx = {}, recs = [];
+    gj.games.forEach(function (g, i) {
+      var meAcc = g.accuracy[g.my_side];
+      var r = gameRecord(g.pgn, { source: "mine", date: "", time_class: "", my_side: g.my_side, my_accuracy: meAcc,
+        my_blunders: g.blunders[g.my_side], mine_no: gj.games.length - i, opening: "" });
+      r.id = "g" + r.pgn_hash;
+      mineIdx[r.pgn_hash] = g.id;
+      recs.push(r);
+    });
+    S.set("mineIdx", mineIdx);
+    var lib = S.get("games", []).filter(function (g) { return g.source !== "mine"; });
+    S.set("games", lib);
+    addToLibrary(recs);
+    // 3. analyses index (feeds Progress accuracy trend, profile, openings)
+    var t0 = Date.now() - gj.games.length * 3600000;
+    var idx = analysisIndex().filter(function (r) { return !r.mine; });
+    var mineRows = gj.games.map(function (g, i) {
+      var h = recs[i].pgn_hash;
+      return { key: h + ":12", pgn_hash: h, white: g.white, black: g.black, result: g.result, date: "", mine: true,
+        accuracy_white: g.accuracy.white, accuracy_black: g.accuracy.black, at: new Date(t0 + i * 3600000).toISOString(),
+        blunders_white: g.blunders.white, blunders_black: g.blunders.black, motifs: g.motifs };
+    }).reverse();
+    S.set("analyses", idx.concat(mineRows).slice(0, 200));
+    // 4. flashcards: his 24 cards due now, missed positions from his games spread over the next two weeks
+    var deck = cards().filter(function (c) { return !/^my-/.test(c.source || ""); });
+    saveCards(deck);
+    var rc = addCards(cj.cards.map(function (c) { return { fen_before: c.fen_before, best_uci: c.best_uci, uci: c.uci, san: c.san,
+      title: c.title, explanation: c.explanation, motif: c.motif, classification: c.classification }; }), "my-cards");
+    var misses = [];
+    gj.games.forEach(function (g) { g.misses.forEach(function (m) { misses.push(m); }); });
+    misses.sort(function (a, b) { return b.cpl - a.cpl; });
+    var rg = addCards(misses, "my-games");
+    var due = {}, n = 0;
+    rg.ids.forEach(function (id) { due[id] = new Date(Date.now() + Math.floor(n++ / 8) * 86400000).toISOString(); });
+    saveCards(cards().map(function (c) { if (due[c.id]) c.due_at = due[c.id]; return c; }));
+    // 5. Cycles: a default Woodpecker set = his cards + the worst missed positions
+    var allSets = sets().filter(function (x) { return x.id !== MINE_SET_ID; });
+    var pickIds = rc.ids.concat(rg.ids.slice(0, 26)), byId = {};
+    cards().forEach(function (c) { byId[c.id] = c; });
+    var chosen = pickIds.map(function (id) { return byId[id]; }).filter(Boolean);
+    if (chosen.length) {
+      allSets.unshift({ id: MINE_SET_ID, name: "My mistakes — " + rc.ids.length + " cards + " + Math.min(26, rg.ids.length) + " missed positions", kind: "source", value: "my-",
+        cards: chosen.map(function (c) { return { id: c.id, fen_before: c.fen_before, best_uci: c.best_uci, best_san: c.best_san,
+          played_san: c.played_san, played_uci: c.played_uci, title: c.title, hint: c.hint, motif: c.motif, explanation: c.explanation }; }),
+        cycles: [], prs: {}, created_at: nowIso() });
+    }
+    saveSets(allSets);
+    // 6. stale caches that depend on the library
+    S.del("egLeakCache"); S.del("sparringOwn");
+    S.set("mineEndgames", gj.games.filter(function (g) { return g.endgame_fen; }).map(function (g) {
+      return { fen: g.endgame_fen, label: "#" + (gj.games.length - gj.games.indexOf(g)) + " (" + g.white + " – " + g.black + ")" }; }));
+    S.set("mineVersion", gj.version); S.set("mineImportedAt", nowIso());
+    var st = mineStatus();
+    st.first_import = first; st.cards_added = rc.added; st.misses_added = rg.added;
+    return st;
+  }
+  function mineStatus() {
+    var deck = cards();
+    return { version: S.get("mineVersion") || null, imported_at: S.get("mineImportedAt") || null,
+      games: S.get("games", []).filter(function (g) { return g.source === "mine"; }).length,
+      cards: deck.filter(function (c) { return c.source === "my-cards"; }).length,
+      missed_positions: deck.filter(function (c) { return c.source === "my-games"; }).length,
+      names: String(getConfig().my_names || ""), level: getConfig().level || null };
+  }
+  route("GET", "/api/mine/status", async function () { if (MINE_READY) { try { await MINE_READY; } catch (_) {} } return mineStatus(); });
+  route("POST", "/api/mine/reload", async function () { MINE_READY = importMine(true); return await MINE_READY; });
+  MINE_READY = importMine(false).then(function (st) {
+    if (st && st.first_import) window.dispatchEvent(new CustomEvent("cc-mine-imported", { detail: st }));
+    return st;
+  }).catch(function (e) { console.info("[chesscoach] my data not loaded:", e && e.message); });
 
   window.__CC_SHIM_ROUTES__ = ROUTES.length;
   window.ChessCoachShim = { dispatch: dispatch, storage: S, version: SHIM_VERSION,

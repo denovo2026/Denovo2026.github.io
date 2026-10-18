@@ -1434,3 +1434,16 @@ select.opp-level { font-size: 0.92rem; }
 @media (min-width: 1240px) {
   #tab-play .play-side-a, #tab-play .play-side-b { max-height: var(--side-stage-h); }
 }
+
+/* v39: my training data */
+.mine-bar { display: inline-flex; gap: 6px; align-items: center; margin-left: auto; flex-wrap: wrap; }
+.mine-chip { font-size: 0.78rem; color: var(--accent-text); background: var(--accent-soft); border: 1px solid var(--accent-ring);
+  border-radius: 999px; padding: 2px 9px; white-space: nowrap; }
+.mine-toast { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 9999; max-width: min(92vw, 560px);
+  background: var(--surface-2, #161b22); color: var(--text); border: 1px solid var(--accent, #2fbf8a); border-radius: 10px;
+  padding: 10px 14px; font-size: 0.9rem; box-shadow: 0 8px 30px rgba(0,0,0,.45); transition: opacity .6s; }
+.mine-toast.out { opacity: 0; }
+@media (min-width: 961px) {
+  /* v39: the games list now always has content; keep it inside the stage under the import row */
+  #tab-games .games-side { max-height: calc((var(--stage-h) - 84px) / var(--side-zoom)); }
+}

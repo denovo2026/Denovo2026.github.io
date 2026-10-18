@@ -285,6 +285,7 @@ function switchTab(name) {
   if (name === "endgames") initEndgames();
   if (name === "masters") initMasters();
   if (name === "progress") initProgress();
+  if (name === "games" && typeof loadLibrary === "function" && !Games.list.length) loadLibrary();
   if (name === "modern" && typeof initModern === "function") initModern();
   if (name === "grunfeld" && typeof initGrunfeld === "function") initGrunfeld();
   if (name === "attacks" && typeof initAttacks === "function") initAttacks();
@@ -5547,7 +5548,11 @@ function renderGamesList() {
     d.className = "game-item";
     d.innerHTML = "<div><b>" + escapeHtml(g.white) + "</b> vs <b>" + escapeHtml(g.black) + "</b> " +
       '<span class="gi-result">' + escapeHtml(g.result) + "</span></div>" +
-      '<div class="info-line">' + escapeHtml(g.date || "") + " · " + escapeHtml(g.time_class || "") + "</div>";
+      '<div class="info-line">' + (g.source === "mine"
+        ? "Your game" + (g.mine_no ? " #" + g.mine_no : "") + " · as " + escapeHtml(g.my_side || "") +
+          (g.my_accuracy != null ? " · " + Number(g.my_accuracy).toFixed(0) + "% accuracy" : "") +
+          (g.my_blunders != null ? " · " + g.my_blunders + " blunder" + (g.my_blunders === 1 ? "" : "s") : "")
+        : escapeHtml(g.date || "") + " · " + escapeHtml(g.time_class || "")) + "</div>";
     const openBtn = document.createElement("button");
     openBtn.className = "btn mini gi-open";
     openBtn.textContent = "Open in Lab";
@@ -8284,3 +8289,59 @@ function emptyStateCard(o) {
     if (host && !host.children.length && typeof Games !== "undefined" && !Games.list.length) renderGamesList();
   } catch (_) { /* */ }
 })();
+
+
+/* ------------------------------------------------------------------ */
+/* v39: "my training data" — bundled cards + analysed games            */
+/* ------------------------------------------------------------------ */
+async function loadLibrary() {
+  try {
+    const r = await apiGet("/api/games");
+    Games.list = r.games || [];
+    renderGamesList();
+  } catch (_) { /* library stays empty */ }
+}
+function setMineText(el, st, prefix) {
+  if (el.dataset.short && st && st.version) {
+    el.textContent = prefix + "My data: " + st.games + " games · " + st.cards + " cards · " + st.missed_positions + " missed";
+    el.title = mineSummary(st);
+  } else el.textContent = prefix + mineSummary(st);
+}
+function mineSummary(st) {
+  if (!st || !st.version) return "Your training data is not loaded.";
+  return "Your data: " + st.games + " analysed games, " + st.cards + " mistake cards, " +
+    st.missed_positions + " missed positions" + (st.names ? " (as " + st.names + ")" : "") + ".";
+}
+async function refreshMineBar() {
+  try {
+    const st = await apiGet("/api/mine/status");
+    document.querySelectorAll(".mine-status").forEach((el) => { setMineText(el, st, ""); });
+  } catch (_) {}
+}
+async function reloadMine(btn) {
+  if (!confirm("Reload your bundled training data? This resets the progress on your own mistake cards and the \u201cMy mistakes\u201d cycle. Other progress is kept.")) return;
+  document.querySelectorAll(".btn-mine-reload").forEach((b) => { b.disabled = true; });
+  document.querySelectorAll(".mine-status").forEach((el) => { el.textContent = "Reloading\u2026"; });
+  try {
+    const st = await apiPost("/api/mine/reload", {});
+    document.querySelectorAll(".mine-status").forEach((el) => { setMineText(el, st, "Reloaded. "); });
+    await loadLibrary();
+  } catch (e) {
+    document.querySelectorAll(".mine-status").forEach((el) => { el.textContent = "Reload failed: " + e.message; });
+  } finally {
+    document.querySelectorAll(".btn-mine-reload").forEach((b) => { b.disabled = false; });
+  }
+}
+document.querySelectorAll(".btn-mine-reload").forEach((b) => b.addEventListener("click", () => reloadMine(b)));
+window.addEventListener("cc-mine-imported", (ev) => {
+  const st = ev.detail || {};
+  const n = document.createElement("div");
+  n.className = "mine-toast";
+  n.setAttribute("role", "status");
+  n.textContent = "Loaded your training data: " + st.games + " analysed games and " + st.cards + " mistake cards. Find them in My Games, Puzzles and Cycles.";
+  document.body.appendChild(n);
+  setTimeout(() => n.classList.add("out"), 6000);
+  setTimeout(() => n.remove(), 6800);
+});
+refreshMineBar();
+loadLibrary();
