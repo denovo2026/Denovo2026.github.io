@@ -1413,3 +1413,24 @@ select.opp-level { font-size: 0.92rem; }
   .rep-coachbar .info-line { -webkit-line-clamp: 1; }
   .rep-coach-avatar { width: 30px; height: 30px; font-size: 1rem; }
 }
+
+/* =====================================================================
+   v38 — denser side panels on laptops/desktops. Everything to the right of
+   the board (and the move-feedback chip under it) is drawn ~11% smaller via
+   `zoom`, which shrinks font-size, line-height, padding and gaps together.
+   Lengths set on a zoomed element are zoomed too, so the panel heights are
+   divided by --side-zoom to keep them filling the same screen height.
+   Phones (≤960px) are left exactly as in v37.
+   ===================================================================== */
+@media (min-width: 961px) {
+  :root { --side-zoom: 0.89; --side-stage-h: calc(var(--stage-h) / var(--side-zoom)); }
+  .side-panel, .games-side, .lab-panels, .rep-right, #tab-play .feedback-chip { zoom: var(--side-zoom); }
+  .side-panel, .games-side, .lab-panels, .rep-right { max-height: var(--side-stage-h); }
+  #tab-games .games-side { max-height: calc((var(--stage-h) - 64px) / var(--side-zoom)); }
+  .rep-right { height: var(--side-stage-h); }
+  #tab-play .side-panel { max-height: none; max-width: calc(980px / var(--side-zoom)); }
+  .side-panel { max-width: calc(980px / var(--side-zoom)); }
+}
+@media (min-width: 1240px) {
+  #tab-play .play-side-a, #tab-play .play-side-b { max-height: var(--side-stage-h); }
+}
