@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<!--
+  =====================================================================
+  GHOSTWIRE — Authorized Adversary-Emulation SIMULATOR (TRAINING ONLY)
+  =====================================================================
+  SAFETY / ETHICS NOTICE
+  - This file is a narrative + scoring SIMULATION for authorized red/blue
+    team training and education. It is a defensive / educational product.
+  - It performs NO real attacks, NO exploitation, NO scanning, NO network
+    requests of any kind, contains NO malware, NO payloads, NO C2, and NO
+    code capable of causing harm.
+  - All "techniques" are labels drawn from the public MITRE ATT&CK
+    knowledge base, and every log line is fictional text produced by
+    scripted / randomized logic. Hostnames, users and IPs are invented.
+  - The only browser APIs used are DOM rendering, a decorative <canvas>,
+    localStorage (settings + stats) and a local Blob download for export.
+  - No external resources: no CDNs, fonts, scripts, or analytics.
+  MITRE ATT&CK(R) is a registered trademark of The MITRE Corporation.
+  =====================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GHOSTWIRE">
+<meta name="application-name" content="GHOSTWIRE">
+<meta name="description" content="GHOSTWIRE — a safe, offline adversary-emulation simulator for authorized red-team training. Simulation only; performs no real attacks.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23000'/%3E%3Cpath d='M14 46V26a18 18 0 0 1 36 0v20l-6-5-6 5-6-5-6 5-6-5z' fill='none' stroke='%2300ff9c' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='25' cy='27' r='3.5' fill='%2300e5ff'/%3E%3Ccircle cx='39' cy='27' r='3.5' fill='%2300e5ff'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000'/%3E%3Cpath d='M14 46V26a18 18 0 0 1 36 0v20l-6-5-6 5-6-5-6 5-6-5z' fill='none' stroke='%2300ff9c' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<title>GHOSTWIRE — Adversary-Emulation Simulator (Training Only)</title>
+<style>
+:root{
+  --bg:#000; --panel:rgba(2,14,10,.82); --line:#0b3b2b;
+  --green:#00ff9c; --green-d:#00b36d; --cyan:#00e5ff; --cyan-d:#0aa3b5;
+  --red:#ff3b6b; --amber:#ffc23d; --mag:#ff4fd8; --dim:#3f7a63; --txt:#b8ffe0;
+  --glow:0 0 6px rgba(0,255,156,.55), 0 0 18px rgba(0,255,156,.18);
+  --glow-c:0 0 6px rgba(0,229,255,.6), 0 0 18px rgba(0,229,255,.2);
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace;
+  --r:10px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:14px;line-height:1.45;-webkit-text-size-adjust:100%}
+body{min-height:100vh;overflow-x:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+#matrix{position:fixed;inset:0;z-index:0;opacity:.13;pointer-events:none}
+.crt::before{content:"";position:fixed;inset:0;z-index:50;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0,rgba(0,0,0,0) 2px,rgba(0,0,0,.28) 3px);
+  mix-blend-mode:multiply}
+.crt::after{content:"";position:fixed;inset:0;z-index:51;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%);
+  animation:flicker 6s infinite}
+@keyframes flicker{0%,100%{opacity:.9} 50%{opacity:1} 92%{opacity:.85}}
+.wrap{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:14px 14px 40px}
+.banner{border:1px solid var(--amber);background:rgba(255,194,61,.08);color:var(--amber);
+  padding:10px 14px;border-radius:var(--r);margin-bottom:14px;font-size:12px;text-align:center;
+  box-shadow:0 0 12px rgba(255,194,61,.15)}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px;border-bottom:1px solid var(--line);padding-bottom:14px}
+.brand h1{margin:0;font-size:clamp(28px,6vw,42px);letter-spacing:.18em;color:var(--green);text-shadow:var(--glow);font-weight:700}
+.brand .tag{color:var(--cyan);font-size:12px;letter-spacing:.04em;margin-top:4px;text-shadow:var(--glow-c)}
+.brand .sub{color:var(--dim);font-size:11px;margin-top:2px}
+.stats-mini{display:flex;gap:10px;flex-wrap:wrap}
+.pill{border:1px solid var(--line);background:var(--panel);padding:6px 10px;border-radius:999px;font-size:11px;color:var(--cyan)}
+.pill b{color:var(--green)}
+.grid{display:grid;grid-template-columns:320px 1fr;gap:14px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;
+  box-shadow:inset 0 0 24px rgba(0,255,156,.04), 0 0 20px rgba(0,255,156,.05);backdrop-filter:blur(4px)}
+.panel h2{margin:0 0 10px;font-size:12px;letter-spacing:.16em;color:var(--cyan);text-transform:uppercase;border-bottom:1px dashed var(--line);padding-bottom:6px}
+.ctrl label{display:block;font-size:11px;color:var(--dim);margin:10px 0 4px;letter-spacing:.06em}
+.ctrl select,.ctrl input[type=range]{width:100%}
+.ctrl select{background:#00150f;color:var(--green);border:1px solid var(--line);border-radius:6px;padding:8px;font-family:inherit;outline:none}
+.ctrl select:focus{border-color:var(--green);box-shadow:var(--glow)}
+.ctrl .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ctrl .val{color:var(--green);font-size:12px;min-width:54px;text-align:right}
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;background:linear-gradient(90deg,var(--dim),var(--green));border-radius:4px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--cyan);box-shadow:var(--glow-c);cursor:pointer;border:2px solid #001}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+button{font-family:inherit;cursor:pointer;border:1px solid var(--green);background:rgba(0,255,156,.08);color:var(--green);
+  padding:10px 8px;border-radius:6px;letter-spacing:.08em;text-transform:uppercase;font-size:12px;
+  transition:background .15s, transform .1s, box-shadow .15s}
+button:hover{background:rgba(0,255,156,.18);box-shadow:var(--glow)}
+button:active{transform:translateY(1px)}
+button.danger{border-color:var(--red);color:var(--red);background:rgba(255,59,107,.08)}
+button.danger:hover{background:rgba(255,59,107,.18);box-shadow:0 0 10px rgba(255,59,107,.35)}
+button.cyan{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,.08)}
+button.cyan:hover{background:rgba(0,229,255,.18);box-shadow:var(--glow-c)}
+button:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
+.meters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.meter{border:1px solid var(--line);border-radius:6px;padding:8px;text-align:center}
+.meter .n{font-size:22px;color:var(--green);text-shadow:var(--glow)}
+.meter.miss .n{color:var(--red);text-shadow:0 0 8px rgba(255,59,107,.5)}
+.meter.noise .n{color:var(--amber)}
+.meter.risk .n{color:var(--mag)}
+.meter .l{font-size:10px;color:var(--dim);letter-spacing:.1em;margin-top:2px}
+.main{display:flex;flex-direction:column;gap:14px;min-width:0}
+.chain{display:flex;flex-wrap:wrap;gap:6px}
+.phase{flex:1 1 70px;min-width:70px;text-align:center;padding:6px 4px;border:1px solid var(--line);border-radius:6px;font-size:9px;letter-spacing:.04em;color:var(--dim);background:rgba(0,0,0,.4);transition:all .3s}
+.phase.active{color:#001;background:var(--green);border-color:var(--green);box-shadow:var(--glow);font-weight:700}
+.phase.done{color:var(--cyan);border-color:var(--cyan-d);background:rgba(0,229,255,.08)}
+.phase.missed{color:var(--amber);border-color:rgba(255,194,61,.4)}
+.term{height:340px;overflow:auto;background:#000;border:1px solid var(--line);border-radius:6px;padding:10px;font-size:12px;position:relative;scroll-behavior:smooth}
+.term .line{margin:0 0 3px;white-space:pre-wrap;word-break:break-word}
+.term .ts{color:var(--dim)}
+.term .ok{color:var(--green)}
+.term .det{color:var(--cyan)}
+.term .miss{color:var(--red)}
+.term .info{color:var(--amber)}
+.term .sys{color:var(--mag)}
+.term .cursor{display:inline-block;width:8px;height:14px;background:var(--green);vertical-align:text-bottom;margin-left:2px;animation:blink 1s step-end infinite;box-shadow:var(--glow)}
+@keyframes blink{50%{opacity:0}}
+.cov{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:5px;max-height:220px;overflow:auto}
+.tech{border:1px solid var(--line);border-radius:4px;padding:5px 4px;font-size:9px;text-align:center;color:var(--dim);background:rgba(0,0,0,.35);transition:all .25s;cursor:default}
+.tech.used{color:#001;background:var(--green);border-color:var(--green);box-shadow:var(--glow);font-weight:700}
+.tech.detected{background:var(--cyan);border-color:var(--cyan);color:#001;box-shadow:var(--glow-c)}
+.tech.missed{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 0 8px rgba(255,59,107,.4)}
+.tech .id{display:block;letter-spacing:.04em}
+.report{max-height:280px;overflow:auto;font-size:12px;white-space:pre-wrap;color:var(--txt);background:#000;border:1px solid var(--line);border-radius:6px;padding:10px;min-height:80px}
+.footer{margin-top:18px;text-align:center;color:var(--dim);font-size:10px;letter-spacing:.06em;border-top:1px solid var(--line);padding-top:12px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:10px;color:var(--dim);margin-top:8px}
+.legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:middle}
+.legend .l-used::before{background:var(--green)}
+.legend .l-det::before{background:var(--cyan)}
+.legend .l-miss::before{background:var(--red)}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:#00150f}
+::-webkit-scrollbar-thumb{background:var(--green-d);border-radius:4px}
+</style>
+</head>
+<body class="crt">
+<canvas id="matrix" aria-hidden="true"></canvas>
+<div class="wrap">
+  <div class="banner" role="note">
+    &#9888; SIMULATION ONLY — Authorized training tool. GHOSTWIRE performs <b>no real attacks</b>, scans, exploits, malware, payloads, or C2. All activity is fictional narrative scoring.
+  </div>
+  <header>
+    <div class="brand">
+      <h1>GHOSTWIRE</h1>
+      <div class="tag">Authorized adversary-emulation simulator — training only</div>
+      <div class="sub">MITRE ATT&amp;CK kill-chain narrative · offline · zero network I/O</div>
+    </div>
+    <div class="stats-mini">
+      <div class="pill">RUNS <b id="statRuns">0</b></div>
+      <div class="pill">AVG DET <b id="statAvg">—</b></div>
+      <div class="pill">STATUS <b id="statStatus">IDLE</b></div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <aside class="panel ctrl">
+      <h2>Operator Console</h2>
+      <label for="profile">Target profile</label>
+      <select id="profile" aria-label="Target profile">
+        <option value="corp">Corp Windows AD</option>
+        <option value="cloud">Cloud SaaS</option>
+        <option value="ot">OT / ICS</option>
+      </select>
+
+      <label for="maturity">Blue-team detection maturity</label>
+      <div class="row"><input id="maturity" type="range" min="0" max="2" step="1" value="1"><span class="val" id="maturityVal">MED</span></div>
+
+      <label for="aggro">AI aggressiveness</label>
+      <div class="row"><input id="aggro" type="range" min="0" max="2" step="1" value="1"><span class="val" id="aggroVal">BALANCED</span></div>
+
+      <label for="speed">Playback speed</label>
+      <div class="row"><input id="speed" type="range" min="1" max="10" step="1" value="4"><span class="val" id="speedVal">4×</span></div>
+
+      <div class="btns">
+        <button id="btnStart" type="button" title="Start AI campaign">▶ Start</button>
+        <button id="btnPause" type="button" class="cyan" disabled title="Pause">⏸ Pause</button>
+        <button id="btnStep" type="button" title="Advance one technique">⏭ Step</button>
+        <button id="btnReset" type="button" class="danger" title="Reset campaign">⟲ Reset</button>
+      </div>
+      <div class="btns" style="grid-template-columns:1fr">
+        <button id="btnExport" type="button" class="cyan" disabled title="Download after-action report">⬇ Export report</button>
+      </div>
+
+      <div class="meters">
+        <div class="meter"><div class="n" id="mDet">0</div><div class="l">DETECTED</div></div>
+        <div class="meter miss"><div class="n" id="mMiss">0</div><div class="l">MISSED</div></div>
+        <div class="meter noise"><div class="n" id="mNoise">0</div><div class="l">NOISE</div></div>
+        <div class="meter risk"><div class="n" id="mRisk">0</div><div class="l">RISK</div></div>
+      </div>
+    </aside>
+
+    <section class="main">
+      <div class="panel">
+        <h2>Kill-chain Progress</h2>
+        <div class="chain" id="chain" role="list"></div>
+      </div>
+
+      <div class="panel">
+        <h2>AI Operator Feed <span style="color:var(--dim);font-weight:400;letter-spacing:0">// simulated narrative</span></h2>
+        <div class="term" id="term" aria-live="polite" aria-relevant="additions"><span class="cursor" id="cursor"></span></div>
+      </div>
+
+      <div class="panel">
+        <h2>ATT&amp;CK Technique Coverage</h2>
+        <div class="cov" id="cov"></div>
+        <div class="legend">
+          <span class="l-used">Used</span>
+          <span class="l-det">Detected</span>
+          <span class="l-miss">Missed</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>After-Action Report</h2>
+        <div class="report" id="report">Campaign not started. Configure controls and press Start or Step.</div>
+      </div>
+    </section>
+  </div>
+
+  <div class="footer">
+    GHOSTWIRE · simulation for authorized training · no real offensive capability ·
+    ATT&amp;CK technique names used under fair educational reference · &copy; local offline app
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  /* GHOSTWIRE — SIMULATION ONLY. No network, no exploits, no payloads. */
+
+  var PHASES = [
+    "Reconnaissance","Initial Access","Execution","Persistence","Privilege Escalation",
+    "Defense Evasion","Credential Access","Discovery","Lateral Movement","Collection",
+    "Command & Control","Exfiltration","Impact"
+  ];
+
+  /* Catalog: public ATT&CK IDs/names + fictional narrative templates only. */
+  var CATALOG = {
+    "Reconnaissance": [
+      {id:"T1595", name:"Active Scanning", noise:2, risk:1,
+        lines:["[SIM] Probe surface map for {host} (fictional)", "[SIM] Catalog exposed services on {ip} (narrative)"]},
+      {id:"T1589", name:"Gather Victim Identity Info", noise:1, risk:1,
+        lines:["[SIM] Enumerate public staff roles for {org}", "[SIM] Build fictional persona dossier"]},
+      {id:"T1598", name:"Phishing for Information", noise:2, risk:2,
+        lines:["[SIM] Craft lure narrative targeting {user}", "[SIM] Harvest simulated replies (no mail sent)"]}
+    ],
+    "Initial Access": [
+      {id:"T1566", name:"Phishing", noise:3, risk:3,
+        lines:["[SIM] Deliver fictional phishing narrative to {user}", "[SIM] User opens simulated attachment (story only)"]},
+      {id:"T1190", name:"Exploit Public-Facing Application", noise:2, risk:4,
+        lines:["[SIM] Narrative exploit against {host} (no code run)", "[SIM] Gained fictional foothold token"]},
+      {id:"T1078", name:"Valid Accounts", noise:1, risk:3,
+        lines:["[SIM] Authenticate with planted story credentials", "[SIM] Session established on {host} (simulated)"]},
+      {id:"T1133", name:"External Remote Services", noise:2, risk:3,
+        lines:["[SIM] Connect to fictional VPN edge", "[SIM] Tunnel story established"]}
+    ],
+    "Execution": [
+      {id:"T1059", name:"Command and Scripting Interpreter", noise:3, risk:2,
+        lines:["[SIM] Invoke fictional interpreter session", "[SIM] Run benign story script on {host}"]},
+      {id:"T1204", name:"User Execution", noise:2, risk:2,
+        lines:["[SIM] User executes simulated lure payload (inert)", "[SIM] Process tree story updated"]},
+      {id:"T1047", name:"Windows Management Instrumentation", noise:2, risk:2,
+        lines:["[SIM] Issue WMI narrative query", "[SIM] Remote story process spawned"]}
+    ],
+    "Persistence": [
+      {id:"T1053", name:"Scheduled Task/Job", noise:2, risk:3,
+        lines:["[SIM] Register fictional scheduled task", "[SIM] Persistence hook (story) on {host}"]},
+      {id:"T1547", name:"Boot or Logon Autostart Execution", noise:2, risk:3,
+        lines:["[SIM] Plant autostart narrative entry", "[SIM] Survives reboot in simulation"]},
+      {id:"T1136", name:"Create Account", noise:2, risk:3,
+        lines:["[SIM] Create story local account", "[SIM] Account {user} exists only in narrative"]}
+    ],
+    "Privilege Escalation": [
+      {id:"T1068", name:"Exploitation for Privilege Escalation", noise:3, risk:4,
+        lines:["[SIM] Narrative local privilege story", "[SIM] Elevated token (fictional) on {host}"]},
+      {id:"T1548", name:"Abuse Elevation Control Mechanism", noise:2, risk:3,
+        lines:["[SIM] Bypass UAC story path", "[SIM] High-integrity context simulated"]},
+      {id:"T1078.002", name:"Domain Accounts", noise:1, risk:4,
+        lines:["[SIM] Assume domain admin story persona", "[SIM] Privileged group membership (fiction)"]}
+    ],
+    "Defense Evasion": [
+      {id:"T1070", name:"Indicator Removal", noise:2, risk:3,
+        lines:["[SIM] Clear fictional event log entries", "[SIM] Scrub story artefacts from {host}"]},
+      {id:"T1027", name:"Obfuscated Files or Information", noise:2, risk:2,
+        lines:["[SIM] Obfuscate narrative payload blob (inert)", "[SIM] Encode story strings"]},
+      {id:"T1562", name:"Impair Defenses", noise:4, risk:4,
+        lines:["[SIM] Temporarily mute fictional sensor", "[SIM] Defense impairment (story only)"]}
+    ],
+    "Credential Access": [
+      {id:"T1003", name:"OS Credential Dumping", noise:4, risk:5,
+        lines:["[SIM] Dump fictional LSASS story dump", "[SIM] Extract narrative hashes (not real)"]},
+      {id:"T1110", name:"Brute Force", noise:5, risk:3,
+        lines:["[SIM] Attempt password guesses (local RNG)", "[SIM] Lockout risk modeled as noise"]},
+      {id:"T1555", name:"Credentials from Password Stores", noise:3, risk:4,
+        lines:["[SIM] Read story vault entries", "[SIM] Recover narrative secrets"]}
+    ],
+    "Discovery": [
+      {id:"T1087", name:"Account Discovery", noise:2, risk:1,
+        lines:["[SIM] Enumerate accounts on {host}", "[SIM] Map fictional user directory"]},
+      {id:"T1018", name:"Remote System Discovery", noise:2, risk:1,
+        lines:["[SIM] Discover peer hosts (story graph)", "[SIM] Add {host} to campaign map"]},
+      {id:"T1046", name:"Network Service Discovery", noise:3, risk:2,
+        lines:["[SIM] Service fingerprint narrative", "[SIM] Ports catalogued (no packets sent)"]},
+      {id:"T1082", name:"System Information Discovery", noise:1, risk:1,
+        lines:["[SIM] Collect OS/build story facts", "[SIM] Profile {host} for next phase"]}
+    ],
+    "Lateral Movement": [
+      {id:"T1021", name:"Remote Services", noise:3, risk:4,
+        lines:["[SIM] Pivot via fictional remote service", "[SIM] Land story session on {host}"]},
+      {id:"T1570", name:"Lateral Tool Transfer", noise:2, risk:3,
+        lines:["[SIM] Copy inert story tool between hosts", "[SIM] Transfer complete (narrative)"]},
+      {id:"T1550", name:"Use Alternate Authentication Material", noise:2, risk:4,
+        lines:["[SIM] Pass-the-hash story token", "[SIM] Authenticate without password (fiction)"]}
+    ],
+    "Collection": [
+      {id:"T1119", name:"Automated Collection", noise:2, risk:3,
+        lines:["[SIM] Stage automated harvest job", "[SIM] Collect documents (story files)"]},
+      {id:"T1005", name:"Data from Local System", noise:2, risk:2,
+        lines:["[SIM] Search local paths on {host}", "[SIM] Pocket interesting narrative files"]},
+      {id:"T1560", name:"Archive Collected Data", noise:1, risk:2,
+        lines:["[SIM] Archive staged loot (fiction)", "[SIM] Compress story bundle"]}
+    ],
+    "Command & Control": [
+      {id:"T1071", name:"Application Layer Protocol", noise:2, risk:3,
+        lines:["[SIM] Beacon over fictional HTTPS story", "[SIM] C2 channel is a narrative only"]},
+      {id:"T1095", name:"Non-Application Layer Protocol", noise:3, risk:3,
+        lines:["[SIM] Alternate protocol story channel", "[SIM] Keepalive ticks (local timer)"]},
+      {id:"T1573", name:"Encrypted Channel", noise:1, risk:3,
+        lines:["[SIM] Wrap story traffic in fiction crypto", "[SIM] Channel opaque to simulated sensors"]}
+    ],
+    "Exfiltration": [
+      {id:"T1041", name:"Exfiltration Over C2 Channel", noise:3, risk:4,
+        lines:["[SIM] Push staged data over story C2", "[SIM] Bytes transferred: fictional counter"]},
+      {id:"T1048", name:"Exfiltration Over Alternative Protocol", noise:3, risk:4,
+        lines:["[SIM] Alternate egress narrative", "[SIM] Exfil path modeled for scoring"]},
+      {id:"T1567", name:"Exfiltration Over Web Service", noise:2, risk:3,
+        lines:["[SIM] Upload story bundle to fake cloud", "[SIM] No real network call made"]}
+    ],
+    "Impact": [
+      {id:"T1486", name:"Data Encrypted for Impact", noise:5, risk:5,
+        lines:["[SIM] Encrypt fictional files (no writes)", "[SIM] Ransom note is a training string"]},
+      {id:"T1489", name:"Service Stop", noise:3, risk:4,
+        lines:["[SIM] Stop story service on {host}", "[SIM] Availability impact scored"]},
+      {id:"T1490", name:"Inhibit System Recovery", noise:4, risk:5,
+        lines:["[SIM] Disable fictional backups", "[SIM] Recovery options reduced (narrative)"]}
+    ]
+  };
+
+  var PROFILES = {
+    corp:  {label:"Corp Windows AD", hosts:["dc01.corp.local","fs01.corp.local","wks-1042","exch01.corp.local","vpn-edge"], users:["j.smith","a.nguyen","svc_backup","helpdesk"], org:"ACME Corp", ip:"10.20."},
+    cloud: {label:"Cloud SaaS", hosts:["idp.saas.example","api.gateway.example","ci-runner-7","bucket-logs","admin-console"], users:["devops","secops","contractor","bot_ci"], org:"Nimbus SaaS", ip:"52.14."},
+    ot:    {label:"OT / ICS", hosts:["hmi-01","plc-cell-3","eng-ws","historian","jump-ot"], users:["ot_eng","plant_ops","vendor","svc_hist"], org:"Plant Floor", ip:"192.168."}
+  };
+
+  var MATURITY_P = [0.28, 0.55, 0.82]; /* Low / Med / High base detect chance */
+  var MATURITY_L = ["LOW","MED","HIGH"];
+  var AGGRO_L = ["STEALTH","BALANCED","AGGRESSIVE"];
+  var AGGRO_EXTRA = [0, 1, 2]; /* extra techniques per phase */
+
+  var LS_KEY = "ghostwire_v1";
+
+  var state = {
+    running: false,
+    paused: false,
+    phaseIdx: 0,
+    stepInPhase: 0,
+    plan: [],
+    events: [],
+    used: {},
+    detected: 0,
+    missed: 0,
+    noise: 0,
+    risk: 0,
+    timer: null,
+    finished: false
+  };
+
+  /* ---------- DOM ---------- */
+  var el = {
+    profile: document.getElementById("profile"),
+    maturity: document.getElementById("maturity"),
+    maturityVal: document.getElementById("maturityVal"),
+    aggro: document.getElementById("aggro"),
+    aggroVal: document.getElementById("aggroVal"),
+    speed: document.getElementById("speed"),
+    speedVal: document.getElementById("speedVal"),
+    btnStart: document.getElementById("btnStart"),
+    btnPause: document.getElementById("btnPause"),
+    btnStep: document.getElementById("btnStep"),
+    btnReset: document.getElementById("btnReset"),
+    btnExport: document.getElementById("btnExport"),
+    chain: document.getElementById("chain"),
+    term: document.getElementById("term"),
+    cursor: document.getElementById("cursor"),
+    cov: document.getElementById("cov"),
+    report: document.getElementById("report"),
+    mDet: document.getElementById("mDet"),
+    mMiss: document.getElementById("mMiss"),
+    mNoise: document.getElementById("mNoise"),
+    mRisk: document.getElementById("mRisk"),
+    statRuns: document.getElementById("statRuns"),
+    statAvg: document.getElementById("statAvg"),
+    statStatus: document.getElementById("statStatus")
+  };
+
+  var techEls = {};
+
+  function loadStats() {
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if (!raw) return {runs:0, detSum:0, settings:null};
+      return JSON.parse(raw);
+    } catch (e) { return {runs:0, detSum:0, settings:null}; }
+  }
+  function saveStats(patch) {
+    var s = loadStats();
+    Object.keys(patch).forEach(function (k) { s[k] = patch[k]; });
+    try { localStorage.setItem(LS_KEY, JSON.stringify(s)); } catch (e) {}
+    renderStats();
+  }
+  function renderStats() {
+    var s = loadStats();
+    el.statRuns.textContent = String(s.runs || 0);
+    el.statAvg.textContent = s.runs ? Math.round((s.detSum / s.runs) * 100) + "%" : "—";
+  }
+
+  function applySettings(s) {
+    if (!s) return;
+    if (s.profile) el.profile.value = s.profile;
+    if (typeof s.maturity === "number") el.maturity.value = s.maturity;
+    if (typeof s.aggro === "number") el.aggro.value = s.aggro;
+    if (typeof s.speed === "number") el.speed.value = s.speed;
+    syncLabels();
+  }
+  function persistSettings() {
+    saveStats({settings:{
+      profile: el.profile.value,
+      maturity: +el.maturity.value,
+      aggro: +el.aggro.value,
+      speed: +el.speed.value
+    }});
+  }
+  function syncLabels() {
+    el.maturityVal.textContent = MATURITY_L[+el.maturity.value];
+    el.aggroVal.textContent = AGGRO_L[+el.aggro.value];
+    el.speedVal.textContent = el.speed.value + "×";
+  }
+
+  function rnd(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+  function pick(arr){ return arr[rnd(0, arr.length-1)]; }
+  function nowIso(){ return new Date().toISOString().replace("T"," ").replace("Z","Z"); }
+  function pad(n){ return (n<10?"0":"")+n; }
+  function stamp(){
+    var d = new Date();
+    return pad(d.getHours())+":"+pad(d.getMinutes())+":"+pad(d.getSeconds())+"."+String(d.getMilliseconds()).padStart(3,"0");
+  }
+
+  function buildPlan() {
+    var aggro = +el.aggro.value;
+    var extra = AGGRO_EXTRA[aggro];
+    var plan = [];
+    PHASES.forEach(function (phase) {
+      var pool = CATALOG[phase].slice();
+      /* shuffle */
+      for (var i = pool.length - 1; i > 0; i--) {
+        var j = rnd(0, i); var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+      }
+      var count = 1 + (aggro === 0 ? 0 : rnd(0, extra));
+      count = Math.min(count, pool.length);
+      for (var k = 0; k < count; k++) {
+        plan.push({phase: phase, tech: pool[k]});
+      }
+    });
+    return plan;
+  }
+
+  function detectChance(tech) {
+    var base = MATURITY_P[+el.maturity.value];
+    var aggro = +el.aggro.value;
+    /* noisy / risky techniques more detectable; stealth reduces chance slightly */
+    var adj = (tech.noise * 0.04) + (tech.risk * 0.02) - (aggro === 0 ? 0.08 : 0) + (aggro === 2 ? 0.06 : 0);
+    var p = Math.max(0.05, Math.min(0.95, base + adj));
+    return p;
+  }
+
+  function fillContext(line) {
+    var p = PROFILES[el.profile.value];
+    return line
+      .replace(/\{host\}/g, pick(p.hosts))
+      .replace(/\{user\}/g, pick(p.users))
+      .replace(/\{org\}/g, p.org)
+      .replace(/\{ip\}/g, p.ip + rnd(1,254) + "." + rnd(1,254));
+  }
+
+  function setStatus(s) {
+    el.statStatus.textContent = s;
+  }
+
+  function renderChain() {
+    el.chain.innerHTML = "";
+    PHASES.forEach(function (ph, i) {
+      var d = document.createElement("div");
+      d.className = "phase";
+      d.setAttribute("role","listitem");
+      d.textContent = ph;
+      if (state.finished) d.classList.add("done");
+      else if (i === state.phaseIdx && (state.running || state.events.length)) d.classList.add("active");
+      else if (i < state.phaseIdx) d.classList.add("done");
+      el.chain.appendChild(d);
+    });
+  }
+
+  function renderCoverage() {
+    el.cov.innerHTML = "";
+    techEls = {};
+    PHASES.forEach(function (ph) {
+      CATALOG[ph].forEach(function (t) {
+        var d = document.createElement("div");
+        d.className = "tech";
+        d.title = t.name + " (" + t.id + ")";
+        d.innerHTML = '<span class="id">'+t.id+'</span>'+t.name.split(" ")[0];
+        el.cov.appendChild(d);
+        techEls[t.id] = d;
+      });
+    });
+  }
+
+  function updateMeters() {
+    el.mDet.textContent = String(state.detected);
+    el.mMiss.textContent = String(state.missed);
+    el.mNoise.textContent = String(state.noise);
+    el.mRisk.textContent = String(state.risk);
+  }
+
+  function logLine(cls, text) {
+    var line = document.createElement("div");
+    line.className = "line " + cls;
+    line.innerHTML = '<span class="ts">['+stamp()+']</span> ' + text;
+    el.term.insertBefore(line, el.cursor);
+    el.term.scrollTop = el.term.scrollHeight;
+  }
+
+  function clearTerm() {
+    el.term.innerHTML = "";
+    el.cursor = document.createElement("span");
+    el.cursor.className = "cursor";
+    el.cursor.id = "cursor";
+    el.term.appendChild(el.cursor);
+  }
+
+  function runStep() {
+    if (state.finished) return false;
+    if (!state.plan.length) {
+      state.plan = buildPlan();
+      state.phaseIdx = 0;
+      logLine("sys", "◆ AI operator online · profile=" + PROFILES[el.profile.value].label +
+        " · maturity=" + MATURITY_L[+el.maturity.value] +
+        " · aggro=" + AGGRO_L[+el.aggro.value]);
+      logLine("info", "◆ Campaign plan built: " + state.plan.length + " simulated techniques across " + PHASES.length + " phases.");
+    }
+    if (state.stepInPhase >= state.plan.length) {
+      finishCampaign();
+      return false;
+    }
+    var item = state.plan[state.stepInPhase];
+    var phase = item.phase;
+    var tech = item.tech;
+    state.phaseIdx = PHASES.indexOf(phase);
+
+    if (state.stepInPhase === 0 || (state.stepInPhase > 0 && state.plan[state.stepInPhase-1].phase !== phase)) {
+      logLine("sys", "━━ PHASE: " + phase + " ━━");
+    }
+
+    var narrative = fillContext(pick(tech.lines));
+    logLine("ok", "▶ " + tech.id + " " + tech.name + " — " + narrative);
+
+    var p = detectChance(tech);
+    var detected = Math.random() < p;
+    state.noise += tech.noise;
+    state.risk += tech.risk;
+
+    var ev = {
+      t: nowIso(),
+      phase: phase,
+      id: tech.id,
+      name: tech.name,
+      detected: detected,
+      p: Math.round(p*100),
+      noise: tech.noise,
+      risk: tech.risk,
+      narrative: narrative
+    };
+    state.events.push(ev);
+    state.used[tech.id] = detected ? "detected" : "missed";
+
+    if (detected) {
+      state.detected++;
+      logLine("det", "  ✓ DETECTED by blue team (p≈" + ev.p + "%) · alert story raised");
+    } else {
+      state.missed++;
+      logLine("miss", "  ✗ MISSED · technique slipped past sensors (p≈" + ev.p + "%)");
+    }
+
+    var cell = techEls[tech.id];
+    if (cell) {
+      cell.classList.remove("used","detected","missed");
+      cell.classList.add(detected ? "detected" : "missed");
+    }
+
+    state.stepInPhase++;
+    updateMeters();
+    renderChain();
+
+    if (state.stepInPhase >= state.plan.length) {
+      finishCampaign();
+      return false;
+    }
+    return true;
+  }
+
+  function finishCampaign() {
+    state.finished = true;
+    state.running = false;
+    state.paused = false;
+    clearTimer();
+    setStatus("COMPLETE");
+    el.btnStart.disabled = true;
+    el.btnPause.disabled = true;
+    el.btnPause.textContent = "⏸ Pause";
+    el.btnStep.disabled = true;
+    el.btnExport.disabled = false;
+    renderChain();
+
+    var total = state.detected + state.missed;
+    var rate = total ? state.detected / total : 0;
+    logLine("sys", "◆ Campaign complete · detection rate " + Math.round(rate*100) + "% (" + state.detected + "/" + total + ")");
+    logLine("info", "◆ After-action report ready · use Export report to download");
+
+    var s = loadStats();
+    saveStats({runs: (s.runs||0)+1, detSum: (s.detSum||0) + rate});
+
+    el.report.textContent = buildReportText();
+  }
+
+  function buildReportText() {
+    var total = state.detected + state.missed;
+    var rate = total ? Math.round((state.detected/total)*100) : 0;
+    var lines = [];
+    lines.push("GHOSTWIRE AFTER-ACTION REPORT");
+    lines.push("================================");
+    lines.push("NOTICE: This report describes a SIMULATED training campaign.");
+    lines.push("No real systems were accessed, scanned, or attacked.");
+    lines.push("");
+    lines.push("Generated: " + nowIso());
+    lines.push("Profile:   " + PROFILES[el.profile.value].label);
+    lines.push("Maturity:  " + MATURITY_L[+el.maturity.value]);
+    lines.push("Aggro:     " + AGGRO_L[+el.aggro.value]);
+    lines.push("");
+    lines.push("SUMMARY");
+    lines.push("-------");
+    lines.push("Techniques simulated : " + total);
+    lines.push("Detected             : " + state.detected);
+    lines.push("Missed               : " + state.missed);
+    lines.push("Detection rate       : " + rate + "%");
+    lines.push("Noise score          : " + state.noise);
+    lines.push("Risk score           : " + state.risk);
+    lines.push("");
+    lines.push("TIMELINE");
+    lines.push("--------");
+    state.events.forEach(function (e, i) {
+      lines.push((i+1) + ". [" + e.t + "] " + e.phase);
+      lines.push("   " + e.id + " " + e.name + " → " + (e.detected ? "DETECTED" : "MISSED") + " (p≈" + e.p + "%)");
+      lines.push("   " + e.narrative);
+    });
+    lines.push("");
+    lines.push("COVERAGE GAPS (missed techniques)");
+    lines.push("---------------------------------");
+    var gaps = state.events.filter(function (e) { return !e.detected; });
+    if (!gaps.length) lines.push("(none — all simulated techniques detected)");
+    else gaps.forEach(function (e) {
+      lines.push("- " + e.id + " " + e.name + " @ " + e.phase);
+    });
+    lines.push("");
+    lines.push("RECOMMENDATIONS (defensive / training)");
+    lines.push("--------------------------------------");
+    var tips = [];
+    if (state.missed > state.detected) tips.push("Increase detection maturity in training scenarios; review visibility for missed ATT&CK techniques.");
+    if (state.noise > 30) tips.push("High noise score: practice reducing alert fatigue and tuning detections.");
+    if (gaps.some(function(g){return g.phase==="Credential Access";})) tips.push("Strengthen credential-access telemetry (e.g., unusual auth, dump-like behaviors) in the lab.");
+    if (gaps.some(function(g){return g.phase==="Lateral Movement";})) tips.push("Improve east-west visibility and remote-service monitoring in the lab environment.");
+    if (gaps.some(function(g){return g.phase==="Defense Evasion";})) tips.push("Add detections for indicator removal and defense impairment stories.");
+    if (gaps.some(function(g){return g.phase==="Exfiltration"||g.phase==="Command & Control";})) tips.push("Review egress and beaconing analytics in your SOC playbooks.");
+    if (!tips.length) tips.push("Strong detection rate — expand scenarios with higher aggressiveness or OT/Cloud profiles.");
+    tips.push("Re-run GHOSTWIRE with different maturity / profile settings to map coverage gaps.");
+    tips.push("Map missed technique IDs to your SIEM/EDR content backlog for purple-team exercises.");
+    tips.forEach(function (t,i){ lines.push((i+1)+". "+t); });
+    lines.push("");
+    lines.push("END OF REPORT — GHOSTWIRE simulation");
+    return lines.join("\n");
+  }
+
+  function buildReportJson() {
+    var total = state.detected + state.missed;
+    return {
+      product: "GHOSTWIRE",
+      notice: "SIMULATION ONLY — no real attacks performed",
+      generated: nowIso(),
+      settings: {
+        profile: PROFILES[el.profile.value].label,
+        maturity: MATURITY_L[+el.maturity.value],
+        aggressiveness: AGGRO_L[+el.aggro.value]
+      },
+      summary: {
+        techniques: total,
+        detected: state.detected,
+        missed: state.missed,
+        detectionRate: total ? +(state.detected/total).toFixed(4) : 0,
+        noise: state.noise,
+        risk: state.risk
+      },
+      timeline: state.events,
+      gaps: state.events.filter(function(e){return !e.detected;}).map(function(e){
+        return {id:e.id, name:e.name, phase:e.phase};
+      })
+    };
+  }
+
+  function clearTimer() {
+    if (state.timer) { clearTimeout(state.timer); state.timer = null; }
+  }
+
+  function scheduleNext() {
+    clearTimer();
+    if (!state.running || state.paused || state.finished) return;
+    var speed = +el.speed.value;
+    var delay = Math.max(120, 1600 / speed);
+    state.timer = setTimeout(function () {
+      if (!state.running || state.paused) return;
+      if (runStep()) scheduleNext();
+    }, delay);
+  }
+
+  function start() {
+    if (state.finished) return;
+    if (!state.plan.length) {
+      /* fresh start */
+    }
+    state.running = true;
+    state.paused = false;
+    setStatus("RUNNING");
+    el.btnStart.disabled = true;
+    el.btnPause.disabled = false;
+    el.btnStep.disabled = true;
+    scheduleNext();
+  }
+
+  function pause() {
+    if (!state.running || state.finished) return;
+    state.paused = !state.paused;
+    if (state.paused) {
+      clearTimer();
+      setStatus("PAUSED");
+      el.btnPause.textContent = "▶ Resume";
+      el.btnStep.disabled = false;
+      logLine("info", "◆ Campaign paused");
+    } else {
+      setStatus("RUNNING");
+      el.btnPause.textContent = "⏸ Pause";
+      el.btnStep.disabled = true;
+      logLine("info", "◆ Campaign resumed");
+      scheduleNext();
+    }
+  }
+
+  function stepOnce() {
+    if (state.finished) return;
+    if (state.running && !state.paused) return;
+    state.running = false;
+    state.paused = true;
+    setStatus("STEPPING");
+    el.btnStart.disabled = false;
+    el.btnPause.disabled = true;
+    el.btnPause.textContent = "⏸ Pause";
+    runStep();
+    if (!state.finished) setStatus("PAUSED");
+  }
+
+  function reset() {
+    clearTimer();
+    state = {
+      running:false, paused:false, phaseIdx:0, stepInPhase:0,
+      plan:[], events:[], used:{}, detected:0, missed:0, noise:0, risk:0,
+      timer:null, finished:false
+    };
+    clearTerm();
+    updateMeters();
+    renderChain();
+    renderCoverage();
+    el.report.textContent = "Campaign reset. Configure controls and press Start or Step.";
+    el.btnStart.disabled = false;
+    el.btnPause.disabled = true;
+    el.btnPause.textContent = "⏸ Pause";
+    el.btnStep.disabled = false;
+    el.btnExport.disabled = true;
+    setStatus("IDLE");
+    logLine("sys", "◆ GHOSTWIRE ready · simulation sandbox online · zero network I/O");
+    logLine("info", "◆ Select profile / maturity / aggressiveness, then Start or Step.");
+  }
+
+  function exportReport() {
+    if (!state.events.length) return;
+    var useJson = confirm("OK = download JSON report\nCancel = download TXT report");
+    var blob, name;
+    if (useJson) {
+      blob = new Blob([JSON.stringify(buildReportJson(), null, 2)], {type:"application/json"});
+      name = "ghostwire-report-" + Date.now() + ".json";
+    } else {
+      blob = new Blob([buildReportText()], {type:"text/plain"});
+      name = "ghostwire-report-" + Date.now() + ".txt";
+    }
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    logLine("info", "◆ Exported " + name + " (local download only)");
+  }
+
+  /* ---------- Matrix rain (decorative, local canvas) ---------- */
+  function initMatrix() {
+    var c = document.getElementById("matrix");
+    var ctx = c.getContext("2d");
+    var cols, drops, w, h;
+    function resize() {
+      w = c.width = window.innerWidth;
+      h = c.height = window.innerHeight;
+      cols = Math.floor(w / 14);
+      drops = [];
+      for (var i=0;i<cols;i++) drops[i] = rnd(0, h/14);
+    }
+    resize();
+    window.addEventListener("resize", resize);
+    var chars = "01アカサタナハマヤラワGHOSTWIRE$#*/\\";
+    function draw() {
+      ctx.fillStyle = "rgba(0,0,0,0.08)";
+      ctx.fillRect(0,0,w,h);
+      ctx.fillStyle = "#00ff9c";
+      ctx.font = "12px monospace";
+      for (var i=0;i<drops.length;i++) {
+        var ch = chars[rnd(0, chars.length-1)];
+        ctx.fillText(ch, i*14, drops[i]*14);
+        if (drops[i]*14 > h && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+  }
+
+  /* ---------- Wire UI ---------- */
+  el.maturity.addEventListener("input", function(){ syncLabels(); persistSettings(); });
+  el.aggro.addEventListener("input", function(){ syncLabels(); persistSettings(); });
+  el.speed.addEventListener("input", function(){
+    syncLabels(); persistSettings();
+    if (state.running && !state.paused) scheduleNext();
+  });
+  el.profile.addEventListener("change", persistSettings);
+
+  el.btnStart.addEventListener("click", start);
+  el.btnPause.addEventListener("click", pause);
+  el.btnStep.addEventListener("click", stepOnce);
+  el.btnReset.addEventListener("click", reset);
+  el.btnExport.addEventListener("click", exportReport);
+
+  /* boot */
+  var saved = loadStats();
+  applySettings(saved.settings);
+  renderStats();
+  renderChain();
+  renderCoverage();
+  updateMeters();
+  clearTerm();
+  logLine("sys", "◆ GHOSTWIRE boot · authorized training simulator");
+  logLine("info", "◆ SAFETY: no exploits, malware, network attacks, payloads, or C2 in this app.");
+  logLine("ok", "◆ Ready. Press Start for AI auto-play or Step for manual advance.");
+  setStatus("IDLE");
+  initMatrix();
+})();
+</script>
+</body>
+</html>
