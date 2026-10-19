@@ -284,7 +284,7 @@ const TAB_GROUPS = {
   today: ["plan", "progress"],
   play: ["play", "lab", "games"],
   train: ["puzzles", "cycles", "sparring", "endgames", "attacks", "calc"],
-  openings: ["modern", "grunfeld"],
+  openings: ["modern", "scotch", "grunfeld"],
   study: ["masters", "learn"],
 };
 function tabGroupOf(name) {
@@ -316,6 +316,7 @@ function switchTab(name) {
   if (name === "games" && typeof loadLibrary === "function" && !Games.list.length) loadLibrary();
   if (name === "calc" && typeof initCalc === "function") initCalc();
   if (name === "modern" && typeof initModern === "function") initModern();
+  if (name === "scotch" && typeof initScotch === "function") initScotch();
   if (name === "grunfeld" && typeof initGrunfeld === "function") initGrunfeld();
   if (name === "attacks" && typeof initAttacks === "function") initAttacks();
 }
@@ -2851,6 +2852,7 @@ function renderStreak() {
 
 const Puzzles = {
   current: null,      // {id, fen, side_to_move, theme, rating} — merged pool (static + persisted user puzzles)
+  set: "all",         // v44: all | my-missed | defend-it
   userMoves: [],      // solver UCIs played so far
   fen: null,          // current board position in puzzle
   done: false,
@@ -2865,10 +2867,30 @@ puzzleBoard.setInteractive(false);
 function puzzleInfo() {
   const p = Puzzles.current;
   if (!p) { $("puzzle-info").textContent = "Load a puzzle to begin."; return; }
-  $("puzzle-info").textContent =
-    "Theme: " + (p.theme || "?") + " · Rating: " + (p.rating || "?") +
+  let line = "Theme: " + (p.theme || "?") + " · Rating: " + (p.rating || "?") +
     " · You play " + p.side_to_move;
-  if (p.explanation) $("puzzle-info").textContent += " · " + p.explanation;
+  if (p.explanation) line += " · " + p.explanation;
+  if (p.set === "my-missed" || p.set === "defend-it" || (p.id && String(p.id).indexOf("own-") === 0))
+    line += " · from your games";
+  $("puzzle-info").textContent = line;
+  let link = $("puzzle-source-link");
+  if (!link) {
+    link = document.createElement("a");
+    link.id = "puzzle-source-link";
+    link.className = "info-line";
+    link.target = "_blank";
+    link.rel = "noopener";
+    $("puzzle-info").after(link);
+  }
+  if (p.url) {
+    link.href = p.url;
+    link.textContent = "Open the source game ↗";
+    link.classList.remove("hidden");
+  } else {
+    link.textContent = "";
+    link.removeAttribute("href");
+    link.classList.add("hidden");
+  }
   updatePuzzleHintButton();
   updateQueueInfo();
 }
@@ -2911,14 +2933,14 @@ async function newPuzzle() {
   resetPuzzleHintUI();
 
   const sel = $("puzzle-rating").value;
-  const body = { seen_ids: Puzzles.seenIds };
+  const body = { seen_ids: Puzzles.seenIds, set: Puzzles.set || ($("puzzle-set") && $("puzzle-set").value) || "all" };
   if (sel !== "any") {
     const [lo, hi] = sel.split("-").map(Number);
     body.min_rating = lo; body.max_rating = hi;
   }
   try {
     const p = await apiPost("/api/puzzle/next", body);
-    Puzzles.current = { id: p.id, fen: p.fen, side_to_move: p.side_to_move, theme: p.theme, rating: p.rating };
+    Puzzles.current = { id: p.id, fen: p.fen, side_to_move: p.side_to_move, theme: p.theme, rating: p.rating, url: p.url || null, note: p.note || null, set: p.set || null };
     Puzzles.fen = p.fen;
     Puzzles.seenIds.push(p.id);
     puzzleBoard.setFen(p.fen);
@@ -3122,6 +3144,15 @@ function syncBuildScope() {
 
 $("build-scope").addEventListener("change", syncBuildScope);
 
+/* v44: puzzle sets from your own games */
+if ($("puzzle-set")) {
+  $("puzzle-set").addEventListener("change", () => {
+    Puzzles.set = $("puzzle-set").value || "all";
+    try { localStorage.setItem("cc-puzzle-set", Puzzles.set); } catch (_) {}
+    newPuzzle();
+  });
+  try { const s = localStorage.getItem("cc-puzzle-set"); if (s) { Puzzles.set = s; $("puzzle-set").value = s; } } catch (_) {}
+}
 $("btn-new-puzzle").addEventListener("click", newPuzzle);
 $("btn-puzzle-hint").addEventListener("click", puzzleHint);
 $("btn-show-solution").addEventListener("click", showPuzzleSolution);
@@ -8507,7 +8538,8 @@ async function renderProgressOpenings() {
   const row = (l) => {
     const days = repDaysUntil(l.due);
     const cls = l.last_right === l.last_total ? "ok" : "miss";
-    return '<div class="po-row"><span class="po-name">' + escapeHtml(l.name || l.id) + ' <span class="muted">' + escapeHtml(l.slug === "grunfeld" ? "Grünfeld" : "Modern") + "</span></span>"
+    const slugLbl = l.slug === "grunfeld" ? "Grünfeld" : l.slug === "scotch" ? "Scotch" : "Modern";
+    return '<div class="po-row"><span class="po-name">' + escapeHtml(l.name || l.id) + ' <span class="muted">' + escapeHtml(slugLbl) + "</span></span>"
       + '<span class="rep-mem ' + cls + '">' + l.last_right + "/" + l.last_total + "</span>"
       + '<span class="muted">' + (days <= 0 ? "due now" : days === 1 ? "tomorrow" : "in " + days + " d") + "</span></div>";
   };
@@ -8520,7 +8552,7 @@ document.addEventListener("click", (e) => {
   if (!b) return;
   const slug = b.getAttribute("data-opening-drill");
   switchTab(slug);
-  setTimeout(() => { const T = slug === "grunfeld" ? GrunfeldTab : ModernTab; T.init().then(() => T.drillDue()); }, 50);
+  setTimeout(() => { const T = slug === "grunfeld" ? GrunfeldTab : slug === "scotch" ? ScotchTab : ModernTab; T.init().then(() => T.drillDue()); }, 50);
 });
 
 

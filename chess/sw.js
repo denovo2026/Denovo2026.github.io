@@ -1,12 +1,12 @@
 /* Chess Coach AI service worker: network-first for the app shell (so updates
    land immediately), cache fallback for offline use. Cross-origin requests
    (lichess / chess.com / LLM) are never cached. */
-var CACHE = "chesscoach-v43";
-var SHELL = ["./", "index.html", "style.css?v=43", "app.js?v=43", "board.js?v=35", "pieces.js?v=33",
-  "api-shim.js?v=43", "js/engine.js?v=33", "js/repertoire.js?v=43", "js/attacks.js?v=43", "js/calc.js?v=43", "vendor/chess.js?v=33",
+var CACHE = "chesscoach-v44";
+var SHELL = ["./", "index.html", "style.css?v=44", "app.js?v=44", "board.js?v=35", "pieces.js?v=33",
+  "api-shim.js?v=44", "js/engine.js?v=33", "js/repertoire.js?v=44", "js/attacks.js?v=44", "js/calc.js?v=44", "vendor/chess.js?v=33",
   "vendor/stockfish/stockfish-19-lite-single.js", "vendor/stockfish/stockfish-19-lite-single.wasm",
   "data/puzzles.json", "data/masters.json", "data/lessons.json", "data/endgames.json",
-  "data/modern.json", "data/grunfeld.json", "data/attacks.json",
+  "data/modern.json", "data/scotch.json", "data/grunfeld.json", "data/attacks.json", "data/puzzle_sets.json",
   "manifest.webmanifest", "icons/icon-192.png", "icons/apple-touch-icon.png"];
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(SHELL); }).then(function () { return self.skipWaiting(); }));

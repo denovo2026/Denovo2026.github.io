@@ -1,0 +1,19 @@
+{
+  "sets": [
+    {
+      "id": "all",
+      "name": "All puzzles",
+      "count": 557
+    },
+    {
+      "id": "my-missed",
+      "name": "My missed tactics",
+      "count": 27
+    },
+    {
+      "id": "defend-it",
+      "name": "Defend it (allowed tactics)",
+      "count": 30
+    }
+  ]
+}

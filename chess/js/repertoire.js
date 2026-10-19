@@ -35,6 +35,12 @@ function sendFenToPlay(fen, orientation, message) {
 function createRepertoireTab(cfg) {
   const P = cfg.prefix;
   const API = "/api/repertoire/" + cfg.slug;
+  /* v44: side is "black" (Modern/Grünfeld) or "white" (Scotch). Quizzes ask
+     for YOUR moves; the opponent's moves play themselves. */
+  const meSide = () => (S.data && S.data.side) || cfg.side || "black";
+  const oppSide = () => meSide() === "white" ? "black" : "white";
+  const quizBtnLabel = () => meSide() === "white" ? "Quiz me on White's moves" : "Quiz me on Black's moves";
+  const ideaHeading = () => meSide() === "white" ? "What Black wants" : "What White wants";
 
   const S = {
     data: null,        // the overview payload
@@ -59,8 +65,8 @@ function createRepertoireTab(cfg) {
   };
 
   const repBoard = new Board($(P + "-board"), { onMove: onRepMove });
-  // The whole tab is Black's view of the opening, so the board never flips.
-  repBoard.setOrientation("black");
+  // Orientation follows the repertoire side (Black for Modern/Grünfeld, White for Scotch).
+  repBoard.setOrientation((cfg.side === "white") ? "white" : "black");
 
   function repPlies() {
     return (S.branch || S.look || {}).plies || [];
@@ -68,7 +74,12 @@ function createRepertoireTab(cfg) {
 
   function repFenAt(ply) {
     const plies = repPlies();
-    return ply === 0 ? PLAY_START_FEN : plies[ply - 1].fen;
+    if (ply === 0) {
+      // v44: mid-game tactic branches carry their own start fen
+      if (S.branch && S.branch.fen) return S.branch.fen;
+      return PLAY_START_FEN;
+    }
+    return plies[ply - 1].fen;
   }
 
   function repSetStatus(msg, kind) {
@@ -125,9 +136,8 @@ function createRepertoireTab(cfg) {
   }
 
   /* ---- the quiz -------------------------------------------------------
-     White's moves play themselves; every Black move is asked. A wrong
-     answer is taken back rather than accepted, because the point is to
-     leave knowing the line, not to collect a score. */
+     The opponent's moves play themselves; every move of YOUR side is asked.
+     A wrong answer is taken back rather than accepted. */
 
   function repStartQuiz() {
     if (!S.look) { repSetStatus("Pick a set-up first.", "warn"); return; }
@@ -140,7 +150,7 @@ function createRepertoireTab(cfg) {
     $("btn-" + P + "-quiz").textContent = "Stop the quiz";
     repGoToPly(0);
     renderRepScore();
-    repAdvanceWhite();
+    repAdvanceOpponent();
   }
 
   /* ---- the blind drill -------------------------------------------------
@@ -178,11 +188,12 @@ function createRepertoireTab(cfg) {
     S.blind = true;
     S.revealed = false;
     S.toldYou = false;
+    const who = meSide() === "white" ? "Black" : "White";
     $(P + "-label").textContent =
-      "Unknown set-up — read what White plays and answer it.";
+      "Unknown set-up — read what " + who + " plays and answer it.";
     $(P + "-look-name").textContent = "Which set-up is this?";
     $(P + "-detail").innerHTML =
-      '<p class="info-line">Hidden. White is playing one of the ' + S.data.looks.length + ' set-ups and '
+      '<p class="info-line">Hidden. ' + who + ' is playing one of the ' + S.data.looks.length + ' set-ups and '
       + "will not say which — the fourth move usually gives the plan away. "
       + "Answer it with the right move and it stays hidden; get one wrong "
       + "and you will be told which it was.</p>";
@@ -200,15 +211,16 @@ function createRepertoireTab(cfg) {
 
   function repStopQuiz(message) {
     S.quiz = false;
-    $("btn-" + P + "-quiz").textContent = "Quiz me on Black's moves";
+    $("btn-" + P + "-quiz").textContent = quizBtnLabel();
     repSetStatus(message || "");
     renderRepMoves();
     repGoToPly(S.ply);
   }
 
-  function repAdvanceWhite() {
+  function repAdvanceOpponent() {
     const plies = repPlies();
-    while (S.ply < plies.length && plies[S.ply].side === "white") {
+    const opp = oppSide();
+    while (S.ply < plies.length && plies[S.ply].side === opp) {
       S.ply++;
     }
     repGoToPly(S.ply);
@@ -231,7 +243,8 @@ function createRepertoireTab(cfg) {
       return;
     }
     const n = Math.floor(S.ply / 2) + 1;
-    repSetStatus("Black to play, move " + n
+    const who = meSide() === "white" ? "White" : "Black";
+    repSetStatus(who + " to play, move " + n
       + ". Make the move on the board.");
   }
 
@@ -239,7 +252,7 @@ function createRepertoireTab(cfg) {
     if (!S.quiz || S.busy) return;
     const plies = repPlies();
     const want = plies[S.ply];
-    if (!want || want.side !== "black") return;
+    if (!want || want.side !== meSide()) return;
     S.busy = true;
     try {
       const guess = uciCandidate(repBoard, from, to);
@@ -254,7 +267,7 @@ function createRepertoireTab(cfg) {
         repGoToPly(S.ply);
         const msg = "Fine — that transposes" + (tr.to ? " to " + tr.to : "") + ". The book order here is "
           + want.san + "; carrying on with the book move.";
-        repAdvanceWhite();
+        repAdvanceOpponent();
         if (S.quiz) repSetStatus(msg + " " + $(P + "-status").textContent, "good");
       } else if (guess === want.uci) {
         S.score.right++;
@@ -262,20 +275,18 @@ function createRepertoireTab(cfg) {
         S.ply++;
         repGoToPly(S.ply);
         repSetStatus(want.san + " — that's the move.", "good");
-        repAdvanceWhite();
+        repAdvanceOpponent();
       } else {
         renderRepScore();
-        // put the position back: a wrong move left on the board teaches
-        // the wrong picture, and the next prompt would make no sense
         repGoToPly(S.ply);
         if (S.blind && !S.revealed) {
-          // You have hit the edge of what you can read. Guessing again with
-          // nothing new to go on is not practice, so the answer comes out.
           S.toldYou = true;
           repReveal();
-          repSetStatus("Not the move. White is playing " + S.look.name
+          const who = oppSide() === "white" ? "White" : "Black";
+          const me = meSide() === "white" ? "White" : "Black";
+          repSetStatus("Not the move. " + who + " is playing " + S.look.name
             + " — the tell was: " + S.look.tell
-            + " The plans are on the right now; find Black's answer.", "warn");
+            + " The plans are on the right now; find " + me + "'s answer.", "warn");
         } else {
           repSetStatus("Not the book move here. Read the plan on the right "
                           + "and try again — or stop the quiz to see it.", "warn");
@@ -294,7 +305,7 @@ function createRepertoireTab(cfg) {
     for (const l of (S.data ? S.data.looks : [])) {
       try {
         const full = l.id === (S.look && S.look.id) ? S.look : await apiGet(API + "/" + l.id);
-        (full.plies || []).forEach(p => { if (p.side === "black" && !idx[posKey(p.fen)]) idx[posKey(p.fen)] = full.name; });
+        (full.plies || []).forEach(p => { if (p.side === meSide() && !idx[posKey(p.fen)]) idx[posKey(p.fen)] = full.name; });
       } catch (_) { /* skip */ }
     }
     S.posIndex = idx;
@@ -312,11 +323,11 @@ function createRepertoireTab(cfg) {
     const ch = new Chess(here);
     if (!playUci(ch, guess)) return null;
     const after = posKey(ch.fen());
-    const nextBlack = plies[S.ply + 2];
-    if (nextBlack && nextBlack.side === "black" && guess === nextBlack.uci) {
+    const nextMine = plies[S.ply + 2];
+    if (nextMine && nextMine.side === meSide() && guess === nextMine.uci) {
       const sw = new Chess(here);
       if (playUci(sw, guess) && playUci(sw, plies[S.ply + 1].uci) && playUci(sw, plies[S.ply].uci)
-          && posKey(sw.fen()) === posKey(nextBlack.fen)) return { to: null };
+          && posKey(sw.fen()) === posKey(nextMine.fen)) return { to: null };
     }
     const idx = await repPositionIndex();
     if (idx[after]) return { to: idx[after] === S.look.name ? null : idx[after] };
@@ -362,7 +373,7 @@ function createRepertoireTab(cfg) {
     repStartQuiz();
     repSetStatus((rank(pick) === 0 ? "You missed this one last time — " : rank(pick) === 1 ? "A line you have not drilled yet — "
       : rank(pick) === 2 ? "Due for review — " : "Nothing is due; drilling your weakest line — ")
-      + pick.l.name + ". Black to play.");
+      + pick.l.name + ". " + (meSide() === "white" ? "White" : "Black") + " to play.");
   }
   function repPlayThePlan() {
     if (!S.look) return;
@@ -433,8 +444,9 @@ function createRepertoireTab(cfg) {
 
     html += "<h4 class='sub-head'>The tell</h4>"
       + '<div class="coach-box">' + escapeHtml(look.tell) + "</div>";
-    html += "<h4 class='sub-head'>What White wants</h4>"
-      + '<div class="info-line">' + escapeHtml(look.white_idea) + "</div>";
+    const idea = look.opponent_idea || look.white_idea || "";
+    html += "<h4 class='sub-head'>" + ideaHeading() + "</h4>"
+      + '<div class="info-line">' + escapeHtml(idea) + "</div>";
     html += "<h4 class='sub-head'>Your plan</h4>" + repList(look.plans);
     html += "<h4 class='sub-head'>Playing it strategically</h4>"
       + repList(look.strategic);
@@ -488,7 +500,7 @@ function createRepertoireTab(cfg) {
       S.quiz = false;
       S.blind = false;
       S.revealed = true;
-      $("btn-" + P + "-quiz").textContent = "Quiz me on Black's moves";
+      $("btn-" + P + "-quiz").textContent = quizBtnLabel();
       $(P + "-score").classList.add("hidden");
       $(P + "-label").textContent = look.name + " — " + look.line_san;
       renderRepLooks();
@@ -547,6 +559,9 @@ function createRepertoireTab(cfg) {
     $(P + "-summary").textContent = S.data.summary;
     $(P + "-scheme").innerHTML = repList(S.data.scheme);
     $(P + "-reading").innerHTML = repList(S.data.reading);
+    repBoard.setOrientation(meSide());
+    const qb = $("btn-" + P + "-quiz");
+    if (qb && !S.quiz) qb.textContent = quizBtnLabel();
     if (S.data.coach_note) {
       const box = $(P + "-coach");
       box.textContent = S.data.coach_note;
@@ -562,10 +577,12 @@ function createRepertoireTab(cfg) {
 }
 
 /* The Modern Defense and Grünfeld Defense tabs — one implementation, two data sets. */
-const ModernTab = createRepertoireTab({ slug: "modern", prefix: "modern" });
+const ModernTab = createRepertoireTab({ slug: "modern", prefix: "modern", side: "black" });
 const initModern = () => ModernTab.init();
-const GrunfeldTab = createRepertoireTab({ slug: "grunfeld", prefix: "grunfeld" });
+const GrunfeldTab = createRepertoireTab({ slug: "grunfeld", prefix: "grunfeld", side: "black" });
 const initGrunfeld = () => GrunfeldTab.init();
+const ScotchTab = createRepertoireTab({ slug: "scotch", prefix: "scotch", side: "white" });
+const initScotch = () => ScotchTab.init();
 
 /* v40: count a training day only after a real answer on this trainer */
 function ccLogAnswer(pillar, kind) {

@@ -1,584 +1,689 @@
 {
- "name": "Kingside attacks",
- "summary": "How attacks on a castled king are built, how they are stopped, and the positions to practise them on — every one a real game from the 46th Olympiad with the engine's answer already confirmed.",
- "patterns": [
-  {
-   "id": "sac-on-h",
-   "name": "The sacrifice on h7",
-   "detect": "bishop or knight captures on h7/h2",
-   "you_are": "attacking",
-   "openings": [
-    "Scotch and other open centres, where your bishop reaches d3 and the centre is already resolved."
-   ],
-   "preconditions": [
-    "A bishop bearing on h7 along the b1-h7 diagonal.",
-    "A knight able to reach g5 in one move, with the queen able to follow to h5.",
-    "No defending knight on f6, and no ...g6 resource that meets the check safely.",
-    "Their pieces far from the kingside — a rook on f8 and a bishop on e7 are not defenders, they are spectators."
-   ],
-   "mechanism": "Bxh7+ drags the king to h7, Ng5+ arrives with check so there is no time to consolidate, and Qh5 brings the third attacker before the king can run. The whole thing is a forcing sequence — if any move in it is not check, count again.",
-   "defence": "Keep a knight on f6 and the h-pawn where it is. If the bishop reaches d3 and your knight has left f6, the sacrifice is on the board whether or not they see it, so treat ...Nf6 as a defensive duty and not just a developing move.",
-   "puzzles": [
+  "name": "Kingside attacks",
+  "summary": "How attacks on a castled king are built, how they are stopped, and the positions to practise them on \u2014 every one a real game from the 46th Olympiad with the engine's answer already confirmed.",
+  "patterns": [
     {
-     "fen": "1br3k1/4r2p/q1p1p1p1/5nP1/p1pPQP2/P1P2B1R/1P4K1/2B4R w - - 4 39",
-     "solution_uci": "h3h7",
-     "solution_san": "Rxh7",
-     "pattern": "sac-on-h",
-     "note": "38...Rc8 left the black king open. White follows with 39.Rxh7 Rxh7 40.Qxe6+ Kh8 41.Qf6+, driving the king around with checks.",
-     "line_san": "39.Rxh7 Rxh7 40.Qxe6+ Kh8 41.Qf6+ Ng7",
-     "white": "Stribuk, Artiom",
-     "black": "Ulloa Castillo, Ruben Abraham",
-     "round": 2,
-     "section": "Open",
-     "eval": "+3.99"
+      "id": "sac-on-h",
+      "name": "The sacrifice on h7",
+      "detect": "bishop or knight captures on h7/h2",
+      "you_are": "attacking",
+      "openings": [
+        "Scotch and other open centres, where your bishop reaches d3 and the centre is already resolved."
+      ],
+      "preconditions": [
+        "A bishop bearing on h7 along the b1-h7 diagonal.",
+        "A knight able to reach g5 in one move, with the queen able to follow to h5.",
+        "No defending knight on f6, and no ...g6 resource that meets the check safely.",
+        "Their pieces far from the kingside \u2014 a rook on f8 and a bishop on e7 are not defenders, they are spectators."
+      ],
+      "mechanism": "Bxh7+ drags the king to h7, Ng5+ arrives with check so there is no time to consolidate, and Qh5 brings the third attacker before the king can run. The whole thing is a forcing sequence \u2014 if any move in it is not check, count again.",
+      "defence": "Keep a knight on f6 and the h-pawn where it is. If the bishop reaches d3 and your knight has left f6, the sacrifice is on the board whether or not they see it, so treat ...Nf6 as a defensive duty and not just a developing move.",
+      "puzzles": [
+        {
+          "fen": "1br3k1/4r2p/q1p1p1p1/5nP1/p1pPQP2/P1P2B1R/1P4K1/2B4R w - - 4 39",
+          "solution_uci": "h3h7",
+          "solution_san": "Rxh7",
+          "pattern": "sac-on-h",
+          "note": "38...Rc8 left the black king open. White follows with 39.Rxh7 Rxh7 40.Qxe6+ Kh8 41.Qf6+, driving the king around with checks.",
+          "line_san": "39.Rxh7 Rxh7 40.Qxe6+ Kh8 41.Qf6+ Ng7",
+          "white": "Stribuk, Artiom",
+          "black": "Ulloa Castillo, Ruben Abraham",
+          "round": 2,
+          "section": "Open",
+          "eval": "+3.99"
+        },
+        {
+          "fen": "2b1k1r1/2q1b2p/p3pp2/P1pp4/1P4rP/2P5/3N1P1P/RN1Q2RK b - - 0 22",
+          "solution_uci": "c7h2",
+          "solution_san": "Qxh2+",
+          "pattern": "sac-on-h",
+          "note": "22.gxh4 allowed a forced mate: Black mates in 2 with 22...Qxh2+ 23.Kxh2 Rxh4#. 22.b5 was needed.",
+          "line_san": "22...Qxh2+ 23.Kxh2 Rxh4#",
+          "white": "Fyfield-Jones, Kaeden",
+          "black": "Dennis, Nathan",
+          "round": 3,
+          "section": "Open",
+          "eval": "mate in 2"
+        },
+        {
+          "fen": "r5k1/3b2pp/1b1p3q/pp1Pp3/5r2/BP3PN1/P1R1Q1PP/4R2K b - - 3 29",
+          "solution_uci": "h6h2",
+          "solution_san": "Qxh2+",
+          "pattern": "sac-on-h",
+          "note": "29.Rc2 allowed a forced mate: Black mates in 2 with 29...Qxh2+ 30.Kxh2 Rh4#. 29.Ne4 was needed.",
+          "line_san": "29...Qxh2+ 30.Kxh2 Rh4#",
+          "white": "Al Ibrahim, Abdulrahman",
+          "black": "Paiva, Donaldo",
+          "round": 8,
+          "section": "Open",
+          "eval": "mate in 2"
+        },
+        {
+          "fen": "rnbqrbk1/1pp2ppp/8/p1n1p3/2PN1P2/P3BN2/1PB3PP/R2Q1RK1 w - - 0 15",
+          "solution_uci": "c2h7",
+          "solution_san": "Bxh7+",
+          "pattern": "sac-on-h",
+          "note": "14...dxe5 allowed a combination: 15.Bxh7+ Kxh7 16.Ng5+ Kg8 17.Qh5 wins about 4 points of material for White.",
+          "line_san": "15.Bxh7+ Kxh7 16.Ng5+ Kg8 17.Qh5 Qxg5",
+          "white": "Peycheva, Gergana",
+          "black": "Duque, Raquel Dos Santos",
+          "round": 2,
+          "section": "Women",
+          "eval": "+4.01"
+        },
+        {
+          "fen": "1k1r3r/pppn1ppp/7q/3p1p2/3PP1n1/6P1/PPPBNP1P/1R1QR1K1 b - - 0 14",
+          "solution_uci": "h6h2",
+          "solution_san": "Qxh2+",
+          "pattern": "sac-on-h",
+          "note": "14.e4 allowed a forced mate: Black mates in 2 with 14...Qxh2+ 15.Kf1 Qxf2#. 14.h4 was needed.",
+          "line_san": "14...Qxh2+ 15.Kf1 Qxf2#",
+          "white": "Beckley, Jerelyn Adeshola Mary",
+          "black": "Ngomo Mbang, Gemima",
+          "round": 3,
+          "section": "Women",
+          "eval": "mate in 2"
+        },
+        {
+          "fen": "r1bqnrk1/ppp2ppp/2nbp3/3pN3/3P1P2/2PBPR2/PP1N2PP/R1BQ2K1 w - - 9 11",
+          "solution_uci": "d3h7",
+          "solution_san": "Bxh7+",
+          "pattern": "sac-on-h",
+          "note": "10...Ne8 left the black king open. White follows with 11.Bxh7+ Kh8 12.Rh3 Nf6 13.Bg6+, driving the king around with checks.",
+          "line_san": "11.Bxh7+ Kh8 12.Rh3 Nf6 13.Bg6+ Kg8",
+          "white": "Fatouma, Ahmed Hassan",
+          "black": "Omari Tshibola Sagesse",
+          "round": 5,
+          "section": "Women",
+          "eval": "+4.56"
+        }
+      ]
     },
     {
-     "fen": "2b1k1r1/2q1b2p/p3pp2/P1pp4/1P4rP/2P5/3N1P1P/RN1Q2RK b - - 0 22",
-     "solution_uci": "c7h2",
-     "solution_san": "Qxh2+",
-     "pattern": "sac-on-h",
-     "note": "22.gxh4 allowed a forced mate: Black mates in 2 with 22...Qxh2+ 23.Kxh2 Rxh4#. 22.b5 was needed.",
-     "line_san": "22...Qxh2+ 23.Kxh2 Rxh4#",
-     "white": "Fyfield-Jones, Kaeden",
-     "black": "Dennis, Nathan",
-     "round": 3,
-     "section": "Open",
-     "eval": "mate in 2"
+      "id": "sac-on-g",
+      "name": "The sacrifice on g7",
+      "detect": "a piece captures on g7/g2",
+      "you_are": "defending",
+      "openings": [
+        "Modern and Gr\u00fcnfeld \u2014 g7 is the square your fianchettoed bishop stands on, and the square that becomes a hole the moment it leaves."
+      ],
+      "preconditions": [
+        "The fianchettoed bishop is gone or can be traded off.",
+        "A queen that can reach h6 or g7, usually via d2 after Bh6.",
+        "The dark squares round the king unguarded \u2014 no knight on f6 covering h7 and h5.",
+        "Heavy pieces able to join down the g- or h-file."
+      ],
+      "mechanism": "Trade the g7-bishop first, usually with Bh6. Once it is gone the dark squares round the king belong to whoever puts a piece there, and the sacrifice on g7 is the way to open the last door.",
+      "defence": "Do not trade the g7-bishop for free. If Bh6 comes, taking is often right but then the knight must come to f6 and the king to h8 with a rook to g8. In the Modern this is exactly what the 150 Attack is trying to do to you, which is why the tab there tells you to race on the queenside rather than defend passively.",
+      "puzzles": [
+        {
+          "fen": "8/Q1R3p1/b3prkp/8/4P3/5qP1/7P/1R4K1 w - - 2 41",
+          "solution_uci": "c7g7",
+          "solution_san": "Rxg7+",
+          "pattern": "sac-on-g",
+          "note": "40...Kg6 allowed a combination: 41.Rxg7+ Kh5 42.Qc5+ Rf5 43.exf5 wins about 5 points of material for White.",
+          "line_san": "41.Rxg7+ Kh5 42.Qc5+ Rf5 43.exf5 exf5",
+          "white": "Vaz, Jose Carlos",
+          "black": "Karabo Mokete",
+          "round": 5,
+          "section": "Open",
+          "eval": "+9.15"
+        },
+        {
+          "fen": "1r4k1/4R1p1/p6p/5p2/3R4/5PqP/2Q3P1/5b1K b - - 5 40",
+          "solution_uci": "f1g2",
+          "solution_san": "Bxg2+",
+          "pattern": "sac-on-g",
+          "note": "40.Qc2 allowed a forced mate: Black mates in 5 with 40...Bxg2+ 41.Kg1 Rb1+ 42.Rd1 Rxd1+. 40.Rxg7+ was needed.",
+          "line_san": "40...Bxg2+ 41.Kg1 Rb1+ 42.Rd1 Rxd1+ 43.Qxd1",
+          "white": "SAIDOU RIGO BOUBACAR",
+          "black": "Zoumagui Magba, Nathan Christian",
+          "round": 7,
+          "section": "Open",
+          "eval": "mate in 5"
+        },
+        {
+          "fen": "2rqk2r/p2bnpp1/1p2p2p/4P3/2p3QP/P1P4N/5PP1/1RB1R1K1 w k - 2 21",
+          "solution_uci": "g4g7",
+          "solution_san": "Qxg7",
+          "pattern": "sac-on-g",
+          "note": "20...Ne7 allowed a combination: 21.Qxg7 Rg8 22.Qxh6 Bc6 23.Bg5 wins about 2 points of material for White.",
+          "line_san": "21.Qxg7 Rg8 22.Qxh6 Bc6 23.Bg5 Qd3",
+          "white": "Martin Ataake",
+          "black": "Aboubakar Ali",
+          "round": 7,
+          "section": "Open",
+          "eval": "+2.90"
+        },
+        {
+          "fen": "5n1k/p5p1/4B2p/3pP2Q/5P2/1P2q2P/2r3PK/2rR1R2 b - - 0 31",
+          "solution_uci": "c2g2",
+          "solution_san": "Rxg2+",
+          "pattern": "sac-on-g",
+          "note": "31.Bxe6 allowed a forced mate: Black mates in 7 with 31...Rxg2+ 32.Kxg2 Rc2+ 33.Kh1 Qg3. 31.Rxc1 was needed.",
+          "line_san": "31...Rxg2+ 32.Kxg2 Rc2+ 33.Kh1 Qg3 34.Rd2",
+          "white": "Stefansson, Hannes",
+          "black": "Kojima, Shinya",
+          "round": 9,
+          "section": "Open",
+          "eval": "+4.88"
+        },
+        {
+          "fen": "2rr2k1/pq2nppp/4p3/P1b5/1p2P3/1P4P1/1BRN1P1P/Q1R3K1 w - - 1 29",
+          "solution_uci": "b2g7",
+          "solution_san": "Bxg7",
+          "pattern": "sac-on-g",
+          "note": "28...Ne7 allowed a combination: 29.Bxg7 Qd7 30.Nf3 e5 31.Bf6 wins about 2 points of material for White.",
+          "line_san": "29.Bxg7 Qd7 30.Nf3 e5 31.Bf6 Qg4",
+          "white": "Nyback, Tomi",
+          "black": "Rakotomaharo, Fy Antenaina",
+          "round": 9,
+          "section": "Open",
+          "eval": "+3.16"
+        },
+        {
+          "fen": "6k1/p5bp/1pbNNnp1/8/1P3P2/P5P1/1B5P/6K1 w - - 1 32",
+          "solution_uci": "e6g7",
+          "solution_san": "Nxg7",
+          "pattern": "sac-on-g",
+          "note": "31...Bc6 allowed a combination: 32.Nxg7 Kxg7 33.b5 Bd7 34.Ne4 wins about 2 points of material for White.",
+          "line_san": "32.Nxg7 Kxg7 33.b5 Bd7 34.Ne4 Kf7",
+          "white": "Pinto, Andrade",
+          "black": "Al-Ghasra, Ali",
+          "round": 9,
+          "section": "Open",
+          "eval": "+4.57"
+        }
+      ]
     },
     {
-     "fen": "r5k1/3b2pp/1b1p3q/pp1Pp3/5r2/BP3PN1/P1R1Q1PP/4R2K b - - 3 29",
-     "solution_uci": "h6h2",
-     "solution_san": "Qxh2+",
-     "pattern": "sac-on-h",
-     "note": "29.Rc2 allowed a forced mate: Black mates in 2 with 29...Qxh2+ 30.Kxh2 Rh4#. 29.Ne4 was needed.",
-     "line_san": "29...Qxh2+ 30.Kxh2 Rh4#",
-     "white": "Al Ibrahim, Abdulrahman",
-     "black": "Paiva, Donaldo",
-     "round": 8,
-     "section": "Open",
-     "eval": "mate in 2"
+      "id": "knight-to-f5",
+      "name": "The knight lands next to the king",
+      "detect": "a knight moves to f5/f4/h5/h4 beside the enemy king",
+      "you_are": "both",
+      "openings": [
+        "Modern, Gr\u00fcnfeld and the Scotch alike \u2014 the square is f5 against a kingside fianchetto and f4 or h5 against a normal castled position."
+      ],
+      "preconditions": [
+        "The landing square cannot be met by a pawn, or the piece is worth more than the pawn that takes it.",
+        "Taking the knight opens a line you want open \u2014 gxf5 shatters the fianchetto and hands you the long diagonal.",
+        "Enough force already aimed at the king that the open line is worth a piece."
+      ],
+      "mechanism": "The knight is not really going to f5 to be taken: it is going there so that the pawn in front of the king has to decide. Take it and the structure breaks; leave it and the knight hits g7, e7 and h6 forever.",
+      "defence": "Count what the open line is worth before capturing. Very often declining is right and the knight, for all its menace, achieves nothing on its own.",
+      "puzzles": [
+        {
+          "fen": "q3rbk1/5p2/2R3p1/3pN2p/1p1P4/rP2P3/2Q2PPP/5RK1 w - - 6 31",
+          "solution_uci": "e5f7",
+          "solution_san": "Nxf7",
+          "pattern": "knight-to-f5",
+          "note": "30...Bf8 allowed a combination: 31.Nxf7 Re4 32.Ng5 Kg7 33.Nxe4 wins about 7 points of material for White.",
+          "line_san": "31.Nxf7 Re4 32.Ng5 Kg7 33.Nxe4 Qxc6",
+          "white": "Santos Latasa, Jaime",
+          "black": "Elier, Ali",
+          "round": 1,
+          "section": "Open",
+          "eval": "+4.78"
+        },
+        {
+          "fen": "8/3b2R1/2pNkp1p/1pPr2p1/1P4P1/5P2/5K1P/8 w - - 2 42",
+          "solution_uci": "d6f5",
+          "solution_san": "Nf5",
+          "pattern": "knight-to-f5",
+          "note": "41...Ke6 allowed a combination: 42.Nf5 Ke5 43.Re7+ Be6 44.Ng7 wins about 3 points of material for White.",
+          "line_san": "42.Nf5 Ke5 43.Re7+ Be6 44.Ng7 Rd7",
+          "white": "Monroy Lopez, Gustavo Adolfo",
+          "black": "Fofana, Aguibou",
+          "round": 1,
+          "section": "Open",
+          "eval": "+3.86"
+        },
+        {
+          "fen": "3nrb2/5k2/p1b1p2p/1p2Bpp1/1P3N2/PB2P3/5PPP/2R3K1 w - - 0 31",
+          "solution_uci": "f4e6",
+          "solution_san": "Nxe6",
+          "pattern": "knight-to-f5",
+          "note": "30...g5 allowed a combination: 31.Nxe6 Rxe6 32.Bxe6+ Kxe6 33.Bc7 wins about 3 points of material for White.",
+          "line_san": "31.Nxe6 Rxe6 32.Bxe6+ Kxe6 33.Bc7 Bd5",
+          "white": "Keymer, Vincent",
+          "black": "Saydaliev, Saidakbar",
+          "round": 2,
+          "section": "Open",
+          "eval": "+3.74"
+        },
+        {
+          "fen": "2rr2k1/pp3p2/6p1/3nNP2/3p2P1/7R/P4P1P/4R1K1 b - - 0 28",
+          "solution_uci": "d5f4",
+          "solution_san": "Nf4",
+          "pattern": "knight-to-f5",
+          "note": "28.f5 allowed a combination: 28...Nf4 29.Ra3 d3 30.Nxd3 Nxd3 wins about 2 points of material for Black.",
+          "line_san": "28...Nf4 29.Ra3 d3 30.Nxd3 Nxd3 31.Rb1",
+          "white": "Mehmeti, Dritan",
+          "black": "Boruchovsky, Avital",
+          "round": 2,
+          "section": "Open",
+          "eval": "+3.39"
+        },
+        {
+          "fen": "4r1k1/1p3pp1/p4np1/2Pp4/1P1P4/4p1qP/P3K1P1/2Q2RR1 b - - 3 27",
+          "solution_uci": "f6h5",
+          "solution_san": "Nh5",
+          "pattern": "knight-to-f5",
+          "note": "27.Qc1 allowed a combination: 27...Nh5 28.Kd3 Nf4+ 29.Rxf4 Qxf4 wins about 2 points of material for Black.",
+          "line_san": "27...Nh5 28.Kd3 Nf4+ 29.Rxf4 Qxf4 30.Qf1",
+          "white": "Fofana, Aguibou",
+          "black": "Md. Hadi, Md. Danish Zaqwan",
+          "round": 2,
+          "section": "Open",
+          "eval": "+3.53"
+        },
+        {
+          "fen": "rnbq1rk1/7n/2ppp2Q/p3Pp1P/1p1P2p1/3B1NN1/PPP5/2KR2R1 w - - 0 19",
+          "solution_uci": "g3f5",
+          "solution_san": "Nxf5",
+          "pattern": "knight-to-f5",
+          "note": "18...g4 allowed a forced mate: White mates in 10 with 19.Nxf5 exf5 20.Rxg4+ Ng5 21.Rxg5+. 18...Ra7 was needed.",
+          "line_san": "19.Nxf5 exf5 20.Rxg4+ Ng5 21.Rxg5+ Qxg5+",
+          "white": "Ngwenya Kwanele Mangaliso",
+          "black": "Ballebako, Kokou Difendramakada Jacques",
+          "round": 3,
+          "section": "Open",
+          "eval": "+10.76"
+        }
+      ]
     },
     {
-     "fen": "rnbqrbk1/1pp2ppp/8/p1n1p3/2PN1P2/P3BN2/1PB3PP/R2Q1RK1 w - - 0 15",
-     "solution_uci": "c2h7",
-     "solution_san": "Bxh7+",
-     "pattern": "sac-on-h",
-     "note": "14...dxe5 allowed a combination: 15.Bxh7+ Kxh7 16.Ng5+ Kg8 17.Qh5 wins about 4 points of material for White.",
-     "line_san": "15.Bxh7+ Kxh7 16.Ng5+ Kg8 17.Qh5 Qxg5",
-     "white": "Peycheva, Gergana",
-     "black": "Duque, Raquel Dos Santos",
-     "round": 2,
-     "section": "Women",
-     "eval": "+4.01"
+      "id": "queen-infiltration",
+      "name": "The queen gets to h6 or h5",
+      "detect": "the queen moves into the ring of squares round the king",
+      "you_are": "both",
+      "openings": [
+        "Every opening on this page. In the Modern and Gr\u00fcnfeld it arrives via Qd2 and Bh6; in the Scotch it comes to h5 the moment the f- or h-file opens."
+      ],
+      "preconditions": [
+        "A second attacker already there or one move away \u2014 a queen alone next to a king is a loose queen.",
+        "An escape square covered, or a mate on the square she lands on.",
+        "No defender able to come to f6, g6 or h6 with tempo."
+      ],
+      "mechanism": "The queen is the piece that delivers mate and almost never the piece that creates the threat. The order is always the same: open a line, put a minor piece or a rook on it, and only then bring her.",
+      "defence": "Watch the square she is heading for, not the square she is on. If h6 or h5 is covered twice and your knight can reach f6 or f8, the attack has nothing.",
+      "puzzles": [
+        {
+          "fen": "8/5r1k/3R3p/1Qp2q2/4p1p1/4P1P1/7P/6K1 b - - 0 35",
+          "solution_uci": "f5f2",
+          "solution_san": "Qf2+",
+          "pattern": "queen-infiltration",
+          "note": "35.Qxb5 allowed a forced mate: Black mates in 3 with 35...Qf2+ 36.Kh1 Qe1+ 37.Kg2 Rf2#. 35.Rd1 was needed.",
+          "line_san": "35...Qf2+ 36.Kh1 Qe1+ 37.Kg2 Rf2#",
+          "white": "Tchouka, Yakini",
+          "black": "Concio, Michael Jr.",
+          "round": 1,
+          "section": "Open",
+          "eval": "mate in 3"
+        },
+        {
+          "fen": "3Q4/5Kpk/q6p/4R3/5P2/8/7P/4r3 b - - 2 57",
+          "solution_uci": "a6g6",
+          "solution_san": "Qg6+",
+          "pattern": "queen-infiltration",
+          "note": "57.Kf7 left the white king open. Black follows with 57...Qg6+ 58.Ke7 Qf6+ 59.Ke8 Rxe5+, driving the king around with checks.",
+          "line_san": "57...Qg6+ 58.Ke7 Qf6+ 59.Ke8 Rxe5+ 60.fxe5",
+          "white": "Allo Collante, Enrique",
+          "black": "Beckley, Joseph Adeshole Brian",
+          "round": 1,
+          "section": "Open",
+          "eval": "+2.66"
+        },
+        {
+          "fen": "2n1r2q/pp1bn1k1/4p1p1/3pP1Q1/3P4/P2B3N/1P1N2PP/5R1K w - - 11 28",
+          "solution_uci": "g5f6",
+          "solution_san": "Qf6+",
+          "pattern": "queen-infiltration",
+          "note": "27...Nbc8 allowed a forced mate: White mates in 13 with 28.Qf6+ Kh6 29.Qf4+ Kh7 30.Ng5+. 27...Nf5 was needed.",
+          "line_san": "28.Qf6+ Kh6 29.Qf4+ Kh7 30.Ng5+ Kg7",
+          "white": "Chipanga, Chiletso",
+          "black": "Clark, Gary",
+          "round": 4,
+          "section": "Open",
+          "eval": "+8.65"
+        },
+        {
+          "fen": "5rk1/6pp/6q1/3p4/RQ3p1P/6PB/1P2rPK1/2R5 b - - 0 33",
+          "solution_uci": "g6g3",
+          "solution_san": "Qxg3+",
+          "pattern": "queen-infiltration",
+          "note": "33.Qxb4 allowed a combination: 33...Qxg3+ 34.Kh1 Qxf2 35.Qxf8+ Kxf8 wins about 10 points of material for Black.",
+          "line_san": "33...Qxg3+ 34.Kh1 Qxf2 35.Qxf8+ Kxf8 36.Rxf4+",
+          "white": "Mohamed Raakin Fayaz",
+          "black": "Lual Guet nhiany",
+          "round": 6,
+          "section": "Open",
+          "eval": "+7.92"
+        },
+        {
+          "fen": "8/p6Q/2k1p3/1p2P1pK/4pb2/PPpR4/5qPP/2B1R3 b - - 0 29",
+          "solution_uci": "f2h4",
+          "solution_san": "Qh4+",
+          "pattern": "queen-infiltration",
+          "note": "29.Rxd3 left the white king open. Black follows with 29...Qh4+ 30.Kg6 Qxh7+ 31.Kxh7 exd3, driving the king around with checks.",
+          "line_san": "29...Qh4+ 30.Kg6 Qxh7+ 31.Kxh7 exd3 32.h4",
+          "white": "Bellier, Julien",
+          "black": "Alsayer, Bader",
+          "round": 6,
+          "section": "Open",
+          "eval": "+3.20"
+        },
+        {
+          "fen": "8/7p/3N1kp1/q1P5/2B2PQ1/6PP/n4K2/4r3 w - - 3 50",
+          "solution_uci": "g4g5",
+          "solution_san": "Qg5+",
+          "pattern": "queen-infiltration",
+          "note": "49...Kf6 left the black king open. White follows with 50.Qg5+ Kg7 51.Nf5+ Kf8 52.Qf6+, driving the king around with checks.",
+          "line_san": "50.Qg5+ Kg7 51.Nf5+ Kf8 52.Qf6+ Ke8",
+          "white": "Lee, Junhyeok",
+          "black": "Madol Garang Panthou Joh",
+          "round": 8,
+          "section": "Open",
+          "eval": "+10.08"
+        }
+      ]
     },
     {
-     "fen": "1k1r3r/pppn1ppp/7q/3p1p2/3PP1n1/6P1/PPPBNP1P/1R1QR1K1 b - - 0 14",
-     "solution_uci": "h6h2",
-     "solution_san": "Qxh2+",
-     "pattern": "sac-on-h",
-     "note": "14.e4 allowed a forced mate: Black mates in 2 with 14...Qxh2+ 15.Kf1 Qxf2#. 14.h4 was needed.",
-     "line_san": "14...Qxh2+ 15.Kf1 Qxf2#",
-     "white": "Beckley, Jerelyn Adeshola Mary",
-     "black": "Ngomo Mbang, Gemima",
-     "round": 3,
-     "section": "Women",
-     "eval": "mate in 2"
+      "id": "h-file",
+      "name": "The h-file battering ram",
+      "detect": "a pawn or rook opens and uses the h-file",
+      "you_are": "defending",
+      "openings": [
+        "Modern against the 150 Attack, and the Gr\u00fcnfeld whenever White castles long and your king is behind ...g6."
+      ],
+      "preconditions": [
+        "Opposite-side castling, or a White king that is not going to be bothered by the pawn leaving.",
+        "A target: the g6-pawn, which after h4-h5 must either take or be taken.",
+        "A rook already on h1, so the file opens onto something."
+      ],
+      "mechanism": "h4-h5 and the g6-pawn has no good answer. Taking opens the h-file; declining lets hxg6 open it anyway. The attack costs no pieces, which is what makes it so common at club level.",
+      "defence": "Meet h4 with ...h5. It costs a tempo and ends the plan \u2014 without h4-h5 there is no ram, and White has to find a slow idea instead. This is the single most useful defensive move in the whole Modern repertoire.",
+      "puzzles": [
+        {
+          "fen": "r7/1pq2ppk/2pp4/p2n1P2/5QP1/2P3R1/PP3P2/3B2K1 w - - 1 30",
+          "solution_uci": "g3h3",
+          "solution_san": "Rh3+",
+          "pattern": "h-file",
+          "note": "29...Nd5 allowed a combination: 30.Rh3+ Kg8 31.Qh2 Kf8 32.Rh8+ wins about 5 points of material for White.",
+          "line_san": "30.Rh3+ Kg8 31.Qh2 Kf8 32.Rh8+ Ke7",
+          "white": "Kosakowski, Jakub",
+          "black": "Toro Cruz, Sebastian J.",
+          "round": 1,
+          "section": "Open",
+          "eval": "+6.59"
+        },
+        {
+          "fen": "5r1k/1pR1R1pp/p7/3p4/6r1/5n1K/PP3P1P/1B6 b - - 5 32",
+          "solution_uci": "h7h5",
+          "solution_san": "h5",
+          "pattern": "h-file",
+          "note": "32.Kh3 allowed a forced mate: Black mates in 2 with 32...h5 33.Rxg7 Ng5+ 34.Rxg5 Rf3#. 32.Kf1 was needed.",
+          "line_san": "32...h5 33.Rxg7 Ng5+ 34.Rxg5 Rf3#",
+          "white": "Adam, Jamal",
+          "black": "Noboa Silva, Kevin",
+          "round": 1,
+          "section": "Open",
+          "eval": "mate in 2"
+        },
+        {
+          "fen": "r1q3k1/pp3ppp/5n2/2ppr3/7Q/2PBPPP1/PP3P2/R4RK1 b - - 2 16",
+          "solution_uci": "e5h5",
+          "solution_san": "Rh5",
+          "pattern": "h-file",
+          "note": "16.Qh4 allowed a combination: 16...Rh5 17.Qxh5 Nxh5 18.Kg2 Nf6 wins about 4 points of material for Black.",
+          "line_san": "16...Rh5 17.Qxh5 Nxh5 18.Kg2 Nf6 19.g4",
+          "white": "Chottu, Melanie",
+          "black": "Mlik Omar",
+          "round": 2,
+          "section": "Open",
+          "eval": "+4.19"
+        },
+        {
+          "fen": "r3r3/1p3p1k/p2p2p1/2pPn1Rn/2P2q1P/1N3P2/PP1QB3/2K4R w - - 3 24",
+          "solution_uci": "g5h5",
+          "solution_san": "Rxh5+",
+          "pattern": "h-file",
+          "note": "23...Qf4 allowed a combination: 24.Rxh5+ gxh5 25.Qxf4 Kg7 26.Rg1+ wins about 5 points of material for White.",
+          "line_san": "24.Rxh5+ gxh5 25.Qxf4 Kg7 26.Rg1+ Ng6",
+          "white": "Lui, Junior",
+          "black": "Young, Christopher",
+          "round": 3,
+          "section": "Open",
+          "eval": "+6.74"
+        },
+        {
+          "fen": "7r/8/4qpk1/2R5/pp1PpQp1/6N1/PP3PPr/5K2 b - - 1 40",
+          "solution_uci": "h2h1",
+          "solution_san": "Rh1+",
+          "pattern": "h-file",
+          "note": "40.Rc5 allowed a forced mate: Black mates in 5 with 40...Rh1+ 41.Nxh1 Rxh1+ 42.Ke2 Qa6+. 40.Kg1 was needed.",
+          "line_san": "40...Rh1+ 41.Nxh1 Rxh1+ 42.Ke2 Qa6+ 43.Rc4",
+          "white": "Oluka Robert Mcligeyo",
+          "black": "Munoz Sanchez, Miguel",
+          "round": 5,
+          "section": "Open",
+          "eval": "mate in 5"
+        },
+        {
+          "fen": "7r/8/q4pk1/2R5/pp1PpQp1/6N1/PP3PPr/4K3 b - - 3 41",
+          "solution_uci": "h2h1",
+          "solution_san": "Rh1+",
+          "pattern": "h-file",
+          "note": "41.Ke1 allowed a forced mate: Black mates in 3 with 41...Rh1+ 42.Nf1 Qxf1+ 43.Kd2 Qd3#. 41.Kg1 was needed.",
+          "line_san": "41...Rh1+ 42.Nf1 Qxf1+ 43.Kd2 Qd3#",
+          "white": "Oluka Robert Mcligeyo",
+          "black": "Munoz Sanchez, Miguel",
+          "round": 5,
+          "section": "Open",
+          "eval": "mate in 3"
+        }
+      ]
     },
     {
-     "fen": "r1bqnrk1/ppp2ppp/2nbp3/3pN3/3P1P2/2PBPR2/PP1N2PP/R1BQ2K1 w - - 9 11",
-     "solution_uci": "d3h7",
-     "solution_san": "Bxh7+",
-     "pattern": "sac-on-h",
-     "note": "10...Ne8 left the black king open. White follows with 11.Bxh7+ Kh8 12.Rh3 Nf6 13.Bg6+, driving the king around with checks.",
-     "line_san": "11.Bxh7+ Kh8 12.Rh3 Nf6 13.Bg6+ Kg8",
-     "white": "Fatouma, Ahmed Hassan",
-     "black": "Omari Tshibola Sagesse",
-     "round": 5,
-     "section": "Women",
-     "eval": "+4.56"
+      "id": "mating-net",
+      "name": "The forced mate",
+      "detect": "the refutation forces mate",
+      "you_are": "both",
+      "openings": [
+        "Wherever the attack has already arrived \u2014 these are the positions the other patterns are trying to reach."
+      ],
+      "preconditions": [
+        "The king has no flight square, or every flight square is covered.",
+        "A forcing move exists \u2014 a check, or a capture that cannot be declined.",
+        "The defenders cannot interpose with tempo."
+      ],
+      "mechanism": "By this stage calculation replaces judgement. Check every check, including the ones that hang a piece, because a sacrifice that removes the last defender is exactly what a mating net is made of.",
+      "defence": "The time to defend was three moves ago. If you are reading this in a real game, look for a counter-check or a piece you can give back to buy the king a square.",
+      "puzzles": [
+        {
+          "fen": "2rb2k1/6pp/R3pp2/1Q6/2b5/Pn2PNB1/1P3PPP/2q2BK1 w - - 1 28",
+          "solution_uci": "b5e8",
+          "solution_san": "Qe8#",
+          "pattern": "mating-net",
+          "note": "27...Bc4 allowed a forced mate: White mates in 1 with 28.Qe8#. 27...Ba5 was needed.",
+          "line_san": "28.Qe8#",
+          "white": "Temaki, Jamiedson",
+          "black": "Akpa Prince",
+          "round": 3,
+          "section": "Open",
+          "eval": "mate in 1"
+        },
+        {
+          "fen": "5rk1/6p1/Q3p2p/1p1pP3/1PpN1P2/2P4q/4KP1P/4R3 b - - 2 37",
+          "solution_uci": "h3d3",
+          "solution_san": "Qd3#",
+          "pattern": "mating-net",
+          "note": "37.Ke2 allowed a forced mate: Black mates in 1 with 37...Qd3#. 37.Kg1 was needed.",
+          "line_san": "37...Qd3#",
+          "white": "ABDOUL-KARIM SEYDOU MAHAMADOU",
+          "black": "Allen, Darryl",
+          "round": 4,
+          "section": "Open",
+          "eval": "mate in 1"
+        },
+        {
+          "fen": "8/8/2N1bk2/1PP2p2/4pK2/r5P1/8/4R3 b - - 0 44",
+          "solution_uci": "a3f3",
+          "solution_san": "Rf3#",
+          "pattern": "mating-net",
+          "note": "44.b5 allowed a forced mate: Black mates in 1 with 44...Rf3#. 44.Ne5 was needed.",
+          "line_san": "44...Rf3#",
+          "white": "TCHIBINDA ONDO MVE, Onass Theo Jonady",
+          "black": "Fleischer, Carl",
+          "round": 4,
+          "section": "Open",
+          "eval": "mate in 1"
+        },
+        {
+          "fen": "rnb1k1nr/pppp1ppp/5q2/2b1p3/4P2P/2N5/PPPP1PP1/R1BQKBNR b KQkq - 2 4",
+          "solution_uci": "f6f2",
+          "solution_san": "Qxf2#",
+          "pattern": "mating-net",
+          "note": "4.Nc3 allowed a forced mate: Black mates in 1 with 4...Qxf2#. 4.Nf3 was needed.",
+          "line_san": "4...Qxf2#",
+          "white": "Arelong, Abon",
+          "black": "Gamba, Francois",
+          "round": 5,
+          "section": "Open",
+          "eval": "mate in 1"
+        },
+        {
+          "fen": "6Q1/P7/8/5k1K/8/8/6P1/q7 b - - 4 72",
+          "solution_uci": "a1h1",
+          "solution_san": "Qh1#",
+          "pattern": "mating-net",
+          "note": "72.Qg8 allowed a forced mate: Black mates in 1 with 72...Qh1#. 72.Qf3+ was needed.",
+          "line_san": "72...Qh1#",
+          "white": "Orozbaev, Eldiyar",
+          "black": "Chinchilla, Alejandro Jose",
+          "round": 6,
+          "section": "Open",
+          "eval": "mate in 1"
+        },
+        {
+          "fen": "r3kbnr/1p2p1pp/p4pb1/q1p1N3/4P1P1/2N4P/PPP2P2/R1BQ1RK1 w kq - 0 12",
+          "solution_uci": "d1d7",
+          "solution_san": "Qd7#",
+          "pattern": "mating-net",
+          "note": "11...f6 allowed a forced mate: White mates in 1 with 12.Qd7#. 11...Rd8 was needed.",
+          "line_san": "12.Qd7#",
+          "white": "Guanzon, Christian",
+          "black": "De Gondo, Simplice Armel",
+          "round": 6,
+          "section": "Open",
+          "eval": "mate in 1"
+        }
+      ]
+    },
+    {
+      "id": "own-traps",
+      "name": "Traps from your games",
+      "detect": "opening landmines you fell into \u2014 and ones you could have sprung",
+      "you_are": "both",
+      "openings": [
+        "Scotch Game",
+        "Modern Defense",
+        "positions from your own games"
+      ],
+      "preconditions": [
+        "You have reached a known Scotch or Modern shape from your repertoire.",
+        "A quiet pawn move or a check looks tempting but leaves a piece or the king hanging.",
+        "Or the opponent has just left a piece loose under one of yours."
+      ],
+      "mechanism": "Stop before the flashy check or the quiet pawn. Ask what hangs after your move, and what hangs on theirs. The drill is two or three forcing moves \u2014 the same length as a real trap.",
+      "defence": "If you are the one who fell in, the defence is not to play the lemon. Find the alternative that keeps the king safe or the piece guarded, then play the short punishing line so the pattern sticks.",
+      "puzzles": [
+        {
+          "fen": "r1b1k1nr/pppp1ppp/8/2b1q1B1/2BpP3/2P5/PP3PPP/RN1Q1RK1 w kq - 0 9",
+          "solution_uci": "g5h4",
+          "solution_san": "Bh4",
+          "pattern": "own-traps",
+          "note": "f3 walks into ...dxc3+. Bh4 (or Re1) keeps the attack without opening the king.",
+          "line_san": "9.Bh4",
+          "white": "Jetblack007",
+          "black": "sboz",
+          "round": "",
+          "section": "own-games",
+          "eval": "",
+          "url": "https://lichess.org/Y38f4Nlq#16",
+          "trap_id": "trap-scotch-f3",
+          "trap_name": "Scotch Gambit: refuse f3",
+          "role": "avoid"
+        },
+        {
+          "fen": "r1b2rk1/ppp2pbp/6p1/4n3/4NB2/7P/PPPK1PP1/4RB1R b - - 1 12",
+          "solution_uci": "f8e8",
+          "solution_san": "Re8",
+          "pattern": "own-traps",
+          "note": "...Nc4+ hangs the knight to Bxc4. Put the rook on the e-file first.",
+          "line_san": "12...Re8",
+          "white": "crying_in_the_rain",
+          "black": "Jetblack007",
+          "round": "",
+          "section": "own-games",
+          "eval": "",
+          "url": "https://lichess.org/tCvAQ4Z0/black#23",
+          "trap_id": "trap-modern-nc4",
+          "trap_name": "Modern: rook first, not ...Nc4+",
+          "role": "avoid"
+        },
+        {
+          "fen": "r1bqk1nr/ppp2ppp/2n5/2b5/3NP3/2P1B3/PP3PPP/RN1QKB1R b KQkq - 2 6",
+          "solution_uci": "c5b6",
+          "solution_san": "Bb6",
+          "pattern": "own-traps",
+          "note": "...Nf6 walks into Nxc6. Slide the bishop to b6 first.",
+          "line_san": "6...Bb6",
+          "white": "clobymoose",
+          "black": "JetBlack007",
+          "round": "",
+          "section": "own-games",
+          "eval": "",
+          "url": "https://www.chess.com/game/daily/815866986?move=11",
+          "trap_id": "trap-scotch-bb6",
+          "trap_name": "Vs Scotch: ...Bb6 not ...Nf6",
+          "role": "avoid"
+        },
+        {
+          "fen": "r2qkb1r/pb2nppp/1p6/2p5/2B1p3/3Q4/PPP2PPP/RNBR2K1 w kq - 0 11",
+          "solution_uci": "c4b5",
+          "solution_san": "Bb5+",
+          "pattern": "own-traps",
+          "note": "Bb5+ wins more cleanly than Bxf7+.",
+          "line_san": "11.Bb5+ Bc6 12.Bxc6+ Nxc6 13.Qxe4+",
+          "white": "Jetblack007",
+          "black": "fhoud41",
+          "round": "",
+          "section": "own-games",
+          "eval": "",
+          "url": "https://lichess.org/zoUZTRZs#20",
+          "trap_id": "trap-spring-bb5",
+          "trap_name": "Scotch: spring Bb5+",
+          "role": "spring"
+        },
+        {
+          "fen": "r2q1rk1/1p1b1ppp/p1n1p3/6Pn/1bpN4/2N1B3/PPQ1PP2/2KR1B1R w - - 1 13",
+          "solution_uci": "d4c6",
+          "solution_san": "Nxc6",
+          "pattern": "own-traps",
+          "note": "The c6-knight is loose under your d4-knight. Take it.",
+          "line_san": "13.Nxc6 bxc6 14.Bg2",
+          "white": "Jetblack007",
+          "black": "ChessTeacherEU",
+          "round": "",
+          "section": "own-games",
+          "eval": "",
+          "url": "https://lichess.org/ehKCZHDN#24",
+          "trap_id": "trap-spring-nxc6",
+          "trap_name": "Take the loose knight on c6",
+          "role": "spring"
+        }
+      ]
     }
-   ]
-  },
-  {
-   "id": "sac-on-g",
-   "name": "The sacrifice on g7",
-   "detect": "a piece captures on g7/g2",
-   "you_are": "defending",
-   "openings": [
-    "Modern and Grünfeld — g7 is the square your fianchettoed bishop stands on, and the square that becomes a hole the moment it leaves."
-   ],
-   "preconditions": [
-    "The fianchettoed bishop is gone or can be traded off.",
-    "A queen that can reach h6 or g7, usually via d2 after Bh6.",
-    "The dark squares round the king unguarded — no knight on f6 covering h7 and h5.",
-    "Heavy pieces able to join down the g- or h-file."
-   ],
-   "mechanism": "Trade the g7-bishop first, usually with Bh6. Once it is gone the dark squares round the king belong to whoever puts a piece there, and the sacrifice on g7 is the way to open the last door.",
-   "defence": "Do not trade the g7-bishop for free. If Bh6 comes, taking is often right but then the knight must come to f6 and the king to h8 with a rook to g8. In the Modern this is exactly what the 150 Attack is trying to do to you, which is why the tab there tells you to race on the queenside rather than defend passively.",
-   "puzzles": [
-    {
-     "fen": "8/Q1R3p1/b3prkp/8/4P3/5qP1/7P/1R4K1 w - - 2 41",
-     "solution_uci": "c7g7",
-     "solution_san": "Rxg7+",
-     "pattern": "sac-on-g",
-     "note": "40...Kg6 allowed a combination: 41.Rxg7+ Kh5 42.Qc5+ Rf5 43.exf5 wins about 5 points of material for White.",
-     "line_san": "41.Rxg7+ Kh5 42.Qc5+ Rf5 43.exf5 exf5",
-     "white": "Vaz, Jose Carlos",
-     "black": "Karabo Mokete",
-     "round": 5,
-     "section": "Open",
-     "eval": "+9.15"
-    },
-    {
-     "fen": "1r4k1/4R1p1/p6p/5p2/3R4/5PqP/2Q3P1/5b1K b - - 5 40",
-     "solution_uci": "f1g2",
-     "solution_san": "Bxg2+",
-     "pattern": "sac-on-g",
-     "note": "40.Qc2 allowed a forced mate: Black mates in 5 with 40...Bxg2+ 41.Kg1 Rb1+ 42.Rd1 Rxd1+. 40.Rxg7+ was needed.",
-     "line_san": "40...Bxg2+ 41.Kg1 Rb1+ 42.Rd1 Rxd1+ 43.Qxd1",
-     "white": "SAIDOU RIGO BOUBACAR",
-     "black": "Zoumagui Magba, Nathan Christian",
-     "round": 7,
-     "section": "Open",
-     "eval": "mate in 5"
-    },
-    {
-     "fen": "2rqk2r/p2bnpp1/1p2p2p/4P3/2p3QP/P1P4N/5PP1/1RB1R1K1 w k - 2 21",
-     "solution_uci": "g4g7",
-     "solution_san": "Qxg7",
-     "pattern": "sac-on-g",
-     "note": "20...Ne7 allowed a combination: 21.Qxg7 Rg8 22.Qxh6 Bc6 23.Bg5 wins about 2 points of material for White.",
-     "line_san": "21.Qxg7 Rg8 22.Qxh6 Bc6 23.Bg5 Qd3",
-     "white": "Martin Ataake",
-     "black": "Aboubakar Ali",
-     "round": 7,
-     "section": "Open",
-     "eval": "+2.90"
-    },
-    {
-     "fen": "5n1k/p5p1/4B2p/3pP2Q/5P2/1P2q2P/2r3PK/2rR1R2 b - - 0 31",
-     "solution_uci": "c2g2",
-     "solution_san": "Rxg2+",
-     "pattern": "sac-on-g",
-     "note": "31.Bxe6 allowed a forced mate: Black mates in 7 with 31...Rxg2+ 32.Kxg2 Rc2+ 33.Kh1 Qg3. 31.Rxc1 was needed.",
-     "line_san": "31...Rxg2+ 32.Kxg2 Rc2+ 33.Kh1 Qg3 34.Rd2",
-     "white": "Stefansson, Hannes",
-     "black": "Kojima, Shinya",
-     "round": 9,
-     "section": "Open",
-     "eval": "+4.88"
-    },
-    {
-     "fen": "2rr2k1/pq2nppp/4p3/P1b5/1p2P3/1P4P1/1BRN1P1P/Q1R3K1 w - - 1 29",
-     "solution_uci": "b2g7",
-     "solution_san": "Bxg7",
-     "pattern": "sac-on-g",
-     "note": "28...Ne7 allowed a combination: 29.Bxg7 Qd7 30.Nf3 e5 31.Bf6 wins about 2 points of material for White.",
-     "line_san": "29.Bxg7 Qd7 30.Nf3 e5 31.Bf6 Qg4",
-     "white": "Nyback, Tomi",
-     "black": "Rakotomaharo, Fy Antenaina",
-     "round": 9,
-     "section": "Open",
-     "eval": "+3.16"
-    },
-    {
-     "fen": "6k1/p5bp/1pbNNnp1/8/1P3P2/P5P1/1B5P/6K1 w - - 1 32",
-     "solution_uci": "e6g7",
-     "solution_san": "Nxg7",
-     "pattern": "sac-on-g",
-     "note": "31...Bc6 allowed a combination: 32.Nxg7 Kxg7 33.b5 Bd7 34.Ne4 wins about 2 points of material for White.",
-     "line_san": "32.Nxg7 Kxg7 33.b5 Bd7 34.Ne4 Kf7",
-     "white": "Pinto, Andrade",
-     "black": "Al-Ghasra, Ali",
-     "round": 9,
-     "section": "Open",
-     "eval": "+4.57"
-    }
-   ]
-  },
-  {
-   "id": "knight-to-f5",
-   "name": "The knight lands next to the king",
-   "detect": "a knight moves to f5/f4/h5/h4 beside the enemy king",
-   "you_are": "both",
-   "openings": [
-    "Modern, Grünfeld and the Scotch alike — the square is f5 against a kingside fianchetto and f4 or h5 against a normal castled position."
-   ],
-   "preconditions": [
-    "The landing square cannot be met by a pawn, or the piece is worth more than the pawn that takes it.",
-    "Taking the knight opens a line you want open — gxf5 shatters the fianchetto and hands you the long diagonal.",
-    "Enough force already aimed at the king that the open line is worth a piece."
-   ],
-   "mechanism": "The knight is not really going to f5 to be taken: it is going there so that the pawn in front of the king has to decide. Take it and the structure breaks; leave it and the knight hits g7, e7 and h6 forever.",
-   "defence": "Count what the open line is worth before capturing. Very often declining is right and the knight, for all its menace, achieves nothing on its own.",
-   "puzzles": [
-    {
-     "fen": "q3rbk1/5p2/2R3p1/3pN2p/1p1P4/rP2P3/2Q2PPP/5RK1 w - - 6 31",
-     "solution_uci": "e5f7",
-     "solution_san": "Nxf7",
-     "pattern": "knight-to-f5",
-     "note": "30...Bf8 allowed a combination: 31.Nxf7 Re4 32.Ng5 Kg7 33.Nxe4 wins about 7 points of material for White.",
-     "line_san": "31.Nxf7 Re4 32.Ng5 Kg7 33.Nxe4 Qxc6",
-     "white": "Santos Latasa, Jaime",
-     "black": "Elier, Ali",
-     "round": 1,
-     "section": "Open",
-     "eval": "+4.78"
-    },
-    {
-     "fen": "8/3b2R1/2pNkp1p/1pPr2p1/1P4P1/5P2/5K1P/8 w - - 2 42",
-     "solution_uci": "d6f5",
-     "solution_san": "Nf5",
-     "pattern": "knight-to-f5",
-     "note": "41...Ke6 allowed a combination: 42.Nf5 Ke5 43.Re7+ Be6 44.Ng7 wins about 3 points of material for White.",
-     "line_san": "42.Nf5 Ke5 43.Re7+ Be6 44.Ng7 Rd7",
-     "white": "Monroy Lopez, Gustavo Adolfo",
-     "black": "Fofana, Aguibou",
-     "round": 1,
-     "section": "Open",
-     "eval": "+3.86"
-    },
-    {
-     "fen": "3nrb2/5k2/p1b1p2p/1p2Bpp1/1P3N2/PB2P3/5PPP/2R3K1 w - - 0 31",
-     "solution_uci": "f4e6",
-     "solution_san": "Nxe6",
-     "pattern": "knight-to-f5",
-     "note": "30...g5 allowed a combination: 31.Nxe6 Rxe6 32.Bxe6+ Kxe6 33.Bc7 wins about 3 points of material for White.",
-     "line_san": "31.Nxe6 Rxe6 32.Bxe6+ Kxe6 33.Bc7 Bd5",
-     "white": "Keymer, Vincent",
-     "black": "Saydaliev, Saidakbar",
-     "round": 2,
-     "section": "Open",
-     "eval": "+3.74"
-    },
-    {
-     "fen": "2rr2k1/pp3p2/6p1/3nNP2/3p2P1/7R/P4P1P/4R1K1 b - - 0 28",
-     "solution_uci": "d5f4",
-     "solution_san": "Nf4",
-     "pattern": "knight-to-f5",
-     "note": "28.f5 allowed a combination: 28...Nf4 29.Ra3 d3 30.Nxd3 Nxd3 wins about 2 points of material for Black.",
-     "line_san": "28...Nf4 29.Ra3 d3 30.Nxd3 Nxd3 31.Rb1",
-     "white": "Mehmeti, Dritan",
-     "black": "Boruchovsky, Avital",
-     "round": 2,
-     "section": "Open",
-     "eval": "+3.39"
-    },
-    {
-     "fen": "4r1k1/1p3pp1/p4np1/2Pp4/1P1P4/4p1qP/P3K1P1/2Q2RR1 b - - 3 27",
-     "solution_uci": "f6h5",
-     "solution_san": "Nh5",
-     "pattern": "knight-to-f5",
-     "note": "27.Qc1 allowed a combination: 27...Nh5 28.Kd3 Nf4+ 29.Rxf4 Qxf4 wins about 2 points of material for Black.",
-     "line_san": "27...Nh5 28.Kd3 Nf4+ 29.Rxf4 Qxf4 30.Qf1",
-     "white": "Fofana, Aguibou",
-     "black": "Md. Hadi, Md. Danish Zaqwan",
-     "round": 2,
-     "section": "Open",
-     "eval": "+3.53"
-    },
-    {
-     "fen": "rnbq1rk1/7n/2ppp2Q/p3Pp1P/1p1P2p1/3B1NN1/PPP5/2KR2R1 w - - 0 19",
-     "solution_uci": "g3f5",
-     "solution_san": "Nxf5",
-     "pattern": "knight-to-f5",
-     "note": "18...g4 allowed a forced mate: White mates in 10 with 19.Nxf5 exf5 20.Rxg4+ Ng5 21.Rxg5+. 18...Ra7 was needed.",
-     "line_san": "19.Nxf5 exf5 20.Rxg4+ Ng5 21.Rxg5+ Qxg5+",
-     "white": "Ngwenya Kwanele Mangaliso",
-     "black": "Ballebako, Kokou Difendramakada Jacques",
-     "round": 3,
-     "section": "Open",
-     "eval": "+10.76"
-    }
-   ]
-  },
-  {
-   "id": "queen-infiltration",
-   "name": "The queen gets to h6 or h5",
-   "detect": "the queen moves into the ring of squares round the king",
-   "you_are": "both",
-   "openings": [
-    "Every opening on this page. In the Modern and Grünfeld it arrives via Qd2 and Bh6; in the Scotch it comes to h5 the moment the f- or h-file opens."
-   ],
-   "preconditions": [
-    "A second attacker already there or one move away — a queen alone next to a king is a loose queen.",
-    "An escape square covered, or a mate on the square she lands on.",
-    "No defender able to come to f6, g6 or h6 with tempo."
-   ],
-   "mechanism": "The queen is the piece that delivers mate and almost never the piece that creates the threat. The order is always the same: open a line, put a minor piece or a rook on it, and only then bring her.",
-   "defence": "Watch the square she is heading for, not the square she is on. If h6 or h5 is covered twice and your knight can reach f6 or f8, the attack has nothing.",
-   "puzzles": [
-    {
-     "fen": "8/5r1k/3R3p/1Qp2q2/4p1p1/4P1P1/7P/6K1 b - - 0 35",
-     "solution_uci": "f5f2",
-     "solution_san": "Qf2+",
-     "pattern": "queen-infiltration",
-     "note": "35.Qxb5 allowed a forced mate: Black mates in 3 with 35...Qf2+ 36.Kh1 Qe1+ 37.Kg2 Rf2#. 35.Rd1 was needed.",
-     "line_san": "35...Qf2+ 36.Kh1 Qe1+ 37.Kg2 Rf2#",
-     "white": "Tchouka, Yakini",
-     "black": "Concio, Michael Jr.",
-     "round": 1,
-     "section": "Open",
-     "eval": "mate in 3"
-    },
-    {
-     "fen": "3Q4/5Kpk/q6p/4R3/5P2/8/7P/4r3 b - - 2 57",
-     "solution_uci": "a6g6",
-     "solution_san": "Qg6+",
-     "pattern": "queen-infiltration",
-     "note": "57.Kf7 left the white king open. Black follows with 57...Qg6+ 58.Ke7 Qf6+ 59.Ke8 Rxe5+, driving the king around with checks.",
-     "line_san": "57...Qg6+ 58.Ke7 Qf6+ 59.Ke8 Rxe5+ 60.fxe5",
-     "white": "Allo Collante, Enrique",
-     "black": "Beckley, Joseph Adeshole Brian",
-     "round": 1,
-     "section": "Open",
-     "eval": "+2.66"
-    },
-    {
-     "fen": "2n1r2q/pp1bn1k1/4p1p1/3pP1Q1/3P4/P2B3N/1P1N2PP/5R1K w - - 11 28",
-     "solution_uci": "g5f6",
-     "solution_san": "Qf6+",
-     "pattern": "queen-infiltration",
-     "note": "27...Nbc8 allowed a forced mate: White mates in 13 with 28.Qf6+ Kh6 29.Qf4+ Kh7 30.Ng5+. 27...Nf5 was needed.",
-     "line_san": "28.Qf6+ Kh6 29.Qf4+ Kh7 30.Ng5+ Kg7",
-     "white": "Chipanga, Chiletso",
-     "black": "Clark, Gary",
-     "round": 4,
-     "section": "Open",
-     "eval": "+8.65"
-    },
-    {
-     "fen": "5rk1/6pp/6q1/3p4/RQ3p1P/6PB/1P2rPK1/2R5 b - - 0 33",
-     "solution_uci": "g6g3",
-     "solution_san": "Qxg3+",
-     "pattern": "queen-infiltration",
-     "note": "33.Qxb4 allowed a combination: 33...Qxg3+ 34.Kh1 Qxf2 35.Qxf8+ Kxf8 wins about 10 points of material for Black.",
-     "line_san": "33...Qxg3+ 34.Kh1 Qxf2 35.Qxf8+ Kxf8 36.Rxf4+",
-     "white": "Mohamed Raakin Fayaz",
-     "black": "Lual Guet nhiany",
-     "round": 6,
-     "section": "Open",
-     "eval": "+7.92"
-    },
-    {
-     "fen": "8/p6Q/2k1p3/1p2P1pK/4pb2/PPpR4/5qPP/2B1R3 b - - 0 29",
-     "solution_uci": "f2h4",
-     "solution_san": "Qh4+",
-     "pattern": "queen-infiltration",
-     "note": "29.Rxd3 left the white king open. Black follows with 29...Qh4+ 30.Kg6 Qxh7+ 31.Kxh7 exd3, driving the king around with checks.",
-     "line_san": "29...Qh4+ 30.Kg6 Qxh7+ 31.Kxh7 exd3 32.h4",
-     "white": "Bellier, Julien",
-     "black": "Alsayer, Bader",
-     "round": 6,
-     "section": "Open",
-     "eval": "+3.20"
-    },
-    {
-     "fen": "8/7p/3N1kp1/q1P5/2B2PQ1/6PP/n4K2/4r3 w - - 3 50",
-     "solution_uci": "g4g5",
-     "solution_san": "Qg5+",
-     "pattern": "queen-infiltration",
-     "note": "49...Kf6 left the black king open. White follows with 50.Qg5+ Kg7 51.Nf5+ Kf8 52.Qf6+, driving the king around with checks.",
-     "line_san": "50.Qg5+ Kg7 51.Nf5+ Kf8 52.Qf6+ Ke8",
-     "white": "Lee, Junhyeok",
-     "black": "Madol Garang Panthou Joh",
-     "round": 8,
-     "section": "Open",
-     "eval": "+10.08"
-    }
-   ]
-  },
-  {
-   "id": "h-file",
-   "name": "The h-file battering ram",
-   "detect": "a pawn or rook opens and uses the h-file",
-   "you_are": "defending",
-   "openings": [
-    "Modern against the 150 Attack, and the Grünfeld whenever White castles long and your king is behind ...g6."
-   ],
-   "preconditions": [
-    "Opposite-side castling, or a White king that is not going to be bothered by the pawn leaving.",
-    "A target: the g6-pawn, which after h4-h5 must either take or be taken.",
-    "A rook already on h1, so the file opens onto something."
-   ],
-   "mechanism": "h4-h5 and the g6-pawn has no good answer. Taking opens the h-file; declining lets hxg6 open it anyway. The attack costs no pieces, which is what makes it so common at club level.",
-   "defence": "Meet h4 with ...h5. It costs a tempo and ends the plan — without h4-h5 there is no ram, and White has to find a slow idea instead. This is the single most useful defensive move in the whole Modern repertoire.",
-   "puzzles": [
-    {
-     "fen": "r7/1pq2ppk/2pp4/p2n1P2/5QP1/2P3R1/PP3P2/3B2K1 w - - 1 30",
-     "solution_uci": "g3h3",
-     "solution_san": "Rh3+",
-     "pattern": "h-file",
-     "note": "29...Nd5 allowed a combination: 30.Rh3+ Kg8 31.Qh2 Kf8 32.Rh8+ wins about 5 points of material for White.",
-     "line_san": "30.Rh3+ Kg8 31.Qh2 Kf8 32.Rh8+ Ke7",
-     "white": "Kosakowski, Jakub",
-     "black": "Toro Cruz, Sebastian J.",
-     "round": 1,
-     "section": "Open",
-     "eval": "+6.59"
-    },
-    {
-     "fen": "5r1k/1pR1R1pp/p7/3p4/6r1/5n1K/PP3P1P/1B6 b - - 5 32",
-     "solution_uci": "h7h5",
-     "solution_san": "h5",
-     "pattern": "h-file",
-     "note": "32.Kh3 allowed a forced mate: Black mates in 2 with 32...h5 33.Rxg7 Ng5+ 34.Rxg5 Rf3#. 32.Kf1 was needed.",
-     "line_san": "32...h5 33.Rxg7 Ng5+ 34.Rxg5 Rf3#",
-     "white": "Adam, Jamal",
-     "black": "Noboa Silva, Kevin",
-     "round": 1,
-     "section": "Open",
-     "eval": "mate in 2"
-    },
-    {
-     "fen": "r1q3k1/pp3ppp/5n2/2ppr3/7Q/2PBPPP1/PP3P2/R4RK1 b - - 2 16",
-     "solution_uci": "e5h5",
-     "solution_san": "Rh5",
-     "pattern": "h-file",
-     "note": "16.Qh4 allowed a combination: 16...Rh5 17.Qxh5 Nxh5 18.Kg2 Nf6 wins about 4 points of material for Black.",
-     "line_san": "16...Rh5 17.Qxh5 Nxh5 18.Kg2 Nf6 19.g4",
-     "white": "Chottu, Melanie",
-     "black": "Mlik Omar",
-     "round": 2,
-     "section": "Open",
-     "eval": "+4.19"
-    },
-    {
-     "fen": "r3r3/1p3p1k/p2p2p1/2pPn1Rn/2P2q1P/1N3P2/PP1QB3/2K4R w - - 3 24",
-     "solution_uci": "g5h5",
-     "solution_san": "Rxh5+",
-     "pattern": "h-file",
-     "note": "23...Qf4 allowed a combination: 24.Rxh5+ gxh5 25.Qxf4 Kg7 26.Rg1+ wins about 5 points of material for White.",
-     "line_san": "24.Rxh5+ gxh5 25.Qxf4 Kg7 26.Rg1+ Ng6",
-     "white": "Lui, Junior",
-     "black": "Young, Christopher",
-     "round": 3,
-     "section": "Open",
-     "eval": "+6.74"
-    },
-    {
-     "fen": "7r/8/4qpk1/2R5/pp1PpQp1/6N1/PP3PPr/5K2 b - - 1 40",
-     "solution_uci": "h2h1",
-     "solution_san": "Rh1+",
-     "pattern": "h-file",
-     "note": "40.Rc5 allowed a forced mate: Black mates in 5 with 40...Rh1+ 41.Nxh1 Rxh1+ 42.Ke2 Qa6+. 40.Kg1 was needed.",
-     "line_san": "40...Rh1+ 41.Nxh1 Rxh1+ 42.Ke2 Qa6+ 43.Rc4",
-     "white": "Oluka Robert Mcligeyo",
-     "black": "Munoz Sanchez, Miguel",
-     "round": 5,
-     "section": "Open",
-     "eval": "mate in 5"
-    },
-    {
-     "fen": "7r/8/q4pk1/2R5/pp1PpQp1/6N1/PP3PPr/4K3 b - - 3 41",
-     "solution_uci": "h2h1",
-     "solution_san": "Rh1+",
-     "pattern": "h-file",
-     "note": "41.Ke1 allowed a forced mate: Black mates in 3 with 41...Rh1+ 42.Nf1 Qxf1+ 43.Kd2 Qd3#. 41.Kg1 was needed.",
-     "line_san": "41...Rh1+ 42.Nf1 Qxf1+ 43.Kd2 Qd3#",
-     "white": "Oluka Robert Mcligeyo",
-     "black": "Munoz Sanchez, Miguel",
-     "round": 5,
-     "section": "Open",
-     "eval": "mate in 3"
-    }
-   ]
-  },
-  {
-   "id": "mating-net",
-   "name": "The forced mate",
-   "detect": "the refutation forces mate",
-   "you_are": "both",
-   "openings": [
-    "Wherever the attack has already arrived — these are the positions the other patterns are trying to reach."
-   ],
-   "preconditions": [
-    "The king has no flight square, or every flight square is covered.",
-    "A forcing move exists — a check, or a capture that cannot be declined.",
-    "The defenders cannot interpose with tempo."
-   ],
-   "mechanism": "By this stage calculation replaces judgement. Check every check, including the ones that hang a piece, because a sacrifice that removes the last defender is exactly what a mating net is made of.",
-   "defence": "The time to defend was three moves ago. If you are reading this in a real game, look for a counter-check or a piece you can give back to buy the king a square.",
-   "puzzles": [
-    {
-     "fen": "2rb2k1/6pp/R3pp2/1Q6/2b5/Pn2PNB1/1P3PPP/2q2BK1 w - - 1 28",
-     "solution_uci": "b5e8",
-     "solution_san": "Qe8#",
-     "pattern": "mating-net",
-     "note": "27...Bc4 allowed a forced mate: White mates in 1 with 28.Qe8#. 27...Ba5 was needed.",
-     "line_san": "28.Qe8#",
-     "white": "Temaki, Jamiedson",
-     "black": "Akpa Prince",
-     "round": 3,
-     "section": "Open",
-     "eval": "mate in 1"
-    },
-    {
-     "fen": "5rk1/6p1/Q3p2p/1p1pP3/1PpN1P2/2P4q/4KP1P/4R3 b - - 2 37",
-     "solution_uci": "h3d3",
-     "solution_san": "Qd3#",
-     "pattern": "mating-net",
-     "note": "37.Ke2 allowed a forced mate: Black mates in 1 with 37...Qd3#. 37.Kg1 was needed.",
-     "line_san": "37...Qd3#",
-     "white": "ABDOUL-KARIM SEYDOU MAHAMADOU",
-     "black": "Allen, Darryl",
-     "round": 4,
-     "section": "Open",
-     "eval": "mate in 1"
-    },
-    {
-     "fen": "8/8/2N1bk2/1PP2p2/4pK2/r5P1/8/4R3 b - - 0 44",
-     "solution_uci": "a3f3",
-     "solution_san": "Rf3#",
-     "pattern": "mating-net",
-     "note": "44.b5 allowed a forced mate: Black mates in 1 with 44...Rf3#. 44.Ne5 was needed.",
-     "line_san": "44...Rf3#",
-     "white": "TCHIBINDA ONDO MVE, Onass Theo Jonady",
-     "black": "Fleischer, Carl",
-     "round": 4,
-     "section": "Open",
-     "eval": "mate in 1"
-    },
-    {
-     "fen": "rnb1k1nr/pppp1ppp/5q2/2b1p3/4P2P/2N5/PPPP1PP1/R1BQKBNR b KQkq - 2 4",
-     "solution_uci": "f6f2",
-     "solution_san": "Qxf2#",
-     "pattern": "mating-net",
-     "note": "4.Nc3 allowed a forced mate: Black mates in 1 with 4...Qxf2#. 4.Nf3 was needed.",
-     "line_san": "4...Qxf2#",
-     "white": "Arelong, Abon",
-     "black": "Gamba, Francois",
-     "round": 5,
-     "section": "Open",
-     "eval": "mate in 1"
-    },
-    {
-     "fen": "6Q1/P7/8/5k1K/8/8/6P1/q7 b - - 4 72",
-     "solution_uci": "a1h1",
-     "solution_san": "Qh1#",
-     "pattern": "mating-net",
-     "note": "72.Qg8 allowed a forced mate: Black mates in 1 with 72...Qh1#. 72.Qf3+ was needed.",
-     "line_san": "72...Qh1#",
-     "white": "Orozbaev, Eldiyar",
-     "black": "Chinchilla, Alejandro Jose",
-     "round": 6,
-     "section": "Open",
-     "eval": "mate in 1"
-    },
-    {
-     "fen": "r3kbnr/1p2p1pp/p4pb1/q1p1N3/4P1P1/2N4P/PPP2P2/R1BQ1RK1 w kq - 0 12",
-     "solution_uci": "d1d7",
-     "solution_san": "Qd7#",
-     "pattern": "mating-net",
-     "note": "11...f6 allowed a forced mate: White mates in 1 with 12.Qd7#. 11...Rd8 was needed.",
-     "line_san": "12.Qd7#",
-     "white": "Guanzon, Christian",
-     "black": "De Gondo, Simplice Armel",
-     "round": 6,
-     "section": "Open",
-     "eval": "mate in 1"
-    }
-   ]
-  }
- ]
+  ]
 }

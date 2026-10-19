@@ -164,9 +164,11 @@ function showPuzzle() {
   attacksBoard.setOrientation(fenSide(p.fen) === "w" ? "white" : "black");
   attacksBoard.setLastMove(null, null);
   const mover = fenSide(p.fen) === "w" ? "White" : "Black";
+  const verb = (Attacks.pattern && Attacks.pattern.id === "own-traps") ? "find the right move" : "to play and attack";
+  const where = [p.section, p.round ? ("round " + p.round) : ""].filter(Boolean).join(", ");
   $("attacks-puzzle-label").textContent =
-    p.white + " vs " + p.black + " — " + p.section + ", round " + p.round
-    + ". " + mover + " to play and attack.";
+    p.white + " vs " + p.black + (where ? " — " + where : "")
+    + ". " + mover + " " + verb + ".";
   const own = Math.ceil(Attacks.seq.length / 2);
   attacksSetStatus("Position " + (Attacks.at + 1) + " of "
     + Attacks.queue.length + ". " + (own > 1 ? "Work out the line: " + own + " moves of yours, nothing is shown until you have them all." : "Find the move."));

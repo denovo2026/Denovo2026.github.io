@@ -767,23 +767,31 @@
   }
   function pubPuzzle(p) {
     return { id: p.id, fen: p.fen, side_to_move: p.side_to_move, theme: THEME_LABEL(p.theme), rating: p.rating,
-      themes: (p.themes || []).map(THEME_LABEL), source: p.source || "lichess" };
+      themes: (p.themes || []).map(THEME_LABEL), source: p.source || "lichess",
+      url: p.url || null, note: p.note || null, set: p.set || null, label: p.label || null };
   }
 
   route("GET", "/api/puzzles/library-stats", async function () {
     var data = await loadData("puzzles.json");
     var user = S.get("userPuzzles", []);
     var hist = S.get("puzzleHistory", {});
+    var ownMissed = data.puzzles.filter(function (p) { return p.set === "my-missed" || p.source === "own-missed"; }).length;
+    var defend = data.puzzles.filter(function (p) { return p.set === "defend-it" || p.source === "own-allowed"; }).length;
     return { total_puzzles: data.puzzles.length + user.length, static_puzzles: data.puzzles.length, user_puzzles: user.length,
-      solved: Object.keys(hist).filter(function (k) { return hist[k].solved; }).length };
+      solved: Object.keys(hist).filter(function (k) { return hist[k].solved; }).length,
+      my_missed: ownMissed, defend_it: defend };
   });
 
   route("POST", "/api/puzzle/next", async function (b) {
     var pool = await puzzlePool();
+    var set = b.set || "all";
+    if (set && set !== "all") {
+      pool = pool.filter(function (p) { return p.set === set || (set === "my-missed" && p.source === "own-missed") || (set === "defend-it" && p.source === "own-allowed"); });
+    }
     var seen = new Set(b.seen_ids || []);
     var hist = S.get("puzzleHistory", {});
     var lo = b.min_rating || 0, hi = b.max_rating || 99999;
-    var inRange = pool.filter(function (p) { return p.rating >= lo && p.rating <= hi; });
+    var inRange = pool.filter(function (p) { return (p.rating || 1000) >= lo && (p.rating || 1000) <= hi; });
     if (!inRange.length) inRange = pool;
     // prefer: user-built puzzles not yet solved, then unseen + unsolved, then unseen, then anything
     var tiers = [
@@ -2091,7 +2099,7 @@
   /* /api/attacks                 -> name, summary, patterns w/o puzzles   */
   /*                                 (puzzle_count instead)                */
   /* /api/attacks/:id             -> one pattern with its puzzles          */
-  var REPERTOIRES = { modern: "modern.json", grunfeld: "grunfeld.json" };
+  var REPERTOIRES = { modern: "modern.json", grunfeld: "grunfeld.json", scotch: "scotch.json" };
   function repFile(slug) {
     if (!Object.prototype.hasOwnProperty.call(REPERTOIRES, slug)) fail(404, "repertoire_not_found");
     return loadData(REPERTOIRES[slug]);
@@ -2134,7 +2142,7 @@
   async function repProgressSummary(slug) {
     var all = repProg(), lines = Object.keys(all).map(function (k) { return all[k]; }).filter(function (l) { return !slug || l.slug === slug; });
     var totalLines = 0;
-    for (var s2 of ["modern", "grunfeld"]) { if (slug && slug !== s2) continue; try { totalLines += ((await repFile(s2)).looks || []).length; } catch (_) {} }
+    for (var s2 of ["modern", "grunfeld", "scotch"]) { if (slug && slug !== s2) continue; try { totalLines += ((await repFile(s2)).looks || []).length; } catch (_) {} }
     var now = Date.now();
     return { lines: lines, total_lines: totalLines, tried: lines.length,
       known: lines.filter(function (l) { return l.last_right === l.last_total; }).length,
@@ -2508,9 +2516,46 @@
       return a;
     } catch (_) { return null; }
   }
+  async function mergeStyleCards(cj) {
+    /* v44: merge new mistake cards by id without a full reload */
+    if (!cj || !cj.cards) return { added: 0 };
+    var rev = cj.cards_revision || null;
+    if (rev && S.get("mineCardsRevision") === rev) return { added: 0 };
+    var before = cards().length;
+    var mapped = cj.cards.map(function (c) {
+      return { fen_before: c.fen_before, best_uci: c.best_uci, uci: c.uci, san: c.san,
+        title: c.title, explanation: c.explanation, motif: c.motif || "missed_capture",
+        classification: c.classification || "mistake" };
+    });
+    /* Prefer stable ids from the file when present */
+    var deck = cards(), byKey = {};
+    deck.forEach(function (c) { byKey[c.id] = c; });
+    var added = 0;
+    cj.cards.forEach(function (c) {
+      if (!c.id || !c.fen_before || !c.best_uci) return;
+      if (byKey[c.id]) return;
+      var built = cardFromMistake({ fen_before: c.fen_before, best_uci: c.best_uci, uci: c.uci, san: c.san,
+        title: c.title, explanation: c.explanation, motif: c.motif || "missed_capture",
+        classification: c.classification || "mistake" }, c.source || "my-cards");
+      if (!built) return;
+      /* Prefer the stable style-review id so merges stay idempotent */
+      if (c.id) { built.id = c.id; }
+
+      if (c.url) built.url = c.url;
+      deck.push(built);
+      byKey[c.id] = built;
+      added++;
+    });
+    if (added) saveCards(deck);
+    if (rev) S.set("mineCardsRevision", rev);
+    return { added: added };
+  }
   async function importMine(force) {
     var gj = await loadData("mine/games.json"), cj = await loadData("mine/cards.json");
-    if (!force && S.get("mineVersion") === gj.version) return mineStatus();
+    if (!force && S.get("mineVersion") === gj.version) {
+      try { await mergeStyleCards(cj); } catch (_) {}
+      return mineStatus();
+    }
     var first = !S.get("mineVersion");
     // 1. names + level (only the non-secret prefs from his config)
     var cfg = S.get("config", {});
@@ -2548,6 +2593,7 @@
     saveCards(deck);
     var rc = addCards(cj.cards.map(function (c) { return { fen_before: c.fen_before, best_uci: c.best_uci, uci: c.uci, san: c.san,
       title: c.title, explanation: c.explanation, motif: c.motif, classification: c.classification }; }), "my-cards");
+    try { await mergeStyleCards(cj); } catch (_) {}
     var misses = [];
     gj.games.forEach(function (g) { g.misses.forEach(function (m) { misses.push(m); }); });
     misses.sort(function (a, b) { return b.cpl - a.cpl; });
@@ -2572,6 +2618,7 @@
     S.set("mineEndgames", gj.games.filter(function (g) { return g.endgame_fen; }).map(function (g) {
       return { fen: g.endgame_fen, label: "#" + (gj.games.length - gj.games.indexOf(g)) + " (" + g.white + " – " + g.black + ")" }; }));
     S.set("mineVersion", gj.version); S.set("mineImportedAt", nowIso());
+    if (cj.cards_revision) S.set("mineCardsRevision", cj.cards_revision);
     var st = mineStatus();
     st.first_import = first; st.cards_added = rc.added; st.misses_added = rg.added;
     return st;

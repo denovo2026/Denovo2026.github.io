@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=43">
+<link rel="stylesheet" href="style.css?v=44">
 </head>
 <body>
 <header class="app-header">
@@ -78,6 +78,7 @@
       <button class="tab-btn" data-tab="attacks" data-group="train">Attacks</button>
       <button class="tab-btn" data-tab="calc" data-group="train">Calculation</button>
       <button class="tab-btn" data-tab="modern" data-group="openings">Modern</button>
+      <button class="tab-btn" data-tab="scotch" data-group="openings">Scotch</button>
       <button class="tab-btn" data-tab="grunfeld" data-group="openings">Gr&uuml;nfeld</button>
       <button class="tab-btn" data-tab="masters" data-group="study">Masters</button>
       <button class="tab-btn" data-tab="learn" data-group="study">Learn</button>
@@ -387,6 +388,12 @@
       </div>
       <aside class="side-panel">
         <div class="panel-row">
+          <label for="puzzle-set">Set</label>
+          <select id="puzzle-set" title="Train a specific set from your games">
+            <option value="all">All puzzles</option>
+            <option value="my-missed">My missed tactics</option>
+            <option value="defend-it">Defend it</option>
+          </select>
           <label for="puzzle-rating">Rating</label>
           <select id="puzzle-rating">
             <option value="any">Any</option>
@@ -960,8 +967,8 @@
         <div id="progress-trend"></div>
       </div>
       <div class="lab-panel" id="progress-openings-card">
-        <h3>Opening lines <span class="muted">(first tries, Modern &amp; Grünfeld)</span></h3>
-        <div id="progress-openings"><div class="info-line muted">Take a quiz on the Modern or Grünfeld tab to start.</div></div>
+        <h3>Opening lines <span class="muted">(first tries, Modern, Scotch &amp; Grünfeld)</span></h3>
+        <div id="progress-openings"><div class="info-line muted">Take a quiz on the Modern, Scotch or Grünfeld tab to start.</div></div>
       </div>
       <div class="lab-panel" id="progress-cycles-card">
         <h3>Latest cycle <span class="muted">(Woodpecker sets)</span></h3>
@@ -1111,6 +1118,66 @@
             <h4 class="sub-head">Reading the board</h4>
             <div id="modern-reading"></div>
             <div id="modern-coach" class="coach-box hidden"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===================== SCOTCH GAME (v44) ===================== -->
+  <section id="tab-scotch" class="tab-panel rep-tab">
+    <div class="rep-layout">
+      <div class="rep-left">
+        <div id="scotch-label" class="lab-game-bar">Pick a Black reply.</div>
+        <div id="scotch-board" class="board-holder"></div>
+        <div id="scotch-nav" class="nav-slot"></div>
+      </div>
+
+      <div class="rep-right">
+        <div class="rep-coachbar">
+          <span class="rep-coach-avatar" aria-hidden="true">&#x265F;</span>
+          <div class="rep-coachbar-text">
+            <strong id="scotch-title">Scotch Game</strong>
+            <span class="info-line" id="scotch-summary">Loading…</span>
+          </div>
+        </div>
+
+        <div class="rep-picker">
+          <div class="rep-picker-head">
+            <h3>What Black shows you</h3>
+            <span class="info-line">You are White. Each set-up is named by Black's reply after 3.d4 —
+            recognise it, then play your plan.</span>
+          </div>
+          <div id="scotch-looks" class="rep-looks">Loading…</div>
+        </div>
+
+        <div class="rep-controls">
+          <div id="scotch-movebar" class="rep-movebar"></div>
+          <div class="panel-row">
+            <button id="btn-scotch-quiz" class="btn primary">Quiz me on White's moves</button>
+            <button id="btn-scotch-due" class="btn" title="Missed lines first, then new ones, then the lines due for review">Drill due lines</button>
+            <button id="btn-scotch-blind" class="btn">Quiz against all types</button>
+            <button id="btn-scotch-plan" class="btn" title="Play on from the final position against the engine at your level">&#9654; Play the plan</button>
+            <button id="btn-scotch-play" class="btn">Send to Play &amp; Analyze</button>
+          </div>
+          <div class="rep-status-row"><span id="scotch-status" class="info-line"></span></div>
+          <div id="scotch-score" class="rep-score hidden"></div>
+        </div>
+
+        <div class="rep-panels">
+          <div class="lab-panel" id="scotch-detail-panel">
+            <h3 id="scotch-look-name">The set-up</h3>
+            <div id="scotch-detail">
+              <p class="info-line">Choose a set-up to see the tell, the plan and the tactics that decide it.</p>
+            </div>
+          </div>
+          <div class="lab-panel">
+            <h3>Your scheme, whatever they play</h3>
+            <div id="scotch-scheme"></div>
+            <h4 class="sub-head">Reading the board</h4>
+            <div id="scotch-reading"></div>
+            <div id="scotch-coach" class="coach-box hidden"></div>
           </div>
         </div>
       </div>
@@ -1301,13 +1368,13 @@
 <!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
 <script src="vendor/chess.js?v=33"></script>
 <script src="js/engine.js?v=33"></script>
-<script src="api-shim.js?v=43"></script>
+<script src="api-shim.js?v=44"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=35"></script>
-<script src="app.js?v=43"></script>
-<script src="js/repertoire.js?v=43"></script>
-<script src="js/attacks.js?v=43"></script>
-<script src="js/calc.js?v=43"></script>
+<script src="app.js?v=44"></script>
+<script src="js/repertoire.js?v=44"></script>
+<script src="js/attacks.js?v=44"></script>
+<script src="js/calc.js?v=44"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});

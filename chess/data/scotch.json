@@ -1,0 +1,459 @@
+{
+  "name": "Scotch Game",
+  "eco": "C45",
+  "side": "white",
+  "summary": "1.e4 e5 2.Nf3 Nc6 3.d4. You open the centre on move three and play for a lead in development. Two shapes cover almost everything you meet: the gambit with 4.Bc4, and the Classical with 4.Nxd4.",
+  "coach_note": "You already win your Scotch games. The work is finishing them \u2014 taking the free piece, not checking into a hang, and never opening your king with f3 when Black's queen sits on e5.",
+  "scheme": [
+    "3.d4 opens the centre; decide on move four whether you want the gambit (Bc4) or the Classical (Nxd4).",
+    "In the gambit, castle before any quiet pawn move. f3 with the king on g1 is a known self-mate pattern against ...Qe5.",
+    "In the Classical, have a retreat ready when Black plays ...c5 (Qe3 or Qd3), then develop Be3/Bd2 and castle.",
+    "Conversion: before you check, ask what hangs. Bb5+ and Bxf6 win more games than flashy Bxf7+ or Bc4+."
+  ],
+  "reading": [
+    "Black's fourth move names the set-up: ...Bc5 and ...Nf6 lean gambit; ...Nxd4 and ...Qf6 lean Classical.",
+    "If Black plays ...h6 early, take on d4 and develop \u2014 do not chase the queen into your own trap.",
+    "A queen trade does not end the Scotch. Keep counting loose pieces."
+  ],
+  "looks": [
+    {
+      "id": "scotch-bc4-gambit",
+      "name": "Scotch Gambit \u2014 4.Bc4",
+      "eco": "C44",
+      "frequency": "your main Scotch (5 of 10 games)",
+      "tell": "After 1.e4 e5 2.Nf3 Nc6 3.d4 exd4 you play 4.Bc4. Black answers ...Bc5, ...Nf6, or ...h6.",
+      "white_idea": "Black wants to hold the extra pawn on d4, castle, and trade pieces into an endgame where the pawn still matters \u2014 or catch your king in the open centre with discovered checks if you play a quiet move like f3 too early.",
+      "opponent_idea": "Black wants to hold the extra pawn on d4, castle, and trade pieces into an endgame where the pawn still matters \u2014 or catch your king in the open centre with discovered checks if you play a quiet move like f3 too early.",
+      "moves": [
+        "e4",
+        "e5",
+        "Nf3",
+        "Nc6",
+        "d4",
+        "exd4",
+        "Bc4",
+        "Bc5",
+        "c3",
+        "Qf6",
+        "Bg5",
+        "Qd6",
+        "O-O",
+        "Ne5",
+        "Nxe5",
+        "Qxe5"
+      ],
+      "plans": [
+        "Castle before touching f3. Against ...Bc5/...Qf6, look at Bg5 and c3, then O-O.",
+        "The bishop on c4 eyes f7 \u2014 if Black is careless, Bxf7+ then Qd5+ or Ng5 is a real idea (you already sprung this vs ChessTeacherEU).",
+        "When Black plays ...h6 (IdN9XvEe, 8LyMd1xE), take on d4 and develop \u2014 do not chase the queen into a trap of your own making."
+      ],
+      "strategic": [
+        "This is an open centre. Quiet pawn moves like f3 leave the king on the open e-file and give Black discovered checks.",
+        "You win every Scotch Gambit game in this sample (5/5), but the evaluation swings show you leave wins on the table with f3."
+      ],
+      "tactics": [
+        {
+          "name": "Do not play f3",
+          "point": "Black answers ...dxc3+ and the e5-queen + bishop discover on the king.",
+          "line_san": "9...dxc3+ 10.Kh1 cxb2",
+          "plies": [
+            {
+              "san": "dxc3+",
+              "uci": "d4c3",
+              "side": "black",
+              "fen": "r1b1k1nr/pppp1ppp/8/2b1q1B1/2B1P3/2p2P2/PP4PP/RN1Q1RK1 w kq - 0 10"
+            },
+            {
+              "san": "Kh1",
+              "uci": "g1h1",
+              "side": "white",
+              "fen": "r1b1k1nr/pppp1ppp/8/2b1q1B1/2B1P3/2p2P2/PP4PP/RN1Q1R1K b kq - 1 10"
+            },
+            {
+              "san": "cxb2",
+              "uci": "c3b2",
+              "side": "black",
+              "fen": "r1b1k1nr/pppp1ppp/8/2b1q1B1/2B1P3/5P2/Pp4PP/RN1Q1R1K w kq - 0 11"
+            }
+          ],
+          "fen": "r1b1k1nr/pppp1ppp/8/2b1q1B1/2BpP3/2P2P2/PP4PP/RN1Q1RK1 b kq - 0 9",
+          "url": "https://lichess.org/Y38f4Nlq#16"
+        },
+        {
+          "name": "Bxf7+ when Black is undeveloped",
+          "point": "You already know this one \u2014 spring it.",
+          "line_san": "5.Bxf7+ Kxf7 6.Qd5+",
+          "plies": [
+            {
+              "san": "Bxf7+",
+              "uci": "c4f7",
+              "side": "white",
+              "fen": "r1bqk1nr/pppp1Bpp/2n5/2b5/3pP3/5N2/PPP2PPP/RNBQK2R b KQkq - 0 5"
+            },
+            {
+              "san": "Kxf7",
+              "uci": "e8f7",
+              "side": "black",
+              "fen": "r1bq2nr/pppp1kpp/2n5/2b5/3pP3/5N2/PPP2PPP/RNBQK2R w KQ - 0 6"
+            }
+          ],
+          "fen": "r1bqk1nr/pppp1ppp/2n5/2b5/2BpP3/5N2/PPP2PPP/RNBQK2R w KQkq - 2 5",
+          "url": "https://lichess.org/OEAu4SJ0"
+        },
+        {
+          "name": "Finish the job \u2014 take on e8",
+          "point": "You checked with Qc3+ and let the win slip. The rook on e8 is free.",
+          "line_san": "24. Qxe8",
+          "plies": [
+            {
+              "san": "Qxe8",
+              "uci": "e3e8",
+              "side": "white",
+              "fen": "4Q3/ppp2pkp/n1qp2p1/8/8/P7/1P3PPP/4R1K1 b - - 0 24"
+            }
+          ],
+          "fen": "4r3/ppp2pkp/n1qp2p1/8/8/P3Q3/1P3PPP/4R1K1 w - - 1 24",
+          "url": "https://lichess.org/sLtyi2H6#46"
+        }
+      ],
+      "watch": "Never play f3 with your king just castled when Black has ...Qe5 and a bishop on the a7-g1 diagonal. Prefer Bh4, Re1, or developing with tempo.",
+      "plies": [
+        {
+          "san": "e4",
+          "uci": "e2e4",
+          "side": "white",
+          "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+        },
+        {
+          "san": "e5",
+          "uci": "e7e5",
+          "side": "black",
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
+        },
+        {
+          "san": "Nf3",
+          "uci": "g1f3",
+          "side": "white",
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2"
+        },
+        {
+          "san": "Nc6",
+          "uci": "b8c6",
+          "side": "black",
+          "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3"
+        },
+        {
+          "san": "d4",
+          "uci": "d2d4",
+          "side": "white",
+          "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq - 0 3"
+        },
+        {
+          "san": "exd4",
+          "uci": "e5d4",
+          "side": "black",
+          "fen": "r1bqkbnr/pppp1ppp/2n5/8/3pP3/5N2/PPP2PPP/RNBQKB1R w KQkq - 0 4"
+        },
+        {
+          "san": "Bc4",
+          "uci": "f1c4",
+          "side": "white",
+          "fen": "r1bqkbnr/pppp1ppp/2n5/8/2BpP3/5N2/PPP2PPP/RNBQK2R b KQkq - 1 4"
+        },
+        {
+          "san": "Bc5",
+          "uci": "f8c5",
+          "side": "black",
+          "fen": "r1bqk1nr/pppp1ppp/2n5/2b5/2BpP3/5N2/PPP2PPP/RNBQK2R w KQkq - 2 5"
+        },
+        {
+          "san": "c3",
+          "uci": "c2c3",
+          "side": "white",
+          "fen": "r1bqk1nr/pppp1ppp/2n5/2b5/2BpP3/2P2N2/PP3PPP/RNBQK2R b KQkq - 0 5"
+        },
+        {
+          "san": "Qf6",
+          "uci": "d8f6",
+          "side": "black",
+          "fen": "r1b1k1nr/pppp1ppp/2n2q2/2b5/2BpP3/2P2N2/PP3PPP/RNBQK2R w KQkq - 1 6"
+        },
+        {
+          "san": "Bg5",
+          "uci": "c1g5",
+          "side": "white",
+          "fen": "r1b1k1nr/pppp1ppp/2n2q2/2b3B1/2BpP3/2P2N2/PP3PPP/RN1QK2R b KQkq - 2 6"
+        },
+        {
+          "san": "Qd6",
+          "uci": "f6d6",
+          "side": "black",
+          "fen": "r1b1k1nr/pppp1ppp/2nq4/2b3B1/2BpP3/2P2N2/PP3PPP/RN1QK2R w KQkq - 3 7"
+        },
+        {
+          "san": "O-O",
+          "uci": "e1g1",
+          "side": "white",
+          "fen": "r1b1k1nr/pppp1ppp/2nq4/2b3B1/2BpP3/2P2N2/PP3PPP/RN1Q1RK1 b kq - 4 7"
+        },
+        {
+          "san": "Ne5",
+          "uci": "c6e5",
+          "side": "black",
+          "fen": "r1b1k1nr/pppp1ppp/3q4/2b1n1B1/2BpP3/2P2N2/PP3PPP/RN1Q1RK1 w kq - 5 8"
+        },
+        {
+          "san": "Nxe5",
+          "uci": "f3e5",
+          "side": "white",
+          "fen": "r1b1k1nr/pppp1ppp/3q4/2b1N1B1/2BpP3/2P5/PP3PPP/RN1Q1RK1 b kq - 0 8"
+        },
+        {
+          "san": "Qxe5",
+          "uci": "d6e5",
+          "side": "black",
+          "fen": "r1b1k1nr/pppp1ppp/8/2b1q1B1/2BpP3/2P5/PP3PPP/RN1Q1RK1 w kq - 0 9"
+        }
+      ],
+      "line_san": "e4 e5 Nf3 Nc6 d4 exd4 Bc4 Bc5 c3 Qf6 Bg5 Qd6 O-O Ne5 Nxe5 Qxe5",
+      "fen": "r1b1k1nr/pppp1ppp/8/2b1q1B1/2BpP3/2P5/PP3PPP/RN1Q1RK1 w kq - 0 9",
+      "moves_count": 16,
+      "source_games": [
+        "https://lichess.org/Y38f4Nlq",
+        "https://lichess.org/IdN9XvEe",
+        "https://lichess.org/oF7yaVFb",
+        "https://lichess.org/8LyMd1xE",
+        "https://lichess.org/OEAu4SJ0"
+      ]
+    },
+    {
+      "id": "scotch-classical-nxd4",
+      "name": "Classical Scotch \u2014 4.Nxd4",
+      "eco": "C45",
+      "frequency": "your other Scotch (5 of 10 games)",
+      "tell": "You take on d4 with the knight. Black usually replies ...Nxd4, ...Qf6, or ...Nf6.",
+      "white_idea": "Black wants to kick your queen with ...c5, develop quickly, and trade into a safe middlegame. Against Nb5 lines they sometimes walk the king \u2014 punish that.",
+      "opponent_idea": "Black wants to kick your queen with ...c5, develop quickly, and trade into a safe middlegame. Against Nb5 lines they sometimes walk the king \u2014 punish that.",
+      "moves": [
+        "e4",
+        "e5",
+        "Nf3",
+        "Nc6",
+        "d4",
+        "exd4",
+        "Nxd4",
+        "Nxd4",
+        "Qxd4",
+        "c5",
+        "Qe3",
+        "Nf6",
+        "Nc3",
+        "Be7",
+        "Bd2",
+        "O-O"
+      ],
+      "plans": [
+        "Against ...Nxd4 Qxd4 c5, retreat the queen (Qe3/Qd3) and develop. Do not drop the bishop on c4 into ...dxc4 (zoUZTRZs).",
+        "Against ...Qf6 Nb5, you already punish the king walk (831876672).",
+        "In the endgame after a queen trade (856440792), do not hang pieces \u2014 you threw about five pawns with Bc4+ instead of Bxf6."
+      ],
+      "strategic": [
+        "The Classical Scotch is a long game. Your results are perfect (5/5) but conversion is the skill: several of those games had 50+ WP swings you survived."
+      ],
+      "tactics": [
+        {
+          "name": "Take the hanging knight",
+          "point": "Bxf6 cleans up. Bc4+ hangs material.",
+          "line_san": "17.Bxf6",
+          "plies": [
+            {
+              "san": "Bxf6",
+              "uci": "g5f6",
+              "side": "white",
+              "fen": "r1br1bk1/p2p3p/1p3B2/2p5/8/5P2/PPP3PP/2KR1B1R b - - 0 17"
+            }
+          ],
+          "fen": "r1br1bk1/p2p3p/1p3n2/2p3B1/8/5P2/PPP3PP/2KR1B1R w - - 0 17",
+          "url": "https://www.chess.com/game/daily/856440792?move=32"
+        },
+        {
+          "name": "Bb5+ when Black is undeveloped",
+          "point": "You played Bxf7+; Bb5+ was crushing instead.",
+          "line_san": "11.Bb5+",
+          "plies": [
+            {
+              "san": "Bb5+",
+              "uci": "c4b5",
+              "side": "white",
+              "fen": "r2qkb1r/pb2nppp/1p6/1Bp5/4p3/3Q4/PPP2PPP/RNBR2K1 b kq - 1 11"
+            }
+          ],
+          "fen": "r2qkb1r/pb2nppp/1p6/2p5/2B1p3/3Q4/PPP2PPP/RNBR2K1 w kq - 0 11",
+          "url": "https://lichess.org/zoUZTRZs#20"
+        },
+        {
+          "name": "Finish the job \u2014 Bxf6 not Bc4+",
+          "point": "The knight on f6 is hanging. Taking it keeps the win; checking on c4 throws material.",
+          "line_san": "17. Bxf6",
+          "plies": [
+            {
+              "san": "Bxf6",
+              "uci": "g5f6",
+              "side": "white",
+              "fen": "r1br1bk1/p2p3p/1p3B2/2p5/8/5P2/PPP3PP/2KR1B1R b - - 0 17"
+            }
+          ],
+          "fen": "r1br1bk1/p2p3p/1p3n2/2p3B1/8/5P2/PPP3PP/2KR1B1R w - - 0 17",
+          "url": "https://www.chess.com/game/daily/856440792?move=32"
+        },
+        {
+          "name": "Finish the job \u2014 Bb5+ not Bxf7+",
+          "point": "The quieter check wins more. Bb5+ forces the issue; Bxf7+ only looks flashy.",
+          "line_san": "11. Bb5+ Bc6 12. Bxc6+ Nxc6 13. Qxe4+",
+          "plies": [
+            {
+              "san": "Bb5+",
+              "uci": "c4b5",
+              "side": "white",
+              "fen": "r2qkb1r/pb2nppp/1p6/1Bp5/4p3/3Q4/PPP2PPP/RNBR2K1 b kq - 1 11"
+            },
+            {
+              "san": "Bc6",
+              "uci": "b7c6",
+              "side": "black",
+              "fen": "r2qkb1r/p3nppp/1pb5/1Bp5/4p3/3Q4/PPP2PPP/RNBR2K1 w kq - 2 12"
+            },
+            {
+              "san": "Bxc6+",
+              "uci": "b5c6",
+              "side": "white",
+              "fen": "r2qkb1r/p3nppp/1pB5/2p5/4p3/3Q4/PPP2PPP/RNBR2K1 b kq - 0 12"
+            },
+            {
+              "san": "Nxc6",
+              "uci": "e7c6",
+              "side": "black",
+              "fen": "r2qkb1r/p4ppp/1pn5/2p5/4p3/3Q4/PPP2PPP/RNBR2K1 w kq - 0 13"
+            },
+            {
+              "san": "Qxe4+",
+              "uci": "d3e4",
+              "side": "white",
+              "fen": "r2qkb1r/p4ppp/1pn5/2p5/4Q3/8/PPP2PPP/RNBR2K1 b kq - 0 13"
+            }
+          ],
+          "fen": "r2qkb1r/pb2nppp/1p6/2p5/2B1p3/3Q4/PPP2PPP/RNBR2K1 w kq - 0 11",
+          "url": "https://lichess.org/zoUZTRZs#20"
+        }
+      ],
+      "watch": "After a queen trade, keep looking for hanging pieces \u2014 a check that hangs material throws Scotch wins.",
+      "plies": [
+        {
+          "san": "e4",
+          "uci": "e2e4",
+          "side": "white",
+          "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+        },
+        {
+          "san": "e5",
+          "uci": "e7e5",
+          "side": "black",
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
+        },
+        {
+          "san": "Nf3",
+          "uci": "g1f3",
+          "side": "white",
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2"
+        },
+        {
+          "san": "Nc6",
+          "uci": "b8c6",
+          "side": "black",
+          "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3"
+        },
+        {
+          "san": "d4",
+          "uci": "d2d4",
+          "side": "white",
+          "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq - 0 3"
+        },
+        {
+          "san": "exd4",
+          "uci": "e5d4",
+          "side": "black",
+          "fen": "r1bqkbnr/pppp1ppp/2n5/8/3pP3/5N2/PPP2PPP/RNBQKB1R w KQkq - 0 4"
+        },
+        {
+          "san": "Nxd4",
+          "uci": "f3d4",
+          "side": "white",
+          "fen": "r1bqkbnr/pppp1ppp/2n5/8/3NP3/8/PPP2PPP/RNBQKB1R b KQkq - 0 4"
+        },
+        {
+          "san": "Nxd4",
+          "uci": "c6d4",
+          "side": "black",
+          "fen": "r1bqkbnr/pppp1ppp/8/8/3nP3/8/PPP2PPP/RNBQKB1R w KQkq - 0 5"
+        },
+        {
+          "san": "Qxd4",
+          "uci": "d1d4",
+          "side": "white",
+          "fen": "r1bqkbnr/pppp1ppp/8/8/3QP3/8/PPP2PPP/RNB1KB1R b KQkq - 0 5"
+        },
+        {
+          "san": "c5",
+          "uci": "c7c5",
+          "side": "black",
+          "fen": "r1bqkbnr/pp1p1ppp/8/2p5/3QP3/8/PPP2PPP/RNB1KB1R w KQkq - 0 6"
+        },
+        {
+          "san": "Qe3",
+          "uci": "d4e3",
+          "side": "white",
+          "fen": "r1bqkbnr/pp1p1ppp/8/2p5/4P3/4Q3/PPP2PPP/RNB1KB1R b KQkq - 1 6"
+        },
+        {
+          "san": "Nf6",
+          "uci": "g8f6",
+          "side": "black",
+          "fen": "r1bqkb1r/pp1p1ppp/5n2/2p5/4P3/4Q3/PPP2PPP/RNB1KB1R w KQkq - 2 7"
+        },
+        {
+          "san": "Nc3",
+          "uci": "b1c3",
+          "side": "white",
+          "fen": "r1bqkb1r/pp1p1ppp/5n2/2p5/4P3/2N1Q3/PPP2PPP/R1B1KB1R b KQkq - 3 7"
+        },
+        {
+          "san": "Be7",
+          "uci": "f8e7",
+          "side": "black",
+          "fen": "r1bqk2r/pp1pbppp/5n2/2p5/4P3/2N1Q3/PPP2PPP/R1B1KB1R w KQkq - 4 8"
+        },
+        {
+          "san": "Bd2",
+          "uci": "c1d2",
+          "side": "white",
+          "fen": "r1bqk2r/pp1pbppp/5n2/2p5/4P3/2N1Q3/PPPB1PPP/R3KB1R b KQkq - 5 8"
+        },
+        {
+          "san": "O-O",
+          "uci": "e8g8",
+          "side": "black",
+          "fen": "r1bq1rk1/pp1pbppp/5n2/2p5/4P3/2N1Q3/PPPB1PPP/R3KB1R w KQ - 6 9"
+        }
+      ],
+      "line_san": "e4 e5 Nf3 Nc6 d4 exd4 Nxd4 Nxd4 Qxd4 c5 Qe3 Nf6 Nc3 Be7 Bd2 O-O",
+      "fen": "r1bq1rk1/pp1pbppp/5n2/2p5/4P3/2N1Q3/PPPB1PPP/R3KB1R w KQ - 6 9",
+      "moves_count": 16,
+      "source_games": [
+        "https://lichess.org/zoUZTRZs",
+        "https://www.chess.com/game/daily/820807762",
+        "https://www.chess.com/game/daily/831876672",
+        "https://www.chess.com/game/daily/856440792"
+      ]
+    }
+  ]
+}
