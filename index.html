@@ -33,24 +33,31 @@ const SS=window.speechSynthesis||null;
 let voiceOn=LS.getItem('pg_voice')!=='0',voicePrimed=false,lastSpeak=-1e9;
 function primeSpeech(ev){if(!SS||voicePrimed)return;try{const u=new SpeechSynthesisUtterance(' ');u.volume=0;SS.speak(u);}catch(e){}
  if(!ev||/^(touchend|keydown|mousedown|click|pointerup)$/.test(ev.type))voicePrimed=true;}
-function speakTrey(force){if(!SS||!voiceOn||muted||!voicePrimed)return;const now=performance.now();if(!force&&now-lastSpeak<1500)return;lastSpeak=now;
- try{if(SS.paused)SS.resume();if(SS.speaking||SS.pending)SS.cancel();const u=new SpeechSynthesisUtterance('Trey');u.lang='en-US';u.rate=1.1;u.pitch=1.15;u.volume=1;SS.speak(u);}catch(e){}}
+function speakWord(w,force,rate,pitch){if(!SS||!voiceOn||muted||!voicePrimed)return;const now=performance.now();if(!force&&now-lastSpeak<1500)return;lastSpeak=now;
+ try{if(SS.paused)SS.resume();if(SS.speaking||SS.pending)SS.cancel();const u=new SpeechSynthesisUtterance(w);u.lang='en-US';u.rate=rate||1.1;u.pitch=pitch||1.15;u.volume=1;SS.speak(u);}catch(e){}}
+function speakTrey(force){speakWord('Trey',force);}
+// ---------- lander curses (mild, PG-13; toggle C / tap CURSES label; pg_curses, default ON) ----------
+const CURSES=['Damn!','Crap!','Hell!','Dammit!','Son of a\u2014!','Holy crap!','Blast!',"Freakin' hell!",'Rats!','What the hell!'];
+let cursesOn=LS.getItem('pg_curses')!=='0',lastCurse=-1;
+function pickCurse(){let i=Math.floor(Math.random()*CURSES.length);if(i===lastCurse)i=(i+1+Math.floor(Math.random()*(CURSES.length-1)))%CURSES.length;lastCurse=i;return CURSES[i];}
+function sayable(w){return w.replace(/\u2014/g,'').replace(/!/g,'');}
+function toggleCurses(ev){primeSpeech(ev);voicePrimed=true;cursesOn=!cursesOn;LS.setItem('pg_curses',cursesOn?'1':'0');if(cursesOn)speakWord(sayable(pickCurse()),true,1.05,0.9);}
 function toggleVoice(ev){primeSpeech(ev);voicePrimed=true;voiceOn=!voiceOn;LS.setItem('pg_voice',voiceOn?'1':'0');if(voiceOn)speakTrey(true);else if(SS)try{SS.cancel();}catch(e){}}
 // ---------- input ----------
 const keys={};const pressed={};
-addEventListener('keydown',e=>{au();primeSpeech(e);const k=e.key.toLowerCase();if(k==='v'&&!e.repeat)toggleVoice(e);if(!keys[k])pressed[k]=true;keys[k]=true;if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault();});
+addEventListener('keydown',e=>{au();primeSpeech(e);const k=e.key.toLowerCase();if(k==='v'&&!e.repeat)toggleVoice(e);if(k==='c'&&!e.repeat)toggleCurses(e);if(!keys[k])pressed[k]=true;keys[k]=true;if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault();});
 addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
 const touch={jx:0,jy:0,jid:null,jcx:0,jcy:0,fire:false,btns:{}};
 function vpos(t){return{x:((t.clientX*dpr)-offX)/scale,y:((t.clientY*dpr)-offY)/scale};}
 const BTN={fire:{x:VW-80,y:VH-90,r:42,l:'FIRE'},bomb:{x:VW-170,y:VH-60,r:30,l:'BOMB'},hyper:{x:VW-70,y:VH-185,r:28,l:'HYPER'},rev:{x:VW-170,y:VH-150,r:28,l:'REV'}};
 function handleTouches(e){e.preventDefault();au();primeSpeech(e);touchUsed=true;const now={};touch.jx=touch.jy=0;let jfound=false;
  for(const t of e.touches){const p=vpos(t);
-  if(p.y<SCAN&&p.x<110&&t.identifier!==touch.jid){now.voice=true;continue;}
+  if(p.y<SCAN&&p.x<110&&t.identifier!==touch.jid){if(p.y<(state==='title'?22:46))now.voice=true;else now.curses=true;continue;}
   if(t.identifier===touch.jid||(touch.jid===null&&p.x<VW/2&&!jfound)){if(touch.jid===null){touch.jid=t.identifier;touch.jcx=p.x;touch.jcy=p.y;}if(t.identifier===touch.jid){jfound=true;let dx=p.x-touch.jcx,dy=p.y-touch.jcy,m=Math.hypot(dx,dy);if(m>50){dx*=50/m;dy*=50/m;}touch.jx=dx/50;touch.jy=dy/50;}continue;}
   for(const k in BTN){const b=BTN[k];if(Math.hypot(p.x-b.x,p.y-b.y)<b.r+12)now[k]=true;}
   if(p.y<SCAN+10&&p.x>VW-60)now.pause=true;}
  if(!jfound)touch.jid=null;
- for(const k in now)if(!touch.btns[k])pressed['t_'+k]=true;if(now.voice&&!touch.btns.voice)toggleVoice(e);touch.btns=now;}
+ for(const k in now)if(!touch.btns[k])pressed['t_'+k]=true;if(now.voice&&!touch.btns.voice)toggleVoice(e);if(now.curses&&!touch.btns.curses)toggleCurses(e);touch.btns=now;}
 let touchUsed=false;
 ['touchstart','touchmove','touchend','touchcancel'].forEach(ev=>cv.addEventListener(ev,handleTouches,{passive:false}));
 document.addEventListener('gesturestart',e=>e.preventDefault());
@@ -81,7 +88,9 @@ const PTS={lander:150,mutant:150,baiter:200,bomber:250,pod:1000,swarmer:150};
 function boom(x,y,col,n=24){for(let i=0;i<n;i++){const a=Math.random()*6.28,s=Math.random()*4+0.5;parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:40+Math.random()*30,c:col});}}
 const COL={lander:'#3f6',mutant:'#f3f',baiter:'#ff3',bomber:'#c6f',pod:'#f36',swarmer:'#f80',mine:'#fff'};
 let pops=[];const POP_MAX=20,POP_LIFE=54; // floating "TREY" on player kills (~0.9s)
-function trey(e){if(pops.length>=POP_MAX)pops.shift();pops.push({x:e.x,y:e.y-8,l:POP_LIFE,c:COL[e.type]||'#0ff'});speakTrey();}
+function trey(e){if(pops.length>=POP_MAX)pops.shift();
+ if(e.type==='lander'&&cursesOn){const w=pickCurse();pops.push({x:e.x,y:e.y-8,l:POP_LIFE,c:Math.random()<.5?'#f60':'#f22',w:w.toUpperCase(),cu:1});speakWord(sayable(w),false,1.05,0.9);}
+ else{pops.push({x:e.x,y:e.y-8,l:POP_LIFE,c:COL[e.type]||'#0ff',w:'TREY'});speakTrey();}}
 function kill(e,silent,byPlayer){e.dead=true;addScore(PTS[e.type]||0);boom(e.x,e.y,COL[e.type]);if(!silent)SFX.boom();if(byPlayer)trey(e);
  if(e.target){const h=e.target;h.st='fall';h.vy=0;h.carrier=null;h.fallY=h.y;}
  if(e.type==='pod'){for(let i=0;i<4+Math.min(wave,4);i++){const s=spawn('swarmer',e.x,e.y);s.vx=(Math.random()-.5)*6;s.vy=(Math.random()-.5)*4;}}}
@@ -195,7 +204,7 @@ function render(){
  for(const p of parts){glow(p.c,4);ctx.globalAlpha=Math.min(1,p.l/30);ctx.fillRect(sx(p.x),p.y,2.5,2.5);}ctx.globalAlpha=1;
  if(pops.length){ctx.font='bold 22px "Courier New",monospace';ctx.textAlign='center';ctx.textBaseline='middle';
   for(const q of pops){const k=q.l/POP_LIFE,t=1-k,x=sx(q.x);if(x<-60||x>VW+60)continue;const y=q.y-34*(1-k*k),s=t<0.12?0.7+t/0.12*0.45:1.15-Math.min(0.15,(t-0.12)*0.6);
-   ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.globalAlpha=Math.min(1,k*1.8);glow(q.c,14);ctx.fillText('TREY',0,0);ctx.fillText('TREY',0,0);ctx.shadowBlur=0;ctx.globalAlpha*=0.35;ctx.fillStyle='#fff';ctx.fillText('TREY',0,0);ctx.restore();}
+   ctx.save();ctx.translate(x,y);ctx.scale(s*(q.cu&&q.w.length>8?0.8:1),s*(q.cu&&q.w.length>8?0.8:1));ctx.globalAlpha=Math.min(1,k*1.8);glow(q.c,14);ctx.fillText(q.w,0,0);ctx.fillText(q.w,0,0);ctx.shadowBlur=0;ctx.globalAlpha*=0.35;ctx.fillStyle='#fff';ctx.fillText(q.w,0,0);ctx.restore();}
   ctx.globalAlpha=1;ctx.textBaseline='alphabetic';}
  // scanner
  ctx.shadowBlur=0;ctx.fillStyle='#000';ctx.fillRect(0,0,VW,SCAN);const mx=200,mw=400,sh=SCAN-8;
@@ -213,10 +222,11 @@ function render(){
   txt('WAVE '+wave,700,46,12,'#0f0');txt('BOMBS',612,14,9,'#f36','left');
   txt(muted?'MUTE':'',760,14,9,'#888');
  }
- txt((voiceOn?'VOICE ON':'VOICE OFF')+(isTouch?'':' [V]'),8,state==='title'?14:48,10,voiceOn&&!muted?'#0ff':'#888','left');
+ txt((voiceOn?'VOICE ON':'VOICE OFF')+(isTouch?'':' [V]'),8,state==='title'?14:38,10,voiceOn&&!muted?'#0ff':'#888','left');
+ txt((cursesOn?'CURSES ON':'CURSES OFF')+(isTouch?'':' [C]'),8,state==='title'?30:54,10,cursesOn?'#f80':'#888','left');
  if(state==='title'){txt('PLANET GUARDIAN',VW/2,170,52,'#0ff');txt('Protect the humanoids. Destroy the invaders.',VW/2,215,16,'#f0f');
   txt(isTouch?'TAP FIRE TO START':'PRESS SPACE TO START',VW/2,270,22,(Date.now()>>9)&1?'#ff0':'#a80');txt('HIGH SCORE '+hi,VW/2,310,16,'#fff');
-  txt(isTouch?'Joystick: move · FIRE · BOMB · HYPER · REV':'Arrows/WASD move · Space fire · Shift/Z reverse · B bomb · H hyperspace · P pause · M mute · V voice',VW/2,350,12,'#8af');}
+  txt(isTouch?'Joystick: move · FIRE · BOMB · HYPER · REV':'Arrows/WASD move · Space fire · Shift/Z reverse · B bomb · H hyperspace · P pause · M mute · V voice · C curses',VW/2,350,12,'#8af');}
  if(state==='play'&&msgT>0)txt('WAVE '+wave,VW/2,200,40,'#0f0');
  if(state==='play'&&paused)txt('PAUSED',VW/2,220,44,'#ff0');
  if(state==='over'){txt('GAME OVER',VW/2,190,56,'#f33');txt('SCORE '+score+(score>=hi&&score>0?'  NEW HIGH!':''),VW/2,240,20,'#ff0');if(deadT<=0)txt(isTouch?'TAP FIRE TO PLAY AGAIN':'PRESS SPACE TO PLAY AGAIN',VW/2,290,18,'#fff');}
@@ -231,7 +241,7 @@ function e_beam(){for(const e of enemies){if(e.type==='lander'&&e.target&&e.mode
 let last=performance.now(),acc=0;
 function loop(t){acc+=Math.min(100,t-last);last=t;while(acc>=1000/60){update();for(const k in pressed)delete pressed[k];acc-=1000/60;}render();requestAnimationFrame(loop);}
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='play')paused=true;});
-window.__pg={get state(){return state},get score(){return score},get wave(){return wave},get pops(){return pops.length},get voice(){return voiceOn}};
+window.__pg={get state(){return state},get score(){return score},get wave(){return wave},get pops(){return pops.length},get voice(){return voiceOn},get curses(){return cursesOn},get popWords(){return pops.map(q=>q.w)},_killLander(dx){const e=enemies.find(e=>e.type==='lander'&&!e.dead);if(e){if(dx!=null){e.x=wrap(ship.x+dx);e.y=Math.max(SCAN+40,ship.y-20);}kill(e,false,true);}return !!e;}};
 requestAnimationFrame(loop);
 })();
 </script></body></html>
