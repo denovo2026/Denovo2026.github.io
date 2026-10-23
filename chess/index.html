@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=44">
+<link rel="stylesheet" href="style.css?v=45">
 </head>
 <body>
 <header class="app-header">
@@ -71,6 +71,7 @@
       <button class="tab-btn active in-group" data-tab="play" data-group="play">Play &amp; Analyze</button>
       <button class="tab-btn in-group" data-tab="lab" data-group="play">Strategy Lab</button>
       <button class="tab-btn in-group" data-tab="games" data-group="play">My Games</button>
+      <button class="tab-btn" data-tab="deck" data-group="train">Mistakes</button>
       <button class="tab-btn" data-tab="puzzles" data-group="train">Puzzles</button>
       <button class="tab-btn" data-tab="cycles" data-group="train">Cycles</button>
       <button class="tab-btn" data-tab="sparring" data-group="train">Sparring</button>
@@ -455,6 +456,7 @@
         </div>
         <div id="puzzle-lib-info" class="info-line"></div>
         <h3>Mistake Flashcards</h3>
+        <div class="panel-row"><button class="btn primary" type="button" data-goto-tab="deck" title="All your games, ranked by cost, with spaced repetition">Open the Mistake Deck →</button></div>
         <div id="fc-stats" class="info-line"></div>
         <div id="fc-quarantined" class="info-line hidden"></div>
         <div class="panel-row">
@@ -1245,6 +1247,72 @@
 
   <!-- ===================== KINGSIDE ATTACKS ===================== -->
   <!-- ===================== CALCULATION (v42) ===================== -->
+  <!-- ===================== MISTAKE DECK (v45) ===================== -->
+  <section id="tab-deck" class="tab-panel rep-tab deck-tab">
+    <div class="rep-layout">
+      <div class="rep-left">
+        <div id="deck-label" class="lab-game-bar">Loading your mistake deck…</div>
+        <div id="deck-board" class="board-holder"></div>
+      </div>
+      <div class="rep-right">
+        <div class="deck-head">
+          <div class="deck-head-title"><strong>Mistake Deck</strong>
+            <span id="deck-sum" class="deck-sum info-line"></span></div>
+          <details id="deck-breakdown" class="deck-breakdown"><summary>Breakdown</summary><div id="deck-breakdown-body" class="deck-bd-grid"></div></details>
+        </div>
+        <div class="deck-filters" role="group" aria-label="Deck filters">
+          <button id="deck-f-costly" class="chip deck-costly" type="button" aria-pressed="false" title="Only the 20 most costly mistakes">★ Most costly</button>
+          <select id="deck-f-theme" aria-label="Theme"><option value="">All themes</option></select>
+          <select id="deck-f-opening" aria-label="Opening"><option value="">All openings</option></select>
+          <select id="deck-f-colour" aria-label="Colour"><option value="">Both colours</option><option value="white">As White</option><option value="black">As Black</option></select>
+          <select id="deck-f-phase" aria-label="Phase"><option value="">All phases</option><option value="opening">Opening</option><option value="middlegame">Middlegame</option><option value="endgame">Endgame</option></select>
+          <select id="deck-f-source" aria-label="Site"><option value="">All sites</option><option value="lichess">Lichess</option><option value="chesscom">Chess.com</option><option value="noctie">Noctie</option><option value="legacy">Earlier set</option><option value="local">Added here</option></select>
+          <select id="deck-sort" aria-label="Order"><option value="due">Due first, then cost</option><option value="cost">Cost (highest first)</option><option value="date">Newest first</option><option value="random">Shuffle</option></select>
+          <button id="deck-f-reset" class="btn mini" type="button" title="Clear all filters">Reset</button>
+        </div>
+        <div class="deck-card">
+          <div class="deck-card-top">
+            <span id="deck-rank" class="deck-rank"></span>
+            <span id="deck-meta" class="deck-meta"></span>
+          </div>
+          <div id="deck-prompt" class="deck-prompt">Find the better move on the board.</div>
+          <div id="deck-feedback" class="deck-feedback hidden" role="status"></div>
+          <div class="panel-row deck-actions">
+            <button id="btn-deck-hint" class="btn" type="button" title="Name the piece to move (H)">Hint</button>
+            <button id="btn-deck-reveal" class="btn" type="button" title="Show the answer (counts as Again) (R)">Show answer</button>
+            <button id="btn-deck-skip" class="btn" type="button" title="Next card without grading (N)">Skip ▶</button>
+          </div>
+          <div id="deck-grades" class="panel-row deck-grades hidden">
+            <button class="btn deck-grade" data-grade="again" title="Shortcut 1">Again<small id="deck-iv-again"></small></button>
+            <button class="btn deck-grade" data-grade="hard" title="Shortcut 2">Hard<small id="deck-iv-hard"></small></button>
+            <button class="btn deck-grade" data-grade="good" title="Shortcut 3">Good<small id="deck-iv-good"></small></button>
+            <button class="btn deck-grade" data-grade="easy" title="Shortcut 4">Easy<small id="deck-iv-easy"></small></button>
+          </div>
+        </div>
+        <div class="rep-panels deck-panels">
+          <div id="deck-explain" class="lab-panel deck-explain hidden"></div>
+          <div class="lab-panel deck-top">
+            <h3>★ Most costly 20 <span class="muted">— ranked by win-chance lost, ×1.5 when it changed the result</span></h3>
+            <ol id="deck-top-list" class="deck-top-list"></ol>
+          </div>
+          <div class="lab-panel deck-sync">
+            <h3>Add new games</h3>
+            <div class="info-line">Fetch your newest Lichess / Chess.com games (or paste a Noctie PGN) and analyse them here with Stockfish. New mistakes join the deck on this device.</div>
+            <div class="panel-row">
+              <button id="btn-deck-sync" class="btn primary" type="button">Check for new games</button>
+              <label class="deck-sync-n">Max <select id="deck-sync-max"><option>3</option><option selected>5</option><option>10</option></select> games</label>
+            </div>
+            <details class="deck-pgn"><summary>Paste PGN (e.g. exported from Noctie)</summary>
+              <textarea id="deck-pgn" rows="4" placeholder="[Event ...] 1. e4 d6 2. d4 g6 …"></textarea>
+              <div class="panel-row"><button id="btn-deck-pgn" class="btn" type="button">Analyse PGN</button></div>
+            </details>
+            <div id="deck-sync-status" class="info-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="tab-calc" class="tab-panel rep-tab">
     <div class="rep-layout">
       <div class="rep-left">
@@ -1371,10 +1439,11 @@
 <script src="api-shim.js?v=44"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=35"></script>
-<script src="app.js?v=44"></script>
+<script src="app.js?v=45"></script>
 <script src="js/repertoire.js?v=44"></script>
 <script src="js/attacks.js?v=44"></script>
 <script src="js/calc.js?v=44"></script>
+<script src="js/deck.js?v=45"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});

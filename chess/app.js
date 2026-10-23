@@ -283,7 +283,7 @@ function parsePgn(pgn) {
 const TAB_GROUPS = {
   today: ["plan", "progress"],
   play: ["play", "lab", "games"],
-  train: ["puzzles", "cycles", "sparring", "endgames", "attacks", "calc"],
+  train: ["deck", "puzzles", "cycles", "sparring", "endgames", "attacks", "calc"],
   openings: ["modern", "scotch", "grunfeld"],
   study: ["masters", "learn"],
 };
@@ -315,6 +315,7 @@ function switchTab(name) {
   if (name === "progress") { initProgress(); if (typeof renderProgressOpenings === "function") renderProgressOpenings(); }
   if (name === "games" && typeof loadLibrary === "function" && !Games.list.length) loadLibrary();
   if (name === "calc" && typeof initCalc === "function") initCalc();
+  if (name === "deck" && typeof initDeck === "function") initDeck();
   if (name === "modern" && typeof initModern === "function") initModern();
   if (name === "scotch" && typeof initScotch === "function") initScotch();
   if (name === "grunfeld" && typeof initGrunfeld === "function") initGrunfeld();
