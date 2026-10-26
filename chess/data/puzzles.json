@@ -1,6 +1,6 @@
 {
   "source": "Lichess puzzle database (CC0) \u2014 https://database.lichess.org/#puzzles",
-  "count": 557,
+  "count": 561,
   "puzzles": [
     {
       "id": "l:00CtS",
@@ -14502,6 +14502,150 @@
       "url": "https://lichess.org/Tu34dRvU/black#19",
       "note": "You played Qf6 and allowed Bxg5. Find the move that holds.",
       "label": "Defend it \u2014 avoid allowing winning exchange",
+      "origin": "style-review"
+    },
+    {
+      "id": "own-h5-XtnIByaY-24",
+      "fen": "rn2kb1r/pp3ppp/3q1n2/3p4/2pPbN2/2P1B1PP/PP3PB1/RN1QR1K1 w kq - 7 13",
+      "side_to_move": "white",
+      "moves_uci": [
+        "f4h5",
+        "f6h5",
+        "g2e4",
+        "d5e4",
+        "d1h5"
+      ],
+      "solution_san": [
+        "Nh5",
+        "Nxh5",
+        "Bxe4",
+        "dxe4",
+        "Qxh5"
+      ],
+      "rating": 1500,
+      "theme": "capturingDefender",
+      "themes": [
+        "capturingDefender",
+        "ownMissed"
+      ],
+      "source": "own-missed",
+      "set": "knight-h5",
+      "url": "https://lichess.org/XtnIByaY#24",
+      "label": "Knight to h5 \u2014 move 13 of your Alapin win (you played Nd2)",
+      "explanation": "Knight to h5 set, move 13 of your Alapin win",
+      "note": "You played 13.Nd2 (+2.6); 13.Nh5 was best (+3.3, Stockfish 17.1 depth 26).",
+      "question": "Which black piece holds the e4 bishop and the kingside together, and how can your f4 knight trade it off?",
+      "explain": "The f6 knight is Black's key defender: it protects the e4 bishop and guards h5 and h7. 13.Nh5! Nxh5 14.Bxe4 dxe4 15.Qxh5 trades it off, wins back the strong e4 bishop, and your queen arrives on h5 with checks and threats (engine +3.3). In the game 13.Nd2 (+2.6) let Black keep the knight.",
+      "engine": {
+        "best_cp": 333,
+        "played_cp": 258,
+        "depth": 26,
+        "pv": "13. Nh5 Nxh5 14. Bxe4 dxe4 15. Qxh5 Qg6 16. Qb5+ Nd7"
+      },
+      "origin": "style-review"
+    },
+    {
+      "id": "own-h5-XtnIByaY-28",
+      "fen": "rn2k2r/pp2bppp/3q1n2/8/2pPpN2/2P1B1PP/PP3PB1/R2QR1K1 w kq - 0 15",
+      "side_to_move": "white",
+      "moves_uci": [
+        "f4h5",
+        "e8g8",
+        "h5f6"
+      ],
+      "solution_san": [
+        "Nh5",
+        "O-O",
+        "Nxf6+"
+      ],
+      "rating": 1500,
+      "theme": "capturingDefender",
+      "themes": [
+        "capturingDefender",
+        "ownMissed"
+      ],
+      "source": "own-missed",
+      "set": "knight-h5",
+      "url": "https://lichess.org/XtnIByaY#28",
+      "label": "Knight to h5 \u2014 move 15 of your Alapin win (you played b3)",
+      "explanation": "Knight to h5 set, move 15 of your Alapin win",
+      "note": "You played 15.b3 (+3.5); 15.Nh5 was best (+4.0, Stockfish 17.1 depth 26).",
+      "question": "The e4 pawn has one real defender. Which piece is it, and how do you remove it?",
+      "explain": "The f6 knight is the only piece defending the e4 pawn and Black's kingside. 15.Nh5! O-O 16.Nxf6+ trades it off. After 16...Bxf6 17.Bxe4 you have won the pawn and Black's king has lost its best guard (+4.0). In the game 15.b3 (+3.5) gave Black time.",
+      "engine": {
+        "best_cp": 403,
+        "played_cp": 345,
+        "depth": 26,
+        "pv": "15. Nh5 O-O 16. Nxf6+ Bxf6 17. Bxe4 Nc6 18. Qh5 g6"
+      },
+      "origin": "style-review"
+    },
+    {
+      "id": "own-h5-XtnIByaY-30",
+      "fen": "rn2k2r/pp2bppp/3q1n2/8/3PpN2/1pP1B1PP/P4PB1/R2QR1K1 w kq - 0 16",
+      "side_to_move": "white",
+      "moves_uci": [
+        "f4h5",
+        "e8g8",
+        "h5f6"
+      ],
+      "solution_san": [
+        "Nh5",
+        "O-O",
+        "Nxf6+"
+      ],
+      "rating": 1500,
+      "theme": "capturingDefender",
+      "themes": [
+        "capturingDefender",
+        "ownMissed"
+      ],
+      "source": "own-missed",
+      "set": "knight-h5",
+      "url": "https://lichess.org/XtnIByaY#30",
+      "label": "Knight to h5 \u2014 move 16 of your Alapin win (you played axb3)",
+      "explanation": "Knight to h5 set, move 16 of your Alapin win",
+      "note": "You played 16.axb3 (+2.9); 16.Nh5 was best (+3.6, Stockfish 17.1 depth 26).",
+      "question": "Black has just played ...cxb3. Before you recapture, is there a stronger move?",
+      "explain": "Same idea again: trade the defender first, take the pawn later. 16.Nh5! O-O 17.Nxf6+ Bxf6 18.Qxb3 gets the pawn back with play against b7, and e4 no longer has its knight (+3.7). The plain recapture 16.axb3 was +2.9.",
+      "engine": {
+        "best_cp": 365,
+        "played_cp": 287,
+        "depth": 26,
+        "pv": "16. Nh5 O-O 17. Nxf6+ Bxf6 18. Qxb3 Nc6 19. Qxb7 Rab8"
+      },
+      "origin": "style-review"
+    },
+    {
+      "id": "own-h5-XtnIByaY-44",
+      "fen": "4r1k1/pp3ppp/2nr1b2/8/2PP1N2/1P2B1PP/5P2/R3R1K1 w - - 0 23",
+      "side_to_move": "white",
+      "moves_uci": [
+        "f4h5"
+      ],
+      "solution_san": [
+        "Nh5"
+      ],
+      "rating": 1550,
+      "theme": "capturingDefender",
+      "themes": [
+        "capturingDefender",
+        "ownMissed"
+      ],
+      "source": "own-missed",
+      "set": "knight-h5",
+      "url": "https://lichess.org/XtnIByaY#44",
+      "label": "Knight to h5 \u2014 move 23 of your Alapin win (you played Nd5)",
+      "explanation": "Knight to h5 set, move 23 of your Alapin win",
+      "note": "You played 23.Nd5 (+3.3); 23.Nh5 was best (+3.8, Stockfish 17.1 depth 26).",
+      "question": "Queens are off. Black's f6 bishop hits your d4 pawn. How do you trade it off with gain?",
+      "explain": "Here the f6 defender is the bishop: it pressures d4 and covers Black's dark squares. 23.Nh5! attacks it, and after 23...a6 24.Nxf6+ gxf6 Black's kingside pawns are broken and d4 is safe (+3.8). In the game 23.Nd5 (+3.3) let the bishop stay.",
+      "engine": {
+        "best_cp": 382,
+        "played_cp": 329,
+        "depth": 26,
+        "pv": "23. Nh5 a6 24. Nxf6+ gxf6 25. d5 Ne5 26. Kg2 Rc8"
+      },
       "origin": "style-review"
     }
   ]

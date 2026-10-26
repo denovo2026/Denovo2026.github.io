@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=45">
+<link rel="stylesheet" href="style.css?v=46">
 </head>
 <body>
 <header class="app-header">
@@ -80,6 +80,7 @@
       <button class="tab-btn" data-tab="calc" data-group="train">Calculation</button>
       <button class="tab-btn" data-tab="modern" data-group="openings">Modern</button>
       <button class="tab-btn" data-tab="scotch" data-group="openings">Scotch</button>
+      <button class="tab-btn" data-tab="alapin" data-group="openings">Alapin</button>
       <button class="tab-btn" data-tab="grunfeld" data-group="openings">Gr&uuml;nfeld</button>
       <button class="tab-btn" data-tab="masters" data-group="study">Masters</button>
       <button class="tab-btn" data-tab="learn" data-group="study">Learn</button>
@@ -394,6 +395,7 @@
             <option value="all">All puzzles</option>
             <option value="my-missed">My missed tactics</option>
             <option value="defend-it">Defend it</option>
+            <option value="knight-h5">Knight to h5 (my games)</option>
           </select>
           <label for="puzzle-rating">Rating</label>
           <select id="puzzle-rating">
@@ -1186,6 +1188,65 @@
     </div>
   </section>
 
+  <!-- ===================== ALAPIN SICILIAN 2.c3 (v46) ===================== -->
+  <section id="tab-alapin" class="tab-panel rep-tab">
+    <div class="rep-layout">
+      <div class="rep-left">
+        <div id="alapin-label" class="lab-game-bar">Pick a Black reply.</div>
+        <div id="alapin-board" class="board-holder"></div>
+        <div id="alapin-nav" class="nav-slot"></div>
+      </div>
+
+      <div class="rep-right">
+        <div class="rep-coachbar">
+          <span class="rep-coach-avatar" aria-hidden="true">&#x265F;</span>
+          <div class="rep-coachbar-text">
+            <strong id="alapin-title">Alapin Sicilian (2.c3)</strong>
+            <span class="info-line" id="alapin-summary">Loading…</span>
+          </div>
+        </div>
+
+        <div class="rep-picker">
+          <div class="rep-picker-head">
+            <h3>What Black shows you</h3>
+            <span class="info-line">You are White. Each set-up is named by Black's reply after 1.e4 c5 2.c3 —
+            recognise it, then play your plan.</span>
+          </div>
+          <div id="alapin-looks" class="rep-looks">Loading…</div>
+        </div>
+
+        <div class="rep-controls">
+          <div id="alapin-movebar" class="rep-movebar"></div>
+          <div class="panel-row">
+            <button id="btn-alapin-quiz" class="btn primary">Quiz me on White's moves</button>
+            <button id="btn-alapin-due" class="btn" title="Missed lines first, then new ones, then the lines due for review">Drill due lines</button>
+            <button id="btn-alapin-blind" class="btn">Quiz against all types</button>
+            <button id="btn-alapin-plan" class="btn" title="Play on from the final position against the engine at your level">&#9654; Play the plan</button>
+            <button id="btn-alapin-play" class="btn">Send to Play &amp; Analyze</button>
+          </div>
+          <div class="rep-status-row"><span id="alapin-status" class="info-line"></span></div>
+          <div id="alapin-score" class="rep-score hidden"></div>
+        </div>
+
+        <div class="rep-panels">
+          <div class="lab-panel" id="alapin-detail-panel">
+            <h3 id="alapin-look-name">The set-up</h3>
+            <div id="alapin-detail">
+              <p class="info-line">Choose a set-up to see the tell, the plan and the tactics that decide it.</p>
+            </div>
+          </div>
+          <div class="lab-panel">
+            <h3>Your scheme, whatever they play</h3>
+            <div id="alapin-scheme"></div>
+            <h4 class="sub-head">Reading the board</h4>
+            <div id="alapin-reading"></div>
+            <div id="alapin-coach" class="coach-box hidden"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== GR&UUML;NFELD DEFENSE ===================== -->
   <section id="tab-grunfeld" class="tab-panel rep-tab">
     <div class="rep-layout">
@@ -1291,6 +1352,10 @@
         </div>
         <div class="rep-panels deck-panels">
           <div id="deck-explain" class="lab-panel deck-explain hidden"></div>
+          <div id="deck-lessons" class="lab-panel deck-top deck-lessons hidden">
+            <h3>Lesson cards <span class="muted">— rules from your style review</span></h3>
+            <ol id="deck-lessons-list" class="deck-top-list"></ol>
+          </div>
           <div class="lab-panel deck-top">
             <h3>★ Most costly 20 <span class="muted">— ranked by win-chance lost, ×1.5 when it changed the result</span></h3>
             <ol id="deck-top-list" class="deck-top-list"></ol>
@@ -1436,14 +1501,14 @@
 <!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
 <script src="vendor/chess.js?v=33"></script>
 <script src="js/engine.js?v=33"></script>
-<script src="api-shim.js?v=44"></script>
+<script src="api-shim.js?v=46"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=35"></script>
-<script src="app.js?v=45"></script>
-<script src="js/repertoire.js?v=44"></script>
+<script src="app.js?v=46"></script>
+<script src="js/repertoire.js?v=46"></script>
 <script src="js/attacks.js?v=44"></script>
 <script src="js/calc.js?v=44"></script>
-<script src="js/deck.js?v=45"></script>
+<script src="js/deck.js?v=46"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});

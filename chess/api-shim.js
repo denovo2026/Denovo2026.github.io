@@ -762,13 +762,19 @@
       return { text: oq, question: oq, line: p.solution_san.join(" ") + (p.best_line ? "  (engine: " + p.best_line + ")" : ""),
         principle: p.habit ? { id: "olympiad", title: "Habit: " + (p.fam_name || "blunder check"), text: p.habit } : knowledgeFor(themes) };
     }
+    /* v46: own-game sets (Knight to h5) carry their own question and explanation */
+    if (p.explain) {
+      var oq2 = p.question || puzzleQuestion(p, themes);
+      return { text: oq2, question: oq2, line: p.solution_san.join(" ") + (p.note ? "  (" + p.note + ")" : ""),
+        principle: { id: p.set || "own", title: p.set === "knight-h5" ? "Trade off the f6 defender" : "Why it works", text: p.explain } };
+    }
     var q = puzzleQuestion(p, themes);
     return { text: q, question: q, line: p.solution_san.join(" "), principle: knowledgeFor(themes) };
   }
   function pubPuzzle(p) {
     return { id: p.id, fen: p.fen, side_to_move: p.side_to_move, theme: THEME_LABEL(p.theme), rating: p.rating,
       themes: (p.themes || []).map(THEME_LABEL), source: p.source || "lichess",
-      url: p.url || null, note: p.note || null, set: p.set || null, label: p.label || null };
+      url: p.url || null, note: p.note || null, set: p.set || null, label: p.label || null, explanation: p.explanation || null };
   }
 
   route("GET", "/api/puzzles/library-stats", async function () {
@@ -779,7 +785,7 @@
     var defend = data.puzzles.filter(function (p) { return p.set === "defend-it" || p.source === "own-allowed"; }).length;
     return { total_puzzles: data.puzzles.length + user.length, static_puzzles: data.puzzles.length, user_puzzles: user.length,
       solved: Object.keys(hist).filter(function (k) { return hist[k].solved; }).length,
-      my_missed: ownMissed, defend_it: defend };
+      my_missed: ownMissed, defend_it: defend, knight_h5: data.puzzles.filter(function (p) { return p.set === "knight-h5"; }).length };
   });
 
   route("POST", "/api/puzzle/next", async function (b) {
@@ -2099,7 +2105,7 @@
   /* /api/attacks                 -> name, summary, patterns w/o puzzles   */
   /*                                 (puzzle_count instead)                */
   /* /api/attacks/:id             -> one pattern with its puzzles          */
-  var REPERTOIRES = { modern: "modern.json", grunfeld: "grunfeld.json", scotch: "scotch.json" };
+  var REPERTOIRES = { modern: "modern.json", grunfeld: "grunfeld.json", scotch: "scotch.json", alapin: "alapin.json" };
   function repFile(slug) {
     if (!Object.prototype.hasOwnProperty.call(REPERTOIRES, slug)) fail(404, "repertoire_not_found");
     return loadData(REPERTOIRES[slug]);
@@ -2142,7 +2148,7 @@
   async function repProgressSummary(slug) {
     var all = repProg(), lines = Object.keys(all).map(function (k) { return all[k]; }).filter(function (l) { return !slug || l.slug === slug; });
     var totalLines = 0;
-    for (var s2 of ["modern", "grunfeld", "scotch"]) { if (slug && slug !== s2) continue; try { totalLines += ((await repFile(s2)).looks || []).length; } catch (_) {} }
+    for (var s2 of ["modern", "grunfeld", "scotch", "alapin"]) { if (slug && slug !== s2) continue; try { totalLines += ((await repFile(s2)).looks || []).length; } catch (_) {} }
     var now = Date.now();
     return { lines: lines, total_lines: totalLines, tried: lines.length,
       known: lines.filter(function (l) { return l.last_right === l.last_total; }).length,

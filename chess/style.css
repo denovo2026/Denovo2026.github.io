@@ -1625,3 +1625,6 @@ select.opp-level { font-size: 0.92rem; }
   .deck-tab .deck-prompt { margin-top: 3px; font-size: 0.9rem; }
   .deck-tab .deck-actions .btn { min-height: 38px; padding-top: 4px; padding-bottom: 4px; }
 }
+/* v46: plain-English rule on lesson cards; link in the opening coach box */
+.deck-rule { border-left: 3px solid var(--accent, #6aa9ff); }
+.rep-coach-link { display: inline-block; margin-top: 6px; text-decoration: none; }

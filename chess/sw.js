@@ -1,12 +1,12 @@
 /* Chess Coach AI service worker: network-first for the app shell (so updates
    land immediately), cache fallback for offline use. Cross-origin requests
    (lichess / chess.com / LLM) are never cached. */
-var CACHE = "chesscoach-v45";
-var SHELL = ["./", "index.html", "style.css?v=45", "app.js?v=45", "board.js?v=35", "pieces.js?v=33",
-  "api-shim.js?v=44", "js/engine.js?v=33", "js/repertoire.js?v=44", "js/attacks.js?v=44", "js/calc.js?v=44", "js/deck.js?v=45", "vendor/chess.js?v=33",
+var CACHE = "chesscoach-v46";
+var SHELL = ["./", "index.html", "style.css?v=46", "app.js?v=46", "board.js?v=35", "pieces.js?v=33",
+  "api-shim.js?v=46", "js/engine.js?v=33", "js/repertoire.js?v=46", "js/attacks.js?v=44", "js/calc.js?v=44", "js/deck.js?v=46", "vendor/chess.js?v=33",
   "vendor/stockfish/stockfish-19-lite-single.js", "vendor/stockfish/stockfish-19-lite-single.wasm",
   "data/puzzles.json", "data/masters.json", "data/lessons.json", "data/endgames.json",
-  "data/modern.json", "data/scotch.json", "data/grunfeld.json", "data/attacks.json", "data/puzzle_sets.json", "data/mine/deck.json?v=45",
+  "data/modern.json", "data/scotch.json", "data/alapin.json", "data/grunfeld.json", "data/attacks.json", "data/puzzle_sets.json", "data/mine/deck.json?v=46",
   "manifest.webmanifest", "icons/icon-192.png", "icons/apple-touch-icon.png"];
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(SHELL); }).then(function () { return self.skipWaiting(); }));

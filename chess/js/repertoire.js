@@ -35,7 +35,7 @@ function sendFenToPlay(fen, orientation, message) {
 function createRepertoireTab(cfg) {
   const P = cfg.prefix;
   const API = "/api/repertoire/" + cfg.slug;
-  /* v44: side is "black" (Modern/Grünfeld) or "white" (Scotch). Quizzes ask
+  /* v44: side is "black" (Modern/Grünfeld) or "white" (Scotch, v46 Alapin). Quizzes ask
      for YOUR moves; the opponent's moves play themselves. */
   const meSide = () => (S.data && S.data.side) || cfg.side || "black";
   const oppSide = () => meSide() === "white" ? "black" : "white";
@@ -460,7 +460,10 @@ function createRepertoireTab(cfg) {
           + '<button class="btn mt-show" data-tactic="' + i + '">Show it</button>'
           + "</div>"
           + '<div class="mt-line">' + escapeHtml(t.line_san) + "</div>"
-          + "<div>" + escapeHtml(t.point) + "</div></div>";
+          + "<div>" + escapeHtml(t.point) + "</div>"
+          + (t.url && S.data && S.data.show_tactic_links
+            ? '<a class="info-line" href="' + escapeHtml(t.url) + '" target="_blank" rel="noopener">Open the game position &#x2197;</a>' : "")
+          + "</div>";
       }
     }
     const oly = repOlympiadLink(cfg.slug, look.id);
@@ -565,6 +568,13 @@ function createRepertoireTab(cfg) {
     if (S.data.coach_note) {
       const box = $(P + "-coach");
       box.textContent = S.data.coach_note;
+      // v46: optional link (Alapin: your first game)
+      if (S.data.coach_link && S.data.coach_link.href) {
+        const a = document.createElement("a");
+        a.className = "btn mini rep-coach-link"; a.target = "_blank"; a.rel = "noopener";
+        a.href = S.data.coach_link.href; a.textContent = S.data.coach_link.label || "Open the game";
+        box.appendChild(document.createElement("br")); box.appendChild(a);
+      }
       box.classList.remove("hidden");
     }
     await repLoadProgress();
@@ -583,6 +593,8 @@ const GrunfeldTab = createRepertoireTab({ slug: "grunfeld", prefix: "grunfeld", 
 const initGrunfeld = () => GrunfeldTab.init();
 const ScotchTab = createRepertoireTab({ slug: "scotch", prefix: "scotch", side: "white" });
 const initScotch = () => ScotchTab.init();
+const AlapinTab = createRepertoireTab({ slug: "alapin", prefix: "alapin", side: "white" });
+const initAlapin = () => AlapinTab.init();
 
 /* v40: count a training day only after a real answer on this trainer */
 function ccLogAnswer(pillar, kind) {

@@ -1,0 +1,1159 @@
+{
+ "name": "Alapin Sicilian (2.c3)",
+ "eco": "B22",
+ "side": "white",
+ "summary": "1.e4 c5 2.c3. You prepare d4 so you can keep a pawn centre. Five shapes cover Black's replies: 2...d5, 2...Nf6, 2...e6, 2...d6, and 2...g6 (with 2...Nc6 and 2...e5).",
+ "coach_note": "Your first Alapin game was a win: Jetblack007 vs leehooni (1753), Lichess rapid 10+5, Oct 22, 2026. Black locked the queenside with ...c4 and went ...Bf5 and ...Bd3. You kept the edge. Two lessons from that game are here: Nf4 and Nh5 to trade the f6 knight, and trade queens first when you are ahead.",
+ "coach_link": {
+  "label": "Open your first Alapin game (1-0) ↗",
+  "href": "https://lichess.org/XtnIByaY"
+ },
+ "show_tactic_links": true,
+ "scheme": [
+  "2.c3 prepares d4, so you can take back on d4 with a pawn and keep a full centre.",
+  "Play d4 on move three, unless Black has hit e4. Then play e5 against ...Nf6 and exd5 against ...d5.",
+  "Develop: Nf3, a bishop, castle. Then choose between the isolated-pawn attack (Ne5, Bd3, Re1) and a space squeeze.",
+  "When you are ahead, trade queens first (Mistake Deck card: 'Trade queens first when ahead')."
+ ],
+ "reading": [
+  "Black's second move names the set-up. ...d5 and ...Nf6 hit e4 at once. ...e6 and ...d6 wait. ...g6 aims at d4.",
+  "A black pawn on c4 (the ...c4 lock) means the fight moves to the kingside and the d3 and e4 squares.",
+  "If the f6 knight is Black's only kingside defender, look at Nh5 or Bxf6 to remove it."
+ ],
+ "looks": [
+  {
+   "id": "alapin-d5",
+   "name": "2...d5 — the queen comes to d5",
+   "frequency": "most common reply",
+   "tell": "Black hits e4 at once with 2...d5. After 3.exd5 Qxd5 4.d4 the queen sits in the centre. Your c3 pawn has taken the c3 square from your knight for now, so the queen is safe there.",
+   "opponent_idea": "Black wants quick development (...Nf6, ...Bg4, ...e6, ...Nc6), pressure on d4 from the queen, knight and the pin on your f3 knight, and then ...cxd4 to leave you with an isolated d-pawn to aim at.",
+   "moves": [
+    "e4",
+    "c5",
+    "c3",
+    "d5",
+    "exd5",
+    "Qxd5",
+    "d4",
+    "Nf6",
+    "Nf3",
+    "Bg4",
+    "Be2",
+    "e6",
+    "O-O",
+    "Nc6",
+    "Be3",
+    "cxd4",
+    "cxd4",
+    "Be7",
+    "Nc3",
+    "Qd6"
+   ],
+   "plans": [
+    "Play d4, Nf3, Be2 and O-O, then Be3. You do not need to chase the queen with pawns.",
+    "When Black plays ...cxd4, take back with the c-pawn. That frees c3 for your knight, and Nc3 comes with tempo on the d5 queen.",
+    "Against the ...Bg4 pin, Be2 and castling are enough. h3 later asks the bishop what it wants."
+   ],
+   "strategic": [
+    "After ...cxd4 cxd4 you usually have an isolated d-pawn. While pieces are on it is a strength: it controls e5 and c5, and your pieces get open lines. Aim for Ne5, Bd3, Re1 and a kingside attack.",
+    "If lots of pieces come off, the d4 pawn becomes a weakness. Trade only when it wins something or when you are clearly ahead."
+   ],
+   "tactics": [
+    {
+     "name": "...Bg4 before you play Nf3? Take it",
+     "point": "With no knight on f3 the bishop on g4 is simply loose: the queen on d1 sees g4 down the diagonal. +5.0 for White.",
+     "line_san": "5. Qxg4",
+     "plies": [
+      {
+       "san": "Qxg4",
+       "uci": "d1g4",
+       "side": "white",
+       "fen": "rn2kbnr/pp2pppp/8/2pq4/3P2Q1/2P5/PP3PPP/RNB1KBNR b KQkq - 0 5"
+      }
+     ],
+     "fen": "rn2kbnr/pp2pppp/8/2pq4/3P2b1/2P5/PP3PPP/RNBQKBNR w KQkq - 1 5",
+     "url": null
+    },
+    {
+     "name": "...Nxd4? does not win a pawn",
+     "point": "d4 is defended by the c3 pawn, the f3 knight, the e3 bishop and the queen. 9.cxd4 cxd4 10.Qa4+ and Black is a piece down (+5.2).",
+     "line_san": "9. cxd4 cxd4 10. Qa4+",
+     "plies": [
+      {
+       "san": "cxd4",
+       "uci": "c3d4",
+       "side": "white",
+       "fen": "r3kb1r/pp3ppp/4pn2/2pq4/3P2b1/4BN2/PP2BPPP/RN1Q1RK1 b kq - 0 9"
+      },
+      {
+       "san": "cxd4",
+       "uci": "c5d4",
+       "side": "black",
+       "fen": "r3kb1r/pp3ppp/4pn2/3q4/3p2b1/4BN2/PP2BPPP/RN1Q1RK1 w kq - 0 10"
+      },
+      {
+       "san": "Qa4+",
+       "uci": "d1a4",
+       "side": "white",
+       "fen": "r3kb1r/pp3ppp/4pn2/3q4/Q2p2b1/4BN2/PP2BPPP/RN3RK1 b kq - 1 10"
+      }
+     ],
+     "fen": "r3kb1r/pp3ppp/4pn2/2pq4/3n2b1/2P1BN2/PP2BPPP/RN1Q1RK1 w kq - 0 9",
+     "url": null
+    }
+   ],
+   "watch": "Recapture on d4 with the c-pawn (cxd4), not the knight or queen. Then Nc3 hits the queen and you gain time. Castle before you start the IQP attack.",
+   "plies": [
+    {
+     "san": "e4",
+     "uci": "e2e4",
+     "side": "white",
+     "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+    },
+    {
+     "san": "c5",
+     "uci": "c7c5",
+     "side": "black",
+     "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
+    },
+    {
+     "san": "c3",
+     "uci": "c2c3",
+     "side": "white",
+     "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR b KQkq - 0 2"
+    },
+    {
+     "san": "d5",
+     "uci": "d7d5",
+     "side": "black",
+     "fen": "rnbqkbnr/pp2pppp/8/2pp4/4P3/2P5/PP1P1PPP/RNBQKBNR w KQkq - 0 3"
+    },
+    {
+     "san": "exd5",
+     "uci": "e4d5",
+     "side": "white",
+     "fen": "rnbqkbnr/pp2pppp/8/2pP4/8/2P5/PP1P1PPP/RNBQKBNR b KQkq - 0 3"
+    },
+    {
+     "san": "Qxd5",
+     "uci": "d8d5",
+     "side": "black",
+     "fen": "rnb1kbnr/pp2pppp/8/2pq4/8/2P5/PP1P1PPP/RNBQKBNR w KQkq - 0 4"
+    },
+    {
+     "san": "d4",
+     "uci": "d2d4",
+     "side": "white",
+     "fen": "rnb1kbnr/pp2pppp/8/2pq4/3P4/2P5/PP3PPP/RNBQKBNR b KQkq - 0 4"
+    },
+    {
+     "san": "Nf6",
+     "uci": "g8f6",
+     "side": "black",
+     "fen": "rnb1kb1r/pp2pppp/5n2/2pq4/3P4/2P5/PP3PPP/RNBQKBNR w KQkq - 1 5"
+    },
+    {
+     "san": "Nf3",
+     "uci": "g1f3",
+     "side": "white",
+     "fen": "rnb1kb1r/pp2pppp/5n2/2pq4/3P4/2P2N2/PP3PPP/RNBQKB1R b KQkq - 2 5"
+    },
+    {
+     "san": "Bg4",
+     "uci": "c8g4",
+     "side": "black",
+     "fen": "rn2kb1r/pp2pppp/5n2/2pq4/3P2b1/2P2N2/PP3PPP/RNBQKB1R w KQkq - 3 6"
+    },
+    {
+     "san": "Be2",
+     "uci": "f1e2",
+     "side": "white",
+     "fen": "rn2kb1r/pp2pppp/5n2/2pq4/3P2b1/2P2N2/PP2BPPP/RNBQK2R b KQkq - 4 6"
+    },
+    {
+     "san": "e6",
+     "uci": "e7e6",
+     "side": "black",
+     "fen": "rn2kb1r/pp3ppp/4pn2/2pq4/3P2b1/2P2N2/PP2BPPP/RNBQK2R w KQkq - 0 7"
+    },
+    {
+     "san": "O-O",
+     "uci": "e1g1",
+     "side": "white",
+     "fen": "rn2kb1r/pp3ppp/4pn2/2pq4/3P2b1/2P2N2/PP2BPPP/RNBQ1RK1 b kq - 1 7"
+    },
+    {
+     "san": "Nc6",
+     "uci": "b8c6",
+     "side": "black",
+     "fen": "r3kb1r/pp3ppp/2n1pn2/2pq4/3P2b1/2P2N2/PP2BPPP/RNBQ1RK1 w kq - 2 8"
+    },
+    {
+     "san": "Be3",
+     "uci": "c1e3",
+     "side": "white",
+     "fen": "r3kb1r/pp3ppp/2n1pn2/2pq4/3P2b1/2P1BN2/PP2BPPP/RN1Q1RK1 b kq - 3 8"
+    },
+    {
+     "san": "cxd4",
+     "uci": "c5d4",
+     "side": "black",
+     "fen": "r3kb1r/pp3ppp/2n1pn2/3q4/3p2b1/2P1BN2/PP2BPPP/RN1Q1RK1 w kq - 0 9"
+    },
+    {
+     "san": "cxd4",
+     "uci": "c3d4",
+     "side": "white",
+     "fen": "r3kb1r/pp3ppp/2n1pn2/3q4/3P2b1/4BN2/PP2BPPP/RN1Q1RK1 b kq - 0 9"
+    },
+    {
+     "san": "Be7",
+     "uci": "f8e7",
+     "side": "black",
+     "fen": "r3k2r/pp2bppp/2n1pn2/3q4/3P2b1/4BN2/PP2BPPP/RN1Q1RK1 w kq - 1 10"
+    },
+    {
+     "san": "Nc3",
+     "uci": "b1c3",
+     "side": "white",
+     "fen": "r3k2r/pp2bppp/2n1pn2/3q4/3P2b1/2N1BN2/PP2BPPP/R2Q1RK1 b kq - 2 10"
+    },
+    {
+     "san": "Qd6",
+     "uci": "d5d6",
+     "side": "black",
+     "fen": "r3k2r/pp2bppp/2nqpn2/8/3P2b1/2N1BN2/PP2BPPP/R2Q1RK1 w kq - 3 11"
+    }
+   ],
+   "fen": "r3k2r/pp2bppp/2nqpn2/8/3P2b1/2N1BN2/PP2BPPP/R2Q1RK1 w kq - 3 11",
+   "line_san": "1. e4 c5 2. c3 d5 3. exd5 Qxd5 4. d4 Nf6 5. Nf3 Bg4 6. Be2 e6 7. O-O Nc6 8. Be3 cxd4 9. cxd4 Be7 10. Nc3 Qd6",
+   "moves_count": 20,
+   "white_idea": "Black wants quick development (...Nf6, ...Bg4, ...e6, ...Nc6), pressure on d4 from the queen, knight and the pin on your f3 knight, and then ...cxd4 to leave you with an isolated d-pawn to aim at.",
+   "eco": "B22",
+   "source_games": []
+  },
+  {
+   "id": "alapin-nf6",
+   "name": "2...Nf6 — hit e4, knight to d5",
+   "frequency": "second main line",
+   "tell": "Black attacks e4 with 2...Nf6. Push 3.e5: the knight has to go to d5, and you build the centre with d4 and Nf3.",
+   "opponent_idea": "Black wants to undermine your e5/d4 chain with ...d6 and ...Nc6, trade on d4 and e5, and use the d5 knight against c3 and e3. If you push too far, the centre becomes a target.",
+   "moves": [
+    "e4",
+    "c5",
+    "c3",
+    "Nf6",
+    "e5",
+    "Nd5",
+    "d4",
+    "cxd4",
+    "Nf3",
+    "Nc6",
+    "cxd4",
+    "d6",
+    "Bc4",
+    "Nb6",
+    "Bb5",
+    "dxe5",
+    "Nxe5",
+    "Bd7"
+   ],
+   "plans": [
+    "3.e5 Nd5 4.d4 cxd4 5.Nf3, and take back cxd4 next move.",
+    "Bc4 hits the d5 knight. After ...Nb6, Bb5 pins the c6 knight and keeps the pressure.",
+    "Castle and either hold e5 or trade it for active pieces (Nxe5)."
+   ],
+   "strategic": [
+    "...d6 attacks e5. If the position opens, your lead in development counts. Do not let Black win e5 for nothing.",
+    "If Black plays ...e6 instead, you get a French-like position: Bc4, O-O, Qe2 and Nc3."
+   ],
+   "tactics": [
+    {
+     "name": "The knight must move: 3...e6?? 4.exf6",
+     "point": "After 3.e5 the f6 knight is attacked by a pawn. Any slow move loses it (+4.0).",
+     "line_san": "4. exf6",
+     "plies": [
+      {
+       "san": "exf6",
+       "uci": "e5f6",
+       "side": "white",
+       "fen": "rnbqkb1r/pp1p1ppp/4pP2/2p5/8/2P5/PP1P1PPP/RNBQKBNR b KQkq - 0 4"
+      }
+     ],
+     "fen": "rnbqkb1r/pp1p1ppp/4pn2/2p1P3/8/2P5/PP1P1PPP/RNBQKBNR w KQkq - 0 4",
+     "url": null
+    },
+    {
+     "name": "Loose knight on d5: 7...Bg4? 8.Bxd5",
+     "point": "Once Black has played ...d6, the d6 pawn blocks the queen's defence of the d5 knight. Bxd5 wins a piece (+4.8), and after 8...dxe5 9.Bxf7+ Kxf7 10.Ng5+ even more.",
+     "line_san": "8. Bxd5 dxe5 9. Bxf7+ Kxf7 10. Ng5+",
+     "plies": [
+      {
+       "san": "Bxd5",
+       "uci": "c4d5",
+       "side": "white",
+       "fen": "r2qkb1r/pp2pppp/2np4/3BP3/3P2b1/5N2/PP3PPP/RNBQK2R b KQkq - 0 8"
+      },
+      {
+       "san": "dxe5",
+       "uci": "d6e5",
+       "side": "black",
+       "fen": "r2qkb1r/pp2pppp/2n5/3Bp3/3P2b1/5N2/PP3PPP/RNBQK2R w KQkq - 0 9"
+      },
+      {
+       "san": "Bxf7+",
+       "uci": "d5f7",
+       "side": "white",
+       "fen": "r2qkb1r/pp2pBpp/2n5/4p3/3P2b1/5N2/PP3PPP/RNBQK2R b KQkq - 0 9"
+      },
+      {
+       "san": "Kxf7",
+       "uci": "e8f7",
+       "side": "black",
+       "fen": "r2q1b1r/pp2pkpp/2n5/4p3/3P2b1/5N2/PP3PPP/RNBQK2R w KQ - 0 10"
+      },
+      {
+       "san": "Ng5+",
+       "uci": "f3g5",
+       "side": "white",
+       "fen": "r2q1b1r/pp2pkpp/2n5/4p1N1/3P2b1/8/PP3PPP/RNBQK2R b KQ - 1 10"
+      }
+     ],
+     "fen": "r2qkb1r/pp2pppp/2np4/3nP3/2BP2b1/5N2/PP3PPP/RNBQK2R w KQkq - 2 8",
+     "url": null
+    }
+   ],
+   "watch": "Every time Black's knight sits on d5 with a pawn on d6 and no pawn on e6, check whether it is defended. If it is not, Bxd5 wins it.",
+   "plies": [
+    {
+     "san": "e4",
+     "uci": "e2e4",
+     "side": "white",
+     "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+    },
+    {
+     "san": "c5",
+     "uci": "c7c5",
+     "side": "black",
+     "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
+    },
+    {
+     "san": "c3",
+     "uci": "c2c3",
+     "side": "white",
+     "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR b KQkq - 0 2"
+    },
+    {
+     "san": "Nf6",
+     "uci": "g8f6",
+     "side": "black",
+     "fen": "rnbqkb1r/pp1ppppp/5n2/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR w KQkq - 1 3"
+    },
+    {
+     "san": "e5",
+     "uci": "e4e5",
+     "side": "white",
+     "fen": "rnbqkb1r/pp1ppppp/5n2/2p1P3/8/2P5/PP1P1PPP/RNBQKBNR b KQkq - 0 3"
+    },
+    {
+     "san": "Nd5",
+     "uci": "f6d5",
+     "side": "black",
+     "fen": "rnbqkb1r/pp1ppppp/8/2pnP3/8/2P5/PP1P1PPP/RNBQKBNR w KQkq - 1 4"
+    },
+    {
+     "san": "d4",
+     "uci": "d2d4",
+     "side": "white",
+     "fen": "rnbqkb1r/pp1ppppp/8/2pnP3/3P4/2P5/PP3PPP/RNBQKBNR b KQkq - 0 4"
+    },
+    {
+     "san": "cxd4",
+     "uci": "c5d4",
+     "side": "black",
+     "fen": "rnbqkb1r/pp1ppppp/8/3nP3/3p4/2P5/PP3PPP/RNBQKBNR w KQkq - 0 5"
+    },
+    {
+     "san": "Nf3",
+     "uci": "g1f3",
+     "side": "white",
+     "fen": "rnbqkb1r/pp1ppppp/8/3nP3/3p4/2P2N2/PP3PPP/RNBQKB1R b KQkq - 1 5"
+    },
+    {
+     "san": "Nc6",
+     "uci": "b8c6",
+     "side": "black",
+     "fen": "r1bqkb1r/pp1ppppp/2n5/3nP3/3p4/2P2N2/PP3PPP/RNBQKB1R w KQkq - 2 6"
+    },
+    {
+     "san": "cxd4",
+     "uci": "c3d4",
+     "side": "white",
+     "fen": "r1bqkb1r/pp1ppppp/2n5/3nP3/3P4/5N2/PP3PPP/RNBQKB1R b KQkq - 0 6"
+    },
+    {
+     "san": "d6",
+     "uci": "d7d6",
+     "side": "black",
+     "fen": "r1bqkb1r/pp2pppp/2np4/3nP3/3P4/5N2/PP3PPP/RNBQKB1R w KQkq - 0 7"
+    },
+    {
+     "san": "Bc4",
+     "uci": "f1c4",
+     "side": "white",
+     "fen": "r1bqkb1r/pp2pppp/2np4/3nP3/2BP4/5N2/PP3PPP/RNBQK2R b KQkq - 1 7"
+    },
+    {
+     "san": "Nb6",
+     "uci": "d5b6",
+     "side": "black",
+     "fen": "r1bqkb1r/pp2pppp/1nnp4/4P3/2BP4/5N2/PP3PPP/RNBQK2R w KQkq - 2 8"
+    },
+    {
+     "san": "Bb5",
+     "uci": "c4b5",
+     "side": "white",
+     "fen": "r1bqkb1r/pp2pppp/1nnp4/1B2P3/3P4/5N2/PP3PPP/RNBQK2R b KQkq - 3 8"
+    },
+    {
+     "san": "dxe5",
+     "uci": "d6e5",
+     "side": "black",
+     "fen": "r1bqkb1r/pp2pppp/1nn5/1B2p3/3P4/5N2/PP3PPP/RNBQK2R w KQkq - 0 9"
+    },
+    {
+     "san": "Nxe5",
+     "uci": "f3e5",
+     "side": "white",
+     "fen": "r1bqkb1r/pp2pppp/1nn5/1B2N3/3P4/8/PP3PPP/RNBQK2R b KQkq - 0 9"
+    },
+    {
+     "san": "Bd7",
+     "uci": "c8d7",
+     "side": "black",
+     "fen": "r2qkb1r/pp1bpppp/1nn5/1B2N3/3P4/8/PP3PPP/RNBQK2R w KQkq - 1 10"
+    }
+   ],
+   "fen": "r2qkb1r/pp1bpppp/1nn5/1B2N3/3P4/8/PP3PPP/RNBQK2R w KQkq - 1 10",
+   "line_san": "1. e4 c5 2. c3 Nf6 3. e5 Nd5 4. d4 cxd4 5. Nf3 Nc6 6. cxd4 d6 7. Bc4 Nb6 8. Bb5 dxe5 9. Nxe5 Bd7",
+   "moves_count": 18,
+   "white_idea": "Black wants to undermine your e5/d4 chain with ...d6 and ...Nc6, trade on d4 and e5, and use the d5 knight against c3 and e3. If you push too far, the centre becomes a target.",
+   "eco": "B22",
+   "source_games": []
+  },
+  {
+   "id": "alapin-e6",
+   "name": "2...e6 — French style, then ...d5",
+   "frequency": "your first Alapin game",
+   "tell": "Black plays 2...e6 and meets 3.d4 with 3...d5. After 4.exd5 exd5 the e-file is open and Black chooses between an isolated pawn (...cxd4 or dxc5) and the ...c4 lock you saw in your game.",
+   "opponent_idea": "Black wants either active pieces around an isolated d5 pawn (...Bd6, ...Nge7, ...O-O), or to lock the queenside with ...c4 and use the d3 and e4 squares for the light bishop (...Bf5 and ...Bd3), as in your game.",
+   "moves": [
+    "e4",
+    "c5",
+    "c3",
+    "e6",
+    "d4",
+    "d5",
+    "exd5",
+    "exd5",
+    "Nf3",
+    "Nc6",
+    "Bb5",
+    "Bd6",
+    "dxc5",
+    "Bxc5",
+    "O-O",
+    "Nge7",
+    "Nbd2",
+    "O-O",
+    "Nb3",
+    "Bd6"
+   ],
+   "plans": [
+    "5.Nf3 Nc6 6.Bb5 pins the knight. Take dxc5 after ...Bd6 so the bishop has to move twice.",
+    "Against the ...c4 lock (your game), d3 is the hole. Ne2 and Nf4 cover it and hit d5. If Black's bishop lands on d3 it is a target: Re1, Nf4 and Nd2 all hit it.",
+    "Look for Nf4 and Nh5 to trade off the f6 knight. It defends d5, e4 and h7. You missed this four times in your game (Train > Puzzles > set 'Knight to h5').",
+    "b3 breaks the ...c4 chain, but only once your pieces are ready. In your game 15.b3 was slower than 15.Nh5."
+   ],
+   "strategic": [
+    "Against Black's isolated d5 pawn: blockade on d4 (Nb3 then Nbd4), trade minor pieces, and attack d5 later.",
+    "If Black locks with ...c4, the game is decided in the centre and on the kingside (e5, f5, h5), not on the queenside."
+   ],
+   "tactics": [
+    {
+     "name": "4...Nc6?? 5.dxc6",
+     "point": "Black has to recapture on d5 first. Developing instead just loses the knight (+4.8).",
+     "line_san": "5. dxc6",
+     "plies": [
+      {
+       "san": "dxc6",
+       "uci": "d5c6",
+       "side": "white",
+       "fen": "r1bqkbnr/pp3ppp/2P1p3/2p5/3P4/2P5/PP3PPP/RNBQKBNR b KQkq - 0 5"
+      }
+     ],
+     "fen": "r1bqkbnr/pp3ppp/2n1p3/2pP4/3P4/2P5/PP3PPP/RNBQKBNR w KQkq - 1 5",
+     "url": null
+    },
+    {
+     "name": "Queen on a5? 9.Bxc6+ bxc6 10.b4",
+     "point": "With the queen on a5 and the bishop on c5, Bxc6+ and b4 hits both at once (+4.7).",
+     "line_san": "9. Bxc6+ bxc6 10. b4",
+     "plies": [
+      {
+       "san": "Bxc6+",
+       "uci": "b5c6",
+       "side": "white",
+       "fen": "r1b1k1nr/pp3ppp/2B5/q1bp4/8/2P2N2/PP3PPP/RNBQ1RK1 b kq - 0 9"
+      },
+      {
+       "san": "bxc6",
+       "uci": "b7c6",
+       "side": "black",
+       "fen": "r1b1k1nr/p4ppp/2p5/q1bp4/8/2P2N2/PP3PPP/RNBQ1RK1 w kq - 0 10"
+      },
+      {
+       "san": "b4",
+       "uci": "b2b4",
+       "side": "white",
+       "fen": "r1b1k1nr/p4ppp/2p5/q1bp4/1P6/2P2N2/P4PPP/RNBQ1RK1 b kq - 0 10"
+      }
+     ],
+     "fen": "r1b1k1nr/pp3ppp/2n5/qBbp4/8/2P2N2/PP3PPP/RNBQ1RK1 w kq - 2 9",
+     "url": null
+    },
+    {
+     "name": "Your game: punish 10...Bd3?",
+     "point": "In your game the bishop went deep to d3. 11.Re1 (you played it; engine +3.6) and next Bf4 or Nf4 keeps hitting it. Step back through the moves to replay your game from move 1.",
+     "line_san": "11. Re1",
+     "plies": [
+      {
+       "san": "e4",
+       "uci": "e2e4",
+       "side": "white",
+       "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+      },
+      {
+       "san": "c5",
+       "uci": "c7c5",
+       "side": "black",
+       "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
+      },
+      {
+       "san": "c3",
+       "uci": "c2c3",
+       "side": "white",
+       "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR b KQkq - 0 2"
+      },
+      {
+       "san": "e6",
+       "uci": "e7e6",
+       "side": "black",
+       "fen": "rnbqkbnr/pp1p1ppp/4p3/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR w KQkq - 0 3"
+      },
+      {
+       "san": "d4",
+       "uci": "d2d4",
+       "side": "white",
+       "fen": "rnbqkbnr/pp1p1ppp/4p3/2p5/3PP3/2P5/PP3PPP/RNBQKBNR b KQkq - 0 3"
+      },
+      {
+       "san": "d5",
+       "uci": "d7d5",
+       "side": "black",
+       "fen": "rnbqkbnr/pp3ppp/4p3/2pp4/3PP3/2P5/PP3PPP/RNBQKBNR w KQkq - 0 4"
+      },
+      {
+       "san": "exd5",
+       "uci": "e4d5",
+       "side": "white",
+       "fen": "rnbqkbnr/pp3ppp/4p3/2pP4/3P4/2P5/PP3PPP/RNBQKBNR b KQkq - 0 4"
+      },
+      {
+       "san": "exd5",
+       "uci": "e6d5",
+       "side": "black",
+       "fen": "rnbqkbnr/pp3ppp/8/2pp4/3P4/2P5/PP3PPP/RNBQKBNR w KQkq - 0 5"
+      },
+      {
+       "san": "Ne2",
+       "uci": "g1e2",
+       "side": "white",
+       "fen": "rnbqkbnr/pp3ppp/8/2pp4/3P4/2P5/PP2NPPP/RNBQKB1R b KQkq - 1 5"
+      },
+      {
+       "san": "Nf6",
+       "uci": "g8f6",
+       "side": "black",
+       "fen": "rnbqkb1r/pp3ppp/5n2/2pp4/3P4/2P5/PP2NPPP/RNBQKB1R w KQkq - 2 6"
+      },
+      {
+       "san": "g3",
+       "uci": "g2g3",
+       "side": "white",
+       "fen": "rnbqkb1r/pp3ppp/5n2/2pp4/3P4/2P3P1/PP2NP1P/RNBQKB1R b KQkq - 0 6"
+      },
+      {
+       "san": "Bg4",
+       "uci": "c8g4",
+       "side": "black",
+       "fen": "rn1qkb1r/pp3ppp/5n2/2pp4/3P2b1/2P3P1/PP2NP1P/RNBQKB1R w KQkq - 1 7"
+      },
+      {
+       "san": "Bg2",
+       "uci": "f1g2",
+       "side": "white",
+       "fen": "rn1qkb1r/pp3ppp/5n2/2pp4/3P2b1/2P3P1/PP2NPBP/RNBQK2R b KQkq - 2 7"
+      },
+      {
+       "san": "Qe7",
+       "uci": "d8e7",
+       "side": "black",
+       "fen": "rn2kb1r/pp2qppp/5n2/2pp4/3P2b1/2P3P1/PP2NPBP/RNBQK2R w KQkq - 3 8"
+      },
+      {
+       "san": "Be3",
+       "uci": "c1e3",
+       "side": "white",
+       "fen": "rn2kb1r/pp2qppp/5n2/2pp4/3P2b1/2P1B1P1/PP2NPBP/RN1QK2R b KQkq - 4 8"
+      },
+      {
+       "san": "c4",
+       "uci": "c5c4",
+       "side": "black",
+       "fen": "rn2kb1r/pp2qppp/5n2/3p4/2pP2b1/2P1B1P1/PP2NPBP/RN1QK2R w KQkq - 0 9"
+      },
+      {
+       "san": "h3",
+       "uci": "h2h3",
+       "side": "white",
+       "fen": "rn2kb1r/pp2qppp/5n2/3p4/2pP2b1/2P1B1PP/PP2NPB1/RN1QK2R b KQkq - 0 9"
+      },
+      {
+       "san": "Bf5",
+       "uci": "g4f5",
+       "side": "black",
+       "fen": "rn2kb1r/pp2qppp/5n2/3p1b2/2pP4/2P1B1PP/PP2NPB1/RN1QK2R w KQkq - 1 10"
+      },
+      {
+       "san": "O-O",
+       "uci": "e1g1",
+       "side": "white",
+       "fen": "rn2kb1r/pp2qppp/5n2/3p1b2/2pP4/2P1B1PP/PP2NPB1/RN1Q1RK1 b kq - 2 10"
+      },
+      {
+       "san": "Bd3",
+       "uci": "f5d3",
+       "side": "black",
+       "fen": "rn2kb1r/pp2qppp/5n2/3p4/2pP4/2PbB1PP/PP2NPB1/RN1Q1RK1 w kq - 3 11"
+      },
+      {
+       "san": "Re1",
+       "uci": "f1e1",
+       "side": "white",
+       "fen": "rn2kb1r/pp2qppp/5n2/3p4/2pP4/2PbB1PP/PP2NPB1/RN1QR1K1 b kq - 4 11"
+      }
+     ],
+     "url": "https://lichess.org/XtnIByaY#20"
+    },
+    {
+     "name": "Your game: 13.Nh5! trades the f6 defender",
+     "point": "The f6 knight holds Black's e4 bishop and the kingside together. 13.Nh5 Nxh5 14.Bxe4 dxe4 15.Qxh5 trades it off (+3.3, vs +2.6 after 13.Nd2).",
+     "line_san": "13. Nh5 Nxh5 14. Bxe4 dxe4 15. Qxh5",
+     "plies": [
+      {
+       "san": "Nh5",
+       "uci": "f4h5",
+       "side": "white",
+       "fen": "rn2kb1r/pp3ppp/3q1n2/3p3N/2pPb3/2P1B1PP/PP3PB1/RN1QR1K1 b kq - 8 13"
+      },
+      {
+       "san": "Nxh5",
+       "uci": "f6h5",
+       "side": "black",
+       "fen": "rn2kb1r/pp3ppp/3q4/3p3n/2pPb3/2P1B1PP/PP3PB1/RN1QR1K1 w kq - 0 14"
+      },
+      {
+       "san": "Bxe4",
+       "uci": "g2e4",
+       "side": "white",
+       "fen": "rn2kb1r/pp3ppp/3q4/3p3n/2pPB3/2P1B1PP/PP3P2/RN1QR1K1 b kq - 0 14"
+      },
+      {
+       "san": "dxe4",
+       "uci": "d5e4",
+       "side": "black",
+       "fen": "rn2kb1r/pp3ppp/3q4/7n/2pPp3/2P1B1PP/PP3P2/RN1QR1K1 w kq - 0 15"
+      },
+      {
+       "san": "Qxh5",
+       "uci": "d1h5",
+       "side": "white",
+       "fen": "rn2kb1r/pp3ppp/3q4/7Q/2pPp3/2P1B1PP/PP3P2/RN2R1K1 b kq - 0 15"
+      }
+     ],
+     "fen": "rn2kb1r/pp3ppp/3q1n2/3p4/2pPbN2/2P1B1PP/PP3PB1/RN1QR1K1 w kq - 7 13",
+     "url": "https://lichess.org/XtnIByaY#24"
+    }
+   ],
+   "watch": "Do not let the ...c4 lock make you passive. In your game the slow moves 13.Nd2, 15.b3 and 16.axb3 each gave back about a pawn. Look at the knight jump to h5 first.",
+   "source_games": [
+    "https://lichess.org/XtnIByaY"
+   ],
+   "plies": [
+    {
+     "san": "e4",
+     "uci": "e2e4",
+     "side": "white",
+     "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+    },
+    {
+     "san": "c5",
+     "uci": "c7c5",
+     "side": "black",
+     "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
+    },
+    {
+     "san": "c3",
+     "uci": "c2c3",
+     "side": "white",
+     "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR b KQkq - 0 2"
+    },
+    {
+     "san": "e6",
+     "uci": "e7e6",
+     "side": "black",
+     "fen": "rnbqkbnr/pp1p1ppp/4p3/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR w KQkq - 0 3"
+    },
+    {
+     "san": "d4",
+     "uci": "d2d4",
+     "side": "white",
+     "fen": "rnbqkbnr/pp1p1ppp/4p3/2p5/3PP3/2P5/PP3PPP/RNBQKBNR b KQkq - 0 3"
+    },
+    {
+     "san": "d5",
+     "uci": "d7d5",
+     "side": "black",
+     "fen": "rnbqkbnr/pp3ppp/4p3/2pp4/3PP3/2P5/PP3PPP/RNBQKBNR w KQkq - 0 4"
+    },
+    {
+     "san": "exd5",
+     "uci": "e4d5",
+     "side": "white",
+     "fen": "rnbqkbnr/pp3ppp/4p3/2pP4/3P4/2P5/PP3PPP/RNBQKBNR b KQkq - 0 4"
+    },
+    {
+     "san": "exd5",
+     "uci": "e6d5",
+     "side": "black",
+     "fen": "rnbqkbnr/pp3ppp/8/2pp4/3P4/2P5/PP3PPP/RNBQKBNR w KQkq - 0 5"
+    },
+    {
+     "san": "Nf3",
+     "uci": "g1f3",
+     "side": "white",
+     "fen": "rnbqkbnr/pp3ppp/8/2pp4/3P4/2P2N2/PP3PPP/RNBQKB1R b KQkq - 1 5"
+    },
+    {
+     "san": "Nc6",
+     "uci": "b8c6",
+     "side": "black",
+     "fen": "r1bqkbnr/pp3ppp/2n5/2pp4/3P4/2P2N2/PP3PPP/RNBQKB1R w KQkq - 2 6"
+    },
+    {
+     "san": "Bb5",
+     "uci": "f1b5",
+     "side": "white",
+     "fen": "r1bqkbnr/pp3ppp/2n5/1Bpp4/3P4/2P2N2/PP3PPP/RNBQK2R b KQkq - 3 6"
+    },
+    {
+     "san": "Bd6",
+     "uci": "f8d6",
+     "side": "black",
+     "fen": "r1bqk1nr/pp3ppp/2nb4/1Bpp4/3P4/2P2N2/PP3PPP/RNBQK2R w KQkq - 4 7"
+    },
+    {
+     "san": "dxc5",
+     "uci": "d4c5",
+     "side": "white",
+     "fen": "r1bqk1nr/pp3ppp/2nb4/1BPp4/8/2P2N2/PP3PPP/RNBQK2R b KQkq - 0 7"
+    },
+    {
+     "san": "Bxc5",
+     "uci": "d6c5",
+     "side": "black",
+     "fen": "r1bqk1nr/pp3ppp/2n5/1Bbp4/8/2P2N2/PP3PPP/RNBQK2R w KQkq - 0 8"
+    },
+    {
+     "san": "O-O",
+     "uci": "e1g1",
+     "side": "white",
+     "fen": "r1bqk1nr/pp3ppp/2n5/1Bbp4/8/2P2N2/PP3PPP/RNBQ1RK1 b kq - 1 8"
+    },
+    {
+     "san": "Ne7",
+     "uci": "g8e7",
+     "side": "black",
+     "fen": "r1bqk2r/pp2nppp/2n5/1Bbp4/8/2P2N2/PP3PPP/RNBQ1RK1 w kq - 2 9"
+    },
+    {
+     "san": "Nbd2",
+     "uci": "b1d2",
+     "side": "white",
+     "fen": "r1bqk2r/pp2nppp/2n5/1Bbp4/8/2P2N2/PP1N1PPP/R1BQ1RK1 b kq - 3 9"
+    },
+    {
+     "san": "O-O",
+     "uci": "e8g8",
+     "side": "black",
+     "fen": "r1bq1rk1/pp2nppp/2n5/1Bbp4/8/2P2N2/PP1N1PPP/R1BQ1RK1 w - - 4 10"
+    },
+    {
+     "san": "Nb3",
+     "uci": "d2b3",
+     "side": "white",
+     "fen": "r1bq1rk1/pp2nppp/2n5/1Bbp4/8/1NP2N2/PP3PPP/R1BQ1RK1 b - - 5 10"
+    },
+    {
+     "san": "Bd6",
+     "uci": "c5d6",
+     "side": "black",
+     "fen": "r1bq1rk1/pp2nppp/2nb4/1B1p4/8/1NP2N2/PP3PPP/R1BQ1RK1 w - - 6 11"
+    }
+   ],
+   "fen": "r1bq1rk1/pp2nppp/2nb4/1B1p4/8/1NP2N2/PP3PPP/R1BQ1RK1 w - - 6 11",
+   "line_san": "1. e4 c5 2. c3 e6 3. d4 d5 4. exd5 exd5 5. Nf3 Nc6 6. Bb5 Bd6 7. dxc5 Bxc5 8. O-O Ne7 9. Nbd2 O-O 10. Nb3 Bd6",
+   "moves_count": 20,
+   "white_idea": "Black wants either active pieces around an isolated d5 pawn (...Bd6, ...Nge7, ...O-O), or to lock the queenside with ...c4 and use the d3 and e4 squares for the light bishop (...Bf5 and ...Bd3), as in your game.",
+   "eco": "B22"
+  },
+  {
+   "id": "alapin-d6",
+   "name": "2...d6 — a quiet set-up",
+   "frequency": "less common",
+   "tell": "Black plays 2...d6, often with ...Nf6 and ...g6. Nothing attacks e4 yet, so take the full centre with 3.d4.",
+   "opponent_idea": "Black wants a slow Dragon or Pirc set-up: ...Nf6, ...g6, ...Bg7, ...O-O and ...Nc6, then pressure on your centre with ...cxd4, ...Bg4 or ...e5.",
+   "moves": [
+    "e4",
+    "c5",
+    "c3",
+    "d6",
+    "d4",
+    "Nf6",
+    "Bd3",
+    "g6",
+    "Nf3",
+    "Bg7",
+    "O-O",
+    "O-O",
+    "h3",
+    "Nc6",
+    "Re1"
+   ],
+   "plans": [
+    "3.d4 Nf6 4.Bd3 protects e4. Then Nf3, O-O and h3, which stops ...Bg4.",
+    "If Black takes ...cxd4, take back cxd4 and play Nc3. That is the classic big centre.",
+    "Keep e5 or d5 in reserve to gain space once Black has castled."
+   ],
+   "strategic": [
+    "These structures are close to your Modern Defense with the colours reversed, and here you have an extra move. Space and a calm build-up beat early attacks.",
+    "Re1 and a well-timed e5 or d5 gives you more space if Black just waits."
+   ],
+   "tactics": [
+    {
+     "name": "4...Nxe4?? 5.Bxe4",
+     "point": "e4 is defended by the d3 bishop. Grabbing it loses a knight for a pawn (+4.0).",
+     "line_san": "5. Bxe4",
+     "plies": [
+      {
+       "san": "Bxe4",
+       "uci": "d3e4",
+       "side": "white",
+       "fen": "rnbqkb1r/pp2pppp/3p4/2p5/3PB3/2P5/PP3PPP/RNBQK1NR b KQkq - 0 5"
+      }
+     ],
+     "fen": "rnbqkb1r/pp2pppp/3p4/2p5/3Pn3/2PB4/PP3PPP/RNBQK1NR w KQkq - 0 5",
+     "url": null
+    },
+    {
+     "name": "If you play 4.dxc5: 4...Nxe4?? 5.Qa4+",
+     "point": "Queen check on a4 forks the king and the e4 knight (+3.3).",
+     "line_san": "5. Qa4+ Nc6 6. Qxe4",
+     "plies": [
+      {
+       "san": "Qa4+",
+       "uci": "d1a4",
+       "side": "white",
+       "fen": "rnbqkb1r/pp2pppp/3p4/2P5/Q3n3/2P5/PP3PPP/RNB1KBNR b KQkq - 1 5"
+      },
+      {
+       "san": "Nc6",
+       "uci": "b8c6",
+       "side": "black",
+       "fen": "r1bqkb1r/pp2pppp/2np4/2P5/Q3n3/2P5/PP3PPP/RNB1KBNR w KQkq - 2 6"
+      },
+      {
+       "san": "Qxe4",
+       "uci": "a4e4",
+       "side": "white",
+       "fen": "r1bqkb1r/pp2pppp/2np4/2P5/4Q3/2P5/PP3PPP/RNB1KBNR b KQkq - 0 6"
+      }
+     ],
+     "fen": "rnbqkb1r/pp2pppp/3p4/2P5/4n3/2P5/PP3PPP/RNBQKBNR w KQkq - 0 5",
+     "url": null
+    }
+   ],
+   "watch": "4.Bd3 is the most accurate (+0.6). 4.dxc5 is fine (+0.4), but if you play it, watch for the ...Nxe4 grab and answer it with Qa4+.",
+   "plies": [
+    {
+     "san": "e4",
+     "uci": "e2e4",
+     "side": "white",
+     "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+    },
+    {
+     "san": "c5",
+     "uci": "c7c5",
+     "side": "black",
+     "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
+    },
+    {
+     "san": "c3",
+     "uci": "c2c3",
+     "side": "white",
+     "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR b KQkq - 0 2"
+    },
+    {
+     "san": "d6",
+     "uci": "d7d6",
+     "side": "black",
+     "fen": "rnbqkbnr/pp2pppp/3p4/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR w KQkq - 0 3"
+    },
+    {
+     "san": "d4",
+     "uci": "d2d4",
+     "side": "white",
+     "fen": "rnbqkbnr/pp2pppp/3p4/2p5/3PP3/2P5/PP3PPP/RNBQKBNR b KQkq - 0 3"
+    },
+    {
+     "san": "Nf6",
+     "uci": "g8f6",
+     "side": "black",
+     "fen": "rnbqkb1r/pp2pppp/3p1n2/2p5/3PP3/2P5/PP3PPP/RNBQKBNR w KQkq - 1 4"
+    },
+    {
+     "san": "Bd3",
+     "uci": "f1d3",
+     "side": "white",
+     "fen": "rnbqkb1r/pp2pppp/3p1n2/2p5/3PP3/2PB4/PP3PPP/RNBQK1NR b KQkq - 2 4"
+    },
+    {
+     "san": "g6",
+     "uci": "g7g6",
+     "side": "black",
+     "fen": "rnbqkb1r/pp2pp1p/3p1np1/2p5/3PP3/2PB4/PP3PPP/RNBQK1NR w KQkq - 0 5"
+    },
+    {
+     "san": "Nf3",
+     "uci": "g1f3",
+     "side": "white",
+     "fen": "rnbqkb1r/pp2pp1p/3p1np1/2p5/3PP3/2PB1N2/PP3PPP/RNBQK2R b KQkq - 1 5"
+    },
+    {
+     "san": "Bg7",
+     "uci": "f8g7",
+     "side": "black",
+     "fen": "rnbqk2r/pp2ppbp/3p1np1/2p5/3PP3/2PB1N2/PP3PPP/RNBQK2R w KQkq - 2 6"
+    },
+    {
+     "san": "O-O",
+     "uci": "e1g1",
+     "side": "white",
+     "fen": "rnbqk2r/pp2ppbp/3p1np1/2p5/3PP3/2PB1N2/PP3PPP/RNBQ1RK1 b kq - 3 6"
+    },
+    {
+     "san": "O-O",
+     "uci": "e8g8",
+     "side": "black",
+     "fen": "rnbq1rk1/pp2ppbp/3p1np1/2p5/3PP3/2PB1N2/PP3PPP/RNBQ1RK1 w - - 4 7"
+    },
+    {
+     "san": "h3",
+     "uci": "h2h3",
+     "side": "white",
+     "fen": "rnbq1rk1/pp2ppbp/3p1np1/2p5/3PP3/2PB1N1P/PP3PP1/RNBQ1RK1 b - - 0 7"
+    },
+    {
+     "san": "Nc6",
+     "uci": "b8c6",
+     "side": "black",
+     "fen": "r1bq1rk1/pp2ppbp/2np1np1/2p5/3PP3/2PB1N1P/PP3PP1/RNBQ1RK1 w - - 1 8"
+    },
+    {
+     "san": "Re1",
+     "uci": "f1e1",
+     "side": "white",
+     "fen": "r1bq1rk1/pp2ppbp/2np1np1/2p5/3PP3/2PB1N1P/PP3PP1/RNBQR1K1 b - - 2 8"
+    }
+   ],
+   "fen": "r1bq1rk1/pp2ppbp/2np1np1/2p5/3PP3/2PB1N1P/PP3PP1/RNBQR1K1 b - - 2 8",
+   "line_san": "1. e4 c5 2. c3 d6 3. d4 Nf6 4. Bd3 g6 5. Nf3 Bg7 6. O-O O-O 7. h3 Nc6 8. Re1",
+   "moves_count": 15,
+   "white_idea": "Black wants a slow Dragon or Pirc set-up: ...Nf6, ...g6, ...Bg7, ...O-O and ...Nc6, then pressure on your centre with ...cxd4, ...Bg4 or ...e5.",
+   "eco": "B22",
+   "source_games": []
+  },
+  {
+   "id": "alapin-g6",
+   "name": "2...g6 and the rest (2...Nc6, 2...e5)",
+   "frequency": "briefly",
+   "tell": "Black fianchettoes with 2...g6, or plays 2...Nc6 or 2...e5. Take the centre with 3.d4. After ...cxd4 cxd4 d5, push e5.",
+   "opponent_idea": "With ...g6 and ...Bg7, Black wants to hit d4 down the long diagonal and break with ...d5 or ...d6. After 2...Nc6 Black usually goes back into the ...d5 lines. 2...e5 closes the centre for a solid game.",
+   "moves": [
+    "e4",
+    "c5",
+    "c3",
+    "g6",
+    "d4",
+    "cxd4",
+    "cxd4",
+    "d5",
+    "e5",
+    "Nc6",
+    "Bb5",
+    "Bg7",
+    "Nf3"
+   ],
+   "plans": [
+    "2...g6 3.d4 cxd4 4.cxd4 d5 5.e5. The French-style chain blunts the g7 bishop.",
+    "Bb5 pins the c6 knight and Nf3 protects d4. Castle next.",
+    "2...Nc6: 3.d4 d5 4.exd5 Qxd5 5.Nf3 Bg4 6.Be2. Same plans as the 2...d5 page.",
+    "2...e5: 3.Nf3 Nc6 4.Bc4, develop fast and play d4 later."
+   ],
+   "strategic": [
+    "Against ...g6, the e5 pawn takes f6 from Black's knight. Keep it protected with Nf3 and, if needed, f4.",
+    "If the g7 bishop gets a clear diagonal, d4 needs constant protection. Count attackers before you move a defender."
+   ],
+   "tactics": [
+    {
+     "name": "5...Bg4?? 6.Qxg4",
+     "point": "Nothing stands between your queen on d1 and g4. A bishop on g4 with no knight on f3 to pin is simply loose (+5.1).",
+     "line_san": "6. Qxg4",
+     "plies": [
+      {
+       "san": "Qxg4",
+       "uci": "d1g4",
+       "side": "white",
+       "fen": "rn1qkbnr/pp2pp1p/6p1/3pP3/3P2Q1/8/PP3PPP/RNB1KBNR b KQkq - 0 6"
+      }
+     ],
+     "fen": "rn1qkbnr/pp2pp1p/6p1/3pP3/3P2b1/8/PP3PPP/RNBQKBNR w KQkq - 1 6",
+     "url": null
+    },
+    {
+     "name": "6...Qd6?? 7.exd6",
+     "point": "The e5 pawn controls d6. Never put the queen there (+7.2).",
+     "line_san": "7. exd6",
+     "plies": [
+      {
+       "san": "exd6",
+       "uci": "e5d6",
+       "side": "white",
+       "fen": "r1b1kbnr/pp2pp1p/2nP2p1/1B1p4/3P4/8/PP3PPP/RNBQK1NR b KQkq - 0 7"
+      }
+     ],
+     "fen": "r1b1kbnr/pp2pp1p/2nq2p1/1B1pP3/3P4/8/PP3PPP/RNBQK1NR w KQkq - 3 7",
+     "url": null
+    }
+   ],
+   "watch": "After 5.e5, d4 is your weak point. Do not let Nf3 get pinned or traded off before d4 is secure.",
+   "plies": [
+    {
+     "san": "e4",
+     "uci": "e2e4",
+     "side": "white",
+     "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+    },
+    {
+     "san": "c5",
+     "uci": "c7c5",
+     "side": "black",
+     "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
+    },
+    {
+     "san": "c3",
+     "uci": "c2c3",
+     "side": "white",
+     "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR b KQkq - 0 2"
+    },
+    {
+     "san": "g6",
+     "uci": "g7g6",
+     "side": "black",
+     "fen": "rnbqkbnr/pp1ppp1p/6p1/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR w KQkq - 0 3"
+    },
+    {
+     "san": "d4",
+     "uci": "d2d4",
+     "side": "white",
+     "fen": "rnbqkbnr/pp1ppp1p/6p1/2p5/3PP3/2P5/PP3PPP/RNBQKBNR b KQkq - 0 3"
+    },
+    {
+     "san": "cxd4",
+     "uci": "c5d4",
+     "side": "black",
+     "fen": "rnbqkbnr/pp1ppp1p/6p1/8/3pP3/2P5/PP3PPP/RNBQKBNR w KQkq - 0 4"
+    },
+    {
+     "san": "cxd4",
+     "uci": "c3d4",
+     "side": "white",
+     "fen": "rnbqkbnr/pp1ppp1p/6p1/8/3PP3/8/PP3PPP/RNBQKBNR b KQkq - 0 4"
+    },
+    {
+     "san": "d5",
+     "uci": "d7d5",
+     "side": "black",
+     "fen": "rnbqkbnr/pp2pp1p/6p1/3p4/3PP3/8/PP3PPP/RNBQKBNR w KQkq - 0 5"
+    },
+    {
+     "san": "e5",
+     "uci": "e4e5",
+     "side": "white",
+     "fen": "rnbqkbnr/pp2pp1p/6p1/3pP3/3P4/8/PP3PPP/RNBQKBNR b KQkq - 0 5"
+    },
+    {
+     "san": "Nc6",
+     "uci": "b8c6",
+     "side": "black",
+     "fen": "r1bqkbnr/pp2pp1p/2n3p1/3pP3/3P4/8/PP3PPP/RNBQKBNR w KQkq - 1 6"
+    },
+    {
+     "san": "Bb5",
+     "uci": "f1b5",
+     "side": "white",
+     "fen": "r1bqkbnr/pp2pp1p/2n3p1/1B1pP3/3P4/8/PP3PPP/RNBQK1NR b KQkq - 2 6"
+    },
+    {
+     "san": "Bg7",
+     "uci": "f8g7",
+     "side": "black",
+     "fen": "r1bqk1nr/pp2ppbp/2n3p1/1B1pP3/3P4/8/PP3PPP/RNBQK1NR w KQkq - 3 7"
+    },
+    {
+     "san": "Nf3",
+     "uci": "g1f3",
+     "side": "white",
+     "fen": "r1bqk1nr/pp2ppbp/2n3p1/1B1pP3/3P4/5N2/PP3PPP/RNBQK2R b KQkq - 4 7"
+    }
+   ],
+   "fen": "r1bqk1nr/pp2ppbp/2n3p1/1B1pP3/3P4/5N2/PP3PPP/RNBQK2R b KQkq - 4 7",
+   "line_san": "1. e4 c5 2. c3 g6 3. d4 cxd4 4. cxd4 d5 5. e5 Nc6 6. Bb5 Bg7 7. Nf3",
+   "moves_count": 13,
+   "white_idea": "With ...g6 and ...Bg7, Black wants to hit d4 down the long diagonal and break with ...d5 or ...d6. After 2...Nc6 Black usually goes back into the ...d5 lines. 2...e5 closes the centre for a solid game.",
+   "eco": "B22",
+   "source_games": []
+  }
+ ]
+}

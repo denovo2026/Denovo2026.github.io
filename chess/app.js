@@ -284,7 +284,7 @@ const TAB_GROUPS = {
   today: ["plan", "progress"],
   play: ["play", "lab", "games"],
   train: ["deck", "puzzles", "cycles", "sparring", "endgames", "attacks", "calc"],
-  openings: ["modern", "scotch", "grunfeld"],
+  openings: ["modern", "scotch", "alapin", "grunfeld"],
   study: ["masters", "learn"],
 };
 function tabGroupOf(name) {
@@ -318,6 +318,7 @@ function switchTab(name) {
   if (name === "deck" && typeof initDeck === "function") initDeck();
   if (name === "modern" && typeof initModern === "function") initModern();
   if (name === "scotch" && typeof initScotch === "function") initScotch();
+  if (name === "alapin" && typeof initAlapin === "function") initAlapin();
   if (name === "grunfeld" && typeof initGrunfeld === "function") initGrunfeld();
   if (name === "attacks" && typeof initAttacks === "function") initAttacks();
 }
@@ -2853,7 +2854,7 @@ function renderStreak() {
 
 const Puzzles = {
   current: null,      // {id, fen, side_to_move, theme, rating} — merged pool (static + persisted user puzzles)
-  set: "all",         // v44: all | my-missed | defend-it
+  set: "all",         // v44: all | my-missed | defend-it  (v46: + knight-h5)
   userMoves: [],      // solver UCIs played so far
   fen: null,          // current board position in puzzle
   done: false,
@@ -2871,7 +2872,7 @@ function puzzleInfo() {
   let line = "Theme: " + (p.theme || "?") + " · Rating: " + (p.rating || "?") +
     " · You play " + p.side_to_move;
   if (p.explanation) line += " · " + p.explanation;
-  if (p.set === "my-missed" || p.set === "defend-it" || (p.id && String(p.id).indexOf("own-") === 0))
+  if (p.set === "my-missed" || p.set === "defend-it" || p.set === "knight-h5" || (p.id && String(p.id).indexOf("own-") === 0))
     line += " · from your games";
   $("puzzle-info").textContent = line;
   let link = $("puzzle-source-link");
@@ -2941,7 +2942,7 @@ async function newPuzzle() {
   }
   try {
     const p = await apiPost("/api/puzzle/next", body);
-    Puzzles.current = { id: p.id, fen: p.fen, side_to_move: p.side_to_move, theme: p.theme, rating: p.rating, url: p.url || null, note: p.note || null, set: p.set || null };
+    Puzzles.current = { id: p.id, fen: p.fen, side_to_move: p.side_to_move, theme: p.theme, rating: p.rating, url: p.url || null, note: p.note || null, set: p.set || null, explanation: p.explanation || null };
     Puzzles.fen = p.fen;
     Puzzles.seenIds.push(p.id);
     puzzleBoard.setFen(p.fen);
@@ -8539,7 +8540,7 @@ async function renderProgressOpenings() {
   const row = (l) => {
     const days = repDaysUntil(l.due);
     const cls = l.last_right === l.last_total ? "ok" : "miss";
-    const slugLbl = l.slug === "grunfeld" ? "Grünfeld" : l.slug === "scotch" ? "Scotch" : "Modern";
+    const slugLbl = l.slug === "grunfeld" ? "Grünfeld" : l.slug === "scotch" ? "Scotch" : l.slug === "alapin" ? "Alapin" : "Modern";
     return '<div class="po-row"><span class="po-name">' + escapeHtml(l.name || l.id) + ' <span class="muted">' + escapeHtml(slugLbl) + "</span></span>"
       + '<span class="rep-mem ' + cls + '">' + l.last_right + "/" + l.last_total + "</span>"
       + '<span class="muted">' + (days <= 0 ? "due now" : days === 1 ? "tomorrow" : "in " + days + " d") + "</span></div>";
@@ -8553,7 +8554,7 @@ document.addEventListener("click", (e) => {
   if (!b) return;
   const slug = b.getAttribute("data-opening-drill");
   switchTab(slug);
-  setTimeout(() => { const T = slug === "grunfeld" ? GrunfeldTab : slug === "scotch" ? ScotchTab : ModernTab; T.init().then(() => T.drillDue()); }, 50);
+  setTimeout(() => { const T = slug === "grunfeld" ? GrunfeldTab : slug === "scotch" ? ScotchTab : slug === "alapin" ? AlapinTab : ModernTab; T.init().then(() => T.drillDue()); }, 50);
 });
 
 
@@ -8587,4 +8588,27 @@ document.addEventListener("click", (e) => {
   } catch (e) {
     console.warn("olympiad hand-off failed", e);
   }
+})();
+
+/* ------------------------------------------------------------------ */
+/* v46: deep links — ?tab=alapin, ?tab=puzzles&set=knight-h5,         */
+/* ?tab=deck&card=<id>. The query is dropped after it is used.         */
+/* ------------------------------------------------------------------ */
+(function deepLink() {
+  let u;
+  try { u = new URLSearchParams(location.search); } catch (_) { return; }
+  const tab = u.get("tab"), set = u.get("set"), card = u.get("card");
+  if (!tab && !set && !card) return;
+  try { history.replaceState(null, "", location.pathname + location.hash); } catch (_) { /* */ }
+  const target = card ? "deck" : set ? "puzzles" : tab;
+  if (!document.getElementById("tab-" + target)) return;
+  const run = () => {
+    if (set && $("puzzle-set") && [...$("puzzle-set").options].some(o => o.value === set)) {
+      $("puzzle-set").value = set;
+      $("puzzle-set").dispatchEvent(new Event("change"));
+    }
+    switchTab(target);
+    if (card && window.CCDeck && window.CCDeck.show) window.CCDeck.show(card);
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run); else setTimeout(run, 0);
 })();

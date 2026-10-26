@@ -31,7 +31,7 @@ const DECK_SITE = { lichess: "Lichess", chesscom: "Chess.com", noctie: "Noctie",
 async function deckLoad() {
   let bundled = { cards: [], summary: null };
   try {
-    const r = await fetch("data/mine/deck.json?v=45", { cache: "no-cache" });
+    const r = await fetch("data/mine/deck.json?v=46", { cache: "no-cache" });
     if (r.ok) bundled = await r.json();
   } catch (e) { console.info("[deck] bundled deck not loaded:", e && e.message); }
   const local = deckLS(DECK_KEYS.local, []);
@@ -120,6 +120,7 @@ function deckRenderSummary() {
     + (sum ? '<div class="deck-bd deck-bd-note"><h4>Built</h4><div class="info-line">' + deckEsc(sum.note || "") + "</div></div>" : "");
 }
 function deckRenderTop() {
+  if (typeof deckRenderLessons === "function") deckRenderLessons();
   const top = Deck.all.filter(c => c.most_costly).sort((a, b) => a.rank - b.rank);
   $("deck-top-list").innerHTML = top.map(c => {
     const s = Deck.srs[c.id];
@@ -253,7 +254,9 @@ function deckReveal(solved) {
     + (other.length ? " (also fine: " + other.map(deckEsc).join(", ") + ")" : "") + "</span>"
     + ' <span class="muted">' + Math.round(c.wp_before) + "% → " + Math.round(c.wp_after) + "% win chance" + (c.result_changed ? " · <b>changed the result</b>" : "") + "</span></div>"
     + '<div class="deck-ex-title">' + deckEsc(c.title) + "</div>"
+    + (c.rule ? '<div class="coach-box deck-rule"><b>The rule:</b> ' + deckEsc(c.rule) + "</div>" : "")
     + '<div class="coach-box">' + deckEsc(c.explanation) + "</div>"
+    + (c.engine_note ? '<div class="info-line muted">' + deckEsc(c.engine_note) + "</div>" : "")
     + '<div class="panel-row deck-lines">'
     + (c.best_pv && c.best_pv.length ? '<button class="btn mini" type="button" id="btn-deck-play-best">▶ Best line</button>' : "")
     + (c.refute_pv && c.refute_pv.length ? '<button class="btn mini" type="button" id="btn-deck-play-ref">▶ What ' + deckEsc(c.played_san) + " allowed</button>" : "")
@@ -507,10 +510,35 @@ $("btn-deck-sync").addEventListener("click", deckSync);
 $("btn-deck-pgn").addEventListener("click", deckImportPgn);
 
 let deckInitDone = false;
+let deckInitP = null;
 async function initDeck() {
-  if (deckInitDone) return; deckInitDone = true;
-  await deckLoad();
-  deckBuildQueue();
-  deckShow(Deck.queue[0] || null);
+  if (deckInitDone) return deckInitP; deckInitDone = true;
+  deckInitP = (async () => {
+    await deckLoad();
+    deckBuildQueue();
+    deckShow(Deck.queue[0] || null);
+  })();
+  return deckInitP;
 }
-window.CCDeck = { state: Deck, init: initDeck, next: deckNext, grade: deckGrade };
+/* v46: open one card by id (deep link ?card=…, lesson list) */
+async function deckShowById(id) {
+  await initDeck();
+  const c = Deck.byId[id];
+  if (c) deckShow(c);
+  return !!c;
+}
+function deckRenderLessons() {
+  const host = $("deck-lessons-list"); if (!host) return;
+  const ls = Deck.all.filter(c => c.lesson);
+  $("deck-lessons").classList.toggle("hidden", !ls.length);
+  host.innerHTML = ls.map(c => '<li><button type="button" class="deck-top-item' + (Deck.cur && Deck.cur.id === c.id ? " current" : "") + '" data-id="' + deckEsc(c.id) + '">'
+    + '<span class="dt-swing">' + deckEsc(c.swing) + "</span>"
+    + '<span class="dt-move">' + c.move_no + (c.side === "white" ? ". " : "… ") + deckEsc(c.played_san) + "</span>"
+    + '<span class="dt-theme">' + deckEsc(c.theme) + "</span>"
+    + '<span class="dt-game">' + deckEsc(c.opening) + " · " + deckEsc(c.date || "") + "</span></button></li>").join("");
+}
+if ($("deck-lessons-list")) $("deck-lessons-list").addEventListener("click", (e) => {
+  const b = e.target.closest(".deck-top-item"); if (!b) return;
+  const c = Deck.byId[b.dataset.id]; if (c) deckShow(c);
+});
+window.CCDeck = { state: Deck, init: initDeck, next: deckNext, grade: deckGrade, show: deckShowById };
