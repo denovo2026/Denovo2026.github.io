@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070b14">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Maze Muncher is an original maze arcade game. Eat the crumbs, dodge four shades, and clear faster mazes.">
+  <title>Maze Muncher</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070b14'/%3E%3Cpath d='M32 8a24 24 0 1 0 .2 0L32 32z' fill='%23ff8618'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="hud">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
+          <rect width="64" height="64" rx="14" fill="#10182c"/>
+          <path d="M32 8a24 24 0 1 0 .2 0L32 32z" fill="#ff8618"/>
+          <circle cx="40" cy="22" r="3" fill="#1b1020"/>
+        </svg>
+        <div>
+          <h1>Maze Muncher</h1>
+          <p>Original maze arcade</p>
+        </div>
+      </div>
+      <div class="stats">
+        <div><span>Score</span><strong id="score">0</strong></div>
+        <div><span>Best</span><strong id="best">0</strong></div>
+        <div><span>Level</span><strong id="level">–</strong></div>
+        <div><span>Left</span><strong id="left">–</strong></div>
+        <div class="lives-wrap">
+          <span>Lives</span>
+          <div class="lives" id="lives" aria-label="Lives"></div>
+        </div>
+      </div>
+      <div id="combo" class="combo" hidden>Power</div>
+      <div class="hud-actions">
+        <button type="button" id="btn-mute" aria-pressed="false">Sound on</button>
+        <button type="button" id="btn-pause">Pause</button>
+      </div>
+    </header>
+
+    <main class="stage">
+      <div class="playfield" id="playfield">
+        <div class="board-wrap" id="board-wrap">
+          <canvas id="board" width="630" height="690" aria-label="Maze Muncher board"></canvas>
+          <div class="overlay" id="overlay">
+            <section class="card" id="screen-title">
+              <p class="eyebrow">Original maze arcade</p>
+              <h2>Maze Muncher</h2>
+              <p class="how">Eat every crumb. Four shades hunt the lanes. Power orbs turn them vulnerable — chain several for a rising bonus — and grab the treat before it fades. Each maze is quicker than the last.</p>
+              <ul class="roster" id="roster"></ul>
+              <p class="keys">Arrows or WASD. Swipe the board or use the pad. P or Esc pauses. R restarts.</p>
+              <button type="button" class="play" id="btn-play">Play</button>
+              <p class="bestline">Best <strong id="title-best">0</strong></p>
+            </section>
+            <section class="card" id="screen-pause" hidden>
+              <p class="eyebrow">Hold up</p>
+              <h2>Paused</h2>
+              <p class="how">The shades are waiting. Resume, or deal a fresh maze from level 1.</p>
+              <div class="row">
+                <button type="button" class="play" id="btn-resume">Resume</button>
+                <button type="button" id="btn-restart">Restart</button>
+              </div>
+            </section>
+            <section class="card" id="screen-over" hidden>
+              <p class="eyebrow">Run over</p>
+              <h2>Game over</h2>
+              <p class="how">Score <strong id="over-score">0</strong></p>
+              <p class="how">Best <strong id="over-best">0</strong></p>
+              <p class="note" id="over-note" hidden>New best</p>
+              <button type="button" class="play" id="btn-again">Play again</button>
+            </section>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="dpad" id="dpad" aria-label="Direction pad">
+          <button type="button" data-dir="up" aria-label="Up">▲</button>
+          <button type="button" data-dir="left" aria-label="Left">◀</button>
+          <button type="button" data-dir="down" aria-label="Down">▼</button>
+          <button type="button" data-dir="right" aria-label="Right">▶</button>
+          <button type="button" id="dpad-pause" aria-label="Pause or start">❚❚</button>
+        </div>
+        <p class="hint">Arrows / WASD · swipe · P pause · R restart</p>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+:root {
+  --bg: #070b14;
+  --ink: #f6f1de;
+  --muted: #b7c3dc;
+  --line: rgba(154, 239, 255, 0.5);
+  --amber: #ffb020;
+  --card: rgba(10, 14, 28, 0.94);
+  --pad: 68px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(1100px 520px at 50% -12%, #1c2b52 0%, transparent 58%),
+    radial-gradient(700px 420px at 110% 110%, #351848 0%, transparent 46%),
+    var(--bg);
+  color: var(--ink);
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+button, canvas { touch-action: none; }
+
+button {
+  font: inherit;
+  color: var(--ink);
+  background: #18233f;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+}
+
+button:hover { background: #22325c; }
+button:active { transform: translateY(1px); }
+button:focus-visible { outline: 2px solid #9aefff; outline-offset: 2px; }
+button:disabled { opacity: 0.45; cursor: default; }
+
+.app {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px 0;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: clamp(1.05rem, 2vw, 1.45rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.brand p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.mark {
+  width: 34px;
+  height: 34px;
+  flex: none;
+}
+
+.stats {
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stats span, .lives-wrap span {
+  color: var(--muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.stats strong {
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 1.15rem;
+  min-width: 3ch;
+}
+
+.stats strong.bump { color: var(--amber); }
+
+.lives {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  min-height: 18px;
+  align-items: center;
+}
+
+.life {
+  width: 16px;
+  height: 16px;
+  background: conic-gradient(from 40deg, transparent 0 42deg, #ff8618 42deg 360deg);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px #6a3208;
+}
+
+.combo {
+  align-self: center;
+  color: #d6e4ff;
+  border: 1px solid rgba(214, 228, 255, 0.45);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+}
+
+.hud-actions { display: flex; gap: 8px; }
+
+.stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 8px 12px 12px;
+}
+
+.playfield {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.board-wrap {
+  position: relative;
+  border-radius: 18px;
+  box-shadow:
+    0 0 0 2px #31406e,
+    0 18px 50px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(154, 239, 255, 0.18);
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  background: #0c1224;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  background: rgba(5, 8, 16, 0.42);
+  border-radius: 18px;
+}
+
+.overlay[hidden] { display: none; }
+
+.card {
+  width: min(100%, 440px);
+  max-height: 100%;
+  overflow: auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px 18px 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.card h2 {
+  margin: 0 0 8px;
+  font-size: 1.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: #9aefff;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+}
+
+.how, .keys, .bestline {
+  margin: 8px 0;
+  color: var(--muted);
+  line-height: 1.4;
+  font-size: 0.95rem;
+}
+
+.roster {
+  list-style: none;
+  margin: 10px 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.roster li {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--ink);
+  font-size: 0.92rem;
+}
+
+.roster i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.16);
+}
+
+.roster b { margin-right: 4px; }
+
+.play {
+  margin-top: 6px;
+  background: #ff8618;
+  color: #2a1400;
+  border-color: #ffd7a8;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.3rem;
+}
+
+.play:hover { background: #ffb020; }
+
+.bestline strong, #over-score, #over-best {
+  font-family: "Courier New", ui-monospace, monospace;
+  color: var(--ink);
+}
+
+.note {
+  color: #ffe14a;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+
+.dpad {
+  display: grid;
+  grid-template-columns: var(--pad) var(--pad) var(--pad);
+  grid-template-areas:
+    ". up ."
+    "left mid right"
+    ". down .";
+  gap: 8px;
+}
+
+.dpad button {
+  width: var(--pad);
+  height: 58px;
+  border-radius: 16px;
+  font-size: 1.15rem;
+  padding: 0;
+}
+
+.dpad [data-dir="up"] { grid-area: up; }
+.dpad [data-dir="left"] { grid-area: left; }
+.dpad [data-dir="down"] { grid-area: down; }
+.dpad [data-dir="right"] { grid-area: right; }
+#dpad-pause { grid-area: mid; font-size: 0.95rem; }
+
+.hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-align: center;
+  max-width: 220px;
+}
+
+@media (max-width: 800px) {
+  .stage { flex-direction: column; gap: 8px; padding-bottom: 8px; }
+  .brand p { display: none; }
+  .stats { gap: 8px; }
+  .stats strong { font-size: 1rem; }
+}
+
+@media (max-height: 700px) {
+  .hint { display: none; }
+  :root { --pad: 54px; }
+  .dpad button { height: 46px; }
+  .hud { padding-top: 6px; }
+  .card { padding: 12px; }
+  .card h2 { font-size: 1.35rem; }
+  .how { margin: 6px 0; font-size: 0.86rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button:active { transform: none; }
+}
