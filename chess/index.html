@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=46">
+<link rel="stylesheet" href="style.css?v=47">
 </head>
 <body>
 <header class="app-header">
@@ -78,6 +78,7 @@
       <button class="tab-btn" data-tab="endgames" data-group="train">Endgames</button>
       <button class="tab-btn" data-tab="attacks" data-group="train">Attacks</button>
       <button class="tab-btn" data-tab="calc" data-group="train">Calculation</button>
+      <button class="tab-btn" data-tab="top10" data-group="openings">Top 10 <span id="top10-tab-due" class="t10-tab-due hidden"></span></button>
       <button class="tab-btn" data-tab="modern" data-group="openings">Modern</button>
       <button class="tab-btn" data-tab="scotch" data-group="openings">Scotch</button>
       <button class="tab-btn" data-tab="alapin" data-group="openings">Alapin</button>
@@ -1069,6 +1070,59 @@
     </div>
   </section>
 
+  <!-- ===================== TOP 10 OPENINGS ===================== -->
+  <section id="tab-top10" class="tab-panel rep-tab">
+    <div class="rep-layout">
+      <div class="rep-left">
+        <div id="top10-label" class="lab-game-bar">Pick an opening.</div>
+        <div id="top10-board" class="board-holder"></div>
+        <div id="top10-nav" class="nav-slot"></div>
+      </div>
+      <div class="rep-right">
+        <div class="rep-coachbar">
+          <span class="rep-coach-avatar" aria-hidden="true">&#x265E;</span>
+          <div class="rep-coachbar-text">
+            <strong id="top10-title">Top 10 Openings</strong>
+            <span class="info-line" id="top10-summary">Loading…</span>
+          </div>
+          <span id="top10-due" class="rep-mem">Due today: …</span>
+        </div>
+        <div class="rep-picker">
+          <div class="rep-picker-head">
+            <h3>The ten</h3>
+            <span class="info-line">Five with White, five with Black, grouped by family. Learn the plan, then drill the moves.</span>
+          </div>
+          <div id="top10-openings" class="rep-looks">Loading…</div>
+        </div>
+        <div class="rep-controls">
+          <div id="top10-lines" class="t10-lines"></div>
+          <div id="top10-movebar" class="rep-movebar"></div>
+          <div class="panel-row">
+            <button id="btn-top10-drill" class="btn primary" type="button">Drill this line</button>
+            <button id="btn-top10-due" class="btn" type="button" title="Missed lines first, then new ones, then lines due for review">Drill due</button>
+            <button id="btn-top10-hint" class="btn" type="button" disabled>Hint</button>
+            <button id="btn-top10-playout" class="btn" type="button" title="Load the position after this line and play it against the engine, from either side">Play it out</button>
+            <span id="top10-sides" class="t10-sides hidden">
+              <button type="button" class="btn" data-side="white">as White</button>
+              <button type="button" class="btn" data-side="black">as Black</button>
+            </span>
+            <button id="btn-top10-analyze" class="btn" type="button">Send to Play &amp; Analyze</button>
+          </div>
+          <div class="rep-status-row"><span id="top10-status" class="info-line" role="status" aria-live="polite"></span></div>
+          <div id="top10-score" class="rep-score hidden"></div>
+        </div>
+        <div class="rep-panels">
+          <div class="lab-panel" id="top10-card">
+            <h3 id="top10-card-title">The plan</h3>
+            <div id="top10-detail">
+              <p class="info-line">Choose an opening to see the pawn structure, the plans and the traps.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== MODERN DEFENSE ===================== -->
   <section id="tab-modern" class="tab-panel rep-tab">
     <div class="rep-layout">
@@ -1504,8 +1558,9 @@
 <script src="api-shim.js?v=46"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=35"></script>
-<script src="app.js?v=46"></script>
+<script src="app.js?v=47"></script>
 <script src="js/repertoire.js?v=46"></script>
+<script src="js/top10.js?v=47"></script>
 <script src="js/attacks.js?v=44"></script>
 <script src="js/calc.js?v=44"></script>
 <script src="js/deck.js?v=46"></script>

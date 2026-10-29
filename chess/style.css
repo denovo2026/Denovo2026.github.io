@@ -1628,3 +1628,36 @@ select.opp-level { font-size: 0.92rem; }
 /* v46: plain-English rule on lesson cards; link in the opening coach box */
 .deck-rule { border-left: 3px solid var(--accent, #6aa9ff); }
 .rep-coach-link { display: inline-block; margin-top: 6px; text-decoration: none; }
+
+/* v47: Top 10 Openings — same trainer shell, plan card + drill + review */
+.t10-tab-due {
+  display: inline-block; margin-left: 4px; min-width: 1.1em; padding: 0 5px;
+  border-radius: 999px; background: var(--warn); color: #1a1200;
+  font-size: 0.72rem; font-weight: 750; line-height: 1.35; vertical-align: 1px;
+}
+#tab-top10 .rep-coachbar-text { flex: 1 1 auto; min-width: 0; }
+#top10-due { margin-left: auto; flex: 0 0 auto; }
+.t10-kicker {
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--text-3);
+}
+#tab-top10 .rep-look { border-top: 3px solid var(--border-strong); }
+#tab-top10 .rep-look.t10-white { border-top-color: var(--info); }
+#tab-top10 .rep-look.t10-black { border-top-color: var(--accent); }
+.t10-lines { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 6px; }
+.t10-line {
+  font: inherit; font-size: 0.82rem; font-weight: 650; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text-2);
+  border-radius: 999px; padding: 3px 10px; min-height: 30px;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.t10-line:hover { border-color: var(--border-strong); color: var(--text); }
+.t10-line.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-text); }
+.t10-line .rep-mem { margin: 0; }
+.t10-sides { display: inline-flex; gap: 6px; align-items: center; }
+#tab-top10 .rep-tactic .info-line, #top10-detail .info-line { margin: 4px 0 8px; }
+#top10-detail a { color: var(--accent-text); }
+@media (min-width: 961px) {
+  #top10-openings.rep-looks { grid-auto-columns: minmax(158px, 1fr); }
+  #tab-top10 { --board-chrome: 104px; }
+}

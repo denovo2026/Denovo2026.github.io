@@ -284,7 +284,7 @@ const TAB_GROUPS = {
   today: ["plan", "progress"],
   play: ["play", "lab", "games"],
   train: ["deck", "puzzles", "cycles", "sparring", "endgames", "attacks", "calc"],
-  openings: ["modern", "scotch", "alapin", "grunfeld"],
+  openings: ["top10", "modern", "scotch", "alapin", "grunfeld"],
   study: ["masters", "learn"],
 };
 function tabGroupOf(name) {
@@ -316,6 +316,7 @@ function switchTab(name) {
   if (name === "games" && typeof loadLibrary === "function" && !Games.list.length) loadLibrary();
   if (name === "calc" && typeof initCalc === "function") initCalc();
   if (name === "deck" && typeof initDeck === "function") initDeck();
+  if (name === "top10" && typeof initTop10 === "function") initTop10();
   if (name === "modern" && typeof initModern === "function") initModern();
   if (name === "scotch" && typeof initScotch === "function") initScotch();
   if (name === "alapin" && typeof initAlapin === "function") initAlapin();
