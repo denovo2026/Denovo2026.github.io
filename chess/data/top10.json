@@ -1,0 +1,785 @@
+{
+  "title": "Top 10 Openings",
+  "summary": "The openings a club player meets most often, taught as plans. You play your side's moves. Lines you miss come back tomorrow; lines you know come back later.",
+  "openings": [
+    {
+      "id": "italian",
+      "name": "Italian Game",
+      "eco": "C50–C54",
+      "side": "white",
+      "family": "Open games",
+      "blurb": "Bishop on c4, aimed at f7, before you touch d4.",
+      "tell": "White's light-squared bishop is on c4 and Black has answered 1.e4 e5. The bishop stares at f7. If the bishop were on b5 it would be a Ruy Lopez; if White has already played d4 it is a Scotch or a centre gambit, not this.",
+      "structure": "Black's pawn stays on e5. White usually plays c3 and then either a quiet d3 or a direct d4. If the centre opens (d4 exd4 cxd4) White has an open c-file and a pawn on d4; if it stays closed, the game is about the f7-point and a later d3-d4 or ...d5 break.",
+      "pieces": [
+        "White: knight on f3, bishop on c4 (often it drops back to b3 before ...Na5), knight on d2, rook on e1, king castled short.",
+        "Black: knights on c6 and f6, bishop on c5 or e7, pawn on d6, king castled short. The c5-bishop often tucks to a7 after ...a6.",
+        "The piece that matters is the c4-bishop. Trade it only when you mean to; ...Na5 is Black's way of asking that question."
+      ],
+      "plans": {
+        "white": [
+          "Build with c3 and d3, castle, put the bishop on b3, and bring the knight to d2. Then choose: d3-d4, or a slow Re1 and Nf1-g3.",
+          "Keep the bishop. It is the reason you played Bc4. Bb3 before ...Na5 saves it.",
+          "Only open the centre with d4 when your king is castled and the c3-pawn can recapture, or when d4 comes with a tempo on the bishop."
+        ],
+        "black": [
+          "Neutralise the c4-bishop with ...a6 and ...Ba7, or trade it with ...Na5.",
+          "Hold e5 with ...d6 and ...Nf6, castle, and strike with ...d5 once the pieces are out.",
+          "Do not grab a loose piece on the queenside while f7 is still soft."
+        ]
+      },
+      "breaks": [
+        "White: d3-d4, or c3 and an immediate d4 (the Giuoco Piano).",
+        "Black: ...d5, the freeing break. It is the move that says the opening is over."
+      ],
+      "traps": [
+        {
+          "name": "Blackburne Shilling mate",
+          "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nd4", "Nxe5", "Qg5", "Nxf7", "Qxg2", "Rf1", "Qxe4+", "Be2", "Nf3#"],
+          "point": "3...Nd4 is a trap, not a system. 4.Nxe5 loses. 4.c3 or 4.Nxd4 is the answer. The line ends in mate."
+        },
+        {
+          "name": "Legal's mate",
+          "moves": ["e4", "e5", "Nf3", "d6", "Bc4", "Bg4", "Nc3", "g6", "Nxe5", "Bxd1", "Bxf7+", "Ke7", "Nd5#"],
+          "point": "When the bishop on g4 pins the knight, taking on e5 and leaving the queen en prise is mate if Black grabs the queen. As Black, do not take the queen. As White, know the pattern before you try it — 4...g6 is what makes this exact mate work."
+        },
+        {
+          "name": "Fried Liver fork",
+          "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nf6", "Ng5", "d5", "exd5", "Nxd5", "Nxf7"],
+          "point": "Nxf7 forks the queen on d8 and the rook on h8. Black usually plays ...Kxf7 and a sharp attack follows. It is a tactic to recognise, not the plan. The drill uses 4.d3, which never allows Ng5."
+        }
+      ],
+      "links": [
+        {"tab": "scotch", "label": "Your Scotch", "note": "Same start: 1.e4 e5 2.Nf3 Nc6. You play 3.d4. The Italian is 3.Bc4 — slower, with the bishop aimed at f7."}
+      ],
+      "games": [
+        {
+          "title": "Steinitz–von Bardeleben, Hastings 1895",
+          "note": "Giuoco Piano. The same d4 centre strike as the sideline, then an attack down the open e-file.",
+          "url": "https://www.chessgames.com/perl/chessgame?gid=1132699"
+        }
+      ],
+      "lines": [
+        {
+          "id": "slow",
+          "name": "Slow Italian",
+          "note": "The plan: c3, d3, bishop back to b3, knight to d2.",
+          "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Bc5", "c3", "Nf6", "d3", "d6", "O-O", "a6", "Bb3", "O-O", "Nbd2"]
+        },
+        {
+          "id": "centre",
+          "name": "Centre strike",
+          "note": "c3 and d4 straight away. The centre opens; pieces matter more than pawns.",
+          "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Bc5", "c3", "Nf6", "d4", "exd4", "cxd4", "Bb4+", "Bd2", "Bxd2+", "Nbxd2", "d5"]
+        },
+        {
+          "id": "twoknights",
+          "name": "Two Knights",
+          "note": "Black played ...Nf6 before ...Bc5. Same plan: d3, c3, castle, bishop to b3.",
+          "moves": ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nf6", "d3", "Bc5", "c3", "d6", "O-O", "O-O", "Re1", "a6", "Bb3"]
+        }
+      ]
+    },
+    {
+      "id": "ruy",
+      "name": "Ruy Lopez",
+      "eco": "C60–C99",
+      "side": "white",
+      "family": "Open games",
+      "blurb": "Bishop on b5, pressing the knight that defends e5.",
+      "tell": "White's bishop is on b5 against a knight on c6, after 1.e4 e5. The bishop is not really trying to take on c6 yet. It is making the e5-pawn harder to defend, and waiting to see ...a6.",
+      "structure": "Black keeps a pawn on e5. In the Closed Ruy, Black plays ...a6 ...b5 and ...d6, and White prepares d4 with c3. In the Berlin the queens come off and Black has doubled c-pawns but the two bishops. In the Exchange, White takes on c6 on purpose and plays for a kingside pawn majority.",
+      "pieces": [
+        "White, Closed: bishop retreats a4-b3, rook on e1, knight f3, the other knight d2-f1-g3, king castled short.",
+        "Black, Closed: ...a6 ...b5, bishop on e7, knight on f6, pawn on d6, king castled. Later ...Bb7 or ...Na5.",
+        "Do not take on c6 unless you want the Exchange structure. The pressure is the point of the bishop, not the trade."
+      ],
+      "plans": {
+        "white": [
+          "Closed: castle, Re1, c3, d4. The knight comes via d2 to f1 and g3. You are playing against e5 for a long time.",
+          "Berlin: trade queens on d8, then Nc3, a bishop to f4 or g5, and rooks to the d- and e-files. You have space; Black has the bishops.",
+          "Exchange: you damaged Black's pawns on purpose. Castle, play d3 or d4, and do not open the h-file onto your own king."
+        ],
+        "black": [
+          "Closed: kick the bishop with ...a6 ...b5, play ...Be7 ...d6, castle, and choose ...d6 held or a ...d5 break.",
+          "Berlin: ...Nf6 and ...Nxe4, then ...Nd6 and ...Nf5. You want the endgame. Your king on d8 is normal once the queens are gone.",
+          "Against the Exchange, ...Bg4 pins the f3-knight. If White plays h3, ...h5 keeps the pin. Do not let them take and open your king either — but the pin is your activity."
+        ]
+      },
+      "breaks": [
+        "White: d2-d4, prepared by c3 in the Closed Ruy.",
+        "Black: ...d5. Played early, with the bishop on b3 and a rook on e1, it is the Marshall sacrifice. Played later, it is the normal freeing move."
+      ],
+      "traps": [
+        {
+          "name": "Noah's Ark",
+          "moves": ["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Ba4", "d6", "d4", "b5", "Bb3", "Nxd4", "Nxd4", "exd4", "Qxd4", "c5", "Qd5", "Be6", "Qc6+", "Bd7", "Qd5", "c4"],
+          "point": "9.Qxd4 walks into it. After ...c5, ...Be6 and ...c4 the bishop on b3 is lost: it is attacked by the c-pawn, a4 is covered by the b-pawn, and taking on c4 loses the bishop to ...bxc4. Do not recapture on d4 with the queen."
+        },
+        {
+          "name": "Mortimer trap",
+          "moves": ["e4", "e5", "Nf3", "Nc6", "Bb5", "Nf6", "d3", "Ne7", "Nxe5", "c6", "Bc4", "Qa5+"],
+          "point": "4...Ne7 is odd on purpose. 5.Nxe5 c6 hits the bishop, and 6.Bc4 Qa5+ wins the knight on e5 — every legal answer to the check still drops it. Play 5.c3 or 5.O-O, not the pawn grab."
+        },
+        {
+          "name": "Do not take on g4",
+          "moves": ["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Bxc6", "dxc6", "O-O", "Bg4", "h3", "h5"],
+          "point": "In the Exchange, ...Bg4 and ...h5 say: if you play hxg4, hxg4 opens the h-file onto your castled king. The drill's answer is d3 and Nbd2, leaving the bishop where it is."
+        }
+      ],
+      "links": [
+        {"tab": "scotch", "label": "Your Scotch", "note": "The other 1.e4 e5 opening you already play. 3.d4 instead of 3.Bb5. Knowing the Ruy tells you what you are declining."}
+      ],
+      "games": [
+        {
+          "title": "Capablanca–Marshall, New York 1918",
+          "note": "The Marshall Attack (...d5) was introduced here. Capablanca met the pawn sacrifice and won.",
+          "url": "https://www.chessgames.com/perl/chessgame?gid=1095025"
+        },
+        {
+          "title": "Kasparov–Kramnik, London 2000, game 1",
+          "note": "Berlin Defence. Queens off by move 8, and the endgame held for Black.",
+          "url": "https://www.chessgames.com/perl/chessgame?gid=1252041"
+        }
+      ],
+      "lines": [
+        {
+          "id": "closed",
+          "name": "Closed Ruy",
+          "note": "The main plan: a6, bishop to b3, castle, c3, ready for d4.",
+          "moves": ["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Ba4", "Nf6", "O-O", "Be7", "Re1", "b5", "Bb3", "O-O", "c3"]
+        },
+        {
+          "id": "berlin",
+          "name": "Berlin",
+          "note": "Queens come off. You have space; Black has the two bishops and a king on d8.",
+          "moves": ["e4", "e5", "Nf3", "Nc6", "Bb5", "Nf6", "O-O", "Nxe4", "d4", "Nd6", "Bxc6", "dxc6", "dxe5", "Nf5", "Qxd8+", "Kxd8"]
+        },
+        {
+          "id": "exchange",
+          "name": "Exchange",
+          "note": "You take on c6 on purpose. Then d3, and you do not take the bishop on g4.",
+          "moves": ["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Bxc6", "dxc6", "O-O", "Bg4", "h3", "h5", "d3", "Qf6", "Nbd2"]
+        }
+      ]
+    },
+    {
+      "id": "qg",
+      "name": "Queen's Gambit",
+      "eco": "D06–D69",
+      "side": "white",
+      "family": "Queen's pawn",
+      "blurb": "1.d4 d5 2.c4 — you offer the c-pawn to undermine d5.",
+      "tell": "White has played d4 and c4 against a black pawn on d5. It is not a real gambit if you know the plan: the c-pawn is bait. Black either holds d5 with ...e6 or ...c6, or takes on c4 and you will take the centre instead.",
+      "structure": "Three families. Declined: pawns on d4 and d5, Black's pawn on e6, your c-pawn still offering the trade. Accepted: Black has taken on c4 and you win it back, often with an isolated queen pawn or hanging pawns after ...c5. Slav: Black holds d5 with ...c6, so the light-squared bishop can come out.",
+      "pieces": [
+        "White: knight on c3, knight on f3, dark-squared bishop on g5 or f4, light-squared bishop on d3 or e2, rook on c1.",
+        "Black, Declined: ...Nf6, ...Be7, ...Nbd7, ...c6, king castled. The c8-bishop is the piece Black has to solve.",
+        "Black, Slav: the c8-bishop is outside the pawn chain, on f5 or g4, before ...e6."
+      ],
+      "plans": {
+        "white": [
+          "Against ...e6: develop Bg5, e3, Nf3, Bd3, Rc1. Then choose the minority attack (trade on d5 and push b4-b5) or a central e4.",
+          "Against ...dxc4: Nf3 and e3, take the pawn back with the bishop, stop ...b5 with a4, and aim at the centre with Qe2 and Rd1.",
+          "Against the Slav: let them take on c4, play a4 so ...b5 is not free, then Bxc4 and castle. The c-file and e4 are your breaks."
+        ],
+        "black": [
+          "Declined: hold the centre, castle, and free the c8-bishop later with ...dxc4 and ...e5, or ...c5.",
+          "Accepted: give the pawn back. ...Nf6, ...e6, ...c5. Do not try to keep it with an early ...b5.",
+          "Slav: ...Bf5 before ...e6. Then ...e6, ...Bb4, castle. You are a pawn down for a move and a half and you get it back in development."
+        ]
+      },
+      "breaks": [
+        "White: e3-e4 in the Orthodox, or b4-b5 after cxd5 (the minority attack).",
+        "Black: ...c5 or ...e5. In the Accepted, ...c5 is the move that stops you keeping a pawn on d4 for free."
+      ],
+      "traps": [
+        {
+          "name": "Elephant Trap",
+          "moves": ["d4", "d5", "c4", "e6", "Nc3", "Nf6", "Bg5", "Nbd7", "cxd5", "exd5", "Nxd5", "Nxd5", "Bxd8", "Bb4+", "Qd2", "Bxd2+", "Kxd2", "Kxd8"],
+          "point": "6.Nxd5 looks like a free pawn and loses a piece for a pawn. The bishop on g5 takes the queen, ...Bb4+ takes your queen back, and the king recaptures into ...Kxd8. Do not grab on d5 with the knight while the g5-bishop and the queen are loose."
+        },
+        {
+          "name": "Clinging to the c4-pawn",
+          "moves": ["d4", "d5", "c4", "dxc4", "e3", "b5", "a4", "c6", "axb5", "cxb5", "Qf3"],
+          "point": "After 3.e3, ...b5 and ...c6 do not hold the pawn. 6.Qf3 hits the rook on a8 down the long diagonal. ...Bb7 or ...Nc6 can block it, but the pawn was never worth this. The drill gives the pawn back with ...Nf6, ...e6 and ...c5. (3.Nf3, the drill move, stops this idea at once.)"
+        },
+        {
+          "name": "The c8-bishop",
+          "point": "Not a one-move trap: the trap is leaving the c8-bishop inside the pawn chain for the whole game. ...Nbd7 and ...c6 are right; the plan afterwards is ...dxc4 and ...e5, or ...c5, so that bishop gets a square."
+        }
+      ],
+      "links": [
+        {"opening": "qgd", "label": "Same opening as Black", "note": "The Queen's Gambit Declined card is this structure from the other side."}
+      ],
+      "games": [
+        {
+          "title": "Fischer–Spassky, Reykjavik 1972, game 6",
+          "note": "Queen's Gambit Declined, Tartakower. White trades on d5 and plays against the hanging pawns.",
+          "url": "https://www.chessgames.com/perl/chessgame?gid=1044366"
+        },
+        {
+          "title": "Kramnik–Kasparov, London 2000, game 4",
+          "note": "Queen's Gambit Accepted, classical, with ...a6."
+        }
+      ],
+      "lines": [
+        {
+          "id": "declined",
+          "name": "Declined",
+          "note": "Bg5, e3, Bd3, rook on c1. Pressure, not a pawn grab.",
+          "moves": ["d4", "d5", "c4", "e6", "Nc3", "Nf6", "Bg5", "Be7", "e3", "O-O", "Nf3", "Nbd7", "Rc1", "c6", "Bd3"]
+        },
+        {
+          "id": "accepted",
+          "name": "Accepted",
+          "note": "Win the pawn back, stop ...b5 with a4, queen to e2.",
+          "moves": ["d4", "d5", "c4", "dxc4", "Nf3", "Nf6", "e3", "e6", "Bxc4", "c5", "O-O", "a6", "a4", "Nc6", "Qe2"]
+        },
+        {
+          "id": "slav",
+          "name": "Slav",
+          "note": "Black's bishop came to f5 first. You play a4, take on c4, and castle.",
+          "moves": ["d4", "d5", "c4", "c6", "Nf3", "Nf6", "Nc3", "dxc4", "a4", "Bf5", "e3", "e6", "Bxc4", "Bb4", "O-O"]
+        }
+      ]
+    },
+    {
+      "id": "london",
+      "name": "London System",
+      "eco": "D02",
+      "side": "white",
+      "family": "Queen's pawn",
+      "blurb": "Bishop to f4 early, pawns on d4 and e3, before you commit the c-pawn.",
+      "tell": "White's dark-squared bishop is on f4, the d-pawn is on d4, and e3 has been played or is about to be. The c-pawn is still on c2 or has only gone to c3. If the bishop is on g5 and the c-pawn is on c4, it is a Queen's Gambit, not a London.",
+      "structure": "A solid pyramid: d4, e3, often c3. Black's main tries are ...d5 and ...c5, or a kingside fianchetto with ...g6. The centre stays closed until someone plays c4, e4, or ...e5. When the dark-squared bishops are traded on d6 or g3, the h-file can open if you recapture hxg3.",
+      "pieces": [
+        "White: bishop f4, knights f3 and d2, light-squared bishop on d3, king castled short. The queen often waits on c2 or c1.",
+        "Black against ...d5: ...c5, ...Nc6, ...Bd6 offering the bishop trade, ...Nf6, castle.",
+        "Against a fianchetto (...g6 ...Bg7) you keep the same setup and add h3 so ...Nh5 does not pick the bishop off for free."
+      ],
+      "plans": {
+        "white": [
+          "Same moves almost every game: d4, Nf3, Bf4, e3, c3, Nbd2, Bd3, castle. Learn the plan, not a tree.",
+          "If Black plays ...Bd6, decide: trade on d6, drop back to g3, or keep the bishop with h3 and Bh2.",
+          "Breaks come later: e4 when the knight on d2 and the bishop on d3 support it, or c4 if you want a Queen's Gambit after all."
+        ],
+        "black": [
+          "Put a pawn on c5 and a knight on c6, and offer ...Bd6 to trade your good bishop.",
+          "If the queen comes to b6, it hits b2. That is pressure, not a free pawn.",
+          "With a fianchetto, ...d6 ...Nbd7 ...c5 and castle. Do not chase the f4-bishop with ...Nh5 unless you want Be5 or an open h-file."
+        ]
+      },
+      "breaks": [
+        "White: e3-e4, sometimes c3-c4.",
+        "Black: ...c5 is the main one. ...e5 is the other, usually after the bishop on f4 has been asked a question."
+      ],
+      "traps": [
+        {
+          "name": "Chasing the bishop",
+          "moves": ["d4", "d5", "Nf3", "Nf6", "Bf4", "Nh5", "Be5"],
+          "point": "3...Nh5 looks active and asks for Be5, which is awkward. If the bishop goes to g3 instead and you trade, hxg3 opens the h-file for White. Leave the bishop alone and play ...c5 or ...Bd6."
+        },
+        {
+          "name": "The open h-file",
+          "moves": ["d4", "d5", "Nf3", "Nf6", "Bf4", "Nh5", "Bg3", "Nxg3", "hxg3"],
+          "point": "Same idea, the other reply. White is happy. The h-file is open and your knight has left f6."
+        },
+        {
+          "name": "Queen on b6",
+          "moves": ["d4", "d5", "Nf3", "Nf6", "Bf4", "c5", "e3", "Nc6", "c3", "Qb6", "Qb3", "c4", "Qc2", "Bf5", "Nbd2"],
+          "point": "b2 is attacked, so you do not ignore it. Qb3 offers the queen trade. If they close the position with ...c4, the queen drops to c2 and you have lost nothing. The sideline drill is this exact plan."
+        }
+      ],
+      "links": [
+        {"tab": "modern", "label": "Your Modern", "note": "The fianchetto sideline is what a London looks like against the bishop you play on g7."},
+        {"opening": "kid", "label": "King's Indian", "note": "Same dark-squared bishop, with ...Nf6 and ...d6 committed. Useful when you are Black against this setup."}
+      ],
+      "games": [],
+      "lines": [
+        {
+          "id": "classical",
+          "name": "Classical",
+          "note": "The pyramid. Meet ...Bd6 by stepping the bishop to g3, then Bd3.",
+          "moves": ["d4", "d5", "Nf3", "Nf6", "Bf4", "e6", "e3", "c5", "c3", "Nc6", "Nbd2", "Bd6", "Bg3", "O-O", "Bd3"]
+        },
+        {
+          "id": "fianchetto",
+          "name": "Against the fianchetto",
+          "note": "Same system versus ...g6. h3 keeps the bishop, c3 holds d4.",
+          "moves": ["d4", "Nf6", "Nf3", "g6", "Bf4", "Bg7", "e3", "O-O", "Be2", "d6", "O-O", "Nbd7", "h3", "c5", "c3"]
+        },
+        {
+          "id": "qb6",
+          "name": "Queen on b6",
+          "note": "They hit b2. Offer the trade with Qb3; if ...c4, drop to c2.",
+          "moves": ["d4", "d5", "Nf3", "Nf6", "Bf4", "c5", "e3", "Nc6", "c3", "Qb6", "Qb3", "c4", "Qc2", "Bf5", "Nbd2"]
+        }
+      ]
+    },
+    {
+      "id": "english",
+      "name": "English Opening",
+      "eco": "A10–A39",
+      "side": "white",
+      "family": "Flank",
+      "blurb": "First move c4. You fight for d5 from the side.",
+      "tell": "White's first pawn move was c4, not e4 or d4. There is no white pawn in the centre yet. Black has either played ...e5 (a Sicilian with colours reversed) or ...c5 (symmetrical).",
+      "structure": "Against ...e5 you are a tempo up in a Sicilian. The Botvinnik setup is pawns on c4, d3 and e4, with a later f4. The reversed Open Sicilian is ...d5, you take, and a dragon-shaped position with your extra move. Against ...c5 the Hedgehog is Black's pawns on d6 and e6, with breaks ...d5 and ...b5.",
+      "pieces": [
+        "Botvinnik: bishop g2, knights c3 and e2, bishop e3, queen d2, king castled short. The e2-knight can go to d5 or support f4.",
+        "Reversed Sicilian: bishop g2, knights c3 and f3, rook on the c-file, bishop e3.",
+        "Against the Hedgehog: bishop g2, queen often on d4 for a move, rooks on c1 and d1, pawns on e4 and c4 giving you the space."
+      ],
+      "plans": {
+        "white": [
+          "If they play ...e5 and fianchetto, build the Botvinnik wall (c4, d3, e4) and prepare f4. Do not push f4 before you have castled.",
+          "If they play ...d5 early, take and treat it as a Sicilian where you are Black with an extra move. Bishop on g2, knight on f3, castle, then Be3 and a4 or d4.",
+          "Against the Hedgehog, take space with d4 and e4, put rooks on c1 and d1, and wait. Their breaks are the game."
+        ],
+        "black": [
+          "With ...e5: either strike with ...d5 at once, or copy the setup with ...g6 ...Bg7 ...d6 and prepare ...f5.",
+          "Hedgehog: ...e6 ...b6 ...Bb7 ...Be7, then ...d6 ...a6 ...Nbd7. You are cramped on purpose. The breaks are ...d5 and ...b5, not a random pawn move.",
+          "A bishop on b4 will be hit by Nd5. Move it."
+        ]
+      },
+      "breaks": [
+        "White: f2-f4 in the Botvinnik; d3-d4 when the reversed Sicilian is ready.",
+        "Black: ...d5 against c4, and ...f5 in the closed setups. In the Hedgehog, ...b5 and ...d5."
+      ],
+      "traps": [
+        {
+          "name": "Nd5 against the bishop",
+          "moves": ["c4", "e5", "Nc3", "Nf6", "Nf3", "Nc6", "g3", "Bb4", "Nd5"],
+          "point": "5.Nd5 hits the bishop on b4 and threatens to damage the f6-knight. Retreat the bishop (...Be7, ...Bc5, ...a5). If you trade ...Nxd5, cxd5 kicks the knight on c6 as well."
+        },
+        {
+          "name": "The extra move is not a free centre",
+          "moves": ["c4", "e5", "Nc3", "Nf6", "g3", "d5", "cxd5", "Nxd5"],
+          "point": "If you are still developing the kingside and Black has already played ...d5, you have not 'gained a tempo' — you have an open centre and a bishop still on f1. The drill's answer is Bg2, then castle, before you do anything else."
+        },
+        {
+          "name": "f4 with the king in the middle",
+          "point": "In the Botvinnik system the f4 break is the plan, and it is also how you lose if you play it before O-O and Be3. Finish development first. The drill castles on move 8 and stops there on purpose."
+        }
+      ],
+      "links": [
+        {"opening": "sicilian", "label": "Sicilian, colours reversed", "note": "1.c4 e5 is a Sicilian with you as Black and an extra move. The plans on the Sicilian card are the ones you are copying."},
+        {"tab": "alapin", "label": "Your Alapin", "note": "Your 2.c3 against the Sicilian — a central pawn and a ...d5 break — is the same family of idea as meeting ...d5 here."}
+      ],
+      "games": [
+        {
+          "title": "Fischer–Spassky, Reykjavik 1972, game 8",
+          "note": "English Symmetrical. White plays d4 and wins in 37 moves."
+        },
+        {
+          "title": "Kasparov–Kramnik, London 2000, game 5",
+          "note": "English Symmetrical."
+        }
+      ],
+      "lines": [
+        {
+          "id": "reversed",
+          "name": "Reversed Sicilian",
+          "note": "They struck with ...d5. Take, fianchetto, castle, then d3.",
+          "moves": ["c4", "e5", "Nc3", "Nf6", "g3", "d5", "cxd5", "Nxd5", "Bg2", "Nb6", "Nf3", "Nc6", "O-O", "Be7", "d3"]
+        },
+        {
+          "id": "botvinnik",
+          "name": "Botvinnik system",
+          "note": "Pawns on c4, d3 and e4. Knights on c3 and e2. Castle before f4.",
+          "moves": ["c4", "e5", "Nc3", "Nc6", "g3", "g6", "Bg2", "Bg7", "d3", "d6", "e4", "Nge7", "Nge2", "O-O", "O-O"]
+        },
+        {
+          "id": "hedgehog",
+          "name": "Hedgehog",
+          "note": "You take space with d4. They will sit on d6 and e6 and wait for ...d5 or ...b5.",
+          "moves": ["c4", "c5", "Nf3", "Nf6", "Nc3", "e6", "g3", "b6", "Bg2", "Bb7", "O-O", "Be7", "d4", "cxd4", "Qxd4"]
+        }
+      ]
+    },
+    {
+      "id": "sicilian",
+      "name": "Sicilian Defense",
+      "eco": "B20–B99",
+      "side": "black",
+      "family": "vs 1.e4",
+      "blurb": "1...c5. You take the c-file and give White the centre.",
+      "tell": "Black has played ...c5 against e4. If White plays d4 and you take, the c-file is half-open for you and White has an extra central pawn. If White does not play d4 — 2.c3, 2.Nc3, 2.f4 — it is an Anti-Sicilian, and the plan is different.",
+      "structure": "Open Sicilian: White pawns on e4 and f2 (the d-pawn was traded), Black pawn on d6 or e6, half-open c-file for Black and half-open d-file for White. Najdorf/Scheveningen: pawns on d6 and e6, queenside expansion with ...b5. Dragon: ...g6 and a bishop on g7, the centre already open. Alapin (2.c3): White builds a pawn centre and you strike with ...d5.",
+      "pieces": [
+        "Najdorf, you: ...a6, knight f6, bishop e7, knight d7, queen c7, pawn storm ...b5. King usually castled short, sometimes left in the centre if White has castled long.",
+        "Dragon, you: bishop g7, knight c6, rook c8, knight often to e5. You play on the c-file. White plays on your king.",
+        "White in the Open: knight on d4, knight on c3, bishop e3, queen d2, pawn f3, castle long, then g4 and h4."
+      ],
+      "plans": {
+        "black": [
+          "Open Sicilian: you play on the c-file and the queenside. ...a6 ...b5, rook to c8, knight to c6 or d7. The central strike is ...d5, and you play it when e4 is loose.",
+          "Dragon: the bishop on g7 is the piece. Trade White's dark-squared bishop if you can, and use the c-file.",
+          "Against the Alapin you do not get the open c-file for free. ...d5 is the move, then develop and castle. Your White repertoire is this line — the drill below is it from Black's side."
+        ],
+        "white": [
+          "Open: castle long in the English Attack and the Yugoslav, and throw the kingside pawns. The knight on d4 and the pawn on e4 are the centre you are defending.",
+          "Do not let ...d5 happen for nothing. It is the move that frees Black.",
+          "If you do not want this, you do not have to play it. 2.c3 is your practical answer."
+        ]
+      },
+      "breaks": [
+        "Black: ...d5 is the freeing break. ...b5 is the queenside one.",
+        "White: f4-f5 or g4-g5 against your king, and sometimes e4-e5 to kick the f6-knight."
+      ],
+      "traps": [
+        {
+          "name": "Poisoned pawn",
+          "moves": ["e4", "c5", "Nf3", "d6", "d4", "cxd4", "Nxd4", "Nf6", "Nc3", "a6", "Bg5", "e6", "f4", "Qb6", "Qd2", "Qxb2"],
+          "point": "The pawn on b2 is the Poisoned Pawn variation, not a free snack. White has given it up on purpose and will castle long and attack. At club level, do not take it. Put the queen on c7."
+        },
+        {
+          "name": "...d5 is the tactic and the plan",
+          "point": "When the c-file is open and e4 is only defended once, ...d5 wins the centre or a pawn. When e4 is well defended, ...d5 too early just drops a pawn. Count the defenders of e4 before you push."
+        },
+        {
+          "name": "Dragon bishop, same piece you already know",
+          "point": "The bishop on g7 is your Modern bishop, but here the centre is already open. Do not play ...g6 and then leave the bishop staring at your own pawn on e5. In the Dragon the pawn is on d6, and the bishop bites down the long diagonal."
+        }
+      ],
+      "links": [
+        {"tab": "alapin", "label": "Your Alapin", "note": "As White you answer 1...c5 with 2.c3. Drill that tab for your moves. This card is what Black is trying to do, so you know what to stop."},
+        {"tab": "modern", "label": "Your Modern", "note": "The Dragon bishop on g7 is the same piece. The difference is that the Sicilian centre is already open."},
+        {"opening": "english", "label": "English", "note": "1.c4 e5 is this opening with the colours turned around."}
+      ],
+      "games": [
+        {
+          "title": "Karpov–Kasparov, Moscow 1985, game 16",
+          "note": "Sicilian Taimanov. The ...d5 break against a Maroczy bind.",
+          "url": "https://www.chessgames.com/perl/chessgame?gid=1067175"
+        },
+        {
+          "title": "Kasparov–Piket, Tilburg 1989",
+          "note": "Dragon, Yugoslav Attack.",
+          "url": "https://www.chessgames.com/perl/chessgame?gid=1070474"
+        }
+      ],
+      "lines": [
+        {
+          "id": "najdorf",
+          "name": "Najdorf",
+          "note": "English Attack setup. Your next ideas are ...O-O, ...Nbd7, ...b5, ...Qc7.",
+          "moves": ["e4", "c5", "Nf3", "d6", "d4", "cxd4", "Nxd4", "Nf6", "Nc3", "a6", "Be3", "e6", "f3", "Be7", "Qd2"]
+        },
+        {
+          "id": "dragon",
+          "name": "Dragon",
+          "note": "Bishop on g7, king castled, White's queen already on d2. You play on the c-file.",
+          "moves": ["e4", "c5", "Nf3", "d6", "d4", "cxd4", "Nxd4", "Nf6", "Nc3", "g6", "Be3", "Bg7", "f3", "O-O", "Qd2"]
+        },
+        {
+          "id": "alapin",
+          "name": "Against the Alapin",
+          "note": "This is your White weapon, seen from Black's side. ...d5, then develop and castle.",
+          "moves": ["e4", "c5", "c3", "d5", "exd5", "Qxd5", "d4", "Nf6", "Nf3", "e6", "Be2", "cxd4", "cxd4", "Nc6", "O-O"]
+        }
+      ]
+    },
+    {
+      "id": "french",
+      "name": "French Defense",
+      "eco": "C00–C19",
+      "side": "black",
+      "family": "vs 1.e4",
+      "blurb": "1...e6 and 2...d5. You hit e4; the light-squared bishop stays inside for a while.",
+      "tell": "Black has played ...e6 and ...d5 against 1.e4. The chain is usually White's pawn on e5 against yours on d5. Your light-squared bishop is behind the e6-pawn. If the bishop is already outside, on f5 or g4, it is a Caro-Kann, not a French.",
+      "structure": "Advance: White pawns e5 and d4, you have c5 and a queen on b6 attacking d4. Winawer: you trade the dark-squared bishop for the c3-knight and White has doubled c-pawns. Tarrasch: the centre often opens and someone gets an isolated queen pawn.",
+      "pieces": [
+        "You: knight on c6 or d7, knight on e7 or f5, queen on b6 or c7, king castled short. The c8-bishop is the problem piece — it wants ...b6 and ...Ba6, or a centre that opens.",
+        "White, Advance: knights on f3 and d2 or c3, bishop on d3 or e2, king castled. They defend d4.",
+        "White, Winawer: queen often on g4 attacking g7, doubled pawns on c2 and c3, which are both a weakness and a battering ram."
+      ],
+      "plans": {
+        "black": [
+          "Attack d4. That is the whole Advance: ...c5, ...Nc6, ...Qb6, and a knight to f5. Do not take on d4 until more pieces join the attack.",
+          "Winawer: trade on c3, then ...Ne7 ...Bd7 or ...Qa5, and work against the doubled c-pawns. Castle before you worry about the queen on g4.",
+          "Tarrasch: after the centre opens you have an isolated d-pawn. Use the pieces — ...Bg4, ...Qb6 — before White blockades d5."
+        ],
+        "white": [
+          "Advance: hold d4. a3 and b4 gains space; the knight wants c3 or d2. Do not put the bishop on d3 where ...cxd4 and ...Nxd4 forks it.",
+          "Winawer: you have space and the bishop pair after ...Bxc3. Qg4 attacks g7. The doubled c-pawns are the price.",
+          "Tarrasch: trade into the isolated pawn and blockade it. Piece pressure on d5, not a wild attack."
+        ]
+      },
+      "breaks": [
+        "Black: ...c5 is the lever against d4. ...f6 is the lever against e5, later, once you are castled.",
+        "White: f4-f5 in some Advance lines, and the b4 push. In the Winawer, a4-a5 clamps your queenside."
+      ],
+      "traps": [
+        {
+          "name": "Bishop on d3, knight takes d4",
+          "moves": ["e4", "e6", "d4", "d5", "e5", "c5", "c3", "Nc6", "Nf3", "Qb6", "Bd3", "cxd4", "cxd4", "Nxd4", "Nxd4", "Qxd4", "Bb5+", "Bd7", "Qxd4"],
+          "point": "7...Nxd4 loses the queen. The knight was the only recapture, and 9.Bb5+ is check: Bd7, Ke7 and Kd8 all still lose the queen to Qxd4. Pressure d4 with pieces. Do not take it with the knight."
+        },
+        {
+          "name": "The queen on g7",
+          "moves": ["e4", "e6", "d4", "d5", "Nc3", "Bb4", "e5", "c5", "a3", "Bxc3+", "bxc3", "Ne7", "Qg4"],
+          "point": "In the Winawer, Qg4 hits g7. Castle, or play ...Qc7, but do not ignore the queen. The g7-pawn is the target because your bishop has left the kingside."
+        },
+        {
+          "name": "The bad bishop",
+          "point": "The trap that is not a tactic: the bishop on c8 stays bad for thirty moves if you never play ...b6 and ...Ba6 or open the centre. Every French plan includes a job for that bishop."
+        }
+      ],
+      "links": [
+        {"opening": "caro", "label": "Caro-Kann", "note": "The same ...d5 idea against 1.e4, with the light-squared bishop free outside the pawn chain."}
+      ],
+      "games": [
+        {
+          "title": "Alekhine–Nimzowitsch, San Remo 1930",
+          "note": "French Winawer. White clamps the c-file and the knight on c6 never moves.",
+          "url": "https://www.chessgames.com/perl/chessgame?gid=1012683"
+        }
+      ],
+      "lines": [
+        {
+          "id": "advance",
+          "name": "Advance",
+          "note": "...c5, ...Nc6, ...Qb6, knight from h6 to f5. Pressure d4, do not take it yet.",
+          "moves": ["e4", "e6", "d4", "d5", "e5", "c5", "c3", "Nc6", "Nf3", "Qb6", "a3", "Nh6", "b4", "cxd4", "cxd4", "Nf5"]
+        },
+        {
+          "id": "winawer",
+          "name": "Winawer",
+          "note": "Trade the dark-squared bishop, then ...Ne7 and ...Bd7. The c-pawns are the target.",
+          "moves": ["e4", "e6", "d4", "d5", "Nc3", "Bb4", "e5", "c5", "a3", "Bxc3+", "bxc3", "Ne7", "Nf3", "Bd7", "a4"]
+        },
+        {
+          "id": "tarrasch",
+          "name": "Tarrasch",
+          "note": "The centre opens. You have an isolated d-pawn and the more active pieces.",
+          "moves": ["e4", "e6", "d4", "d5", "Nd2", "c5", "exd5", "exd5", "Ngf3", "Nc6", "Bb5", "Bd6", "O-O", "Ne7", "dxc5", "Bxc5"]
+        }
+      ]
+    },
+    {
+      "id": "caro",
+      "name": "Caro-Kann",
+      "eco": "B10–B19",
+      "side": "black",
+      "family": "vs 1.e4",
+      "blurb": "1...c6 and 2...d5. Same strike as the French, but the bishop gets out.",
+      "tell": "Black has played ...c6 and ...d5 against 1.e4. The c8-bishop is not locked in, because ...e6 has not been played yet. That is the difference from the French. After the main line the bishop sits on g6 or h7 and White has a space edge plus an h-pawn hook.",
+      "structure": "Classical: you trade ...dxe4, the bishop goes f5-g6, White plays h4-h5 and you answer ...h6. Advance: White's pawn on e5, your bishop already on f5, and you break with ...c5. Exchange: symmetrical pawns, an open e-file, and a quiet game where development is the whole plan.",
+      "pieces": [
+        "Classical, you: bishop on g6 or h7, knights on d7 and f6, bishop on d6, queen on c7, king castled short. Solid, a bit less space.",
+        "White, Classical: knight that was on e4 often goes to g3, the other knight to f3, bishop on d3 to trade your bishop, queen on e2 or d3, h-pawn on h5.",
+        "Advance, you: the bishop is the point. It lives on f5. Do not drop it back to g6 into a pawn hook unless you have to."
+      ],
+      "plans": {
+        "black": [
+          "Classical: ...Bf5, meet h4 with ...h6, ...Nd7, and when h5 comes the bishop goes to h7. Then ...e6 ...Ngf6 ...Bd6 ...Qc7 and castle.",
+          "Advance: you already have the bishop. ...e6, ...c5, ...Nc6, and pressure d4 the way a French player does, with a better bishop.",
+          "Exchange: develop, castle, and fight for the e5 square. There is no pawn weakness yet. Do not create one."
+        ],
+        "white": [
+          "Classical: h4-h5 gains space and shoves the bishop. Trade light-squared bishops with Bd3, castle, and use the extra space.",
+          "Advance: you have the French centre without letting them lock the bishop in. Hold d4 and consider g4 only when your king is safe.",
+          "Exchange: you are a move ahead in a symmetrical position. Develop faster. That is the whole advantage."
+        ]
+      },
+      "breaks": [
+        "Black: ...c5 in the Advance and in many Classical endgames. ...e5 is the break in the Exchange, once your pieces are ready.",
+        "White: the h-pawn is the space-gainer in the Classical. e4-e5 is already played in the Advance."
+      ],
+      "traps": [
+        {
+          "name": "Knight to e6",
+          "moves": ["e4", "c6", "d4", "d5", "Nc3", "dxe4", "Nxe4", "Nd7", "Ng5", "h6", "Ne6", "fxe6", "Qh5+", "g6", "Qxg6#"],
+          "point": "4...Nd7 is a normal move. 5...h6 is not. The knight jumps to e6, attacking the queen. Taking it with the f-pawn is met by Qh5+ g6 Qxg6 mate. Move the queen, or better, do not play ...h6 — play ...Ngf6."
+        },
+        {
+          "name": "The bishop and g4",
+          "point": "In the Advance the bishop on f5 is your asset and White's target. g4 kicks it. Have ...e6 in first so the bishop has a retreat, and do not trade it for a knight on f3 unless the structure demands it."
+        },
+        {
+          "name": "Creating a weakness for nothing",
+          "point": "The Exchange is symmetrical. The way to lose it is an early ...f6 or a loose pawn on d5 with no piece behind it. Develop the knights, castle, and only then think about ...e5."
+        }
+      ],
+      "links": [
+        {"opening": "french", "label": "French", "note": "The sister opening. Same ...d5 against e4. In the French the light-squared bishop is inside; here it is already out."}
+      ],
+      "games": [],
+      "lines": [
+        {
+          "id": "classical",
+          "name": "Classical",
+          "note": "Bishop f5-g6, ...h6, ...Nd7. When h5 comes, the bishop will drop to h7.",
+          "moves": ["e4", "c6", "d4", "d5", "Nc3", "dxe4", "Nxe4", "Bf5", "Ng3", "Bg6", "h4", "h6", "Nf3", "Nd7", "h5"]
+        },
+        {
+          "id": "advance",
+          "name": "Advance",
+          "note": "Bishop already on f5. Break with ...c5 and put the knight on c6.",
+          "moves": ["e4", "c6", "d4", "d5", "e5", "Bf5", "Nf3", "e6", "Be2", "c5", "O-O", "Nc6", "c3", "cxd4", "cxd4"]
+        },
+        {
+          "id": "exchange",
+          "name": "Exchange",
+          "note": "Symmetrical. Develop, pin with ...Bg4, castle next. No pawn weaknesses.",
+          "moves": ["e4", "c6", "d4", "d5", "exd5", "cxd5", "Nf3", "Nc6", "Bb5", "Nf6", "O-O", "Bg4", "c3", "e6", "h3"]
+        }
+      ]
+    },
+    {
+      "id": "kid",
+      "name": "King's Indian Defense",
+      "eco": "E60–E99",
+      "side": "black",
+      "family": "vs 1.d4",
+      "blurb": "Fianchetto the king's bishop, let them build a centre, then break with ...e5 or ...c5.",
+      "tell": "Black has ...Nf6, ...g6, ...Bg7 and ...d6, and has not played ...d5. White has a big centre, usually pawns on d4 and e4. If Black strikes with ...d5 instead of ...d6, it is a Grünfeld. If the knight never went to f6, it is a Modern.",
+      "structure": "Classical: White closes with d5, you have ...e5, and the board splits. White attacks on the queenside (c5, b4). You attack on the kingside (...f5, ...f4, ...g5). Sämisch: White plays f3 and keeps the centre flexible, often castling long. Fianchetto: White also has a bishop on g2, so your ...f5 attack is much less effective.",
+      "pieces": [
+        "You, Classical: bishop g7, knights f6 and c6 (the c6-knight reroutes ...Ne7 ...Nd7 after d5), king castled. The f-pawn is your weapon.",
+        "White, Classical: bishop e2, knights f3 and c3, bishop e3, the f3-knight often drops to d2 or e1 so f2-f3 can support the centre.",
+        "Do not trade the g7-bishop unless you get something concrete. It is the piece the opening is built on."
+      ],
+      "plans": {
+        "black": [
+          "Classical, after d5: ...Ne7, ...Nd7, ...f5. You are attacking their king. Do not get distracted by their queenside until ...f5 is in.",
+          "Sämisch: ...e5, and ...Nh5 or ...Nc6 aiming at f4. ...f5 is still the break. Their king on the queenside does not change your plan.",
+          "Against the fianchetto: less ...f5. Play ...e5 or ...c6, ...Nbd7, ...Re8, and look at ...exd4 or a queenside ...a6 ...b5. Their bishop on g2 blunts the kingside pawn storm."
+        ],
+        "white": [
+          "Classical: d5, then c5, Be3, Nd2, b4. You are faster on the queenside if you do not let ...f5 smash through first.",
+          "Sämisch: f3, Be3, Qd2, often O-O-O, and c5. Watch ...Ng4 before the e2-knight or the queen defends the dark-squared bishop.",
+          "Fianchetto: you are playing for a squeeze, not a race. Hold the centre and meet ...e5 calmly."
+        ]
+      },
+      "breaks": [
+        "Black: ...e5 or ...c5 to challenge d4. After the centre closes, ...f5.",
+        "White: c4-c5, the queenside break. e4-e5 is the central kick, and it is a mistake if your knight on f6 can take and the centre dissolves."
+      ],
+      "traps": [
+        {
+          "name": "Greedy knight on e5",
+          "moves": ["d4", "Nf6", "c4", "g6", "Nc3", "Bg7", "e4", "d6", "Nf3", "O-O", "Be2", "e5", "dxe5", "dxe5", "Nxe5", "Nxe4", "Nxe4", "Bxe5"],
+          "point": "If White grabs on e5 with the knight, ...Nxe4 and ...Bxe5 takes the centre apart and the material is level. The dark-squared bishop is what makes the tactic work. Do not be afraid of dxe5."
+        },
+        {
+          "name": "...f5 before you have castled",
+          "point": "The pawn storm is the plan only after O-O. ...f5 with the king still on e8 opens the e-file onto you. The drill castles before ...e5 for that reason."
+        },
+        {
+          "name": "Trading the g7-bishop",
+          "point": "If you trade ...Bg7 for a knight on c3 without a forced reason, the dark squares around your king (f6, g7, h6) become the hole White's queen and dark-squared bishop will use. Keep the bishop."
+        }
+      ],
+      "links": [
+        {"tab": "modern", "label": "Your Modern", "note": "Same bishop, same idea — circle a big centre. Your Modern does it without committing the knight to f6 so early. The breaks here (...e5, ...f5, ...c5) are the ones to steal."},
+        {"tab": "grunfeld", "label": "Your Grünfeld tab", "note": "The Grünfeld is this fianchetto with ...d5 instead of ...d6. Sharper, and you already have a tab for it."}
+      ],
+      "games": [
+        {
+          "title": "Piket–Kasparov, Tilburg 1989",
+          "note": "Classical King's Indian. ...f5, ...f4, ...g5, and the kingside breaks through.",
+          "url": "https://www.chessgames.com/perl/chessgame?gid=1070485"
+        }
+      ],
+      "lines": [
+        {
+          "id": "classical",
+          "name": "Classical",
+          "note": "The tabiya. After d5 your knight goes ...Ne7, then ...Nd7 and ...f5.",
+          "moves": ["d4", "Nf6", "c4", "g6", "Nc3", "Bg7", "e4", "d6", "Nf3", "O-O", "Be2", "e5", "O-O", "Nc6", "d5"]
+        },
+        {
+          "id": "saemisch",
+          "name": "Sämisch",
+          "note": "They play f3. You play ...e5 and ...Nh5, aiming at f4, then ...f5.",
+          "moves": ["d4", "Nf6", "c4", "g6", "Nc3", "Bg7", "e4", "d6", "f3", "O-O", "Be3", "e5", "d5", "Nh5", "Qd2"]
+        },
+        {
+          "id": "fianchetto",
+          "name": "Fianchetto",
+          "note": "Both bishops are fianchettoed. Less ...f5. ...e5, ...Nbd7, and a slower game.",
+          "moves": ["d4", "Nf6", "c4", "g6", "Nf3", "Bg7", "g3", "O-O", "Bg2", "d6", "O-O", "Nbd7", "Nc3", "e5", "e4"]
+        }
+      ]
+    },
+    {
+      "id": "qgd",
+      "name": "Queen's Gambit Declined",
+      "eco": "D30–D69",
+      "side": "black",
+      "family": "vs 1.d4",
+      "blurb": "1...d5 and 2...e6. You hold the centre and solve the c8-bishop later.",
+      "tell": "White has played d4 and c4. You have answered ...d5 and ...e6, not ...dxc4. The centre is still full of pawns. Your light-squared bishop is inside the chain for the moment — that is the Declined, not the Accepted.",
+      "structure": "Orthodox: both sides have a full centre, you play ...c6 and ...Nbd7 and wait for the right moment to take on c4. Tartakower: ...h6 ...b6, and after cxd5 you recapture with the knight and play ...c5. Carlsbad: White has traded cxd5, you have recaptured ...exd5, and the c-file is half-open. White wants b4-b5. You want ...c5 or a knight on e4.",
+      "pieces": [
+        "You: knight f6, bishop e7, knight d7, pawn c6, king castled. The c8-bishop is the piece you still owe a plan.",
+        "White: bishop g5 pinning, knights c3 and f3, bishop d3, rook c1, queen often on c2.",
+        "In the Carlsbad, White's knight often goes to e2 so the f-pawn can move and the b-pawn can advance without a knight in the way."
+      ],
+      "plans": {
+        "black": [
+          "Orthodox: ...Be7 ...O-O ...Nbd7 ...c6. Then either ...dxc4 and ...e5, or ...c5. The bishop on c8 comes out once the centre moves.",
+          "Tartakower: ...h6 ...b6. After they take on d5, ...Nxd5 and ...c5. You accept an isolated pawn or hanging pawns in return for the bishop pair and open lines.",
+          "Carlsbad: ...Be7 ...c6 ...O-O ...Nbd7 ...Re8. Put a knight on e4 if they allow it, and do not open the c-file for their rook unless yours is already on it."
+        ],
+        "white": [
+          "Orthodox: pin with Bg5, Rc1, Bd3, and wait. If you trade on d5 you get the minority attack. If Black takes on c4, you recapture and push e4.",
+          "Against ...b6: trade on d5 at a moment when ...Nxd5 is the recapture you want to meet with Bxe7 and a grip on the c-file.",
+          "Carlsbad: Nge2, O-O, Rb1, b4, b5. The minority attack is the plan. Do not rush it before the pieces are ready."
+        ]
+      },
+      "breaks": [
+        "Black: ...c5, or ...dxc4 followed by ...e5. Those are the two ways out.",
+        "White: e3-e4, or b4-b5 after the centre has been fixed by cxd5."
+      ],
+      "traps": [
+        {
+          "name": "Elephant Trap, from your side",
+          "moves": ["d4", "d5", "c4", "e6", "Nc3", "Nf6", "Bg5", "Nbd7", "cxd5", "exd5", "Nxd5", "Nxd5", "Bxd8", "Bb4+", "Qd2", "Bxd2+", "Kxd2", "Kxd8"],
+          "point": "If they grab ...d5 with the knight, you win a piece for a pawn. ...Nxd5, and when the bishop takes your queen, ...Bb4+ takes theirs. You end with the king taking on d8. It only works with the knight on d7, so that ...Nf6 is the piece that recaptures on d5."
+        },
+        {
+          "name": "Taking on c4 too soon",
+          "point": "...dxc4 before you are ready to meet Bxc4 with ...a6 and ...b5, or with ...c5, just gives White the centre and a free tempo. In the Orthodox drill you play ...c6 first and take on c4 only when ...e5 or ...b5 is the follow-up."
+        },
+        {
+          "name": "Opening the c-file for them",
+          "point": "In the Carlsbad, b4-b5 is coming. If you capture ...cxb5 while their rook is on c1 and yours is not, you opened the file for them. Meet the minority attack with pieces on the file first, or with ...a5 at the right moment, not with an automatic capture."
+        }
+      ],
+      "links": [
+        {"opening": "qg", "label": "Same opening as White", "note": "The Queen's Gambit card is this structure with you as White. The drills are the same moves from the other side."}
+      ],
+      "games": [
+        {
+          "title": "Fischer–Spassky, Reykjavik 1972, game 6",
+          "note": "Tartakower Defence. Black plays ...b6; White trades on d5 and attacks the resulting pawns.",
+          "url": "https://www.chessgames.com/perl/chessgame?gid=1044366"
+        }
+      ],
+      "lines": [
+        {
+          "id": "orthodox",
+          "name": "Orthodox",
+          "note": "...Be7, ...h6, ...Nbd7, ...c6. The bishop on c8 waits for ...dxc4 and ...e5.",
+          "moves": ["d4", "d5", "c4", "e6", "Nc3", "Nf6", "Bg5", "Be7", "e3", "O-O", "Nf3", "h6", "Bh4", "Nbd7", "Rc1", "c6"]
+        },
+        {
+          "id": "tartakower",
+          "name": "Tartakower",
+          "note": "...h6 and ...b6. After cxd5 you recapture with the knight and look at ...c5.",
+          "moves": ["d4", "d5", "c4", "e6", "Nc3", "Nf6", "Bg5", "Be7", "e3", "O-O", "Nf3", "h6", "Bh4", "b6", "cxd5", "Nxd5"]
+        },
+        {
+          "id": "carlsbad",
+          "name": "Carlsbad",
+          "note": "They traded on d5. You have ...c6. Their plan is b4-b5; yours is ...Nbd7, ...Re8 and a knight on e4.",
+          "moves": ["d4", "d5", "c4", "e6", "Nc3", "Nf6", "cxd5", "exd5", "Bg5", "Be7", "e3", "c6", "Bd3", "O-O", "Qc2"]
+        }
+      ]
+    }
+  ]
+}
