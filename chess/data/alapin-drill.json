@@ -1,0 +1,75 @@
+{
+  "title": "Alapin Sicilian",
+  "name": "Alapin Sicilian (2.c3)",
+  "summary": "1.e4 c5 2.c3. You keep a pawn centre. This drill is the two replies you meet most, 2...d5 and 2...Nf6, each through move 8. A wrong move is refused.",
+  "side": "white",
+  "eco": "B22",
+  "family": "vs the Sicilian",
+  "blurb": "2.c3, then a pawn centre. You play White.",
+  "tell": "Black has played 1...c5 and you have answered 2.c3, not 2.Nf3. The c-pawn is there so that when Black takes on d4 you can take back with a pawn and keep two central pawns.",
+  "structure": "Against 2...d5 the black queen lands on d5. After ...cxd4 and cxd4 you usually have an isolated d-pawn: a strength while pieces are on, a target if they all come off. Against 2...Nf6 you push e5, the knight goes to d5, and you hold pawns on d4 and e5.",
+  "pieces": [
+    "You: knight on f3, light-squared bishop on e2 or c4, dark-squared bishop on e3, the other knight to c3 once the c-pawn has moved, king castled short.",
+    "Black, 2...d5: queen on d5, knight on f6, often ...Bg4 pinning your knight, knight on c6, king castled short.",
+    "Black, 2...Nf6: the knight is driven from f6 to d5 and often on to b6. They hit your centre with ...d6 and ...Nc6."
+  ],
+  "plans": {
+    "white": [
+      "Play d4 on move three, unless they have just hit e4. Then exd5 against ...d5, and e5 against ...Nf6.",
+      "Develop Nf3, a bishop, and castle. Do not chase the d5 queen with pawns. After ...cxd4 cxd4, Nc3 comes with tempo.",
+      "Against the pin ...Bg4, Be2 and castling are enough. When you are ahead later, trade queens first."
+    ],
+    "black": [
+      "2...d5: develop fast, pin the f3 knight with ...Bg4, and take on d4 so the d-pawn is isolated.",
+      "2...Nf6: ...d6 and ...Nc6 chip at e5. The knight on d5 wants a square when you play Bc4."
+    ]
+  },
+  "breaks": [
+    "You: d2-d4 at once, so the c3-pawn can recapture.",
+    "Black: ...d5 against e4, or ...d6 against the e5-pawn in the 2...Nf6 line."
+  ],
+  "traps": [
+    {
+      "name": "...Bg4 before Nf3",
+      "moves": ["e4", "c5", "c3", "d5", "exd5", "Qxd5", "d4", "Bg4", "Qxg4"],
+      "point": "With no knight on f3 the bishop on g4 is loose: the queen on d1 sees it. Take it."
+    },
+    {
+      "name": "The knight must move",
+      "moves": ["e4", "c5", "c3", "Nf6", "e5", "e6", "exf6"],
+      "point": "After 3.e5 the knight on f6 is attacked by a pawn. A slow move such as 3...e6 drops it to 4.exf6."
+    }
+  ],
+  "links": [
+    {
+      "tab": "alapin",
+      "label": "Full Alapin",
+      "note": "The longer repertoire stays on the Alapin tab: 2...e6, 2...d6, 2...g6, and the tactics from your games."
+    },
+    {
+      "opening": "sicilian",
+      "label": "Sicilian as Black",
+      "note": "The Top 10 Sicilian card is this opening from the other side, including a line against 2.c3."
+    }
+  ],
+  "lines": [
+    {
+      "id": "d5",
+      "name": "2...d5 main",
+      "note": "The move you meet most. exd5, d4, Nf3, Be2, castle, Be3. Do not chase the queen.",
+      "moves": ["e4", "c5", "c3", "d5", "exd5", "Qxd5", "d4", "Nf6", "Nf3", "Bg4", "Be2", "e6", "O-O", "Nc6", "Be3"]
+    },
+    {
+      "id": "d5-cxd4",
+      "name": "2...d5, early ...cxd4",
+      "note": "They take on d4 before developing. cxd4 frees c3, and Nc3 hits the queen.",
+      "moves": ["e4", "c5", "c3", "d5", "exd5", "Qxd5", "d4", "cxd4", "cxd4", "Nc6", "Nf3", "Bg4", "Nc3", "Qd6", "Be2"]
+    },
+    {
+      "id": "nf6",
+      "name": "2...Nf6",
+      "note": "They hit e4 with a knight. e5, d4, Nf3, cxd4, Bc4, and Bb5 after ...Nb6.",
+      "moves": ["e4", "c5", "c3", "Nf6", "e5", "Nd5", "d4", "cxd4", "Nf3", "Nc6", "cxd4", "d6", "Bc4", "Nb6", "Bb5"]
+    }
+  ]
+}

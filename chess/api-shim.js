@@ -766,7 +766,7 @@
     if (p.explain) {
       var oq2 = p.question || puzzleQuestion(p, themes);
       return { text: oq2, question: oq2, line: p.solution_san.join(" ") + (p.note ? "  (" + p.note + ")" : ""),
-        principle: { id: p.set || "own", title: p.set === "knight-h5" ? "Trade off the f6 defender" : "Why it works", text: p.explain } };
+        principle: { id: p.set || "own", title: p.idea_title || (p.set === "knight-h5" ? (p.side_to_move === "black" ? "Knight to h5 against the f3 knight" : "Trade off the f6 defender") : "Why it works"), text: p.explain } };
     }
     var q = puzzleQuestion(p, themes);
     return { text: q, question: q, line: p.solution_san.join(" "), principle: knowledgeFor(themes) };
