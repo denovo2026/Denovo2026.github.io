@@ -31,7 +31,7 @@ const DECK_SITE = { lichess: "Lichess", chesscom: "Chess.com", noctie: "Noctie",
 async function deckLoad() {
   let bundled = { cards: [], summary: null };
   try {
-    const r = await fetch("data/mine/deck.json?v=46", { cache: "no-cache" });
+    const r = await fetch("data/mine/deck.json?v=48", { cache: "no-cache" });
     if (r.ok) bundled = await r.json();
   } catch (e) { console.info("[deck] bundled deck not loaded:", e && e.message); }
   const local = deckLS(DECK_KEYS.local, []);

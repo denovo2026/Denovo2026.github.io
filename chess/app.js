@@ -284,7 +284,7 @@ const TAB_GROUPS = {
   today: ["plan", "progress"],
   play: ["play", "lab", "games"],
   train: ["deck", "puzzles", "cycles", "sparring", "endgames", "attacks", "calc"],
-  openings: ["top10", "modern", "scotch", "alapin", "grunfeld"],
+  openings: ["top10", "modern", "scotch", "alapin", "alapin-drill", "grunfeld"],
   study: ["masters", "learn"],
 };
 function tabGroupOf(name) {
@@ -320,6 +320,7 @@ function switchTab(name) {
   if (name === "modern" && typeof initModern === "function") initModern();
   if (name === "scotch" && typeof initScotch === "function") initScotch();
   if (name === "alapin" && typeof initAlapin === "function") initAlapin();
+  if (name === "alapin-drill" && typeof initAlapinDrill === "function") initAlapinDrill();
   if (name === "grunfeld" && typeof initGrunfeld === "function") initGrunfeld();
   if (name === "attacks" && typeof initAttacks === "function") initAttacks();
 }
@@ -2873,7 +2874,7 @@ function puzzleInfo() {
   let line = "Theme: " + (p.theme || "?") + " · Rating: " + (p.rating || "?") +
     " · You play " + p.side_to_move;
   if (p.explanation) line += " · " + p.explanation;
-  if (p.set === "my-missed" || p.set === "defend-it" || p.set === "knight-h5" || (p.id && String(p.id).indexOf("own-") === 0))
+  if (p.set === "my-missed" || p.set === "defend-it" || (p.id && String(p.id).indexOf("own-") === 0))
     line += " · from your games";
   $("puzzle-info").textContent = line;
   let link = $("puzzle-source-link");

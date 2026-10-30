@@ -1,6 +1,6 @@
 {
   "source": "Lichess puzzle database (CC0) \u2014 https://database.lichess.org/#puzzles",
-  "count": 561,
+  "count": 569,
   "puzzles": [
     {
       "id": "l:00CtS",
@@ -14535,7 +14535,7 @@
       "explanation": "Knight to h5 set, move 13 of your Alapin win",
       "note": "You played 13.Nd2 (+2.6); 13.Nh5 was best (+3.3, Stockfish 17.1 depth 26).",
       "question": "Which black piece holds the e4 bishop and the kingside together, and how can your f4 knight trade it off?",
-      "explain": "The f6 knight is Black's key defender: it protects the e4 bishop and guards h5 and h7. 13.Nh5! Nxh5 14.Bxe4 dxe4 15.Qxh5 trades it off, wins back the strong e4 bishop, and your queen arrives on h5 with checks and threats (engine +3.3). In the game 13.Nd2 (+2.6) let Black keep the knight.",
+      "explain": "The f6 knight is the only defender of the e4 bishop, so 13.Nh5 trades it off and the queen arrives on h5.",
       "engine": {
         "best_cp": 333,
         "played_cp": 258,
@@ -14571,7 +14571,7 @@
       "explanation": "Knight to h5 set, move 15 of your Alapin win",
       "note": "You played 15.b3 (+3.5); 15.Nh5 was best (+4.0, Stockfish 17.1 depth 26).",
       "question": "The e4 pawn has one real defender. Which piece is it, and how do you remove it?",
-      "explain": "The f6 knight is the only piece defending the e4 pawn and Black's kingside. 15.Nh5! O-O 16.Nxf6+ trades it off. After 16...Bxf6 17.Bxe4 you have won the pawn and Black's king has lost its best guard (+4.0). In the game 15.b3 (+3.5) gave Black time.",
+      "explain": "The f6 knight is the only defender of the e4 pawn, so 15.Nh5 and Nxf6+ trade it off before you take the pawn.",
       "engine": {
         "best_cp": 403,
         "played_cp": 345,
@@ -14607,7 +14607,7 @@
       "explanation": "Knight to h5 set, move 16 of your Alapin win",
       "note": "You played 16.axb3 (+2.9); 16.Nh5 was best (+3.6, Stockfish 17.1 depth 26).",
       "question": "Black has just played ...cxb3. Before you recapture, is there a stronger move?",
-      "explain": "Same idea again: trade the defender first, take the pawn later. 16.Nh5! O-O 17.Nxf6+ Bxf6 18.Qxb3 gets the pawn back with play against b7, and e4 no longer has its knight (+3.7). The plain recapture 16.axb3 was +2.9.",
+      "explain": "Trade the f6 defender first: 16.Nh5 and Nxf6+ remove it, and the pawn on b3 can wait.",
       "engine": {
         "best_cp": 365,
         "played_cp": 287,
@@ -14639,7 +14639,7 @@
       "explanation": "Knight to h5 set, move 23 of your Alapin win",
       "note": "You played 23.Nd5 (+3.3); 23.Nh5 was best (+3.8, Stockfish 17.1 depth 26).",
       "question": "Queens are off. Black's f6 bishop hits your d4 pawn. How do you trade it off with gain?",
-      "explain": "Here the f6 defender is the bishop: it pressures d4 and covers Black's dark squares. 23.Nh5! attacks it, and after 23...a6 24.Nxf6+ gxf6 Black's kingside pawns are broken and d4 is safe (+3.8). In the game 23.Nd5 (+3.3) let the bishop stay.",
+      "explain": "The defender on f6 is the bishop, so 23.Nh5 attacks it and Nxf6+ breaks the kingside pawns.",
       "engine": {
         "best_cp": 382,
         "played_cp": 329,
@@ -14647,6 +14647,243 @@
         "pv": "23. Nh5 a6 24. Nxf6+ gxf6 25. d5 Ne5 26. Kg2 Rc8"
       },
       "origin": "style-review"
+    },
+    {
+      "id": "kh5-a6",
+      "fen": "rn2k2r/1p2bppp/p2q1n2/8/2pPpN2/2P1B1PP/PP3PB1/R2QR1K1 w kq - 0 15",
+      "side_to_move": "white",
+      "moves_uci": [
+        "f4h5",
+        "f6h5",
+        "d1h5"
+      ],
+      "solution_san": [
+        "Nh5",
+        "Nxh5",
+        "Qxh5"
+      ],
+      "rating": 1480,
+      "theme": "capturingDefender",
+      "themes": [
+        "capturingDefender"
+      ],
+      "source": "model",
+      "set": "knight-h5",
+      "label": "Knight to h5 — f6 is the only defender of the bishop on e4",
+      "explanation": "Same Alapin shape as your game, with ...a6",
+      "note": "Stockfish 19 Lite depth 15: Nh5 is best (+4.8), about a pawn ahead of the next try.",
+      "question": "Which piece is holding the bishop on e4, and how does the knight on f4 trade it off?",
+      "explain": "The f6 knight is the only defender of the bishop on e4, so Nh5 forces Nxh5 and Qxh5 trades that defender off.",
+      "idea_title": "Trade off the f6 defender",
+      "origin": "model"
+    },
+    {
+      "id": "kh5-a4",
+      "fen": "rn2k2r/pp2bppp/3q1n2/8/P1pPpN2/2P1B1PP/1P3PB1/R2QR1K1 w kq - 0 15",
+      "side_to_move": "white",
+      "moves_uci": [
+        "f4h5",
+        "f6h5",
+        "d1h5"
+      ],
+      "solution_san": [
+        "Nh5",
+        "Nxh5",
+        "Qxh5"
+      ],
+      "rating": 1500,
+      "theme": "capturingDefender",
+      "themes": [
+        "capturingDefender"
+      ],
+      "source": "model",
+      "set": "knight-h5",
+      "label": "Knight to h5 — trade the f6 defender before anything else",
+      "explanation": "Same Alapin shape as your game, with a4 instead of a2",
+      "note": "Stockfish 19 Lite depth 15: Nh5 is best (+5.2), more than a pawn ahead of the next try.",
+      "question": "The bishop on e4 has one real defender. How do you remove it?",
+      "explain": "Nh5 attacks the f6 knight, the only defender of the bishop on e4, and Qxh5 completes the trade.",
+      "idea_title": "Trade off the f6 defender",
+      "origin": "model"
+    },
+    {
+      "id": "kh5-qc7",
+      "fen": "rn2k2r/ppq1bppp/5n2/8/2pPpN2/2P1B1PP/PP3PB1/R2QR1K1 w kq - 0 15",
+      "side_to_move": "white",
+      "moves_uci": [
+        "f4h5",
+        "e8g8",
+        "h5f6"
+      ],
+      "solution_san": [
+        "Nh5",
+        "O-O",
+        "Nxf6+"
+      ],
+      "rating": 1520,
+      "theme": "capturingDefender",
+      "themes": [
+        "capturingDefender"
+      ],
+      "source": "model",
+      "set": "knight-h5",
+      "label": "Knight to h5 — the queen is on c7 and f6 still holds the bishop",
+      "explanation": "Alapin shape with the black queen on c7",
+      "note": "Stockfish 19 Lite depth 15: Nh5 is best (+5.4). The main line is Nh5 O-O Nxf6+.",
+      "question": "Black has not taken the knight. How do you still remove the f6 defender?",
+      "explain": "Nh5 attacks the f6 knight, and after O-O the capture Nxf6+ pulls that defender off the bishop on e4.",
+      "idea_title": "Trade off the f6 defender",
+      "origin": "model"
+    },
+    {
+      "id": "kh5-nc6",
+      "fen": "r2qk2r/pp2bppp/2n2n2/8/2pPpN2/2P1B1PP/PP3PB1/R2QR1K1 w kq - 0 15",
+      "side_to_move": "white",
+      "moves_uci": [
+        "f4h5",
+        "f6h5",
+        "d1h5"
+      ],
+      "solution_san": [
+        "Nh5",
+        "Nxh5",
+        "Qxh5"
+      ],
+      "rating": 1490,
+      "theme": "capturingDefender",
+      "themes": [
+        "capturingDefender"
+      ],
+      "source": "model",
+      "set": "knight-h5",
+      "label": "Knight to h5 — Nc6 does not change the f6 defender",
+      "explanation": "Alapin shape with the knight already on c6",
+      "note": "Stockfish 19 Lite depth 15: Nh5 is best (+4.6), about a pawn ahead of the next try.",
+      "question": "The knight on c6 is developed. What is still the key defender, and how do you trade it?",
+      "explain": "The knight on c6 does not defend the bishop on e4; the f6 knight does, so Nh5 and Qxh5 trade that defender off.",
+      "idea_title": "Trade off the f6 defender",
+      "origin": "model"
+    },
+    {
+      "id": "kh5-lichess-0Dqefo5O",
+      "fen": "r2q1rk1/pbpn1p1n/1p1bp2Q/8/8/1B1P1NN1/PPP2PPP/R3K2R w KQ - 1 13",
+      "side_to_move": "white",
+      "moves_uci": [
+        "g3h5",
+        "d8f6",
+        "h5f6"
+      ],
+      "solution_san": [
+        "Nh5",
+        "Qf6",
+        "Nxf6+"
+      ],
+      "rating": 1452,
+      "theme": "capturingDefender",
+      "themes": [
+        "capturingDefender",
+        "quietMove"
+      ],
+      "source": "lichess",
+      "set": "knight-h5",
+      "url": "https://lichess.org/0Dqefo5O/black#24",
+      "label": "Knight to h5 — the g3 knight hops in and takes on f6",
+      "explanation": "From a Lichess game, knight on g3",
+      "note": "Stockfish 19 Lite depth 15: Nh5 is best by a wide margin (+5.5). The queen has to step to f6, and Nxf6+ takes her.",
+      "question": "The knight on g3 can hop to h5. What does that do to the f6 square?",
+      "explain": "Ng3-h5 eyes f6 beside the queen on h6; the black queen has to step to f6, and Nxf6+ takes her.",
+      "idea_title": "Knight hop to h5, then take on f6",
+      "origin": "lichess"
+    },
+    {
+      "id": "kh5-lichess-6TdoCAVH",
+      "fen": "r4r2/2p2qk1/2Pp2p1/p2PP1Q1/8/P5Nb/3R1npP/4R1K1 w - - 0 33",
+      "side_to_move": "white",
+      "moves_uci": [
+        "g3h5",
+        "g7g8",
+        "h5f6"
+      ],
+      "solution_san": [
+        "Nh5+",
+        "Kg8",
+        "Nf6+"
+      ],
+      "rating": 1680,
+      "theme": "capturingDefender",
+      "themes": [
+        "capturingDefender"
+      ],
+      "source": "lichess",
+      "set": "knight-h5",
+      "url": "https://lichess.org/6TdoCAVH/black#64",
+      "label": "Knight to h5 — check, then the knight lands on f6",
+      "explanation": "From a Lichess game, knight on g3",
+      "note": "Stockfish 19 Lite depth 15: Nh5+ is best (+6.2). The engine's king step is Kg8, then Nf6+.",
+      "question": "The knight on g3 can check from h5. Where does it go next?",
+      "explain": "Nh5+ checks the king on g7, and after Kg8 the same knight hops on to f6 with check.",
+      "idea_title": "Knight hop to h5",
+      "origin": "lichess"
+    },
+    {
+      "id": "kh5-black-fork-d3",
+      "fen": "r1bq1rk1/ppp2ppp/2nppn2/8/5Q2/3B1NK1/PPPPP1PP/R1B4R b - - 0 1",
+      "side_to_move": "black",
+      "moves_uci": [
+        "f6h5",
+        "g3f2",
+        "h5f4"
+      ],
+      "solution_san": [
+        "Nh5+",
+        "Kf2",
+        "Nxf4"
+      ],
+      "rating": 1400,
+      "theme": "fork",
+      "themes": [
+        "fork",
+        "capturingDefender"
+      ],
+      "source": "model",
+      "set": "knight-h5",
+      "label": "Knight to h5 — the f3 knight cannot take the checking knight",
+      "explanation": "Model position, Black to move",
+      "note": "Stockfish 19 Lite depth 14: ...Nh5+ is best (+9.3), several pawns ahead of the next try.",
+      "question": "The white knight on f3 is the kingside defender. Can it capture a knight that lands on h5?",
+      "explain": "...Nh5+ forks the king on g3 and the queen on f4, and the knight on f3 does not attack h5, so it cannot take.",
+      "idea_title": "Knight to h5 against the f3 knight",
+      "origin": "model"
+    },
+    {
+      "id": "kh5-black-fork-d4",
+      "fen": "r1bq1rk1/ppp2ppp/2nppn2/8/3P1Q2/5NK1/PPP1P1PP/R1B2B1R b - - 0 1",
+      "side_to_move": "black",
+      "moves_uci": [
+        "f6h5",
+        "g3f2",
+        "h5f4"
+      ],
+      "solution_san": [
+        "Nh5+",
+        "Kf2",
+        "Nxf4"
+      ],
+      "rating": 1460,
+      "theme": "fork",
+      "themes": [
+        "fork",
+        "capturingDefender"
+      ],
+      "source": "model",
+      "set": "knight-h5",
+      "label": "Knight to h5 — same fork, with White's pawn on d4",
+      "explanation": "Model position, Black to move",
+      "note": "Stockfish 19 Lite depth 14: ...Nh5+ is best (+7.6), about a pawn ahead of the next try.",
+      "question": "White's queen sits on f4 next to the king on g3. How does a knight hop to h5 use that?",
+      "explain": "...Nh5+ checks the king and attacks the queen, and the f3 knight cannot recapture on h5, so Nxf4 wins the queen.",
+      "idea_title": "Knight to h5 against the f3 knight",
+      "origin": "model"
     }
   ]
 }

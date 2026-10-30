@@ -82,6 +82,7 @@
       <button class="tab-btn" data-tab="modern" data-group="openings">Modern</button>
       <button class="tab-btn" data-tab="scotch" data-group="openings">Scotch</button>
       <button class="tab-btn" data-tab="alapin" data-group="openings">Alapin</button>
+      <button class="tab-btn" data-tab="alapin-drill" data-group="openings">Alapin drill <span id="aln-tab-due" class="t10-tab-due hidden"></span></button>
       <button class="tab-btn" data-tab="grunfeld" data-group="openings">Gr&uuml;nfeld</button>
       <button class="tab-btn" data-tab="masters" data-group="study">Masters</button>
       <button class="tab-btn" data-tab="learn" data-group="study">Learn</button>
@@ -396,7 +397,7 @@
             <option value="all">All puzzles</option>
             <option value="my-missed">My missed tactics</option>
             <option value="defend-it">Defend it</option>
-            <option value="knight-h5">Knight to h5 (my games)</option>
+            <option value="knight-h5">Knight to h5</option>
           </select>
           <label for="puzzle-rating">Rating</label>
           <select id="puzzle-rating">
@@ -1301,6 +1302,58 @@
     </div>
   </section>
 
+  <!-- ===================== ALAPIN DRILL (Top 10 pattern) ===================== -->
+  <section id="tab-alapin-drill" class="tab-panel rep-tab">
+    <div class="rep-layout">
+      <div class="rep-left">
+        <div id="aln-label" class="lab-game-bar">Pick a line.</div>
+        <div id="aln-board" class="board-holder"></div>
+        <div id="aln-nav" class="nav-slot"></div>
+      </div>
+      <div class="rep-right">
+        <div class="rep-coachbar">
+          <span class="rep-coach-avatar" aria-hidden="true">&#x265F;</span>
+          <div class="rep-coachbar-text">
+            <strong id="aln-title">Alapin Sicilian (2.c3)</strong>
+            <span class="info-line" id="aln-summary">Loading…</span>
+          </div>
+          <span id="aln-due" class="rep-mem">Due today: …</span>
+        </div>
+        <div class="rep-picker">
+          <div class="rep-picker-head">
+            <h3>Main line and two sidelines</h3>
+            <span class="info-line">You are White. 2...d5 is the main reply; the other two lines are an early ...cxd4 and 2...Nf6. Each one stops around move 8.</span>
+          </div>
+          <div id="aln-lines" class="t10-lines">Loading…</div>
+        </div>
+        <div class="rep-controls">
+          <div id="aln-movebar" class="rep-movebar"></div>
+          <div class="panel-row">
+            <button id="btn-aln-drill" class="btn primary" type="button">Drill this line</button>
+            <button id="btn-aln-due" class="btn" type="button" title="Missed lines first, then new ones, then lines due for review">Drill due</button>
+            <button id="btn-aln-hint" class="btn" type="button" disabled>Hint</button>
+            <button id="btn-aln-playout" class="btn" type="button" title="Load the position after this line and play it against the engine, from either side">Play it out</button>
+            <span id="aln-sides" class="t10-sides hidden">
+              <button type="button" class="btn" data-side="white">as White</button>
+              <button type="button" class="btn" data-side="black">as Black</button>
+            </span>
+            <button id="btn-aln-analyze" class="btn" type="button">Send to Play &amp; Analyze</button>
+          </div>
+          <div class="rep-status-row"><span id="aln-status" class="info-line" role="status" aria-live="polite"></span></div>
+          <div id="aln-score" class="rep-score hidden"></div>
+        </div>
+        <div class="rep-panels">
+          <div class="lab-panel" id="aln-card">
+            <h3 id="aln-card-title">The plan</h3>
+            <div id="aln-detail">
+              <p class="info-line">The plan card loads with the lines.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== GR&UUML;NFELD DEFENSE ===================== -->
   <section id="tab-grunfeld" class="tab-panel rep-tab">
     <div class="rep-layout">
@@ -1555,15 +1608,16 @@
 <!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
 <script src="vendor/chess.js?v=33"></script>
 <script src="js/engine.js?v=33"></script>
-<script src="api-shim.js?v=46"></script>
+<script src="api-shim.js?v=48"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=35"></script>
-<script src="app.js?v=47"></script>
+<script src="app.js?v=48"></script>
 <script src="js/repertoire.js?v=46"></script>
-<script src="js/top10.js?v=47"></script>
+<script src="js/top10.js?v=48"></script>
+<script src="js/alapin-drill.js?v=48"></script>
 <script src="js/attacks.js?v=44"></script>
 <script src="js/calc.js?v=44"></script>
-<script src="js/deck.js?v=46"></script>
+<script src="js/deck.js?v=48"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});

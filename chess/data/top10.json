@@ -444,7 +444,8 @@
         }
       ],
       "links": [
-        {"tab": "alapin", "label": "Your Alapin", "note": "As White you answer 1...c5 with 2.c3. Drill that tab for your moves. This card is what Black is trying to do, so you know what to stop."},
+        {"tab": "alapin-drill", "label": "Drill the Alapin", "note": "Your 2.c3 as White: the 2...d5 main line, one 2...d5 sideline, and 2...Nf6, through move 8. Wrong moves are refused, and you can play the position out against the engine."},
+        {"tab": "alapin", "label": "Full Alapin", "note": "The longer repertoire, including 2...e6, 2...d6 and 2...g6. This Sicilian card is what Black is trying to do, so you know what to stop."},
         {"tab": "modern", "label": "Your Modern", "note": "The Dragon bishop on g7 is the same piece. The difference is that the Sicilian centre is already open."},
         {"opening": "english", "label": "English", "note": "1.c4 e5 is this opening with the colours turned around."}
       ],

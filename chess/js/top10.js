@@ -5,7 +5,7 @@
 
 const TOP10_SR_KEY = "chesscoach:top10-sr";
 const TOP10_STEPS = [1, 3, 7, 14, 30, 60];
-const TOP10_TABS = { modern: 1, scotch: 1, alapin: 1, grunfeld: 1 };
+const TOP10_TABS = { modern: 1, scotch: 1, alapin: 1, "alapin-drill": 1, grunfeld: 1 };
 const TOP10_START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 const Top10 = {
@@ -102,7 +102,7 @@ function top10ExpandAll(data) {
   return data;
 }
 
-const top10Ready = fetch("data/top10.json?v=47").then((r) => {
+const top10Ready = fetch("data/top10.json?v=48").then((r) => {
   if (!r.ok) throw new Error("HTTP " + r.status);
   return r.json();
 }).then(top10ExpandAll);
