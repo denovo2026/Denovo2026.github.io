@@ -1661,3 +1661,50 @@ select.opp-level { font-size: 0.92rem; }
   #top10-openings.rep-looks { grid-auto-columns: minmax(158px, 1fr); }
   #tab-top10 { --board-chrome: 104px; }
 }
+
+/* v49: Finish it — conversion drill on the Sparring tab. The side panel
+   already scrolls inside the stage, so the board stays on screen. */
+#tab-sparring .sp-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin: 0 0 8px;
+}
+#tab-sparring .sp-head h3 {
+  margin: 0; padding: 0; border: 0; font-size: var(--fs-lg);
+}
+#tab-sparring .fi-list { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 8px; }
+#tab-sparring .fi-row {
+  display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 8px;
+  align-items: center; width: 100%; text-align: left; cursor: pointer;
+  padding: 7px 10px; border-radius: 10px; border: 1px solid var(--border);
+  background: var(--surface-2); color: inherit; font: inherit;
+}
+#tab-sparring .fi-row:hover { border-color: var(--border-strong); }
+#tab-sparring .fi-row.current { border-color: var(--accent); }
+#tab-sparring .fi-ev {
+  font-weight: 750; font-variant-numeric: tabular-nums; color: var(--accent-text);
+}
+#tab-sparring .fi-text { display: flex; flex-direction: column; min-width: 0; }
+#tab-sparring .fi-main { display: block;
+  font-weight: 650; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#tab-sparring .fi-sub { display: block;
+  color: var(--text-3); font-size: var(--fs-xs);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#tab-sparring .fi-best {
+  font-weight: 700; font-variant-numeric: tabular-nums; font-size: var(--fs-xs); color: var(--text-2);
+}
+#tab-sparring .fi-leftout { margin: 6px 0 8px; font-size: 0.88rem; color: var(--text-2); }
+#tab-sparring .fi-leftout summary { cursor: pointer; color: var(--text); font-weight: 650; }
+#tab-sparring .fi-leftout li { margin: 4px 0; }
+#tab-sparring .fi-score {
+  font-size: 1.45rem; font-weight: 750; letter-spacing: -0.02em; margin: 4px 0;
+}
+#tab-sparring .fi-actions { flex-wrap: wrap; }
+#tab-sparring #btn-fi-filter-all[aria-pressed="true"],
+#tab-sparring #btn-fi-filter-starter[aria-pressed="true"] {
+  background: var(--accent-soft); color: var(--accent-text); border-color: var(--accent);
+}
+@media (min-width: 961px) {
+  #tab-sparring { --board-chrome: 52px; }
+}

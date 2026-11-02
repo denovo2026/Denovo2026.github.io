@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=47">
+<link rel="stylesheet" href="style.css?v=49">
 </head>
 <body>
 <header class="app-header">
@@ -576,7 +576,14 @@
         </div>
       </div>
       <aside class="side-panel">
-        <h3>Play-it-out sparring packs</h3>
+        <div class="sp-head">
+          <h3>Sparring</h3>
+          <div class="seg" role="tablist" aria-label="Sparring mode">
+            <button type="button" class="seg-btn active" id="btn-sp-packs" role="tab" aria-selected="true">Packs</button>
+            <button type="button" class="seg-btn" id="btn-sp-finish" role="tab" aria-selected="false">Finish it</button>
+          </div>
+        </div>
+        <div id="sparring-packs">
         <div class="info-line">
           Goal-based position training: each scenario has a verified goal
           (<b>win</b> it or <b>hold</b> the draw) — play it out against an
@@ -614,6 +621,31 @@
             <button id="btn-sparring-mirror" class="btn" title="Play this same position from the other side — the defending mirror">Practice defending side</button>
             <button id="btn-sparring-next" class="btn primary hidden">Next scenario</button>
             <button id="btn-sparring-exit" class="btn">Exit pack</button>
+          </div>
+        </div>
+        </div>
+        <!-- v49: Finish it — convert your own +3 positions, no clock -->
+        <div id="sparring-finish" class="hidden">
+          <div id="fi-home">
+            <div id="fi-lead" class="info-line"></div>
+            <details id="fi-leftout" class="fi-leftout"></details>
+            <div class="panel-row" role="group" aria-label="Which positions">
+              <button type="button" class="btn mini" id="btn-fi-filter-all" aria-pressed="true">All +3</button>
+              <button type="button" class="btn mini" id="btn-fi-filter-starter" aria-pressed="false">Starters</button>
+            </div>
+            <div id="fi-list" class="fi-list" role="list"></div>
+          </div>
+          <div id="fi-run" class="hidden">
+            <div id="fi-kicker" class="info-line muted"></div>
+            <div id="fi-brief" class="fc-prompt"></div>
+            <div id="fi-status" class="info-line" role="status"></div>
+            <div id="fi-summary" class="hidden"></div>
+            <div class="panel-row fi-actions">
+              <button type="button" id="btn-fi-retry" class="btn">Retry</button>
+              <button type="button" id="btn-fi-next" class="btn primary">Next</button>
+              <button type="button" id="btn-fi-giveup" class="btn">Give up</button>
+              <button type="button" id="btn-fi-positions" class="btn">Positions</button>
+            </div>
           </div>
         </div>
       </aside>
@@ -1611,13 +1643,14 @@
 <script src="api-shim.js?v=48"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=35"></script>
-<script src="app.js?v=48"></script>
+<script src="app.js?v=49"></script>
 <script src="js/repertoire.js?v=46"></script>
 <script src="js/top10.js?v=48"></script>
 <script src="js/alapin-drill.js?v=48"></script>
 <script src="js/attacks.js?v=44"></script>
 <script src="js/calc.js?v=44"></script>
 <script src="js/deck.js?v=48"></script>
+<script src="js/finish.js?v=49"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});
