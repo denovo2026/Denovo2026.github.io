@@ -1720,3 +1720,32 @@ select.opp-level { font-size: 0.92rem; }
 @media (min-width: 961px) {
   #tab-sparring { --board-chrome: 52px; }
 }
+
+/* v53: four areas. Play-it-out lives in the header so the board still fits. */
+.tab-groups { position: relative; }
+.playout-bar {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  padding: 0 var(--pad-x, 22px) 6px;
+}
+.playout-k { font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-3); margin-right: 4px; }
+.playout-bar button {
+  font: inherit; font-size: 0.84rem; font-weight: 650; color: var(--text-2);
+  background: transparent; border: 1px solid var(--border); border-radius: 999px;
+  padding: 3px 10px; min-height: 28px; cursor: pointer;
+}
+.playout-bar button.active, .playout-bar button[aria-selected="true"] {
+  color: var(--accent-text); background: var(--accent-soft); border-color: var(--accent);
+}
+.study-pop {
+  position: absolute; right: 8px; top: calc(100% + 4px); z-index: 80;
+  background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 12px;
+  padding: 8px; display: grid; gap: 6px; min-width: 160px;
+  box-shadow: 0 12px 34px rgba(0,0,0,.45);
+}
+@media (max-width: 700px) {
+  .study-pop { top: auto; bottom: calc(100% + 6px); }
+}
+.today-more { margin-top: 10px; }
+.today-more > summary, .go-deeper > summary { cursor: pointer; font-weight: 650; margin: 4px 0 8px; }
+.go-deeper { margin-top: 8px; }
+#plan-today .plan-today-row { align-items: center; }

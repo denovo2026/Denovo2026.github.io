@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=52">
+<link rel="stylesheet" href="style.css?v=53">
 </head>
 <body>
 <header class="app-header">
@@ -58,36 +58,41 @@
   </div>
   <nav class="tabs grouped" aria-label="Sections">
     <div class="tab-groups" role="tablist" aria-label="Sections">
-      <button class="grp-btn" type="button" role="tab" aria-selected="false" data-group="today"><span class="grp-ic" aria-hidden="true">&#9788;</span><span class="grp-lbl">Today</span></button>
-      <button class="grp-btn active" type="button" role="tab" aria-selected="true" data-group="play"><span class="grp-ic" aria-hidden="true">&#9822;</span><span class="grp-lbl">Play</span></button>
+      <button class="grp-btn active" type="button" role="tab" aria-selected="true" data-group="today"><span class="grp-ic" aria-hidden="true">&#9788;</span><span class="grp-lbl">Today</span></button>
       <button class="grp-btn" type="button" role="tab" aria-selected="false" data-group="train"><span class="grp-ic" aria-hidden="true">&#9889;&#xFE0E;</span><span class="grp-lbl">Train</span></button>
       <button class="grp-btn" type="button" role="tab" aria-selected="false" data-group="openings"><span class="grp-ic" aria-hidden="true">&#9820;</span><span class="grp-lbl">Openings</span></button>
-      <button class="grp-btn" type="button" role="tab" aria-selected="false" data-group="study"><span class="grp-ic" aria-hidden="true">&#9998;</span><span class="grp-lbl">Study</span></button>
+      <button class="grp-btn" type="button" role="tab" aria-selected="false" data-group="review"><span class="grp-ic" aria-hidden="true">&#9822;</span><span class="grp-lbl">Review</span></button>
+      <button class="grp-btn" type="button" id="btn-study" aria-haspopup="true" aria-expanded="false" title="Masters, lessons, Olympiad"><span class="grp-ic" aria-hidden="true">&#9998;</span><span class="grp-lbl">Study</span></button>
+      <div id="study-pop" class="study-pop hidden" role="menu">
+        <button type="button" class="btn" data-goto-tab="masters">Masters</button>
+        <button type="button" class="btn" data-goto-tab="learn">Learn</button>
+        <a class="btn" href="./olympiad/">Olympiad</a>
+      </div>
     </div>
     <span class="tab-sep" aria-hidden="true"></span>
     <div class="tab-subs" id="tab-subs">
-      <button class="tab-btn" data-tab="plan" data-group="today">Plan</button>
-      <button class="tab-btn" data-tab="progress" data-group="today">Progress</button>
-      <button class="tab-btn active in-group" data-tab="play" data-group="play">Play &amp; Analyze</button>
-      <button class="tab-btn in-group" data-tab="lab" data-group="play">Strategy Lab</button>
-      <button class="tab-btn in-group" data-tab="games" data-group="play">My Games</button>
+      <button class="tab-btn active in-group" data-tab="plan" data-group="today">Session</button>
+      <button class="tab-btn" data-tab="progress" data-group="today">Charts</button>
       <button class="tab-btn" data-tab="deck" data-group="train">Mistakes</button>
-      <button class="tab-btn" data-tab="puzzles" data-group="train">Puzzles</button>
-      <!-- Cycles retired: Woodpecker passes live on the Mistake Deck ("Cycle this set"). -->
-      <button class="tab-btn" data-tab="sparring" data-group="train">Sparring</button>
-      <button class="tab-btn" data-tab="endgames" data-group="train">Endgames</button>
+      <button class="tab-btn" data-tab="sparring" data-group="train">Play it out</button>
+      <button class="tab-btn" data-tab="calc" data-group="train">Calculate</button>
       <button class="tab-btn" data-tab="attacks" data-group="train">Attacks</button>
-      <button class="tab-btn" data-tab="calc" data-group="train">Calculation</button>
+      <button class="tab-btn" data-tab="puzzles" data-group="train">Tactics</button>
       <button class="tab-btn" data-tab="modern" data-group="openings">Modern</button>
       <button class="tab-btn" data-tab="grunfeld" data-group="openings">Gr&uuml;nfeld</button>
       <button class="tab-btn" data-tab="scotch" data-group="openings">Scotch</button>
       <button class="tab-btn" data-tab="alapin" data-group="openings">Alapin</button>
       <button class="tab-btn" data-tab="top10" data-group="openings">Wider set <span id="top10-tab-due" class="t10-tab-due hidden"></span></button>
-      <button class="tab-btn" data-tab="masters" data-group="study">Masters</button>
-      <button class="tab-btn" data-tab="learn" data-group="study">Learn</button>
-      <a class="tab-link" data-group="study" href="./olympiad/" title="Olympiad game matrix · Samarkand 2026 (opens the Olympiad explorer)">Olympiad <span class="tab-link-arrow" aria-hidden="true">&#x2197;</span></a>
+      <button class="tab-btn" data-tab="play" data-group="review">Analyze</button>
+      <button class="tab-btn" data-tab="games" data-group="review">My games</button>
     </div>
   </nav>
+  <div id="playout-bar" class="playout-bar hidden" role="tablist" aria-label="Play it out">
+    <span class="playout-k">Play it out</span>
+    <button type="button" data-playout="sparring">Sparring</button>
+    <button type="button" data-playout="endgames">Endgames</button>
+    <button type="button" data-playout="finish" title="Convert a won position from your own games. No clock.">Finish it</button>
+  </div>
 </header>
 <script>
 /* v37: expose the real header height so the desktop layout can size the board
@@ -108,7 +113,7 @@
 <main>
 
   <!-- ===================== TRAINING PLAN (V20) ===================== -->
-  <section id="tab-plan" class="tab-panel">
+  <section id="tab-plan" class="tab-panel active">
     <div id="plan-streak-row" class="panel-row">
       <span id="streak-chip" class="streak-chip hidden"></span>
       <span id="streak-note" class="info-line muted"></span>
@@ -120,8 +125,10 @@
     <div id="week-closed-banner" class="banner amber hidden"></div>
     <div class="plan-top">
       <div class="lab-panel" id="plan-today-card">
-        <h3>Today <span class="muted">most relevant right now</span></h3>
+        <h3>Today's session <span class="muted">one mistake, one line, one position</span></h3>
         <div id="plan-today"></div>
+        <div id="today-strip" class="info-line muted"></div>
+        <div class="panel-row"><button class="btn mini" type="button" data-goto-tab="progress">Charts</button></div>
       </div>
       <div class="lab-panel" id="plan-adherence-card">
         <h3>Adherence <span class="muted">planned vs completed</span></h3>
@@ -129,6 +136,8 @@
         <div id="plan-adherence-trend"></div>
       </div>
     </div>
+    <details id="today-more" class="today-more">
+      <summary>This week and the training year</summary>
     <div id="plan-reasons" class="info-line plan-reasons"></div>
     <div id="plan-week-note" class="info-line muted">Weeks run Mon–Sun (UTC)</div>
     <div id="plan-board" class="plan-board"></div>
@@ -138,10 +147,11 @@
       <div id="plan-heatmap" class="heatmap-grid"></div>
       <div id="plan-heatmap-caption" class="info-line muted"></div>
     </div>
+    </details>
   </section>
 
   <!-- ===================== PLAY & ANALYZE ===================== -->
-  <section id="tab-play" class="tab-panel active">
+  <section id="tab-play" class="tab-panel">
     <div class="play-layout">
       <div class="board-col">
         <div class="eval-bar"><div id="eval-fill" class="eval-fill"></div><span id="eval-label" class="eval-label"></span></div>
@@ -248,6 +258,7 @@
             <!-- V30: restored from pre-V25 — the plan also lives in the
                  Strategy Lab (#btn-lab-plan); both doors stay. -->
             <button id="btn-show-plan" class="btn toggle" title="Engine-best plan for you vs. the replies players at your level actually make — now with the goal and the reason behind each move.">Show my plan</button>
+            <button class="btn" type="button" data-goto-tab="games">My games</button>
             <select id="opponent-level" class="opp-level" title="Whose likely replies to show — human moves at this level">
               <option value="casual">Casual (~1300)</option>
               <option value="club" selected>Club (1500–1900)</option>
@@ -292,7 +303,17 @@
             <div id="tb-moves" class="info-line"></div>
           </div>
           <!-- Maia human-move panel removed: the static build has no Maia models. -->
-          <div id="plan-panel" class="plan-panel hidden"></div>
+          <div id="plan-panel" class="plan-panel hidden">          </div>
+          <details id="go-deeper" class="go-deeper">
+            <summary>Go deeper</summary>
+            <div class="info-line">Null-move, candidate lines, and coach suggestions on this position. My games loads a game onto this board.</div>
+            <div class="panel-row">
+              <button type="button" class="btn" id="btn-deeper-null">What if I pass?</button>
+              <button type="button" class="btn" id="btn-deeper-lines">Candidate lines</button>
+              <button type="button" class="btn" id="btn-deeper-suggest">Coach suggestions</button>
+            </div>
+            <div id="play-deeper-out"></div>
+          </details>
         </div>
         <div class="panel-card moves-card">
           <h3 class="card-title">Moves <span class="muted kbd-hint">← → to step</span></h3>
@@ -860,7 +881,7 @@
           <div id="game-brilliant-flash" class="banner amber hidden"></div>
           <div id="game-coach-summary" class="coach-box"></div>
           <div class="panel-row">
-            <button id="btn-game-to-lab" class="btn">Open in Strategy Lab</button>
+            <button id="btn-game-to-lab" class="btn">Review this position</button>
           </div>
         </div>
       </div>
@@ -1609,7 +1630,7 @@
 <script src="api-shim.js?v=52"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=50"></script>
-<script src="app.js?v=52"></script>
+<script src="app.js?v=53"></script>
 <script src="js/repertoire.js?v=52"></script>
 <script src="js/top10.js?v=48"></script>
 <script src="js/alapin-drill.js?v=48"></script>

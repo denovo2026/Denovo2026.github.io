@@ -279,14 +279,15 @@ function parsePgn(pgn) {
 
 /* ================= tab switching ================= */
 
-/* v43: five sections (Today / Play / Train / Openings / Study), each with its own sub-tabs */
+/* Four places: Today, Train, Openings, Review. Study is a menu (Masters, Learn, Olympiad). */
 const TAB_GROUPS = {
   today: ["plan", "progress"],
-  play: ["play", "lab", "games"],
   train: ["deck", "puzzles", "cycles", "sparring", "endgames", "attacks", "calc"],
-  openings: ["top10", "modern", "scotch", "alapin", "alapin-drill", "grunfeld"],
+  openings: ["modern", "grunfeld", "scotch", "alapin", "alapin-drill", "top10"],
+  review: ["play", "games", "lab"],
   study: ["masters", "learn"],
 };
+const TAB_HIGHLIGHT = { "alapin-drill": "alapin", endgames: "sparring", lab: "play", cycles: "deck" };
 function tabGroupOf(name) {
   for (const g in TAB_GROUPS) if (TAB_GROUPS[g].includes(name)) return g;
   return "play";
@@ -297,13 +298,17 @@ function showTabGroup(g) {
     b.classList.toggle("active", on); b.setAttribute("aria-selected", on ? "true" : "false");
   });
   document.querySelectorAll("#tab-subs [data-group]").forEach(b => b.classList.toggle("in-group", b.dataset.group === g));
+  const studyBtn = $("btn-study");
+  if (studyBtn) studyBtn.classList.toggle("active", g === "study");
 }
 function switchTab(name) {
   if (name === "cycles") name = "deck"; // Woodpecker passes live on the deck
+  const openDeeper = name === "lab";
+  if (name === "lab") name = "play";
   const grp = tabGroupOf(name);
   showTabGroup(grp);
   try { localStorage.setItem("cc-last-tab-" + grp, name); localStorage.setItem("cc-last-tab", name); } catch (_) { /* */ }
-  const highlight = name === "alapin-drill" ? "alapin" : name;
+  const highlight = TAB_HIGHLIGHT[name] || name;
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === highlight));
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === "tab-" + name));
   if (name === "plan") initPlan();
@@ -325,11 +330,14 @@ function switchTab(name) {
   if (name === "alapin-drill" && typeof initAlapinDrill === "function") initAlapinDrill();
   if (name === "grunfeld" && typeof initGrunfeld === "function") initGrunfeld();
   if (name === "attacks" && typeof initAttacks === "function") initAttacks();
+  syncPlayOutBar(name);
+  if (openDeeper) { const d = $("go-deeper"); if (d) d.open = true; }
 }
 
 document.querySelectorAll(".tab-btn").forEach(b =>
   b.addEventListener("click", () => switchTab(b.dataset.tab)));
 document.querySelectorAll(".grp-btn").forEach(b => b.addEventListener("click", () => {
+  if (!b.dataset.group) return;
   const g = b.dataset.group, list = TAB_GROUPS[g] || [];
   let last = null;
   try { last = localStorage.getItem("cc-last-tab-" + g); } catch (_) { /* */ }
@@ -5658,8 +5666,8 @@ function renderGamesList() {
         : escapeHtml(g.date || "") + " · " + escapeHtml(g.time_class || "")) + "</div>";
     const openBtn = document.createElement("button");
     openBtn.className = "btn mini gi-open";
-    openBtn.textContent = "Open in Lab";
-    openBtn.title = "Load this game into the Strategy Lab";
+    openBtn.textContent = "Review position";
+    openBtn.title = "Load this game on the review board";
     openBtn.addEventListener("click", (ev) => {
       ev.stopPropagation();
       Games.selected = g;
@@ -6890,25 +6898,25 @@ async function resolveGamePlies(pgn) {
 /* Feature: open an imported game in the Strategy Lab at a given ply */
 async function openGameInLab(game, ply) {
   if (!game || !game.pgn) return;
-  switchTab("lab");
-  initLab();
   const label = (game.white || "White") + " vs " + (game.black || "Black") +
     (game.date ? " · " + game.date : "");
-  $("lab-status").textContent = "Loading game into Lab…";
+  switchTab("play");
+  const deeper = $("go-deeper");
+  if (deeper) deeper.open = true;
+  $("play-fen-status").textContent = "Loading " + label + "…";
   try {
     const resolved = await resolveGamePlies(game.pgn);
     if (!resolved || resolved.fens.length < 1) {
-      $("lab-status").textContent = "Could not load that game.";
+      $("play-fen-status").textContent = "Could not load that game.";
       return;
     }
-    stopLinePlayback();
-    Lab.game = { label, sans: resolved.sans, fens: resolved.fens, ucis: resolved.ucis };
-    $("lab-game-label").textContent = label;
-    $("lab-game-bar").classList.remove("hidden");
-    labGoToPly(Math.max(0, Math.min(ply || 0, resolved.sans.length)));
-    $("lab-status").textContent = "Game loaded — step through it; the panels analyze the shown position.";
+    const at = Math.max(0, Math.min(ply || 0, resolved.fens.length - 1));
+    playResetTo(resolved.fens[at]);
+    playBoard.setOrientation(mySide());
+    $("play-fen-input").value = resolved.fens[at];
+    $("play-fen-status").textContent = label + " — move " + at + " on the review board. Go deeper for the threat, the lines and a suggestion.";
   } catch (e) {
-    $("lab-status").textContent = "Could not load game: " + e.message;
+    $("play-fen-status").textContent = "Could not load game: " + e.message;
   }
 }
 
@@ -7892,43 +7900,96 @@ function planActionable(plan) {
 
 /* V24 (DUP-1): the Today card exists ONCE, on the Plan tab — the Progress
    dashboard now links here instead of rendering a duplicate. */
+function sessionRow(tag, label, onClick) {
+  const row = document.createElement("div");
+  row.className = "plan-today-row";
+  const t = document.createElement("span");
+  t.className = "plan-pillar-tag";
+  t.textContent = tag;
+  const lbl = document.createElement("span");
+  lbl.className = "plan-today-label";
+  lbl.textContent = label;
+  const btn = document.createElement("button");
+  btn.className = "btn mini";
+  btn.type = "button";
+  btn.textContent = "Open";
+  btn.addEventListener("click", onClick);
+  row.appendChild(t); row.appendChild(lbl); row.appendChild(btn);
+  return row;
+}
+function openingSessionLabel(plan) {
+  const items = (((plan || {}).pillars || {}).openings || {}).items || [];
+  const it = items.find(x => !x.done) || items[0];
+  return it ? it.label.replace(/^Openings:\s*/, "") : "One line from Modern, Grünfeld, Scotch or Alapin";
+}
+function openTodayOpening(plan) {
+  const items = (((plan || {}).pillars || {}).openings || {}).items || [];
+  const it = items.find(x => !x.done) || items[0];
+  const slug = it && it.ref && it.ref.drill;
+  if (!slug) { switchTab("modern"); return; }
+  switchTab(slug);
+  setTimeout(() => {
+    const T = slug === "grunfeld" ? GrunfeldTab : slug === "scotch" ? ScotchTab : slug === "alapin" ? AlapinTab : ModernTab;
+    if (T && T.init) T.init().then(() => T.drillDue());
+  }, 50);
+}
+async function openTodayMistake() {
+  switchTab("deck");
+  if (!(window.CCDeck && CCDeck.init)) return;
+  await CCDeck.init();
+  const D = CCDeck.state;
+  const list = (D.all || []).filter(c => !c.training && c.phase === "middlegame");
+  list.sort((a, b) => (b.cost || 0) - (a.cost || 0));
+  const due = list.find(c => { const s = D.srs[c.id]; return !s || !s.due || Date.parse(s.due) <= Date.now(); }) || list[0]
+    || (D.all || []).find(c => !c.training);
+  if (due) CCDeck.show(due.id);
+}
+function syncPlayOutBar(name) {
+  const bar = $("playout-bar");
+  if (!bar) return;
+  const on = name === "sparring" || name === "endgames";
+  bar.classList.toggle("hidden", !on);
+  let finish = false;
+  try { finish = window.FinishIt && FinishIt.state().mode === "finish"; } catch (_) { finish = false; }
+  bar.querySelectorAll("[data-playout]").forEach(b => {
+    const m = b.dataset.playout;
+    const active = m === "endgames" ? name === "endgames" : m === "finish" ? name === "sparring" && finish : name === "sparring" && !finish;
+    b.classList.toggle("active", !!active);
+    b.setAttribute("aria-selected", active ? "true" : "false");
+  });
+}
+function openFinishIt() {
+  switchTab("sparring");
+  if (typeof finishSetMode === "function") finishSetMode("finish");
+  syncPlayOutBar("sparring");
+}
+async function renderTodayStrip() {
+  const el = $("today-strip");
+  if (!el) return;
+  const s = Plan24.streak;
+  let text = s ? (s.current ? s.current + "-day streak" : "Start a streak today") : "Streak";
+  if (s && s.best) text += " · best " + s.best;
+  try {
+    const m = await apiGet("/api/training-plan/pillars");
+    const t = m && m.tactics && m.tactics.retention_7d;
+    if (t != null) text += " · recent accuracy " + Math.round(t * 100) + "%";
+  } catch (_) { /* strip still shows the streak */ }
+  el.textContent = text;
+}
 function renderPlanToday(host, plan) {
   if (!host) return;
   host.innerHTML = "";
   if (!plan) {
     const d = document.createElement("div");
     d.className = "info-line muted";
-    d.textContent = "Training plan unavailable.";
+    d.textContent = "Today's session is unavailable.";
     host.appendChild(d);
     return;
   }
-  const actions = planActionable(plan).slice(0, 5);
-  if (!actions.length) {
-    const d = document.createElement("div");
-    d.className = "info-line";
-    d.textContent = "All caught up — nothing due right now. Nice work.";
-    host.appendChild(d);
-  }
-  actions.forEach(a => {
-    const row = document.createElement("div");
-    row.className = "plan-today-row";
-    const tag = document.createElement("span");
-    tag.className = "plan-pillar-tag";
-    tag.textContent = a.pillar;
-    const lbl = document.createElement("span");
-    lbl.className = "plan-today-label";
-    lbl.textContent = a.item.label;
-    const btn = document.createElement("button");
-    btn.className = "btn mini";
-    btn.textContent = "Open";
-    const tab = a.item.ref && a.item.ref.tab;
-    if (a.item.ref && a.item.ref.drill) btn.setAttribute("data-opening-drill", a.item.ref.drill);
-    else btn.addEventListener("click", () => { if (tab) switchTab(tab); });
-    row.appendChild(tag);
-    row.appendChild(lbl);
-    row.appendChild(btn);
-    host.appendChild(row);
-  });
+  host.appendChild(sessionRow("Mistake", "A real-game mistake, middlegame first", () => openTodayMistake()));
+  host.appendChild(sessionRow("Opening", openingSessionLabel(plan), () => openTodayOpening(plan)));
+  host.appendChild(sessionRow("Play it out", "Finish a position you were winning", () => openFinishIt()));
+  renderTodayStrip();
 }
 
 function renderPlanAdherence(plan, adherence) {
@@ -8118,6 +8179,7 @@ async function loadStreak() {
     Plan24.streak = s;
     renderStreakChip(s);
     checkStreakMilestone(s);
+    renderTodayStrip();
   } catch (_) { /* streak chip stays hidden */ }
 }
 
@@ -8621,4 +8683,90 @@ document.addEventListener("click", (e) => {
     if (card && window.CCDeck && window.CCDeck.show) window.CCDeck.show(card);
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run); else setTimeout(run, 0);
+})();
+
+/* v53: Train > Play it out (Sparring, Endgames, Finish it) and Study menu */
+(function wireShell() {
+  const bar = $("playout-bar");
+  if (bar) bar.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest("[data-playout]");
+    if (!b) return;
+    if (b.dataset.playout === "finish") openFinishIt();
+    else if (b.dataset.playout === "endgames") switchTab("endgames");
+    else {
+      switchTab("sparring");
+      if (typeof finishSetMode === "function") finishSetMode("packs");
+      syncPlayOutBar("sparring");
+    }
+  });
+  const study = $("btn-study"), pop = $("study-pop");
+  if (study && pop) {
+    study.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const open = pop.classList.toggle("hidden") === false;
+      study.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    document.addEventListener("click", (e) => {
+      if (pop.classList.contains("hidden") || pop.contains(e.target)) return;
+      pop.classList.add("hidden");
+      study.setAttribute("aria-expanded", "false");
+    });
+  }
+  const out = (html) => { const el = $("play-deeper-out"); if (el) el.innerHTML = html; };
+  const nullBtn = $("btn-deeper-null"), lineBtn = $("btn-deeper-lines"), sugBtn = $("btn-deeper-suggest");
+  if (nullBtn) nullBtn.addEventListener("click", async () => {
+    const fen = playBoard.getFen();
+    out('<div class="info-line">Analyzing the threat…</div>');
+    try {
+      const r = await apiPost("/api/strategy/nullmove", { fen });
+      if (!r.legal) { out('<div class="info-line">' + escapeHtml(r.note || "Not a legal moment to pass.") + "</div>"); return; }
+      if (!r.threat) { out('<div class="info-line">No concrete threat — the position is solid.</div>'); return; }
+      const t = r.threat;
+      out('<div class="info-line">Threat: <b>' + escapeHtml(t.best_move_san || "?") + "</b> " + escapeHtml((t.line_san || []).join(" ")) + "</div>");
+      if (t.best_move_san) {
+        const solved = await resolveSan(fenFlippedSide(fen), t.best_move_san);
+        if (solved) playBoard.setArrows([{ from: solved.uci.slice(0, 2), to: solved.uci.slice(2, 4), color: "red" }]);
+      }
+    } catch (e) { out('<div class="info-line">Null-move failed: ' + escapeHtml(e.message) + "</div>"); }
+  });
+  if (lineBtn) lineBtn.addEventListener("click", async () => {
+    const fen = playBoard.getFen();
+    out('<div class="info-line">Calculating lines…</div>');
+    try {
+      const r = await apiPost("/api/strategy/lines", { fen, max_moves: 4 });
+      const lines = r.lines || [];
+      if (!lines.length) { out('<div class="info-line">No lines returned.</div>'); return; }
+      out(lines.slice(0, 4).map(line => '<div class="info-line"><b>' + evalText(line.eval) + "</b> " + escapeHtml((line.moves_san || []).join(" ")) + "</div>").join(""));
+    } catch (e) { out('<div class="info-line">Lines failed: ' + escapeHtml(e.message) + "</div>"); }
+  });
+  if (sugBtn) sugBtn.addEventListener("click", async () => {
+    const fen = playBoard.getFen();
+    out('<div class="info-line">Asking the coach…</div>');
+    try {
+      const r = await apiPost("/api/coach/suggest", { fen });
+      const s = (r.suggestions || [])[0];
+      if (!s) { out('<div class="info-line">' + escapeHtml(r.master_note || "No suggestion for this position.") + "</div>"); return; }
+      out('<div class="info-line"><b>' + escapeHtml(s.move_san) + "</b> — " + escapeHtml(s.plan || "") + " " + escapeHtml((s.line_san || []).join(" ")) + "</div>");
+      if (s.move_uci && s.move_uci.length >= 4) playBoard.setArrows([{ from: s.move_uci.slice(0, 2), to: s.move_uci.slice(2, 4), color: "amber" }]);
+    } catch (e) { out('<div class="info-line">Suggestions failed: ' + escapeHtml(e.message) + "</div>"); }
+  });
+  const HASH_TAB = {
+    plan: "plan", today: "plan", progress: "progress",
+    play: "play", review: "play", lab: "lab", games: "games",
+    deck: "deck", mistakes: "deck", puzzles: "puzzles", cycles: "deck",
+    sparring: "sparring", endgames: "endgames", finish: "finish",
+    attacks: "attacks", calc: "calc", calculation: "calc",
+    top10: "top10", modern: "modern", scotch: "scotch", alapin: "alapin",
+    "alapin-drill": "alapin-drill", grunfeld: "grunfeld",
+    masters: "masters", learn: "learn",
+  };
+  function applyHash() {
+    const h = (location.hash || "").replace(/^#/, "").split(/[?&]/)[0];
+    if (!h || !HASH_TAB[h]) return;
+    if (HASH_TAB[h] === "finish") { openFinishIt(); return; }
+    switchTab(HASH_TAB[h]);
+  }
+  window.addEventListener("hashchange", applyHash);
+  if (location.hash) setTimeout(applyHash, 0);
+  else if ($("tab-plan") && $("tab-plan").classList.contains("active")) initPlan();
 })();
