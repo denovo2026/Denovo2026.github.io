@@ -279,14 +279,15 @@ function parsePgn(pgn) {
 
 /* ================= tab switching ================= */
 
-/* v43: five sections (Today / Play / Train / Openings / Study), each with its own sub-tabs */
+/* Four places: Today, Train, Openings, Review. Study is a menu (Masters, Learn, Olympiad). */
 const TAB_GROUPS = {
   today: ["plan", "progress"],
-  play: ["play", "lab", "games"],
   train: ["deck", "puzzles", "cycles", "sparring", "endgames", "attacks", "calc"],
-  openings: ["top10", "modern", "scotch", "alapin", "alapin-drill", "grunfeld"],
+  openings: ["modern", "grunfeld", "scotch", "alapin", "alapin-drill", "top10"],
+  review: ["play", "games", "lab"],
   study: ["masters", "learn"],
 };
+const TAB_HIGHLIGHT = { "alapin-drill": "alapin", endgames: "sparring", lab: "play", cycles: "deck" };
 function tabGroupOf(name) {
   for (const g in TAB_GROUPS) if (TAB_GROUPS[g].includes(name)) return g;
   return "play";
@@ -297,12 +298,18 @@ function showTabGroup(g) {
     b.classList.toggle("active", on); b.setAttribute("aria-selected", on ? "true" : "false");
   });
   document.querySelectorAll("#tab-subs [data-group]").forEach(b => b.classList.toggle("in-group", b.dataset.group === g));
+  const studyBtn = $("btn-study");
+  if (studyBtn) studyBtn.classList.toggle("active", g === "study");
 }
 function switchTab(name) {
+  if (name === "cycles") name = "deck"; // Woodpecker passes live on the deck
+  const openDeeper = name === "lab";
+  if (name === "lab") name = "play";
   const grp = tabGroupOf(name);
   showTabGroup(grp);
   try { localStorage.setItem("cc-last-tab-" + grp, name); localStorage.setItem("cc-last-tab", name); } catch (_) { /* */ }
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  const highlight = TAB_HIGHLIGHT[name] || name;
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === highlight));
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === "tab-" + name));
   if (name === "plan") initPlan();
   if (name === "learn") initLearn();
@@ -323,11 +330,14 @@ function switchTab(name) {
   if (name === "alapin-drill" && typeof initAlapinDrill === "function") initAlapinDrill();
   if (name === "grunfeld" && typeof initGrunfeld === "function") initGrunfeld();
   if (name === "attacks" && typeof initAttacks === "function") initAttacks();
+  syncPlayOutBar(name);
+  if (openDeeper) { const d = $("go-deeper"); if (d) d.open = true; }
 }
 
 document.querySelectorAll(".tab-btn").forEach(b =>
   b.addEventListener("click", () => switchTab(b.dataset.tab)));
 document.querySelectorAll(".grp-btn").forEach(b => b.addEventListener("click", () => {
+  if (!b.dataset.group) return;
   const g = b.dataset.group, list = TAB_GROUPS[g] || [];
   let last = null;
   try { last = localStorage.getItem("cc-last-tab-" + g); } catch (_) { /* */ }
@@ -774,18 +784,8 @@ async function loadLichessConfig() {
     updateLichessCheck();
     $("cfg-lichess-username").value = State.usernames.lichess;
     $("cfg-chesscom-username").value = State.usernames.chesscom;
-    $("llm-enabled").checked = !!c.llm_enabled;
-    $("llm-url-input").value = c.llm_url || "";
-    $("llm-model-input").value = c.llm_model || "";
-    // if the coach is already enabled, show the no-restart hint on load too
-    $("llm-no-restart-hint").classList.toggle("hidden", !c.llm_enabled);
-    // V26: voice toggle reflects the saved config (availability is probed
-    // separately via /api/coach/voice-status in loadVoiceStatus)
-    $("voice-enabled").checked = !!c.voice_enabled;
-    Voice.enabled = !!c.voice_enabled;
-    // V34: persona wording toggle + provider picker mirror the saved config
-    $("persona-enabled").checked = !!c.persona_enabled;
-    $("voice-provider").value = c.voice_provider || "auto";
+    // Local LLM, voice and persona controls are not in this build.
+    Voice.enabled = false;
     syncImportUI(); // prefill the import username from the loaded config
   } catch (_) { /* config unreadable — leave the checkmark off */ }
 }
@@ -854,6 +854,7 @@ function setLlmStatus(text, kind) {
 }
 
 function wireLlmSettings() {
+  if (!$("btn-llm-save")) return; // local LLM settings are not in this build
   $("btn-llm-save").addEventListener("click", async () => {
     const enabled = $("llm-enabled").checked;
     setLlmStatus("Saving…", null);
@@ -1000,6 +1001,7 @@ function wireVoice() {
     const btn = $("btn-speak-" + id);
     if (btn) btn.addEventListener("click", () => speakElementText(id, btn));
   });
+  if (!$("voice-enabled")) return; // voice / persona settings are not in this build
   $("voice-enabled").addEventListener("change", async () => {
     const enabled = $("voice-enabled").checked;
     try {
@@ -1045,9 +1047,9 @@ function wireVoice() {
 async function loadVoiceStatus() {
   try {
     const s = await apiGet("/api/coach/voice-status");
-    Voice.enabled = !!s.enabled;
-    Voice.available = !!s.available;
-    $("voice-enabled").checked = Voice.enabled;
+    Voice.enabled = !!s.enabled && !!$("voice-enabled");
+    Voice.available = !!s.available && !!$("voice-enabled");
+    if ($("voice-enabled")) $("voice-enabled").checked = Voice.enabled;
     // list whichever providers the server can use right now (V34 adds the
     // offline clone, so the user sees whether their pick can speak)
     const p = s.providers || {};
@@ -1055,7 +1057,7 @@ async function loadVoiceStatus() {
     if (p.edge) avail.push("Nils (online)");
     if (p.xtts) avail.push("Offline clone");
     if (p.sapi) avail.push("System voice (offline)");
-    $("voice-status").textContent = !s.available
+    if ($("voice-status")) $("voice-status").textContent = !s.available
       ? "Coach voice is unavailable in the web version — " +
         "coach texts are shown on screen only."
       : "Available: " + avail.join(" + ") + ".";
@@ -1895,8 +1897,10 @@ async function initMaia() {
 function renderMaiaAvailability() {
   const off = Maia.available === false;
   const note = $("maia-note");
+  const panel = $("maia-panel");
+  if (!note && !panel) return; // Maia panel is not in this build
   // v40: the web build never has Maia — don't show a permanent "off" notice
-  note.classList.toggle("hidden", !off || !!(State.config && State.config.static_build) || location.protocol !== "file:");
+  if (note) note.classList.toggle("hidden", !off || !!(State.config && State.config.static_build) || location.protocol !== "file:");
   if (off) {
     if (Maia.status && Maia.status.reason) {
       // surface the backend's real reason (textContent only — contains a path)
@@ -1905,7 +1909,7 @@ function renderMaiaAvailability() {
       note.textContent = "Human-move predictions off — Maia models are not available in the web version.";
     }
   }
-  $("maia-panel").classList.toggle("hidden", Maia.available !== true);
+  if (panel) panel.classList.toggle("hidden", Maia.available !== true);
 }
 
 async function fetchMaiaMoves(fen, level, topK) {
@@ -1920,7 +1924,7 @@ async function fetchMaiaMoves(fen, level, topK) {
 }
 
 async function refreshMaiaPanel(fen) {
-  if (Maia.available !== true) return;
+  if (Maia.available !== true || !$("maia-moves")) return;
   const seq = ++Maia.seq;
   const level = getOpponentLevel();
   try {
@@ -4840,8 +4844,8 @@ async function endgameFinish(result, finalFen) {
       "goal was " + goalText + ", you scored a " + r.result + " (" +
       (r.verification && r.verification.detail ? r.verification.detail : "verified") +
       ").";
-    if (!r.passed && att.mode === "lesson") {
-      text += " The position was added to your flashcards.";
+    if (att.mode === "lesson") {
+      text += " The position joined your Mistake Deck.";
     }
     if (att.mode === "lesson" && r.passed && r.tier_complete) {
       text += " Tier complete!";
@@ -5662,8 +5666,8 @@ function renderGamesList() {
         : escapeHtml(g.date || "") + " · " + escapeHtml(g.time_class || "")) + "</div>";
     const openBtn = document.createElement("button");
     openBtn.className = "btn mini gi-open";
-    openBtn.textContent = "Open in Lab";
-    openBtn.title = "Load this game into the Strategy Lab";
+    openBtn.textContent = "Review position";
+    openBtn.title = "Load this game on the review board";
     openBtn.addEventListener("click", (ev) => {
       ev.stopPropagation();
       Games.selected = g;
@@ -6894,25 +6898,25 @@ async function resolveGamePlies(pgn) {
 /* Feature: open an imported game in the Strategy Lab at a given ply */
 async function openGameInLab(game, ply) {
   if (!game || !game.pgn) return;
-  switchTab("lab");
-  initLab();
   const label = (game.white || "White") + " vs " + (game.black || "Black") +
     (game.date ? " · " + game.date : "");
-  $("lab-status").textContent = "Loading game into Lab…";
+  switchTab("play");
+  const deeper = $("go-deeper");
+  if (deeper) deeper.open = true;
+  $("play-fen-status").textContent = "Loading " + label + "…";
   try {
     const resolved = await resolveGamePlies(game.pgn);
     if (!resolved || resolved.fens.length < 1) {
-      $("lab-status").textContent = "Could not load that game.";
+      $("play-fen-status").textContent = "Could not load that game.";
       return;
     }
-    stopLinePlayback();
-    Lab.game = { label, sans: resolved.sans, fens: resolved.fens, ucis: resolved.ucis };
-    $("lab-game-label").textContent = label;
-    $("lab-game-bar").classList.remove("hidden");
-    labGoToPly(Math.max(0, Math.min(ply || 0, resolved.sans.length)));
-    $("lab-status").textContent = "Game loaded — step through it; the panels analyze the shown position.";
+    const at = Math.max(0, Math.min(ply || 0, resolved.fens.length - 1));
+    playResetTo(resolved.fens[at]);
+    playBoard.setOrientation(mySide());
+    $("play-fen-input").value = resolved.fens[at];
+    $("play-fen-status").textContent = label + " — move " + at + " on the review board. Go deeper for the threat, the lines and a suggestion.";
   } catch (e) {
-    $("lab-status").textContent = "Could not load game: " + e.message;
+    $("play-fen-status").textContent = "Could not load game: " + e.message;
   }
 }
 
@@ -7896,43 +7900,96 @@ function planActionable(plan) {
 
 /* V24 (DUP-1): the Today card exists ONCE, on the Plan tab — the Progress
    dashboard now links here instead of rendering a duplicate. */
+function sessionRow(tag, label, onClick) {
+  const row = document.createElement("div");
+  row.className = "plan-today-row";
+  const t = document.createElement("span");
+  t.className = "plan-pillar-tag";
+  t.textContent = tag;
+  const lbl = document.createElement("span");
+  lbl.className = "plan-today-label";
+  lbl.textContent = label;
+  const btn = document.createElement("button");
+  btn.className = "btn mini";
+  btn.type = "button";
+  btn.textContent = "Open";
+  btn.addEventListener("click", onClick);
+  row.appendChild(t); row.appendChild(lbl); row.appendChild(btn);
+  return row;
+}
+function openingSessionLabel(plan) {
+  const items = (((plan || {}).pillars || {}).openings || {}).items || [];
+  const it = items.find(x => !x.done) || items[0];
+  return it ? it.label.replace(/^Openings:\s*/, "") : "One line from Modern, Grünfeld, Scotch or Alapin";
+}
+function openTodayOpening(plan) {
+  const items = (((plan || {}).pillars || {}).openings || {}).items || [];
+  const it = items.find(x => !x.done) || items[0];
+  const slug = it && it.ref && it.ref.drill;
+  if (!slug) { switchTab("modern"); return; }
+  switchTab(slug);
+  setTimeout(() => {
+    const T = slug === "grunfeld" ? GrunfeldTab : slug === "scotch" ? ScotchTab : slug === "alapin" ? AlapinTab : ModernTab;
+    if (T && T.init) T.init().then(() => T.drillDue());
+  }, 50);
+}
+async function openTodayMistake() {
+  switchTab("deck");
+  if (!(window.CCDeck && CCDeck.init)) return;
+  await CCDeck.init();
+  const D = CCDeck.state;
+  const list = (D.all || []).filter(c => !c.training && c.phase === "middlegame");
+  list.sort((a, b) => (b.cost || 0) - (a.cost || 0));
+  const due = list.find(c => { const s = D.srs[c.id]; return !s || !s.due || Date.parse(s.due) <= Date.now(); }) || list[0]
+    || (D.all || []).find(c => !c.training);
+  if (due) CCDeck.show(due.id);
+}
+function syncPlayOutBar(name) {
+  const bar = $("playout-bar");
+  if (!bar) return;
+  const on = name === "sparring" || name === "endgames";
+  bar.classList.toggle("hidden", !on);
+  let finish = false;
+  try { finish = window.FinishIt && FinishIt.state().mode === "finish"; } catch (_) { finish = false; }
+  bar.querySelectorAll("[data-playout]").forEach(b => {
+    const m = b.dataset.playout;
+    const active = m === "endgames" ? name === "endgames" : m === "finish" ? name === "sparring" && finish : name === "sparring" && !finish;
+    b.classList.toggle("active", !!active);
+    b.setAttribute("aria-selected", active ? "true" : "false");
+  });
+}
+function openFinishIt() {
+  switchTab("sparring");
+  if (typeof finishSetMode === "function") finishSetMode("finish");
+  syncPlayOutBar("sparring");
+}
+async function renderTodayStrip() {
+  const el = $("today-strip");
+  if (!el) return;
+  const s = Plan24.streak;
+  let text = s ? (s.current ? s.current + "-day streak" : "Start a streak today") : "Streak";
+  if (s && s.best) text += " · best " + s.best;
+  try {
+    const m = await apiGet("/api/training-plan/pillars");
+    const t = m && m.tactics && m.tactics.retention_7d;
+    if (t != null) text += " · recent accuracy " + Math.round(t * 100) + "%";
+  } catch (_) { /* strip still shows the streak */ }
+  el.textContent = text;
+}
 function renderPlanToday(host, plan) {
   if (!host) return;
   host.innerHTML = "";
   if (!plan) {
     const d = document.createElement("div");
     d.className = "info-line muted";
-    d.textContent = "Training plan unavailable.";
+    d.textContent = "Today's session is unavailable.";
     host.appendChild(d);
     return;
   }
-  const actions = planActionable(plan).slice(0, 5);
-  if (!actions.length) {
-    const d = document.createElement("div");
-    d.className = "info-line";
-    d.textContent = "All caught up — nothing due right now. Nice work.";
-    host.appendChild(d);
-  }
-  actions.forEach(a => {
-    const row = document.createElement("div");
-    row.className = "plan-today-row";
-    const tag = document.createElement("span");
-    tag.className = "plan-pillar-tag";
-    tag.textContent = a.pillar;
-    const lbl = document.createElement("span");
-    lbl.className = "plan-today-label";
-    lbl.textContent = a.item.label;
-    const btn = document.createElement("button");
-    btn.className = "btn mini";
-    btn.textContent = "Open";
-    const tab = a.item.ref && a.item.ref.tab;
-    if (a.item.ref && a.item.ref.drill) btn.setAttribute("data-opening-drill", a.item.ref.drill);
-    else btn.addEventListener("click", () => { if (tab) switchTab(tab); });
-    row.appendChild(tag);
-    row.appendChild(lbl);
-    row.appendChild(btn);
-    host.appendChild(row);
-  });
+  host.appendChild(sessionRow("Mistake", "A real-game mistake, middlegame first", () => openTodayMistake()));
+  host.appendChild(sessionRow("Opening", openingSessionLabel(plan), () => openTodayOpening(plan)));
+  host.appendChild(sessionRow("Play it out", "Finish a position you were winning", () => openFinishIt()));
+  renderTodayStrip();
 }
 
 function renderPlanAdherence(plan, adherence) {
@@ -7951,7 +8008,7 @@ function renderPlanAdherence(plan, adherence) {
   const line = document.createElement("div");
   line.className = "info-line";
   line.textContent = "This week: " + a.completed + " of " + a.planned +
-    " planned items done (" + a.pct + "%)";
+    " session items done (" + a.pct + "%)";
   const bar = document.createElement("div");
   bar.className = "adherence-bar";
   const fill = document.createElement("div");
@@ -7985,9 +8042,8 @@ function renderPlanReasons(plan) {
   if (!host) return;
   const reasons = (plan && plan.reasons) || [];
   let text = reasons.length
-    ? "Why this plan: " + reasons.join(" · ")
-    : "Why this plan: the standard weekly mix — review your games, drill " +
-      "tactics, spar, study endgames and the masters.";
+    ? reasons.join(" · ")
+    : "Three things count this week: a real-game mistake, one opening line, and one position played out.";
   if (plan && plan.week_of) text = "Week of " + plan.week_of + ". " + text;
   host.textContent = text;
 }
@@ -8025,6 +8081,11 @@ function renderPlanBoard(plan, metrics) {
   const host = $("plan-board");
   if (!host) return;
   host.innerHTML = "";
+  const session = (plan && plan.session) || [];
+  if (session.length) {
+    session.forEach(it => host.appendChild(planItemCard(it)));
+    return;
+  }
   PLAN_PILLARS.forEach(p => {
     const pillar = (plan && plan.pillars && plan.pillars[p.key]) ||
       { target_sessions: 0, done_sessions: 0, items: [] };
@@ -8122,6 +8183,7 @@ async function loadStreak() {
     Plan24.streak = s;
     renderStreakChip(s);
     checkStreakMilestone(s);
+    renderTodayStrip();
   } catch (_) { /* streak chip stays hidden */ }
 }
 
@@ -8255,19 +8317,15 @@ function renderHeatmap(data) {
 const WEEK_CLOSED_KEY = "chesscoach.weekClosed";
 
 function checkWeekClosed(plan) {
-  if (!plan || !plan.pillars || !plan.week_of) return;
-  const closed = PLAN_PILLARS.every(p => {
-    const pillar = plan.pillars[p.key];
-    return pillar && pillar.target_sessions > 0 &&
-      (pillar.done_sessions || 0) >= pillar.target_sessions;
-  });
+  if (!plan || !plan.session || !plan.week_of) return;
+  const closed = plan.session.length > 0 && plan.session.every(it => it.done);
   if (!closed) return;
   let celebrated = null;
   try { celebrated = localStorage.getItem(WEEK_CLOSED_KEY); } catch (_) { /* */ }
   if (celebrated === plan.week_of) return; // once per week
   try { localStorage.setItem(WEEK_CLOSED_KEY, plan.week_of); } catch (_) { /* */ }
   const banner = $("week-closed-banner");
-  banner.textContent = "Week closed — every pillar complete.";
+  banner.textContent = "Week closed — mistake, opening, and a position played out.";
   banner.classList.remove("hidden");
   confettiBurst(30);
   speakCelebration(banner.textContent); // V26: read the banner ONCE
@@ -8456,12 +8514,23 @@ async function reloadMine(btn) {
   }
 }
 document.querySelectorAll(".btn-mine-reload").forEach((b) => b.addEventListener("click", () => reloadMine(b)));
-window.addEventListener("cc-mine-imported", (ev) => {
+window.addEventListener("cc-mine-imported", async (ev) => {
   const st = ev.detail || {};
+  let cards = st.cards, games = st.games;
+  try {
+    const r = await fetch("data/mine/deck.json?v=49", { cache: "no-cache" });
+    if (r.ok) {
+      const j = await r.json();
+      const sum = j.summary || {};
+      if (sum.cards) cards = sum.cards;
+      if (sum.games && sum.games.total) games = sum.games.total;
+    }
+  } catch (_) { /* keep the event counts */ }
   const n = document.createElement("div");
   n.className = "mine-toast";
   n.setAttribute("role", "status");
-  n.textContent = "Loaded your training data: " + st.games + " analysed games and " + st.cards + " mistake cards. Find them in My Games, Puzzles and Cycles.";
+  n.textContent = "Loaded your training data: " + cards + " mistake cards from " + games +
+    " games. Review them on Mistakes.";
   document.body.appendChild(n);
   setTimeout(() => n.classList.add("out"), 6000);
   setTimeout(() => n.remove(), 6800);
@@ -8579,8 +8648,7 @@ document.addEventListener("click", (e) => {
     const n = document.createElement("div");
     n.className = "mine-toast oly-toast"; n.setAttribute("role", "status");
     if (document.querySelector(".mine-toast")) n.style.bottom = (window.innerWidth <= 700 ? 140 : 86) + "px";
-    n.textContent = "Added " + r.puzzles_added + " Olympiad blunder positions to Puzzles and " + r.cards_added +
-      " flashcards (Cycles: \u201cOlympiad blunders\u201d, " + r.set_size + " positions). Find the better move.";
+    n.textContent = "Added " + r.puzzles_added + " Olympiad blunder positions to Tactics. Find the better move.";
     document.body.appendChild(n);
     setTimeout(() => n.classList.add("out"), 7000);
     setTimeout(() => n.remove(), 7800);
@@ -8615,4 +8683,90 @@ document.addEventListener("click", (e) => {
     if (card && window.CCDeck && window.CCDeck.show) window.CCDeck.show(card);
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run); else setTimeout(run, 0);
+})();
+
+/* v53: Train > Play it out (Sparring, Endgames, Finish it) and Study menu */
+(function wireShell() {
+  const bar = $("playout-bar");
+  if (bar) bar.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest("[data-playout]");
+    if (!b) return;
+    if (b.dataset.playout === "finish") openFinishIt();
+    else if (b.dataset.playout === "endgames") switchTab("endgames");
+    else {
+      switchTab("sparring");
+      if (typeof finishSetMode === "function") finishSetMode("packs");
+      syncPlayOutBar("sparring");
+    }
+  });
+  const study = $("btn-study"), pop = $("study-pop");
+  if (study && pop) {
+    study.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const open = pop.classList.toggle("hidden") === false;
+      study.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    document.addEventListener("click", (e) => {
+      if (pop.classList.contains("hidden") || pop.contains(e.target)) return;
+      pop.classList.add("hidden");
+      study.setAttribute("aria-expanded", "false");
+    });
+  }
+  const out = (html) => { const el = $("play-deeper-out"); if (el) el.innerHTML = html; };
+  const nullBtn = $("btn-deeper-null"), lineBtn = $("btn-deeper-lines"), sugBtn = $("btn-deeper-suggest");
+  if (nullBtn) nullBtn.addEventListener("click", async () => {
+    const fen = playBoard.getFen();
+    out('<div class="info-line">Analyzing the threat…</div>');
+    try {
+      const r = await apiPost("/api/strategy/nullmove", { fen });
+      if (!r.legal) { out('<div class="info-line">' + escapeHtml(r.note || "Not a legal moment to pass.") + "</div>"); return; }
+      if (!r.threat) { out('<div class="info-line">No concrete threat — the position is solid.</div>'); return; }
+      const t = r.threat;
+      out('<div class="info-line">Threat: <b>' + escapeHtml(t.best_move_san || "?") + "</b> " + escapeHtml((t.line_san || []).join(" ")) + "</div>");
+      if (t.best_move_san) {
+        const solved = await resolveSan(fenFlippedSide(fen), t.best_move_san);
+        if (solved) playBoard.setArrows([{ from: solved.uci.slice(0, 2), to: solved.uci.slice(2, 4), color: "red" }]);
+      }
+    } catch (e) { out('<div class="info-line">Null-move failed: ' + escapeHtml(e.message) + "</div>"); }
+  });
+  if (lineBtn) lineBtn.addEventListener("click", async () => {
+    const fen = playBoard.getFen();
+    out('<div class="info-line">Calculating lines…</div>');
+    try {
+      const r = await apiPost("/api/strategy/lines", { fen, max_moves: 4 });
+      const lines = r.lines || [];
+      if (!lines.length) { out('<div class="info-line">No lines returned.</div>'); return; }
+      out(lines.slice(0, 4).map(line => '<div class="info-line"><b>' + evalText(line.eval) + "</b> " + escapeHtml((line.moves_san || []).join(" ")) + "</div>").join(""));
+    } catch (e) { out('<div class="info-line">Lines failed: ' + escapeHtml(e.message) + "</div>"); }
+  });
+  if (sugBtn) sugBtn.addEventListener("click", async () => {
+    const fen = playBoard.getFen();
+    out('<div class="info-line">Asking the coach…</div>');
+    try {
+      const r = await apiPost("/api/coach/suggest", { fen });
+      const s = (r.suggestions || [])[0];
+      if (!s) { out('<div class="info-line">' + escapeHtml(r.master_note || "No suggestion for this position.") + "</div>"); return; }
+      out('<div class="info-line"><b>' + escapeHtml(s.move_san) + "</b> — " + escapeHtml(s.plan || "") + " " + escapeHtml((s.line_san || []).join(" ")) + "</div>");
+      if (s.move_uci && s.move_uci.length >= 4) playBoard.setArrows([{ from: s.move_uci.slice(0, 2), to: s.move_uci.slice(2, 4), color: "amber" }]);
+    } catch (e) { out('<div class="info-line">Suggestions failed: ' + escapeHtml(e.message) + "</div>"); }
+  });
+  const HASH_TAB = {
+    plan: "plan", today: "plan", progress: "progress",
+    play: "play", review: "play", lab: "lab", games: "games",
+    deck: "deck", mistakes: "deck", puzzles: "puzzles", cycles: "deck",
+    sparring: "sparring", endgames: "endgames", finish: "finish",
+    attacks: "attacks", calc: "calc", calculation: "calc",
+    top10: "top10", modern: "modern", scotch: "scotch", alapin: "alapin",
+    "alapin-drill": "alapin-drill", grunfeld: "grunfeld",
+    masters: "masters", learn: "learn",
+  };
+  function applyHash() {
+    const h = (location.hash || "").replace(/^#/, "").split(/[?&]/)[0];
+    if (!h || !HASH_TAB[h]) return;
+    if (HASH_TAB[h] === "finish") { openFinishIt(); return; }
+    switchTab(HASH_TAB[h]);
+  }
+  window.addEventListener("hashchange", applyHash);
+  if (location.hash) setTimeout(applyHash, 0);
+  else if ($("tab-plan") && $("tab-plan").classList.contains("active")) initPlan();
 })();

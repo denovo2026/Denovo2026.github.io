@@ -149,12 +149,7 @@ function top10CountDue() {
 function top10PaintDue() {
   if (!Top10.data) return;
   const c = top10CountDue();
-  const badge = $("top10-tab-due");
-  if (badge) {
-    badge.textContent = c.n ? String(c.n) : "";
-    badge.classList.toggle("hidden", !c.n);
-    badge.title = c.n ? c.n + " line" + (c.n === 1 ? "" : "s") + " due today" : "";
-  }
+  /* The nav badge stays off: Wider set is not part of the daily session. The count lives on this page. */
   const chip = $("top10-due");
   if (chip) {
     chip.textContent = "Due today: " + c.n;

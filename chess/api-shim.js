@@ -1478,16 +1478,7 @@
     s.history = s.history.slice(-500);
     egSave(s);
     logActivity("endgame", "lesson");
-    if (!passed) {
-      // put the lesson's start position into the flashcard deck (best move from the tablebase)
-      try {
-        var tb = await tbProbe(att.start_fen);
-        if (tb && tb.moves && tb.moves.length) {
-          var l0 = await egLesson(p.id);
-          addCards([{ fen_before: att.start_fen, best_uci: tb.moves[0].uci, title: "Endgame: " + l0.title, explanation: l0.explanation, motif: "positional" }], "endgame");
-        }
-      } catch (_) {}
-    }
+    try { await rememberEndgameLesson(att, passed); } catch (_) {}
     var c = await egCanon(), lesson = await egLesson(p.id);
     var tier = c.tiers.find(function (t) { return t.tier === lesson.tier; });
     var tierComplete = passed && tier.lessons.every(function (l) { return l.status === "passed"; });
@@ -1495,6 +1486,38 @@
     c.tiers.some(function (t) { return t.lessons.some(function (l) { if (l.status === "available") { next = { id: l.id, title: l.title }; return true; } return false; }); });
     return { passed: passed, goal: att.goal, result: v.result, verification: { detail: v.detail }, tier_complete: tierComplete, next_lesson: next };
   });
+  /* A passed or missed canon lesson joins the Mistake Deck (cc-deck-local-v1).
+     eval_before stays under +3 so Finish it, which reads the same local cards,
+     does not treat a lesson as a conversion position. The old flashcard copy
+     is still written on a miss so that store is not wiped. */
+  function pushDeckLocal(card) {
+    var key = "cc-deck-local-v1";
+    var list = [];
+    try { list = JSON.parse(localStorage.getItem(key) || "[]"); } catch (_) { list = []; }
+    if (!Array.isArray(list)) list = [];
+    if (list.some(function (c) { return c && c.id === card.id; })) return false;
+    list.push(card);
+    try { localStorage.setItem(key, JSON.stringify(list)); } catch (_) { return false; }
+    return true;
+  }
+  async function rememberEndgameLesson(att, passed) {
+    var tb = await tbProbe(att.start_fen);
+    if (!tb || !tb.moves || !tb.moves.length) return;
+    var l0 = await egLesson(att.lesson_id);
+    var uci = tb.moves[0].uci, san = tb.moves[0].san || uci;
+    pushDeckLocal({
+      id: "eg-" + att.lesson_id, fen: att.start_fen, side: att.user_side,
+      played_uci: uci, played_san: san, best_uci: uci, best_san: san, accept: [uci],
+      theme: "Endgame technique", phase: "endgame", training: false, lesson_card: true,
+      source: "local", local: true, opening: "Endgame canon", game_type: "lesson",
+      title: (passed ? "Passed: " : "Missed: ") + (l0.title || att.lesson_id),
+      explanation: l0.explanation || "Find the tablebase move.",
+      game_label: "Endgame lesson", move_no: 1, eval_before: 0,
+      cost: passed ? 8 : 24, wp_loss: passed ? 8 : 24, wp_before: 50, wp_after: passed ? 42 : 26,
+      swing: passed ? "passed" : "missed", date: utcDay()
+    });
+    if (!passed) addCards([{ fen_before: att.start_fen, best_uci: uci, title: "Endgame: " + l0.title, explanation: l0.explanation, motif: "positional" }], "endgame");
+  }
   route("POST", "/api/endgame/hint", async function (b) { return hintFor(b.fen); });
 
   var placementSessions = {};
@@ -2249,14 +2272,31 @@
   /* training plan / streak / heatmap                                    */
   /* ------------------------------------------------------------------ */
   var PILLAR_TARGET = { review: 2, tactics: 5, sparring: 2, endgame: 2, masters: 1 };
+  var REP_PLAN = [
+    { slug: "modern", name: "Modern" },
+    { slug: "grunfeld", name: "Grünfeld" },
+    { slug: "scotch", name: "Scotch" },
+    { slug: "alapin", name: "Alapin" },
+  ];
+  var _repLookCounts = null;
+  async function repLookCounts() {
+    if (_repLookCounts) return _repLookCounts;
+    var out = {};
+    var slugs = ["modern", "grunfeld", "scotch", "alapin"];
+    for (var i = 0; i < slugs.length; i++) {
+      try { out[slugs[i]] = ((await repFile(slugs[i])).looks || []).length; }
+      catch (_) { out[slugs[i]] = 0; }
+    }
+    _repLookCounts = out;
+    return out;
+  }
   function activityIn(from, to) { return S.get("activity", []).filter(function (a) { return a.date >= from && a.date <= to; }); }
-  function planFor(week) {
+  async function planFor(week) {
     var end = addDays(week, 6), today = utcDay();
     var acts = activityIn(week, end);
     var doneBy = function (pillar, kinds) { return acts.filter(function (a) { return a.pillar === pillar && (!kinds || kinds.indexOf(a.kind) !== -1); }); };
     var daysOf = function (list) { return new Set(list.map(function (a) { return a.date; })); };
     var reasons = [];
-    var st = fcStats();
     var pillars = {};
     // review
     var rv = doneBy("review");
@@ -2264,23 +2304,18 @@
       { label: "Run a full game review", kind: "analysis", done: doneBy("review", ["analysis"]).length > 0, due: null, ref: { tab: "games" } }];
     if (!S.get("games", []).length) { revItems.unshift({ label: "Import your games (Games tab)", kind: "onboarding", done: false, due: null, ref: { tab: "games" } }); reasons.push("no games imported yet"); }
     pillars.review = { target_sessions: PILLAR_TARGET.review, done_sessions: Math.min(PILLAR_TARGET.review, daysOf(rv).size), items: revItems };
-    // tactics: one flashcard item per day of the week (up to today)
-    var fc = [], fcDays = daysOf(doneBy("tactics", ["flashcards"]));
-    for (var i = 0; i < 7; i++) {
-      var d = addDays(week, i);
-      if (d > today) break;
-      fc.push({ label: "Flashcard queue" + (d === today ? " (" + st.due_today + " due)" : " — " + d), kind: "flashcards", done: fcDays.has(d) || (d === today && st.due_today === 0 && st.total > 0), due: d === today ? null : d, ref: { tab: "puzzles" } });
-    }
-    var tac = fc.concat([{ label: "Complete a Woodpecker cycle", kind: "cycle", done: doneBy("tactics", ["cycle"]).length > 0, due: null, ref: { tab: "cycles" } },
-      { label: "Solve 10 puzzles", kind: "motif_focus", done: doneBy("tactics", ["puzzle"]).length >= 10, due: null, ref: { tab: "puzzles" } }]);
-    if (st.due_today > 10) reasons.push(st.due_today + " flashcards due");
+    // tactics: the Mistake Deck is the review queue. Puzzle library stays optional.
+    var deckDays = daysOf(doneBy("tactics", ["deck", "flashcards", "cycle"]));
+    var tac = [
+      { label: "Review a real-game mistake", kind: "deck", done: deckDays.has(today), due: null, ref: { tab: "deck" } },
+      { label: "Solve 10 puzzles", kind: "motif_focus", done: doneBy("tactics", ["puzzle"]).length >= 10, due: null, ref: { tab: "puzzles" } }
+    ];
     var focus = cardFocus();
     if (focus.length) {
       var gm = gameMissFocus();
-      reasons.unshift("your " + focus.reduce(function (a, f) { return a + f.n; }, 0) + " mistake cards: " + focus.slice(0, 4).map(function (f) { return f.n + "× " + f.label.toLowerCase(); }).join(", ") +
-        (gm.length ? "; your analysed games add " + gm.slice(0, 2).map(function (f) { return f.n + "× " + f.label.toLowerCase(); }).join(" and ") : "") +
-        " — so this week leads with flashcards and the “My mistakes” Woodpecker cycle");
-      tac.unshift({ label: "Focus: " + focus[0].label + " (" + focus[0].n + " of your cards)", kind: "motif_focus_mine", done: doneBy("tactics", ["cycle", "flashcards"]).length > 0, due: null, ref: { tab: "cycles" } });
+      reasons.unshift("your mistake deck leads this week" +
+        (gm.length ? " (analysed games add " + gm.slice(0, 2).map(function (f) { return f.n + "× " + f.label.toLowerCase(); }).join(" and ") + ")" : ""));
+      tac.unshift({ label: "Focus: " + focus[0].label + " (" + focus[0].n + " of your older cards)", kind: "motif_focus_mine", done: deckDays.size > 0, due: null, ref: { tab: "deck" } });
     }
     pillars.tactics = { target_sessions: PILLAR_TARGET.tactics, done_sessions: Math.min(PILLAR_TARGET.tactics, daysOf(doneBy("tactics")).size), items: tac };
     // sparring
@@ -2302,22 +2337,33 @@
     // v41: openings — due lines from the first-try memory
     var rp = repProg(), rpLines = Object.keys(rp).map(function (k) { return rp[k]; });
     var nowMs = Date.now();
-    var dueBy = { modern: 0, grunfeld: 0 };
+    var counts = await repLookCounts();
+    var dueBy = {}, newBy = {};
+    REP_PLAN.forEach(function (op) { dueBy[op.slug] = 0; });
     rpLines.forEach(function (l) { if (Date.parse(l.due) <= nowMs) dueBy[l.slug] = (dueBy[l.slug] || 0) + 1; });
-    var newBy = { modern: Math.max(0, 7 - rpLines.filter(function (l) { return l.slug === "modern"; }).length),
-      grunfeld: Math.max(0, 7 - rpLines.filter(function (l) { return l.slug === "grunfeld"; }).length) };
+    REP_PLAN.forEach(function (op) {
+      newBy[op.slug] = Math.max(0, (counts[op.slug] || 0) - rpLines.filter(function (l) { return l.slug === op.slug; }).length);
+    });
     var opDone = doneBy("openings");
-    var opItems = ["modern", "grunfeld"].map(function (sl) {
-      var n = dueBy[sl] + newBy[sl], nm = sl === "modern" ? "Modern" : "Grünfeld";
-      return { label: "Openings: " + nm + " — " + (n ? n + " line" + (n === 1 ? "" : "s") + " to drill (" + dueBy[sl] + " due, " + newBy[sl] + " new)" : "all lines fresh"),
-        kind: "opening_drill", done: n === 0 || acts.some(function (a) { return a.pillar === "openings" && a.date === today && a.kind === "repertoire"; }) && dueBy[sl] === 0,
+    var opItems = REP_PLAN.map(function (op) {
+      var sl = op.slug, n = (dueBy[sl] || 0) + (newBy[sl] || 0), nm = op.name;
+      return { label: "Openings: " + nm + " — " + (n ? n + " line" + (n === 1 ? "" : "s") + " to drill (" + (dueBy[sl] || 0) + " due, " + (newBy[sl] || 0) + " new)" : "all lines fresh"),
+        kind: "opening_drill", done: n === 0 || acts.some(function (a) { return a.pillar === "openings" && a.date === today && a.kind === "repertoire"; }) && (dueBy[sl] || 0) === 0,
         due: null, ref: { tab: sl, drill: sl } };
     });
-    if (dueBy.modern + dueBy.grunfeld) reasons.push((dueBy.modern + dueBy.grunfeld) + " opening line(s) due for review");
-    pillars.openings = { target_sessions: 3, done_sessions: Math.min(3, daysOf(opDone).size), items: opItems };
-    var planned = 0, completed = 0;
-    Object.keys(pillars).forEach(function (k) { planned += pillars[k].target_sessions; completed += pillars[k].done_sessions; });
-    return { week_of: week, reasons: reasons, pillars: pillars, adherence: { completed: completed, planned: planned, pct: planned ? Math.round(100 * completed / planned) : 0 } };
+    var dueOpen = REP_PLAN.reduce(function (a, op) { return a + (dueBy[op.slug] || 0); }, 0);
+    if (dueOpen) reasons.push(dueOpen + " opening line(s) due for review");
+    pillars.openings = { target_sessions: REP_PLAN.length, done_sessions: Math.min(REP_PLAN.length, daysOf(opDone).size), items: opItems };
+    /* The week the player sees is the same three jobs as Today, not the old pillar totals. */
+    var firstOpen = opItems.filter(function (it) { return !it.done; })[0] || opItems[0] || { ref: { tab: "modern", drill: "modern" } };
+    var session = [
+      { key: "mistake", label: "Review a real-game mistake", done: doneBy("tactics", ["deck", "flashcards", "cycle"]).length > 0, ref: { tab: "deck" } },
+      { key: "opening", label: "Drill one opening line", done: opDone.length > 0, ref: firstOpen.ref || { tab: "modern", drill: "modern" } },
+      { key: "playout", label: "Play a position out", done: doneBy("sparring").length + doneBy("endgame").length > 0, ref: { tab: "sparring" } }
+    ];
+    var completed = session.filter(function (s) { return s.done; }).length;
+    return { week_of: week, reasons: reasons, pillars: pillars, session: session,
+      adherence: { completed: completed, planned: session.length, pct: session.length ? Math.round(100 * completed / session.length) : 0 } };
   }
   route("GET", "/api/training-plan", function () { return planFor(weekStart()); });
   // v39: category counts of the player's own mistake cards (bundled cards + misses from his games)
@@ -2329,11 +2375,11 @@
   }
   function cardFocus() { return focusBy("my-cards"); }
   function gameMissFocus() { return focusBy("my-games").filter(function (f) { return f.motif !== "positional"; }); }
-  route("GET", "/api/training-plan/adherence", function () {
+  route("GET", "/api/training-plan/adherence", async function () {
     var acts = S.get("activity", []);
     var first = acts.length ? weekStart(acts[0].date) : weekStart();
     var weeks = [], w = weekStart();
-    for (var i = 0; i < 8 && w >= first; i++) { weeks.unshift({ week_of: w, pct: planFor(w).adherence.pct }); w = addDays(w, -7); }
+    for (var i = 0; i < 8 && w >= first; i++) { weeks.unshift({ week_of: w, pct: (await planFor(w)).adherence.pct }); w = addDays(w, -7); }
     return { weeks: weeks };
   });
   route("GET", "/api/training-plan/pillars", function () {
@@ -2354,7 +2400,9 @@
       sparring: { pass_rate: passes + fails ? passes / (passes + fails) : null, pass_trend: [], attempts: spAttempts.length },
       endgame: { lessons_passed: egPassed, lessons_total: 10, passed_trend: trend.slice(-12) },
       openings: (function () { var rp = repProg(), ls = Object.keys(rp).map(function (k) { return rp[k]; });
-        return { known_pct: ls.length ? Math.round(100 * ls.filter(function (l) { return l.last_right === l.last_total; }).length / 14) : null,
+        var denom = 0; REP_PLAN.forEach(function (op) { denom += (_repLookCounts && _repLookCounts[op.slug]) || 0; });
+        if (!denom) denom = 23;
+        return { known_pct: ls.length ? Math.round(100 * ls.filter(function (l) { return l.last_right === l.last_total; }).length / denom) : null,
           trend: ls.reduce(function (a, l) { return a.concat(l.history || []); }, []).sort(function (x, y) { return x.at < y.at ? -1 : 1; }).slice(-12).map(function (h) { return Math.round(100 * h.right / h.total); }) }; })(),
       masters: { best_score: gh.length ? Math.max.apply(null, gh.map(function (h) { return h.score; })) : null, scores: gh.slice(-12).map(function (h) { return h.score; }) },
     };
@@ -2362,7 +2410,7 @@
   // v40: a streak day needs a real answer (viewing a game review or opening a tab does not count)
   var STREAK_SKIP = { analysis: 1 };
   route("POST", "/api/activity/answer", function (b) {
-    var pillar = { openings: "openings", tactics: "tactics", masters: "masters" }[b.pillar] || "tactics";
+    var pillar = { openings: "openings", tactics: "tactics", masters: "masters", sparring: "sparring", endgame: "endgame", review: "review" }[b.pillar] || "tactics";
     logActivity(pillar, String(b.kind || "answer").slice(0, 32));
     return { ok: true };
   });
@@ -2556,20 +2604,34 @@
     if (rev) S.set("mineCardsRevision", rev);
     return { added: added };
   }
+  /* Bundled games know the player (games.json "me") but never wrote
+     lichess_username, so rating history stayed empty until it was typed.
+     JetBlack007 is his Lichess name; keep a name he already saved. */
+  function ensurePlayerIdentity(gj) {
+    var cfg = S.get("config", {});
+    var names = String(cfg.my_names || "").split(",").map(function (x) { return x.trim(); }).filter(Boolean);
+    (gj && gj.me || []).forEach(function (n) {
+      if (names.map(function (x) { return x.toLowerCase(); }).indexOf(String(n).toLowerCase()) === -1) names.push(n);
+    });
+    if (names.length) cfg.my_names = names.join(",");
+    if (!cfg.lichess_username) {
+      var hit = names.filter(function (n) { return /jetblack007/i.test(n); })[0] || (gj && gj.me && gj.me[0]) || names[0];
+      if (hit) cfg.lichess_username = hit;
+    }
+    if (gj && gj.level && !cfg.level) cfg.level = gj.level;
+    S.set("config", cfg);
+    return cfg;
+  }
   async function importMine(force) {
     var gj = await loadData("mine/games.json"), cj = await loadData("mine/cards.json");
+    ensurePlayerIdentity(gj);
     if (!force && S.get("mineVersion") === gj.version) {
       try { await mergeStyleCards(cj); } catch (_) {}
       return mineStatus();
     }
     var first = !S.get("mineVersion");
     // 1. names + level (only the non-secret prefs from his config)
-    var cfg = S.get("config", {});
-    var names = String(cfg.my_names || "").split(",").map(function (x) { return x.trim(); }).filter(Boolean);
-    (gj.me || []).forEach(function (n) { if (names.map(function (x) { return x.toLowerCase(); }).indexOf(n.toLowerCase()) === -1) names.push(n); });
-    cfg.my_names = names.join(",");
-    if (gj.level && !cfg.level) cfg.level = gj.level;
-    S.set("config", cfg);
+    var cfg = ensurePlayerIdentity(gj);
     // 2. games -> library (+ hash -> bundled analysis file)
     var mineIdx = {}, recs = [];
     gj.games.forEach(function (g, i) {

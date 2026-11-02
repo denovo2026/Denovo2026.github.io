@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=49">
+<link rel="stylesheet" href="style.css?v=53">
 </head>
 <body>
 <header class="app-header">
@@ -58,37 +58,41 @@
   </div>
   <nav class="tabs grouped" aria-label="Sections">
     <div class="tab-groups" role="tablist" aria-label="Sections">
-      <button class="grp-btn" type="button" role="tab" aria-selected="false" data-group="today"><span class="grp-ic" aria-hidden="true">&#9788;</span><span class="grp-lbl">Today</span></button>
-      <button class="grp-btn active" type="button" role="tab" aria-selected="true" data-group="play"><span class="grp-ic" aria-hidden="true">&#9822;</span><span class="grp-lbl">Play</span></button>
+      <button class="grp-btn active" type="button" role="tab" aria-selected="true" data-group="today"><span class="grp-ic" aria-hidden="true">&#9788;</span><span class="grp-lbl">Today</span></button>
       <button class="grp-btn" type="button" role="tab" aria-selected="false" data-group="train"><span class="grp-ic" aria-hidden="true">&#9889;&#xFE0E;</span><span class="grp-lbl">Train</span></button>
       <button class="grp-btn" type="button" role="tab" aria-selected="false" data-group="openings"><span class="grp-ic" aria-hidden="true">&#9820;</span><span class="grp-lbl">Openings</span></button>
-      <button class="grp-btn" type="button" role="tab" aria-selected="false" data-group="study"><span class="grp-ic" aria-hidden="true">&#9998;</span><span class="grp-lbl">Study</span></button>
+      <button class="grp-btn" type="button" role="tab" aria-selected="false" data-group="review"><span class="grp-ic" aria-hidden="true">&#9822;</span><span class="grp-lbl">Review</span></button>
+      <button class="grp-btn" type="button" id="btn-study" aria-haspopup="true" aria-expanded="false" title="Masters, lessons, Olympiad"><span class="grp-ic" aria-hidden="true">&#9998;</span><span class="grp-lbl">Study</span></button>
+      <div id="study-pop" class="study-pop hidden" role="menu">
+        <button type="button" class="btn" data-goto-tab="masters">Masters</button>
+        <button type="button" class="btn" data-goto-tab="learn">Learn</button>
+        <a class="btn" href="./olympiad/">Olympiad</a>
+      </div>
     </div>
     <span class="tab-sep" aria-hidden="true"></span>
     <div class="tab-subs" id="tab-subs">
-      <button class="tab-btn" data-tab="plan" data-group="today">Plan</button>
-      <button class="tab-btn" data-tab="progress" data-group="today">Progress</button>
-      <button class="tab-btn active in-group" data-tab="play" data-group="play">Play &amp; Analyze</button>
-      <button class="tab-btn in-group" data-tab="lab" data-group="play">Strategy Lab</button>
-      <button class="tab-btn in-group" data-tab="games" data-group="play">My Games</button>
+      <button class="tab-btn active in-group" data-tab="plan" data-group="today">Session</button>
+      <button class="tab-btn" data-tab="progress" data-group="today">Charts</button>
       <button class="tab-btn" data-tab="deck" data-group="train">Mistakes</button>
-      <button class="tab-btn" data-tab="puzzles" data-group="train">Puzzles</button>
-      <button class="tab-btn" data-tab="cycles" data-group="train">Cycles</button>
-      <button class="tab-btn" data-tab="sparring" data-group="train">Sparring</button>
-      <button class="tab-btn" data-tab="endgames" data-group="train">Endgames</button>
+      <button class="tab-btn" data-tab="sparring" data-group="train">Play it out</button>
+      <button class="tab-btn" data-tab="calc" data-group="train">Calculate</button>
       <button class="tab-btn" data-tab="attacks" data-group="train">Attacks</button>
-      <button class="tab-btn" data-tab="calc" data-group="train">Calculation</button>
-      <button class="tab-btn" data-tab="top10" data-group="openings">Top 10 <span id="top10-tab-due" class="t10-tab-due hidden"></span></button>
+      <button class="tab-btn" data-tab="puzzles" data-group="train">Tactics</button>
       <button class="tab-btn" data-tab="modern" data-group="openings">Modern</button>
+      <button class="tab-btn" data-tab="grunfeld" data-group="openings">Gr&uuml;nfeld</button>
       <button class="tab-btn" data-tab="scotch" data-group="openings">Scotch</button>
       <button class="tab-btn" data-tab="alapin" data-group="openings">Alapin</button>
-      <button class="tab-btn" data-tab="alapin-drill" data-group="openings">Alapin drill <span id="aln-tab-due" class="t10-tab-due hidden"></span></button>
-      <button class="tab-btn" data-tab="grunfeld" data-group="openings">Gr&uuml;nfeld</button>
-      <button class="tab-btn" data-tab="masters" data-group="study">Masters</button>
-      <button class="tab-btn" data-tab="learn" data-group="study">Learn</button>
-      <a class="tab-link" data-group="study" href="./olympiad/" title="Olympiad game matrix · Samarkand 2026 (opens the Olympiad explorer)">Olympiad <span class="tab-link-arrow" aria-hidden="true">&#x2197;</span></a>
+      <button class="tab-btn" data-tab="top10" data-group="openings">Wider set</button>
+      <button class="tab-btn" data-tab="play" data-group="review">Analyze</button>
+      <button class="tab-btn" data-tab="games" data-group="review">My games</button>
     </div>
   </nav>
+  <div id="playout-bar" class="playout-bar hidden" role="tablist" aria-label="Play it out">
+    <span class="playout-k">Play it out</span>
+    <button type="button" data-playout="sparring">Sparring</button>
+    <button type="button" data-playout="endgames">Endgames</button>
+    <button type="button" data-playout="finish" title="Convert a won position from your own games. No clock.">Finish it</button>
+  </div>
 </header>
 <script>
 /* v37: expose the real header height so the desktop layout can size the board
@@ -109,7 +113,7 @@
 <main>
 
   <!-- ===================== TRAINING PLAN (V20) ===================== -->
-  <section id="tab-plan" class="tab-panel">
+  <section id="tab-plan" class="tab-panel active">
     <div id="plan-streak-row" class="panel-row">
       <span id="streak-chip" class="streak-chip hidden"></span>
       <span id="streak-note" class="info-line muted"></span>
@@ -121,15 +125,19 @@
     <div id="week-closed-banner" class="banner amber hidden"></div>
     <div class="plan-top">
       <div class="lab-panel" id="plan-today-card">
-        <h3>Today <span class="muted">most relevant right now</span></h3>
+        <h3>Today's session <span class="muted">one mistake, one line, one position</span></h3>
         <div id="plan-today"></div>
+        <div id="today-strip" class="info-line muted"></div>
+        <div class="panel-row"><button class="btn mini" type="button" data-goto-tab="progress">Charts</button></div>
       </div>
       <div class="lab-panel" id="plan-adherence-card">
-        <h3>Adherence <span class="muted">planned vs completed</span></h3>
+        <h3>This week <span class="muted">the three session items</span></h3>
         <div id="plan-adherence"></div>
         <div id="plan-adherence-trend"></div>
       </div>
     </div>
+    <details id="today-more" class="today-more">
+      <summary>This week and the training year</summary>
     <div id="plan-reasons" class="info-line plan-reasons"></div>
     <div id="plan-week-note" class="info-line muted">Weeks run Mon–Sun (UTC)</div>
     <div id="plan-board" class="plan-board"></div>
@@ -139,10 +147,11 @@
       <div id="plan-heatmap" class="heatmap-grid"></div>
       <div id="plan-heatmap-caption" class="info-line muted"></div>
     </div>
+    </details>
   </section>
 
   <!-- ===================== PLAY & ANALYZE ===================== -->
-  <section id="tab-play" class="tab-panel active">
+  <section id="tab-play" class="tab-panel">
     <div class="play-layout">
       <div class="board-col">
         <div class="eval-bar"><div id="eval-fill" class="eval-fill"></div><span id="eval-label" class="eval-label"></span></div>
@@ -188,7 +197,7 @@
           </div>
           <div class="info-line"><span class="arrow-legend red">➤</span> played move · <span class="arrow-legend green">➤</span> best move</div>
         </div>
-        <div id="rehearsal-panel" class="rehearsal-panel">
+        <div id="rehearsal-panel" class="rehearsal-panel hidden" hidden>
           <button id="rehearsal-toggle" class="rehearsal-head" aria-expanded="false">
             <span>⚔ Opening Rehearsal — practice modes</span>
             <span id="rehearsal-mode-tag" class="rehearsal-tag hidden"></span>
@@ -249,6 +258,7 @@
             <!-- V30: restored from pre-V25 — the plan also lives in the
                  Strategy Lab (#btn-lab-plan); both doors stay. -->
             <button id="btn-show-plan" class="btn toggle" title="Engine-best plan for you vs. the replies players at your level actually make — now with the goal and the reason behind each move.">Show my plan</button>
+            <button class="btn" type="button" data-goto-tab="games">My games</button>
             <select id="opponent-level" class="opp-level" title="Whose likely replies to show — human moves at this level">
               <option value="casual">Casual (~1300)</option>
               <option value="club" selected>Club (1500–1900)</option>
@@ -292,12 +302,18 @@
             <span id="tb-chip-label"></span>
             <div id="tb-moves" class="info-line"></div>
           </div>
-          <div id="maia-note" class="info-line muted hidden"></div>
-          <div id="maia-panel" class="maia-panel hidden">
-            <h3 id="maia-title">Human moves</h3>
-            <div id="maia-moves" class="maia-moves"></div>
-          </div>
-          <div id="plan-panel" class="plan-panel hidden"></div>
+          <!-- Maia human-move panel removed: the static build has no Maia models. -->
+          <div id="plan-panel" class="plan-panel hidden">          </div>
+          <details id="go-deeper" class="go-deeper">
+            <summary>Go deeper</summary>
+            <div class="info-line">Null-move, candidate lines, and coach suggestions on this position. My games loads a game onto this board.</div>
+            <div class="panel-row">
+              <button type="button" class="btn" id="btn-deeper-null">What if I pass?</button>
+              <button type="button" class="btn" id="btn-deeper-lines">Candidate lines</button>
+              <button type="button" class="btn" id="btn-deeper-suggest">Coach suggestions</button>
+            </div>
+            <div id="play-deeper-out"></div>
+          </details>
         </div>
         <div class="panel-card moves-card">
           <h3 class="card-title">Moves <span class="muted kbd-hint">← → to step</span></h3>
@@ -335,43 +351,7 @@
             <div class="settings-divider">My training data</div>
             <div class="panel-row"><span class="mine-status info-line"></span>
               <button class="btn mini btn-mine-reload">Reload my training data</button></div>
-            <div class="settings-divider">AI coach (local LLM)</div>
-            <label class="llm-toggle" for="llm-enabled">
-              <input id="llm-enabled" type="checkbox">
-              Enable AI coach (needs a local LLM server)
-            </label>
-            <div class="panel-row">
-              <input id="llm-url-input" type="text" spellcheck="false" placeholder="http://127.0.0.1:8080">
-              <button id="btn-llm-save" class="btn">Save</button>
-              <button id="btn-llm-test" class="btn">Test connection</button>
-            </div>
-            <label for="llm-model-input">Model name <span class="muted">(Ollama: your model, e.g. llama3.1 — LM Studio/llama.cpp can leave this)</span></label>
-            <div class="panel-row">
-              <input id="llm-model-input" type="text" spellcheck="false" placeholder="local-coach">
-            </div>
-            <div class="info-line"><span id="llm-status"></span></div>
-            <div id="llm-no-restart-hint" class="info-line muted hidden">Enabled — takes effect immediately, no restart needed.</div>
-            <div class="settings-divider">Coach voice (Latvian accent)</div>
-            <label class="llm-toggle" for="voice-enabled">
-              <input id="voice-enabled" type="checkbox">
-              Enable coach voice (reads the coach's text aloud)
-            </label>
-            <label class="llm-toggle" for="persona-enabled">
-              <input id="persona-enabled" type="checkbox">
-              Latvian coach wording (broken English)
-            </label>
-            <div class="panel-row">
-              <label for="voice-provider" class="muted">Voice:</label>
-              <select id="voice-provider">
-                <option value="auto">Auto</option>
-                <option value="edge">Nils (online)</option>
-                <option value="xtts">Offline clone</option>
-                <option value="sapi">System voice (unavailable on web)</option>
-              </select>
-            </div>
-            <div class="info-line"><span id="voice-status"></span></div>
-            <div class="info-line muted">Coach voice is unavailable in the web version — coach texts are shown on screen only. (The voice, when available, only reads text the app already shows — it never adds new advice.)</div>
-            <div class="info-line muted">Run a local server: LM Studio → Developer → Start Server (port 8080), or llama.cpp: llama-server -m model.gguf --port 8080, or Ollama (URL http://127.0.0.1:11434 + your model name below). The app calls your server at its /v1/chat/completions endpoint (OpenAI-compatible). When enabled, the AI coach rewrites plan goals and coach comments in friendlier language; if the server is off, the built-in explanations keep working. Recommended: a small model is plenty (Llama 3.2 3B / Qwen2.5 3B, ~2 GB) — the coach only rewords verified engine analysis, never invents moves.</div>
+            <div class="info-line muted">Quick take, Socratic and chat use the built-in coach. Voice, a local language model and Maia are not part of this build.</div>
           </div>
         </div>
         </div>
@@ -459,7 +439,11 @@
           <div id="build-lib-status" class="info-line"></div>
         </div>
         <div id="puzzle-lib-info" class="info-line"></div>
-        <h3>Mistake Flashcards</h3>
+        <h3>Your mistakes</h3>
+        <div class="info-line">Mistake review lives in the Mistake Deck — real games first, with Again / Hard / Good / Easy and a Woodpecker cycle on whatever filter you set. This page is the tactics library.</div>
+        <div class="panel-row"><button class="btn primary" type="button" data-goto-tab="deck">Open the Mistake Deck</button></div>
+        <div id="fc-retired" class="hidden">
+        <h3 class="hidden">Mistake Flashcards</h3>
         <div class="panel-row"><button class="btn primary" type="button" data-goto-tab="deck" title="All your games, ranked by cost, with spaced repetition">Open the Mistake Deck →</button></div>
         <div id="fc-stats" class="info-line"></div>
         <div id="fc-quarantined" class="info-line hidden"></div>
@@ -505,6 +489,7 @@
           </div>
         </div>
         <div id="fc-done" class="info-line hidden"></div>
+        </div>
       </aside>
     </div>
   </section>
@@ -662,13 +647,24 @@
         </div>
       </div>
       <aside class="side-panel">
-        <h3>Endgame canon curriculum</h3>
+        <div class="lab-panel eg-panel">
+          <h3>Endgame leaks in your games</h3>
+          <div class="info-line">
+            Scan your stored games for endgames the tablebase says you
+            should have won or held — and get the lessons that fix them.
+          </div>
+          <div class="panel-row">
+            <button id="btn-endgame-leaks" class="btn primary" title="Scan your imported games: positions reaching 7 or fewer pieces are checked against the tablebase">Scan my games</button>
+            <button id="btn-endgame-leaks-rescan" class="btn" title="Re-verify every game, ignoring cached results — useful after a scan ran while the tablebase/engine was unreachable">Rescan</button>
+          </div>
+          <div id="endgame-leaks-status" class="info-line"></div>
+          <div id="endgame-leaks"></div>
+        </div>
+        <h3>Endgame canon <span class="muted">10 lessons</span></h3>
         <div class="info-line">
           The essential theoretical endings in three tiers — every lesson
-          goal is <b>tablebase-verified</b>. Read the technique, then play
-          the position out against the engine: pass a lesson to unlock the
-          next, finish a tier to unlock the next tier. Key positions go
-          into your flashcard deck for spaced review.
+          goal is <b>tablebase-verified</b>. The leaks above say where to
+          start; the canon is the unlock path under them.
         </div>
         <div id="endgame-summary"></div>
         <div class="lab-panel eg-panel">
@@ -702,19 +698,6 @@
             <button id="btn-endgame-next" class="btn primary hidden">Next lesson</button>
             <button id="btn-endgame-exit" class="btn">Exit</button>
           </div>
-        </div>
-        <div class="lab-panel eg-panel">
-          <h3>Endgame leaks in your games</h3>
-          <div class="info-line">
-            Scan your stored games for endgames the tablebase says you
-            should have won or held — and get the lessons that fix them.
-          </div>
-          <div class="panel-row">
-            <button id="btn-endgame-leaks" class="btn" title="Scan your imported games: positions reaching 7 or fewer pieces are checked against the tablebase">Scan my games</button>
-            <button id="btn-endgame-leaks-rescan" class="btn" title="Re-verify every game, ignoring cached results — useful after a scan ran while the tablebase/engine was unreachable">Rescan</button>
-          </div>
-          <div id="endgame-leaks-status" class="info-line"></div>
-          <div id="endgame-leaks"></div>
         </div>
       </aside>
     </div>
@@ -898,7 +881,7 @@
           <div id="game-brilliant-flash" class="banner amber hidden"></div>
           <div id="game-coach-summary" class="coach-box"></div>
           <div class="panel-row">
-            <button id="btn-game-to-lab" class="btn">Open in Strategy Lab</button>
+            <button id="btn-game-to-lab" class="btn">Review this position</button>
           </div>
         </div>
       </div>
@@ -1005,7 +988,7 @@
         <div id="progress-trend"></div>
       </div>
       <div class="lab-panel" id="progress-openings-card">
-        <h3>Opening lines <span class="muted">(first tries, Modern, Scotch &amp; Grünfeld)</span></h3>
+        <h3>Opening lines <span class="muted">(first tries, Modern, Grünfeld, Scotch &amp; Alapin)</span></h3>
         <div id="progress-openings"><div class="info-line muted">Take a quiz on the Modern, Scotch or Grünfeld tab to start.</div></div>
       </div>
       <div class="lab-panel" id="progress-cycles-card">
@@ -1020,7 +1003,7 @@
         <h3>Post-mortem calibration <span class="muted">(last 30)</span></h3>
         <div id="pm-calibration-trend"></div>
       </div>
-      <div class="lab-panel" id="progress-openings-card">
+      <div class="lab-panel" id="progress-openings-report">
         <h3>Openings report</h3>
         <div id="openings-empty" class="info-line empty-inline hidden">
           No imported games yet — import your games in My Games to build this report.
@@ -1115,15 +1098,15 @@
         <div class="rep-coachbar">
           <span class="rep-coach-avatar" aria-hidden="true">&#x265E;</span>
           <div class="rep-coachbar-text">
-            <strong id="top10-title">Top 10 Openings</strong>
+            <strong id="top10-title">Wider set</strong>
             <span class="info-line" id="top10-summary">Loading…</span>
           </div>
           <span id="top10-due" class="rep-mem">Due today: …</span>
         </div>
         <div class="rep-picker">
           <div class="rep-picker-head">
-            <h3>The ten</h3>
-            <span class="info-line">Five with White, five with Black, grouped by family. Learn the plan, then drill the moves.</span>
+            <h3>Beyond the four</h3>
+            <span class="info-line">Italian, Ruy Lopez, Queen’s Gambit, London, English, Sicilian, French, Caro-Kann, King’s Indian, QGD. Learn the plan, then drill the moves.</span>
           </div>
           <div id="top10-openings" class="rep-looks">Loading…</div>
         </div>
@@ -1310,6 +1293,7 @@
             <button id="btn-alapin-blind" class="btn">Quiz against all types</button>
             <button id="btn-alapin-plan" class="btn" title="Play on from the final position against the engine at your level">&#9654; Play the plan</button>
             <button id="btn-alapin-play" class="btn">Send to Play &amp; Analyze</button>
+            <button class="btn" type="button" data-goto-tab="alapin-drill" title="The short drill: main line and two sidelines, about eight moves each">Short drill</button>
           </div>
           <div class="rep-status-row"><span id="alapin-status" class="info-line"></span></div>
           <div id="alapin-score" class="rep-score hidden"></div>
@@ -1346,8 +1330,9 @@
         <div class="rep-coachbar">
           <span class="rep-coach-avatar" aria-hidden="true">&#x265F;</span>
           <div class="rep-coachbar-text">
-            <strong id="aln-title">Alapin Sicilian (2.c3)</strong>
+            <strong id="aln-title">Alapin — short drill</strong>
             <span class="info-line" id="aln-summary">Loading…</span>
+            <div class="panel-row"><button class="btn mini" type="button" data-goto-tab="alapin">Full Alapin lines</button></div>
           </div>
           <span id="aln-due" class="rep-mem">Due today: …</span>
         </div>
@@ -1467,7 +1452,9 @@
           <select id="deck-f-colour" aria-label="Colour"><option value="">Both colours</option><option value="white">As White</option><option value="black">As Black</option></select>
           <select id="deck-f-phase" aria-label="Phase"><option value="">All phases</option><option value="opening">Opening</option><option value="middlegame">Middlegame</option><option value="endgame">Endgame</option></select>
           <select id="deck-f-source" aria-label="Site"><option value="">All sites</option><option value="lichess">Lichess</option><option value="chesscom">Chess.com</option><option value="noctie">Noctie</option><option value="legacy">Earlier set</option><option value="local">Added here</option></select>
-          <select id="deck-sort" aria-label="Order"><option value="due">Due first, then cost</option><option value="cost">Cost (highest first)</option><option value="date">Newest first</option><option value="random">Shuffle</option></select>
+          <select id="deck-f-games" aria-label="Which games"><option value="real">Real games</option><option value="training">Training games</option><option value="all">All games</option></select>
+          <select id="deck-sort" aria-label="Order"><option value="due">Due first, middlegame first</option><option value="cost">Cost (highest first)</option><option value="date">Newest first</option><option value="random">Shuffle</option></select>
+          <button id="btn-deck-cycle" class="btn" type="button" title="Woodpecker pass: solve every card in this filter, then repeat in a day or three">Cycle this set</button>
           <button id="deck-f-reset" class="btn mini" type="button" title="Clear all filters">Reset</button>
         </div>
         <div class="deck-card">
@@ -1640,17 +1627,17 @@
 <!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
 <script src="vendor/chess.js?v=33"></script>
 <script src="js/engine.js?v=33"></script>
-<script src="api-shim.js?v=48"></script>
+<script src="api-shim.js?v=54"></script>
 <script src="pieces.js?v=33"></script>
-<script src="board.js?v=35"></script>
-<script src="app.js?v=49"></script>
-<script src="js/repertoire.js?v=46"></script>
-<script src="js/top10.js?v=48"></script>
+<script src="board.js?v=50"></script>
+<script src="app.js?v=54"></script>
+<script src="js/repertoire.js?v=52"></script>
+<script src="js/top10.js?v=54"></script>
 <script src="js/alapin-drill.js?v=48"></script>
 <script src="js/attacks.js?v=44"></script>
 <script src="js/calc.js?v=44"></script>
-<script src="js/deck.js?v=48"></script>
-<script src="js/finish.js?v=49"></script>
+<script src="js/deck.js?v=51"></script>
+<script src="js/finish.js?v=54"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});

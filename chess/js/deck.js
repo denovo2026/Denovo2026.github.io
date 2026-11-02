@@ -13,7 +13,8 @@
    ======================================================================= */
 const DECK_KEYS = { srs: "cc-deck-srs-v1", local: "cc-deck-local-v1", prefs: "cc-deck-prefs-v1", sync: "cc-deck-sync-v1" };
 const Deck = { all: [], byId: {}, meta: null, srs: {}, queue: [], cur: null, state: "idle", tries: 0, hinted: 0,
-  prefs: { costly: false, theme: "", opening: "", colour: "", phase: "", source: "", sort: "due" }, loaded: false, anim: null, busy: false };
+  prefs: { costly: false, theme: "", opening: "", colour: "", phase: "", source: "", games: "real", sort: "due" },
+  loaded: false, anim: null, busy: false, cycle: null };
 const deckBoard = new Board($("deck-board"), { onMove: onDeckMove });
 const DECK_ME = ["jetblack007"];
 
@@ -31,7 +32,7 @@ const DECK_SITE = { lichess: "Lichess", chesscom: "Chess.com", noctie: "Noctie",
 async function deckLoad() {
   let bundled = { cards: [], summary: null };
   try {
-    const r = await fetch("data/mine/deck.json?v=48", { cache: "no-cache" });
+    const r = await fetch("data/mine/deck.json?v=51", { cache: "no-cache" });
     if (r.ok) bundled = await r.json();
   } catch (e) { console.info("[deck] bundled deck not loaded:", e && e.message); }
   const local = deckLS(DECK_KEYS.local, []);
@@ -46,7 +47,10 @@ async function deckLoad() {
   Deck.byId = byId;
   Deck.meta = bundled;
   Deck.srs = srs;
-  Deck.prefs = Object.assign(Deck.prefs, deckLS(DECK_KEYS.prefs, {}));
+  deckMigrateFlashcards();
+  const saved = deckLS(DECK_KEYS.prefs, {});
+  Deck.prefs = Object.assign({ costly: false, theme: "", opening: "", colour: "", phase: "", source: "", games: "real", sort: "due" }, saved);
+  if (Deck.prefs.games !== "real" && Deck.prefs.games !== "training" && Deck.prefs.games !== "all") Deck.prefs.games = "real";
   Deck.loaded = true;
   deckFillFilters();
   deckRenderSummary();
@@ -66,6 +70,7 @@ function deckFillFilters() {
   $("deck-f-theme").value = p.theme || ""; $("deck-f-opening").value = p.opening || "";
   $("deck-f-colour").value = p.colour || ""; $("deck-f-phase").value = p.phase || "";
   $("deck-f-source").value = p.source || ""; $("deck-sort").value = p.sort || "due";
+  if ($("deck-f-games")) $("deck-f-games").value = p.games || "real";
   if ($("deck-f-theme").value !== (p.theme || "")) p.theme = "";
   if ($("deck-f-opening").value !== (p.opening || "")) p.opening = "";
   $("deck-f-costly").classList.toggle("active", !!p.costly);
@@ -76,8 +81,10 @@ function deckFiltered() {
   const p = Deck.prefs;
   return Deck.all.filter(c => (!p.costly || c.most_costly) && (!p.theme || c.theme === p.theme) && (!p.opening || c.opening === p.opening)
     && (!p.colour || c.side === p.colour) && (!p.phase || c.phase === p.phase)
-    && (!p.source || (p.source === "local" ? c.local : c.source === p.source)));
+    && (!p.source || (p.source === "local" ? c.local : c.source === p.source))
+    && (p.games === "all" || (p.games === "training" ? !!c.training : !c.training)));
 }
+function deckPhaseRank(c) { return c.phase === "middlegame" ? 0 : c.phase === "opening" ? 1 : 2; }
 function deckDue(c) { const s = Deck.srs[c.id]; return !s || !s.due || Date.parse(s.due) <= Date.now(); }
 function deckBuildQueue() {
   const list = deckFiltered(), sort = Deck.prefs.sort;
@@ -89,7 +96,9 @@ function deckBuildQueue() {
       const da = deckDue(a), db = deckDue(b);
       if (da !== db) return da ? -1 : 1;
       if (!da) return Date.parse(Deck.srs[a.id].due) - Date.parse(Deck.srs[b.id].due);
-      const na = !Deck.srs[a.id], nb = !Deck.srs[b.id];   // reviews due before brand-new cards? no: costly first
+      const pa = deckPhaseRank(a), pb = deckPhaseRank(b);
+      if (pa !== pb) return pa - pb;   // middlegame first, then opening, then endgame
+      const na = !Deck.srs[a.id], nb = !Deck.srs[b.id];
       return b.cost - a.cost || (na === nb ? 0 : na ? 1 : -1);
     });
   }
@@ -107,9 +116,11 @@ function deckRenderSummary() {
   const due = shown.filter(deckDue).length, newN = shown.filter(c => !Deck.srs[c.id]).length;
   const learned = all.filter(c => { const s = Deck.srs[c.id]; return s && s.interval >= 7; }).length;
   const games = Deck.meta && Deck.meta.summary ? Deck.meta.summary.games : null;
+  const realN = all.filter(c => !c.training).length;
   $("deck-sum").innerHTML = "<b>" + all.length + "</b> cards" + (games ? " from " + games.total + " games" : "")
-    + " · <b>" + all.filter(c => c.most_costly).length + "</b> most costly · showing <b>" + shown.length + "</b> · <b>" + due + "</b> due"
+    + " · <b>" + realN + "</b> from real games · showing <b>" + shown.length + "</b> · <b>" + due + "</b> due"
     + " (" + newN + " new) · " + learned + " learned";
+  deckCycleLabel();
   const block = (title, rows) => '<div class="deck-bd"><h4>' + title + "</h4>" + rows.slice(0, 8).map(([k, n]) =>
     '<div class="deck-bd-row"><span>' + deckEsc(k) + "</span><b>" + n + "</b></div>").join("") + "</div>";
   const sum = Deck.meta && Deck.meta.summary;
@@ -177,8 +188,11 @@ function deckShow(c) {
     + ' <span class="chip deck-theme-chip">' + deckEsc(c.theme) + "</span>";
   $("deck-meta").textContent = [c.opening, c.phase, DECK_SITE[c.source] || c.source, c.date].filter(Boolean).join(" · ")
     + (s ? " · seen " + (s.reps + s.lapses) + "×" : "");
-  $("deck-prompt").innerHTML = "In the game you played <b>" + deckEsc(c.played_san) + "</b> here and it cost <b>"
-    + Math.round(c.wp_loss) + "%</b> win chance. <span class=\"deck-ask\">Find the better move.</span>";
+  const cycleNote = Deck.cycle ? " <span class=\"muted\">Cycle " + (Deck.cycle.i + 1) + "/" + Deck.cycle.ids.length + "</span>" : "";
+  $("deck-prompt").innerHTML = (c.lesson_card
+    ? "Endgame lesson: <b>" + deckEsc(c.title) + "</b>. <span class=\"deck-ask\">Find the key move.</span>"
+    : "In the game you played <b>" + deckEsc(c.played_san) + "</b> here and it cost <b>"
+      + Math.round(c.wp_loss) + "%</b> win chance. <span class=\"deck-ask\">Find the better move.</span>") + cycleNote;
   deckSetFeedback("");
   $("deck-grades").classList.add("hidden");
   $("deck-explain").classList.add("hidden");
@@ -187,6 +201,10 @@ function deckShow(c) {
   deckRenderSummary();
 }
 function deckNext() {
+  if (Deck.cycle && !Deck.cycle.done) {
+    const c = Deck.byId[Deck.cycle.ids[Deck.cycle.i]];
+    return deckShow(c || null);
+  }
   const q = deckBuildQueue();
   if (!q.length) return deckShow(null);
   // don't repeat the card we just did when there is another one
@@ -246,7 +264,9 @@ function deckReveal(solved) {
   const c = Deck.cur; if (!c) return;
   if (!solved) { Deck.state = "revealed"; if (!$("deck-feedback").classList.contains("bad")) deckSetFeedback("The answer was <b>" + deckEsc(c.best_san) + "</b>.", "bad"); }
   deckBoard.setFen(c.fen); deckBoard.setLastMove(null, null);
-  deckBoard.setArrows([{ from: c.best_uci.slice(0, 2), to: c.best_uci.slice(2, 4), color: "green" }, { from: c.played_uci.slice(0, 2), to: c.played_uci.slice(2, 4), color: "red" }]);
+  const arrows = [{ from: c.best_uci.slice(0, 2), to: c.best_uci.slice(2, 4), color: "green" }];
+  if (c.played_uci && c.played_uci.slice(0, 4) !== c.best_uci.slice(0, 4)) arrows.push({ from: c.played_uci.slice(0, 2), to: c.played_uci.slice(2, 4), color: "red" });
+  deckBoard.setArrows(arrows);
   const ex = $("deck-explain");
   const other = (c.accept_san || []).filter(s => s !== c.best_san);
   ex.innerHTML = '<div class="deck-ex-head"><span class="deck-swing">' + deckEsc(c.swing) + "</span> "
@@ -293,7 +313,81 @@ function deckAnimate(fen, pv) {
 function deckGrade(g) {
   const c = Deck.cur; if (!c || Deck.state === "ask") return;
   deckSched(c.id, g);
+  if (typeof ccLogAnswer === "function") ccLogAnswer("tactics", "deck");
+  if (Deck.cycle && !Deck.cycle.done) {
+    if (g === "good" || g === "easy") Deck.cycle.right++; else Deck.cycle.miss++;
+    Deck.cycle.i++;
+    if (Deck.cycle.i >= Deck.cycle.ids.length) return deckFinishCycle();
+  }
   deckNext();
+}
+function deckCycleLabel() {
+  const n = deckFiltered().length;
+  const btn = $("btn-deck-cycle");
+  if (!btn) return;
+  btn.textContent = Deck.cycle && !Deck.cycle.done ? "Stop cycle" : "Cycle this set" + (n ? " (" + n + ")" : "");
+}
+function deckStartCycle() {
+  if (Deck.cycle && !Deck.cycle.done) { Deck.cycle = null; deckCycleLabel(); deckNext(); return; }
+  const list = deckFiltered();
+  if (!list.length) return;
+  Deck.cycle = { ids: list.map(c => c.id), i: 0, right: 0, miss: 0, t0: Date.now(), done: false };
+  deckCycleLabel();
+  deckShow(Deck.byId[Deck.cycle.ids[0]]);
+}
+function deckFinishCycle() {
+  const cy = Deck.cycle; if (!cy) return;
+  cy.done = true;
+  const n = cy.ids.length, sec = Math.max(1, Math.round((Date.now() - cy.t0) / 1000));
+  const acc = n ? Math.round(100 * cy.right / n) : 0;
+  const hist = deckLS("cc-deck-cycles-v1", []);
+  hist.push({ at: new Date().toISOString(), n: n, right: cy.right, miss: cy.miss, sec: sec, games: Deck.prefs.games, phase: Deck.prefs.phase || "" });
+  deckSave("cc-deck-cycles-v1", hist.slice(-40));
+  Deck.cycle = null;
+  deckCycleLabel();
+  deckSetFeedback("Cycle done — " + cy.right + "/" + n + " clean (" + acc + "%) in " + sec + "s. A Woodpecker pass comes back in 1–3 days; press Cycle this set to run it again.", "good");
+  if (typeof ccLogAnswer === "function") ccLogAnswer("tactics", "cycle");
+}
+/* Copy reviewed flashcard schedules onto matching deck cards once.
+   The old store (chesscoach:flashcards) is left in place. */
+function deckMigrateFlashcards() {
+  const FLAG = "cc-deck-fc-migrated-v1";
+  try { if (localStorage.getItem(FLAG)) return; } catch (_) { return; }
+  let raw = [];
+  try { raw = JSON.parse(localStorage.getItem("chesscoach:flashcards") || "[]"); } catch (_) { raw = []; }
+  if (!Array.isArray(raw)) raw = [];
+  const byKey = {};
+  Deck.all.forEach(c => {
+    const fen = String(c.fen || "").split(" ").slice(0, 4).join(" ");
+    byKey[fen + "|" + String(c.best_uci || "").slice(0, 4)] = c;
+    (c.alias_ids || []).forEach(a => { byKey["id:" + a] = c; });
+    byKey["id:" + c.id] = c;
+  });
+  let n = 0;
+  raw.forEach(fc => {
+    if (!fc || !(fc.reps > 0 || fc.lapses > 0)) return;
+    const fen = String(fc.fen_before || "").split(" ").slice(0, 4).join(" ");
+    const card = byKey["id:" + fc.id] || byKey[fen + "|" + String(fc.best_uci || "").slice(0, 4)];
+    if (!card) return;
+    const cur = Deck.srs[card.id];
+    if (cur && (cur.reps || cur.lapses)) return;
+    Deck.srs[card.id] = {
+      ease: fc.ease || 2.5, interval: fc.interval || 0, reps: fc.reps || 0, lapses: fc.lapses || 0,
+      due: fc.due_at || new Date().toISOString(), last: "good", at: fc.due_at || new Date().toISOString(),
+      hist: [["migrated", "f"]], migrated: "flashcards",
+    };
+    n++;
+  });
+  if (n) deckSave(DECK_KEYS.srs, Deck.srs);
+  try { localStorage.setItem(FLAG, JSON.stringify({ at: new Date().toISOString(), copied: n })); } catch (_) { /* */ }
+}
+function deckRememberLesson(card) {
+  if (!card || !card.id || !card.fen || !card.best_uci) return;
+  const local = deckLS(DECK_KEYS.local, []);
+  if (local.some(c => c && c.id === card.id) || Deck.byId[card.id]) return;
+  local.push(card);
+  deckSave(DECK_KEYS.local, local);
+  if (Deck.loaded) deckLoad();
 }
 function deckHint() {
   const c = Deck.cur; if (!c || Deck.state !== "ask") return;
@@ -306,20 +400,23 @@ function deckHint() {
 
 /* ---------------- filters ---------------- */
 function deckPrefsChanged() {
+  if (Deck.cycle) Deck.cycle = null;
   deckSave(DECK_KEYS.prefs, Deck.prefs);
   $("deck-f-costly").classList.toggle("active", !!Deck.prefs.costly);
   $("deck-f-costly").setAttribute("aria-pressed", Deck.prefs.costly ? "true" : "false");
   deckRenderSummary();
+  deckCycleLabel();
   const q = deckBuildQueue();
   if (!Deck.cur || q.indexOf(Deck.cur) === -1 || Deck.state !== "ask") deckShow(q[0] || null);
 }
-[["deck-f-theme", "theme"], ["deck-f-opening", "opening"], ["deck-f-colour", "colour"], ["deck-f-phase", "phase"], ["deck-f-source", "source"], ["deck-sort", "sort"]]
-  .forEach(([id, k]) => $(id).addEventListener("change", () => { Deck.prefs[k] = $(id).value; if (k === "sort") Deck.cur = null; deckPrefsChanged(); }));
+[["deck-f-theme", "theme"], ["deck-f-opening", "opening"], ["deck-f-colour", "colour"], ["deck-f-phase", "phase"], ["deck-f-source", "source"], ["deck-f-games", "games"], ["deck-sort", "sort"]]
+  .forEach(([id, k]) => { const el = $(id); if (el) el.addEventListener("change", () => { Deck.prefs[k] = el.value; if (k === "sort" || k === "games") Deck.cur = null; deckPrefsChanged(); }); });
 $("deck-f-costly").addEventListener("click", () => { Deck.prefs.costly = !Deck.prefs.costly; if (Deck.prefs.costly) Deck.prefs.sort = "cost", $("deck-sort").value = "cost"; Deck.cur = null; deckPrefsChanged(); });
 $("deck-f-reset").addEventListener("click", () => {
-  Deck.prefs = { costly: false, theme: "", opening: "", colour: "", phase: "", source: "", sort: "due" };
+  Deck.prefs = { costly: false, theme: "", opening: "", colour: "", phase: "", source: "", games: "real", sort: "due" };
   deckFillFilters(); Deck.cur = null; deckPrefsChanged();
 });
+if ($("btn-deck-cycle")) $("btn-deck-cycle").addEventListener("click", deckStartCycle);
 $("btn-deck-hint").addEventListener("click", deckHint);
 $("btn-deck-reveal").addEventListener("click", () => { if (Deck.state === "ask") deckReveal(false); });
 $("btn-deck-skip").addEventListener("click", deckNext);
@@ -541,4 +638,4 @@ if ($("deck-lessons-list")) $("deck-lessons-list").addEventListener("click", (e)
   const b = e.target.closest(".deck-top-item"); if (!b) return;
   const c = Deck.byId[b.dataset.id]; if (c) deckShow(c);
 });
-window.CCDeck = { state: Deck, init: initDeck, next: deckNext, grade: deckGrade, show: deckShowById };
+window.CCDeck = { state: Deck, init: initDeck, next: deckNext, grade: deckGrade, show: deckShowById, remember: deckRememberLesson, cycle: deckStartCycle };
