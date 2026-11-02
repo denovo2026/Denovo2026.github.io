@@ -4111,6 +4111,7 @@ sparringBoard.setInteractive(false);
 
 function initSparring() {
   loadSparringAll();
+  if (typeof finishInit === "function") finishInit();
 }
 
 async function loadSparringAll() {
@@ -8599,7 +8600,7 @@ document.addEventListener("click", (e) => {
 (function deepLink() {
   let u;
   try { u = new URLSearchParams(location.search); } catch (_) { return; }
-  const tab = u.get("tab"), set = u.get("set"), card = u.get("card");
+  const tab = u.get("tab"), set = u.get("set"), card = u.get("card"), mode = u.get("mode");
   if (!tab && !set && !card) return;
   try { history.replaceState(null, "", location.pathname + location.hash); } catch (_) { /* */ }
   const target = card ? "deck" : set ? "puzzles" : tab;
@@ -8610,6 +8611,7 @@ document.addEventListener("click", (e) => {
       $("puzzle-set").dispatchEvent(new Event("change"));
     }
     switchTab(target);
+    if (mode === "finish" && target === "sparring" && typeof finishSetMode === "function") finishSetMode("finish");
     if (card && window.CCDeck && window.CCDeck.show) window.CCDeck.show(card);
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run); else setTimeout(run, 0);
