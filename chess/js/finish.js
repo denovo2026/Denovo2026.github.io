@@ -339,6 +339,7 @@
     }
     if (!list.length) {
       host.innerHTML = '<div class="info-line">No positions in this view.</div>';
+      fiSyncStart();
       return;
     }
     list.forEach(function (p) {
@@ -357,6 +358,7 @@
       btn.addEventListener("click", function () { fiStart(p.id); });
       host.appendChild(btn);
     });
+    fiSyncStart();
   }
 
   /* List view: put the first position on the board so the picker is not the
@@ -372,17 +374,30 @@
     sparringBoard.setLastMove(null, null);
     sparringBoard.clearArrows();
     var note = $("sparring-board-note");
-    if (note) note.textContent = "No clock · " + fiSideName(p.side) + " to move";
+    if (note) note.textContent = "Preview · No clock · " + fiSideName(p.side) + " to move";
+    fiSyncStart();
+  }
+
+  function fiSyncStart() {
+    var btn = $("btn-fi-start");
+    if (!btn) return;
+    var ready = !!(FI.posId && FI.byId[FI.posId]) || !!(fiVisible()[0]);
+    btn.disabled = !ready;
   }
 
   function fiShowHome() {
     FI.seq++;
     FI.busy = false;
-    if (FI.phase !== "over") FI.phase = "idle";
     var home = $("fi-home"), run = $("fi-run");
     if (home) home.classList.remove("hidden");
     if (run) run.classList.add("hidden");
     sparringBoard.setInteractive(false);
+    FI.phase = "idle";
+    if (FI.pos && FI.mode === "finish") {
+      var note = $("sparring-board-note");
+      if (note) note.textContent = "Preview · No clock · " + fiSideName(FI.pos.side) + " to move";
+    }
+    fiSyncStart();
     fiRenderList();
   }
 
@@ -659,6 +674,11 @@
       fiFinish({ outcome: "fail", reason: "resign", detail: "You gave up." });
     });
     $("btn-fi-positions").addEventListener("click", fiShowHome);
+    var startBtn = $("btn-fi-start");
+    if (startBtn) startBtn.addEventListener("click", function () {
+      var id = (FI.posId && FI.byId[FI.posId]) ? FI.posId : (fiVisible()[0] && fiVisible()[0].id);
+      if (id) fiStart(id);
+    });
     fiRenderLeftOut();
   }
 
