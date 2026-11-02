@@ -2354,9 +2354,16 @@
     var dueOpen = REP_PLAN.reduce(function (a, op) { return a + (dueBy[op.slug] || 0); }, 0);
     if (dueOpen) reasons.push(dueOpen + " opening line(s) due for review");
     pillars.openings = { target_sessions: REP_PLAN.length, done_sessions: Math.min(REP_PLAN.length, daysOf(opDone).size), items: opItems };
-    var planned = 0, completed = 0;
-    Object.keys(pillars).forEach(function (k) { planned += pillars[k].target_sessions; completed += pillars[k].done_sessions; });
-    return { week_of: week, reasons: reasons, pillars: pillars, adherence: { completed: completed, planned: planned, pct: planned ? Math.round(100 * completed / planned) : 0 } };
+    /* The week the player sees is the same three jobs as Today, not the old pillar totals. */
+    var firstOpen = opItems.filter(function (it) { return !it.done; })[0] || opItems[0] || { ref: { tab: "modern", drill: "modern" } };
+    var session = [
+      { key: "mistake", label: "Review a real-game mistake", done: doneBy("tactics", ["deck", "flashcards", "cycle"]).length > 0, ref: { tab: "deck" } },
+      { key: "opening", label: "Drill one opening line", done: opDone.length > 0, ref: firstOpen.ref || { tab: "modern", drill: "modern" } },
+      { key: "playout", label: "Play a position out", done: doneBy("sparring").length + doneBy("endgame").length > 0, ref: { tab: "sparring" } }
+    ];
+    var completed = session.filter(function (s) { return s.done; }).length;
+    return { week_of: week, reasons: reasons, pillars: pillars, session: session,
+      adherence: { completed: completed, planned: session.length, pct: session.length ? Math.round(100 * completed / session.length) : 0 } };
   }
   route("GET", "/api/training-plan", function () { return planFor(weekStart()); });
   // v39: category counts of the player's own mistake cards (bundled cards + misses from his games)
@@ -2403,7 +2410,7 @@
   // v40: a streak day needs a real answer (viewing a game review or opening a tab does not count)
   var STREAK_SKIP = { analysis: 1 };
   route("POST", "/api/activity/answer", function (b) {
-    var pillar = { openings: "openings", tactics: "tactics", masters: "masters" }[b.pillar] || "tactics";
+    var pillar = { openings: "openings", tactics: "tactics", masters: "masters", sparring: "sparring", endgame: "endgame", review: "review" }[b.pillar] || "tactics";
     logActivity(pillar, String(b.kind || "answer").slice(0, 32));
     return { ok: true };
   });

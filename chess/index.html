@@ -82,7 +82,7 @@
       <button class="tab-btn" data-tab="grunfeld" data-group="openings">Gr&uuml;nfeld</button>
       <button class="tab-btn" data-tab="scotch" data-group="openings">Scotch</button>
       <button class="tab-btn" data-tab="alapin" data-group="openings">Alapin</button>
-      <button class="tab-btn" data-tab="top10" data-group="openings">Wider set <span id="top10-tab-due" class="t10-tab-due hidden"></span></button>
+      <button class="tab-btn" data-tab="top10" data-group="openings">Wider set</button>
       <button class="tab-btn" data-tab="play" data-group="review">Analyze</button>
       <button class="tab-btn" data-tab="games" data-group="review">My games</button>
     </div>
@@ -131,7 +131,7 @@
         <div class="panel-row"><button class="btn mini" type="button" data-goto-tab="progress">Charts</button></div>
       </div>
       <div class="lab-panel" id="plan-adherence-card">
-        <h3>Adherence <span class="muted">planned vs completed</span></h3>
+        <h3>This week <span class="muted">the three session items</span></h3>
         <div id="plan-adherence"></div>
         <div id="plan-adherence-trend"></div>
       </div>
@@ -1627,17 +1627,17 @@
 <!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
 <script src="vendor/chess.js?v=33"></script>
 <script src="js/engine.js?v=33"></script>
-<script src="api-shim.js?v=52"></script>
+<script src="api-shim.js?v=54"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=50"></script>
-<script src="app.js?v=53"></script>
+<script src="app.js?v=54"></script>
 <script src="js/repertoire.js?v=52"></script>
-<script src="js/top10.js?v=48"></script>
+<script src="js/top10.js?v=54"></script>
 <script src="js/alapin-drill.js?v=48"></script>
 <script src="js/attacks.js?v=44"></script>
 <script src="js/calc.js?v=44"></script>
 <script src="js/deck.js?v=51"></script>
-<script src="js/finish.js?v=49"></script>
+<script src="js/finish.js?v=54"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});

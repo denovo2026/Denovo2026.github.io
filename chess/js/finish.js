@@ -544,6 +544,7 @@
     $("btn-fi-giveup").disabled = true;
     var win = result.outcome === "win";
     var kept = fiKept(FI.startCp, FI.minCp);
+    if (typeof ccLogAnswer === "function") ccLogAnswer("sparring", "finish");
     fiSaveBest(p.id, kept, win);
     var sum = $("fi-summary");
     var worst = FI.worst;

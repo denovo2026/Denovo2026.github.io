@@ -8008,7 +8008,7 @@ function renderPlanAdherence(plan, adherence) {
   const line = document.createElement("div");
   line.className = "info-line";
   line.textContent = "This week: " + a.completed + " of " + a.planned +
-    " planned items done (" + a.pct + "%)";
+    " session items done (" + a.pct + "%)";
   const bar = document.createElement("div");
   bar.className = "adherence-bar";
   const fill = document.createElement("div");
@@ -8042,9 +8042,8 @@ function renderPlanReasons(plan) {
   if (!host) return;
   const reasons = (plan && plan.reasons) || [];
   let text = reasons.length
-    ? "Why this plan: " + reasons.join(" · ")
-    : "Why this plan: the standard weekly mix — review your games, drill " +
-      "tactics, spar, study endgames and the masters.";
+    ? reasons.join(" · ")
+    : "Three things count this week: a real-game mistake, one opening line, and one position played out.";
   if (plan && plan.week_of) text = "Week of " + plan.week_of + ". " + text;
   host.textContent = text;
 }
@@ -8082,6 +8081,11 @@ function renderPlanBoard(plan, metrics) {
   const host = $("plan-board");
   if (!host) return;
   host.innerHTML = "";
+  const session = (plan && plan.session) || [];
+  if (session.length) {
+    session.forEach(it => host.appendChild(planItemCard(it)));
+    return;
+  }
   PLAN_PILLARS.forEach(p => {
     const pillar = (plan && plan.pillars && plan.pillars[p.key]) ||
       { target_sessions: 0, done_sessions: 0, items: [] };
@@ -8313,19 +8317,15 @@ function renderHeatmap(data) {
 const WEEK_CLOSED_KEY = "chesscoach.weekClosed";
 
 function checkWeekClosed(plan) {
-  if (!plan || !plan.pillars || !plan.week_of) return;
-  const closed = PLAN_PILLARS.every(p => {
-    const pillar = plan.pillars[p.key];
-    return pillar && pillar.target_sessions > 0 &&
-      (pillar.done_sessions || 0) >= pillar.target_sessions;
-  });
+  if (!plan || !plan.session || !plan.week_of) return;
+  const closed = plan.session.length > 0 && plan.session.every(it => it.done);
   if (!closed) return;
   let celebrated = null;
   try { celebrated = localStorage.getItem(WEEK_CLOSED_KEY); } catch (_) { /* */ }
   if (celebrated === plan.week_of) return; // once per week
   try { localStorage.setItem(WEEK_CLOSED_KEY, plan.week_of); } catch (_) { /* */ }
   const banner = $("week-closed-banner");
-  banner.textContent = "Week closed — every pillar complete.";
+  banner.textContent = "Week closed — mistake, opening, and a position played out.";
   banner.classList.remove("hidden");
   confettiBurst(30);
   speakCelebration(banner.textContent); // V26: read the banner ONCE
