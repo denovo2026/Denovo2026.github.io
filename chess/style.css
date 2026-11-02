@@ -967,8 +967,8 @@ select.opp-level { font-size: 0.92rem; }
 .progress-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; align-items: stretch; }
 .progress-grid .lab-panel { min-height: 160px; }
 .progress-grid .lab-panel h3 .muted { font-weight: 400; font-size: var(--fs-xs); }
-#progress-openings-card { grid-column: 1 / -1; }
-@media (min-width: 1100px) { #progress-openings-card { grid-column: span 2; } }
+#progress-openings-card, #progress-openings-report { grid-column: 1 / -1; }
+@media (min-width: 1100px) { #progress-openings-card, #progress-openings-report { grid-column: span 2; } }
 .spark { display: block; width: 100%; max-width: 420px; height: auto; }
 .spark polyline { stroke: var(--accent); }
 .spark-labels { display: flex; justify-content: space-between; max-width: 420px; font-size: var(--fs-xs); color: var(--text-3); }
@@ -1237,6 +1237,8 @@ select.opp-level { font-size: 0.92rem; }
     --board-size: clamp(280px, min(calc(var(--stage-h) - var(--board-chrome)),
                                    calc(100vw - 2 * var(--pad-x) - var(--side-min) - 60px)), 860px); }
   #tab-play { --board-chrome: 58px; }
+  /* Lab: nav + FEN field + the action row must stay on screen at 1366×768 and 1440×900. */
+  #tab-lab { --board-chrome: 268px; }
   #tab-games { --board-chrome: 180px; }
   .rep-tab { --board-chrome: 104px; --side-min: 520px; }
   #tab-attacks { --board-chrome: 48px; }
@@ -1366,6 +1368,15 @@ select.opp-level { font-size: 0.92rem; }
 @media (min-width: 961px) {
   .games-board-col { width: var(--board-size); min-width: 280px; }
   .lab-left { width: var(--board-size); }
+  /* Pin the FEN row and the action buttons; the board shrinks instead of scrolling them away. */
+  #tab-lab .lab-left {
+    display: flex; flex-direction: column; overflow: hidden;
+    max-height: var(--stage-h);
+  }
+  #tab-lab .lab-left > .panel-row { flex: 0 0 auto; margin: 4px 0; gap: 6px; }
+  #tab-lab .lab-left .btn { min-height: 32px; padding: 4px 9px; font-size: 0.82rem; }
+  #tab-lab #lab-fen-input { max-height: 40px; min-height: 0; margin: 0; }
+  #tab-lab .lab-left .nav-slot { margin: 4px 0 2px; flex: 0 0 auto; }
 }
 @media (min-width: 961px) {
   /* Play: nav buttons and the move-feedback chip share one row under the
@@ -1439,9 +1450,10 @@ select.opp-level { font-size: 0.92rem; }
 .mine-bar { display: inline-flex; gap: 6px; align-items: center; margin-left: auto; flex-wrap: wrap; }
 .mine-chip { font-size: 0.78rem; color: var(--accent-text); background: var(--accent-soft); border: 1px solid var(--accent-ring);
   border-radius: 999px; padding: 2px 9px; white-space: nowrap; }
-.mine-toast { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 9999; max-width: min(92vw, 560px);
+/* Sit under the header, top-right, so it never covers move buttons or board nav. */
+.mine-toast { position: fixed; top: calc(var(--hdr-h, 86px) + 8px); right: 16px; left: auto; bottom: auto; transform: none; z-index: 45; max-width: min(92vw, 420px);
   background: var(--surface-2, #161b22); color: var(--text); border: 1px solid var(--accent, #2fbf8a); border-radius: 10px;
-  padding: 10px 14px; font-size: 0.9rem; box-shadow: 0 8px 30px rgba(0,0,0,.45); transition: opacity .6s; }
+  padding: 10px 14px; font-size: 0.9rem; box-shadow: 0 8px 30px rgba(0,0,0,.45); transition: opacity .6s; pointer-events: none; }
 .mine-toast.out { opacity: 0; }
 @media (min-width: 961px) {
   /* v39: the games list now always has content; keep it inside the stage under the import row */
@@ -1541,7 +1553,7 @@ select.opp-level { font-size: 0.92rem; }
   /* a backdrop-filter on the header would make it the containing block of the fixed bar */
   .app-header { -webkit-backdrop-filter: none; backdrop-filter: none; background: color-mix(in srgb, var(--bg) 97%, transparent); }
   body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0)); }
-  .mine-toast { bottom: calc(72px + env(safe-area-inset-bottom, 0)); }
+  .mine-toast { top: calc(var(--hdr-h, 86px) + 6px); right: 8px; bottom: auto; }
   .tab-subs .tab-btn { min-height: 40px; }
 }
 

@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=49">
+<link rel="stylesheet" href="style.css?v=50">
 </head>
 <body>
 <header class="app-header">
@@ -292,11 +292,7 @@
             <span id="tb-chip-label"></span>
             <div id="tb-moves" class="info-line"></div>
           </div>
-          <div id="maia-note" class="info-line muted hidden"></div>
-          <div id="maia-panel" class="maia-panel hidden">
-            <h3 id="maia-title">Human moves</h3>
-            <div id="maia-moves" class="maia-moves"></div>
-          </div>
+          <!-- Maia human-move panel removed: the static build has no Maia models. -->
           <div id="plan-panel" class="plan-panel hidden"></div>
         </div>
         <div class="panel-card moves-card">
@@ -335,43 +331,7 @@
             <div class="settings-divider">My training data</div>
             <div class="panel-row"><span class="mine-status info-line"></span>
               <button class="btn mini btn-mine-reload">Reload my training data</button></div>
-            <div class="settings-divider">AI coach (local LLM)</div>
-            <label class="llm-toggle" for="llm-enabled">
-              <input id="llm-enabled" type="checkbox">
-              Enable AI coach (needs a local LLM server)
-            </label>
-            <div class="panel-row">
-              <input id="llm-url-input" type="text" spellcheck="false" placeholder="http://127.0.0.1:8080">
-              <button id="btn-llm-save" class="btn">Save</button>
-              <button id="btn-llm-test" class="btn">Test connection</button>
-            </div>
-            <label for="llm-model-input">Model name <span class="muted">(Ollama: your model, e.g. llama3.1 — LM Studio/llama.cpp can leave this)</span></label>
-            <div class="panel-row">
-              <input id="llm-model-input" type="text" spellcheck="false" placeholder="local-coach">
-            </div>
-            <div class="info-line"><span id="llm-status"></span></div>
-            <div id="llm-no-restart-hint" class="info-line muted hidden">Enabled — takes effect immediately, no restart needed.</div>
-            <div class="settings-divider">Coach voice (Latvian accent)</div>
-            <label class="llm-toggle" for="voice-enabled">
-              <input id="voice-enabled" type="checkbox">
-              Enable coach voice (reads the coach's text aloud)
-            </label>
-            <label class="llm-toggle" for="persona-enabled">
-              <input id="persona-enabled" type="checkbox">
-              Latvian coach wording (broken English)
-            </label>
-            <div class="panel-row">
-              <label for="voice-provider" class="muted">Voice:</label>
-              <select id="voice-provider">
-                <option value="auto">Auto</option>
-                <option value="edge">Nils (online)</option>
-                <option value="xtts">Offline clone</option>
-                <option value="sapi">System voice (unavailable on web)</option>
-              </select>
-            </div>
-            <div class="info-line"><span id="voice-status"></span></div>
-            <div class="info-line muted">Coach voice is unavailable in the web version — coach texts are shown on screen only. (The voice, when available, only reads text the app already shows — it never adds new advice.)</div>
-            <div class="info-line muted">Run a local server: LM Studio → Developer → Start Server (port 8080), or llama.cpp: llama-server -m model.gguf --port 8080, or Ollama (URL http://127.0.0.1:11434 + your model name below). The app calls your server at its /v1/chat/completions endpoint (OpenAI-compatible). When enabled, the AI coach rewrites plan goals and coach comments in friendlier language; if the server is off, the built-in explanations keep working. Recommended: a small model is plenty (Llama 3.2 3B / Qwen2.5 3B, ~2 GB) — the coach only rewords verified engine analysis, never invents moves.</div>
+            <div class="info-line muted">Quick take, Socratic and chat use the built-in coach. Voice, a local language model and Maia are not part of this build.</div>
           </div>
         </div>
         </div>
@@ -662,13 +622,24 @@
         </div>
       </div>
       <aside class="side-panel">
-        <h3>Endgame canon curriculum</h3>
+        <div class="lab-panel eg-panel">
+          <h3>Endgame leaks in your games</h3>
+          <div class="info-line">
+            Scan your stored games for endgames the tablebase says you
+            should have won or held — and get the lessons that fix them.
+          </div>
+          <div class="panel-row">
+            <button id="btn-endgame-leaks" class="btn primary" title="Scan your imported games: positions reaching 7 or fewer pieces are checked against the tablebase">Scan my games</button>
+            <button id="btn-endgame-leaks-rescan" class="btn" title="Re-verify every game, ignoring cached results — useful after a scan ran while the tablebase/engine was unreachable">Rescan</button>
+          </div>
+          <div id="endgame-leaks-status" class="info-line"></div>
+          <div id="endgame-leaks"></div>
+        </div>
+        <h3>Endgame canon <span class="muted">10 lessons</span></h3>
         <div class="info-line">
           The essential theoretical endings in three tiers — every lesson
-          goal is <b>tablebase-verified</b>. Read the technique, then play
-          the position out against the engine: pass a lesson to unlock the
-          next, finish a tier to unlock the next tier. Key positions go
-          into your flashcard deck for spaced review.
+          goal is <b>tablebase-verified</b>. The leaks above say where to
+          start; the canon is the unlock path under them.
         </div>
         <div id="endgame-summary"></div>
         <div class="lab-panel eg-panel">
@@ -702,19 +673,6 @@
             <button id="btn-endgame-next" class="btn primary hidden">Next lesson</button>
             <button id="btn-endgame-exit" class="btn">Exit</button>
           </div>
-        </div>
-        <div class="lab-panel eg-panel">
-          <h3>Endgame leaks in your games</h3>
-          <div class="info-line">
-            Scan your stored games for endgames the tablebase says you
-            should have won or held — and get the lessons that fix them.
-          </div>
-          <div class="panel-row">
-            <button id="btn-endgame-leaks" class="btn" title="Scan your imported games: positions reaching 7 or fewer pieces are checked against the tablebase">Scan my games</button>
-            <button id="btn-endgame-leaks-rescan" class="btn" title="Re-verify every game, ignoring cached results — useful after a scan ran while the tablebase/engine was unreachable">Rescan</button>
-          </div>
-          <div id="endgame-leaks-status" class="info-line"></div>
-          <div id="endgame-leaks"></div>
         </div>
       </aside>
     </div>
@@ -1020,7 +978,7 @@
         <h3>Post-mortem calibration <span class="muted">(last 30)</span></h3>
         <div id="pm-calibration-trend"></div>
       </div>
-      <div class="lab-panel" id="progress-openings-card">
+      <div class="lab-panel" id="progress-openings-report">
         <h3>Openings report</h3>
         <div id="openings-empty" class="info-line empty-inline hidden">
           No imported games yet — import your games in My Games to build this report.
@@ -1640,10 +1598,10 @@
 <!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
 <script src="vendor/chess.js?v=33"></script>
 <script src="js/engine.js?v=33"></script>
-<script src="api-shim.js?v=48"></script>
+<script src="api-shim.js?v=50"></script>
 <script src="pieces.js?v=33"></script>
-<script src="board.js?v=35"></script>
-<script src="app.js?v=49"></script>
+<script src="board.js?v=50"></script>
+<script src="app.js?v=50"></script>
 <script src="js/repertoire.js?v=46"></script>
 <script src="js/top10.js?v=48"></script>
 <script src="js/alapin-drill.js?v=48"></script>

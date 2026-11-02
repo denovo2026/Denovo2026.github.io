@@ -774,18 +774,8 @@ async function loadLichessConfig() {
     updateLichessCheck();
     $("cfg-lichess-username").value = State.usernames.lichess;
     $("cfg-chesscom-username").value = State.usernames.chesscom;
-    $("llm-enabled").checked = !!c.llm_enabled;
-    $("llm-url-input").value = c.llm_url || "";
-    $("llm-model-input").value = c.llm_model || "";
-    // if the coach is already enabled, show the no-restart hint on load too
-    $("llm-no-restart-hint").classList.toggle("hidden", !c.llm_enabled);
-    // V26: voice toggle reflects the saved config (availability is probed
-    // separately via /api/coach/voice-status in loadVoiceStatus)
-    $("voice-enabled").checked = !!c.voice_enabled;
-    Voice.enabled = !!c.voice_enabled;
-    // V34: persona wording toggle + provider picker mirror the saved config
-    $("persona-enabled").checked = !!c.persona_enabled;
-    $("voice-provider").value = c.voice_provider || "auto";
+    // Local LLM, voice and persona controls are not in this build.
+    Voice.enabled = false;
     syncImportUI(); // prefill the import username from the loaded config
   } catch (_) { /* config unreadable — leave the checkmark off */ }
 }
@@ -854,6 +844,7 @@ function setLlmStatus(text, kind) {
 }
 
 function wireLlmSettings() {
+  if (!$("btn-llm-save")) return; // local LLM settings are not in this build
   $("btn-llm-save").addEventListener("click", async () => {
     const enabled = $("llm-enabled").checked;
     setLlmStatus("Saving…", null);
@@ -1000,6 +991,7 @@ function wireVoice() {
     const btn = $("btn-speak-" + id);
     if (btn) btn.addEventListener("click", () => speakElementText(id, btn));
   });
+  if (!$("voice-enabled")) return; // voice / persona settings are not in this build
   $("voice-enabled").addEventListener("change", async () => {
     const enabled = $("voice-enabled").checked;
     try {
@@ -1045,9 +1037,9 @@ function wireVoice() {
 async function loadVoiceStatus() {
   try {
     const s = await apiGet("/api/coach/voice-status");
-    Voice.enabled = !!s.enabled;
-    Voice.available = !!s.available;
-    $("voice-enabled").checked = Voice.enabled;
+    Voice.enabled = !!s.enabled && !!$("voice-enabled");
+    Voice.available = !!s.available && !!$("voice-enabled");
+    if ($("voice-enabled")) $("voice-enabled").checked = Voice.enabled;
     // list whichever providers the server can use right now (V34 adds the
     // offline clone, so the user sees whether their pick can speak)
     const p = s.providers || {};
@@ -1055,7 +1047,7 @@ async function loadVoiceStatus() {
     if (p.edge) avail.push("Nils (online)");
     if (p.xtts) avail.push("Offline clone");
     if (p.sapi) avail.push("System voice (offline)");
-    $("voice-status").textContent = !s.available
+    if ($("voice-status")) $("voice-status").textContent = !s.available
       ? "Coach voice is unavailable in the web version — " +
         "coach texts are shown on screen only."
       : "Available: " + avail.join(" + ") + ".";
@@ -1895,8 +1887,10 @@ async function initMaia() {
 function renderMaiaAvailability() {
   const off = Maia.available === false;
   const note = $("maia-note");
+  const panel = $("maia-panel");
+  if (!note && !panel) return; // Maia panel is not in this build
   // v40: the web build never has Maia — don't show a permanent "off" notice
-  note.classList.toggle("hidden", !off || !!(State.config && State.config.static_build) || location.protocol !== "file:");
+  if (note) note.classList.toggle("hidden", !off || !!(State.config && State.config.static_build) || location.protocol !== "file:");
   if (off) {
     if (Maia.status && Maia.status.reason) {
       // surface the backend's real reason (textContent only — contains a path)
@@ -1905,7 +1899,7 @@ function renderMaiaAvailability() {
       note.textContent = "Human-move predictions off — Maia models are not available in the web version.";
     }
   }
-  $("maia-panel").classList.toggle("hidden", Maia.available !== true);
+  if (panel) panel.classList.toggle("hidden", Maia.available !== true);
 }
 
 async function fetchMaiaMoves(fen, level, topK) {
@@ -1920,7 +1914,7 @@ async function fetchMaiaMoves(fen, level, topK) {
 }
 
 async function refreshMaiaPanel(fen) {
-  if (Maia.available !== true) return;
+  if (Maia.available !== true || !$("maia-moves")) return;
   const seq = ++Maia.seq;
   const level = getOpponentLevel();
   try {
@@ -8456,12 +8450,23 @@ async function reloadMine(btn) {
   }
 }
 document.querySelectorAll(".btn-mine-reload").forEach((b) => b.addEventListener("click", () => reloadMine(b)));
-window.addEventListener("cc-mine-imported", (ev) => {
+window.addEventListener("cc-mine-imported", async (ev) => {
   const st = ev.detail || {};
+  let cards = st.cards, games = st.games;
+  try {
+    const r = await fetch("data/mine/deck.json?v=49", { cache: "no-cache" });
+    if (r.ok) {
+      const j = await r.json();
+      const sum = j.summary || {};
+      if (sum.cards) cards = sum.cards;
+      if (sum.games && sum.games.total) games = sum.games.total;
+    }
+  } catch (_) { /* keep the event counts */ }
   const n = document.createElement("div");
   n.className = "mine-toast";
   n.setAttribute("role", "status");
-  n.textContent = "Loaded your training data: " + st.games + " analysed games and " + st.cards + " mistake cards. Find them in My Games, Puzzles and Cycles.";
+  n.textContent = "Loaded your training data: " + cards + " mistake cards from " + games +
+    " games. Review them on Mistakes.";
   document.body.appendChild(n);
   setTimeout(() => n.classList.add("out"), 6000);
   setTimeout(() => n.remove(), 6800);

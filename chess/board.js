@@ -84,6 +84,9 @@ class Board {
   constructor(container, opts) {
     opts = opts || {};
     this.container = container;
+    /* Each board owns its marker ids. Duplicate ids (ah-green, ahn-0, …)
+       make url(#…) resolve to the first board, which is often display:none. */
+    this._mid = "m" + (Board._n = (Board._n || 0) + 1);
     this.onMove = opts.onMove || null;      // (from, to) => void  (UCI, promotion auto-appended by caller path)
     this.onSelect = opts.onSelect || null;  // (sq|null) => void
     this.orientation = opts.orientation || "white";
@@ -326,13 +329,14 @@ class Board {
 
   _renderArrows() {
     const NS = "http://www.w3.org/2000/svg";
+    const mid = this._mid;
     this.svg.innerHTML =
       '<defs>' +
       ["green", "red", "amber", "blue", "opp"].map(c =>
-        `<marker id="ah-${c}" markerWidth="4" markerHeight="4" refX="2.05" refY="1.25" orient="auto">` +
+        `<marker id="${mid}-ah-${c}" markerWidth="4" markerHeight="4" refX="2.05" refY="1.25" orient="auto">` +
         `<path d="M0,0 L2.5,1.25 L0,2.5 Z" class="arrowhead ${c}"></path></marker>`).join("") +
       NUMBERED_COLORS.map((c, i) =>
-        `<marker id="ahn-${i}" markerWidth="4" markerHeight="4" refX="2.05" refY="1.25" orient="auto">` +
+        `<marker id="${mid}-ahn-${i}" markerWidth="4" markerHeight="4" refX="2.05" refY="1.25" orient="auto">` +
         `<path d="M0,0 L2.5,1.25 L0,2.5 Z" fill="${c}"></path></marker>`).join("") +
       "</defs>";
     for (const a of this.arrows) {
@@ -347,7 +351,7 @@ class Board {
       line.setAttribute("x1", x1); line.setAttribute("y1", y1);
       line.setAttribute("x2", x2); line.setAttribute("y2", y2);
       line.setAttribute("class", "arrow " + (a.color || "green"));
-      line.setAttribute("marker-end", `url(#ah-${a.color || "green"})`);
+      line.setAttribute("marker-end", `url(#${this._mid}-ah-${a.color || "green"})`);
       this.svg.appendChild(line);
     }
     /* arced arrow geometry: slight alternating bend (by index k) so overlapping
@@ -390,7 +394,7 @@ class Board {
       path.setAttribute("class", "arrow numbered");
       path.setAttribute("stroke", a.color);
       path.setAttribute("fill", "none");
-      path.setAttribute("marker-end", `url(#ahn-${a.idx})`);
+      path.setAttribute("marker-end", `url(#${this._mid}-ahn-${a.idx})`);
       this.svg.appendChild(path);
       addDisc(g.bx, g.by, a.color, String(a.idx + 1));
     }
@@ -402,11 +406,11 @@ class Board {
       path.setAttribute("fill", "none");
       if (a.dim) {
         path.setAttribute("class", "arrow opp");
-        path.setAttribute("marker-end", "url(#ah-opp)");
+        path.setAttribute("marker-end", `url(#${this._mid}-ah-opp)`);
       } else {
         path.setAttribute("class", "arrow plan");
         path.setAttribute("stroke", a.color);
-        path.setAttribute("marker-end", `url(#${a.marker})`);
+        path.setAttribute("marker-end", `url(#${this._mid}-${a.marker})`);
       }
       this.svg.appendChild(path);
       if (!a.dim) addDisc(g.bx, g.by, a.color, String(a.num));
