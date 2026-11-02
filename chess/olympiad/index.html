@@ -315,7 +315,7 @@ h1{font-weight:700;letter-spacing:-.02em}
       <div class="field"><label for="fRes">Result</label><select id="fRes"><option value="">All</option><option value="1-0">White won</option><option value="1/2-1/2">Draw</option><option value="0-1">Black won</option><option value="dec">Decisive</option></select></div>
       <div class="field"><label for="fFam">Opening</label><select id="fFam"><option value="">All openings</option></select></div>
       <div class="field num"><label for="fElo">Min avg Elo</label><input id="fElo" type="number" step="50" min="0" placeholder="0"></div>
-      <label class="rep checks"><input type="checkbox" id="fRep"> My repertoire (Modern, Grünfeld)</label>
+      <label class="rep checks"><input type="checkbox" id="fRep"> My repertoire (Modern, Grünfeld, Scotch, Alapin)</label>
       <div class="checks">
         <label title="Players more than 500 rating points apart"><input type="checkbox" id="fGap"> Gap 500+</label>
         <label title="The lower-rated player won, with more than 200 points between them"><input type="checkbox" id="fUp"> Upset 200+</label>
@@ -417,7 +417,7 @@ h1{font-weight:700;letter-spacing:-.02em}
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const PAGE = 100;
-const REP = new Set(['Modern', 'Grünfeld']);
+const REP = new Set(['Modern', 'Grünfeld', 'Scotch', 'Alapin']);
 const TAGS = ['Opening', 'Middlegame', 'Endgame', 'Time pressure', 'Played fast', 'Long think', 'Winning to losing', 'Threw away a win',
   'Draw to loss', 'Already worse', 'Ignored a threat', 'Unpunished', 'Decisive'];
 const TAG_FILTERS = [3, 4, 10, 7, 6, 8, 12, 11];

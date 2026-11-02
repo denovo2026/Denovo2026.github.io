@@ -303,7 +303,8 @@ function switchTab(name) {
   const grp = tabGroupOf(name);
   showTabGroup(grp);
   try { localStorage.setItem("cc-last-tab-" + grp, name); localStorage.setItem("cc-last-tab", name); } catch (_) { /* */ }
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  const highlight = name === "alapin-drill" ? "alapin" : name;
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === highlight));
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === "tab-" + name));
   if (name === "plan") initPlan();
   if (name === "learn") initLearn();

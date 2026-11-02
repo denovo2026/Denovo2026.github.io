@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=51">
+<link rel="stylesheet" href="style.css?v=52">
 </head>
 <body>
 <header class="app-header">
@@ -78,12 +78,11 @@
       <button class="tab-btn" data-tab="endgames" data-group="train">Endgames</button>
       <button class="tab-btn" data-tab="attacks" data-group="train">Attacks</button>
       <button class="tab-btn" data-tab="calc" data-group="train">Calculation</button>
-      <button class="tab-btn" data-tab="top10" data-group="openings">Top 10 <span id="top10-tab-due" class="t10-tab-due hidden"></span></button>
       <button class="tab-btn" data-tab="modern" data-group="openings">Modern</button>
+      <button class="tab-btn" data-tab="grunfeld" data-group="openings">Gr&uuml;nfeld</button>
       <button class="tab-btn" data-tab="scotch" data-group="openings">Scotch</button>
       <button class="tab-btn" data-tab="alapin" data-group="openings">Alapin</button>
-      <button class="tab-btn" data-tab="alapin-drill" data-group="openings">Alapin drill <span id="aln-tab-due" class="t10-tab-due hidden"></span></button>
-      <button class="tab-btn" data-tab="grunfeld" data-group="openings">Gr&uuml;nfeld</button>
+      <button class="tab-btn" data-tab="top10" data-group="openings">Wider set <span id="top10-tab-due" class="t10-tab-due hidden"></span></button>
       <button class="tab-btn" data-tab="masters" data-group="study">Masters</button>
       <button class="tab-btn" data-tab="learn" data-group="study">Learn</button>
       <a class="tab-link" data-group="study" href="./olympiad/" title="Olympiad game matrix · Samarkand 2026 (opens the Olympiad explorer)">Olympiad <span class="tab-link-arrow" aria-hidden="true">&#x2197;</span></a>
@@ -188,7 +187,7 @@
           </div>
           <div class="info-line"><span class="arrow-legend red">➤</span> played move · <span class="arrow-legend green">➤</span> best move</div>
         </div>
-        <div id="rehearsal-panel" class="rehearsal-panel">
+        <div id="rehearsal-panel" class="rehearsal-panel hidden" hidden>
           <button id="rehearsal-toggle" class="rehearsal-head" aria-expanded="false">
             <span>⚔ Opening Rehearsal — practice modes</span>
             <span id="rehearsal-mode-tag" class="rehearsal-tag hidden"></span>
@@ -968,7 +967,7 @@
         <div id="progress-trend"></div>
       </div>
       <div class="lab-panel" id="progress-openings-card">
-        <h3>Opening lines <span class="muted">(first tries, Modern, Scotch &amp; Grünfeld)</span></h3>
+        <h3>Opening lines <span class="muted">(first tries, Modern, Grünfeld, Scotch &amp; Alapin)</span></h3>
         <div id="progress-openings"><div class="info-line muted">Take a quiz on the Modern, Scotch or Grünfeld tab to start.</div></div>
       </div>
       <div class="lab-panel" id="progress-cycles-card">
@@ -1078,15 +1077,15 @@
         <div class="rep-coachbar">
           <span class="rep-coach-avatar" aria-hidden="true">&#x265E;</span>
           <div class="rep-coachbar-text">
-            <strong id="top10-title">Top 10 Openings</strong>
+            <strong id="top10-title">Wider set</strong>
             <span class="info-line" id="top10-summary">Loading…</span>
           </div>
           <span id="top10-due" class="rep-mem">Due today: …</span>
         </div>
         <div class="rep-picker">
           <div class="rep-picker-head">
-            <h3>The ten</h3>
-            <span class="info-line">Five with White, five with Black, grouped by family. Learn the plan, then drill the moves.</span>
+            <h3>Beyond the four</h3>
+            <span class="info-line">Italian, Ruy Lopez, Queen’s Gambit, London, English, Sicilian, French, Caro-Kann, King’s Indian, QGD. Learn the plan, then drill the moves.</span>
           </div>
           <div id="top10-openings" class="rep-looks">Loading…</div>
         </div>
@@ -1273,6 +1272,7 @@
             <button id="btn-alapin-blind" class="btn">Quiz against all types</button>
             <button id="btn-alapin-plan" class="btn" title="Play on from the final position against the engine at your level">&#9654; Play the plan</button>
             <button id="btn-alapin-play" class="btn">Send to Play &amp; Analyze</button>
+            <button class="btn" type="button" data-goto-tab="alapin-drill" title="The short drill: main line and two sidelines, about eight moves each">Short drill</button>
           </div>
           <div class="rep-status-row"><span id="alapin-status" class="info-line"></span></div>
           <div id="alapin-score" class="rep-score hidden"></div>
@@ -1309,8 +1309,9 @@
         <div class="rep-coachbar">
           <span class="rep-coach-avatar" aria-hidden="true">&#x265F;</span>
           <div class="rep-coachbar-text">
-            <strong id="aln-title">Alapin Sicilian (2.c3)</strong>
+            <strong id="aln-title">Alapin — short drill</strong>
             <span class="info-line" id="aln-summary">Loading…</span>
+            <div class="panel-row"><button class="btn mini" type="button" data-goto-tab="alapin">Full Alapin lines</button></div>
           </div>
           <span id="aln-due" class="rep-mem">Due today: …</span>
         </div>
@@ -1605,11 +1606,11 @@
 <!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
 <script src="vendor/chess.js?v=33"></script>
 <script src="js/engine.js?v=33"></script>
-<script src="api-shim.js?v=51"></script>
+<script src="api-shim.js?v=52"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=50"></script>
-<script src="app.js?v=51"></script>
-<script src="js/repertoire.js?v=46"></script>
+<script src="app.js?v=52"></script>
+<script src="js/repertoire.js?v=52"></script>
 <script src="js/top10.js?v=48"></script>
 <script src="js/alapin-drill.js?v=48"></script>
 <script src="js/attacks.js?v=44"></script>

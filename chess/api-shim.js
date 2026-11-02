@@ -2275,6 +2275,8 @@
   var REP_PLAN = [
     { slug: "modern", name: "Modern" },
     { slug: "grunfeld", name: "Grünfeld" },
+    { slug: "scotch", name: "Scotch" },
+    { slug: "alapin", name: "Alapin" },
   ];
   var _repLookCounts = null;
   async function repLookCounts() {
@@ -2351,7 +2353,7 @@
     });
     var dueOpen = REP_PLAN.reduce(function (a, op) { return a + (dueBy[op.slug] || 0); }, 0);
     if (dueOpen) reasons.push(dueOpen + " opening line(s) due for review");
-    pillars.openings = { target_sessions: 3, done_sessions: Math.min(3, daysOf(opDone).size), items: opItems };
+    pillars.openings = { target_sessions: REP_PLAN.length, done_sessions: Math.min(REP_PLAN.length, daysOf(opDone).size), items: opItems };
     var planned = 0, completed = 0;
     Object.keys(pillars).forEach(function (k) { planned += pillars[k].target_sessions; completed += pillars[k].done_sessions; });
     return { week_of: week, reasons: reasons, pillars: pillars, adherence: { completed: completed, planned: planned, pct: planned ? Math.round(100 * completed / planned) : 0 } };
@@ -2392,7 +2394,7 @@
       endgame: { lessons_passed: egPassed, lessons_total: 10, passed_trend: trend.slice(-12) },
       openings: (function () { var rp = repProg(), ls = Object.keys(rp).map(function (k) { return rp[k]; });
         var denom = 0; REP_PLAN.forEach(function (op) { denom += (_repLookCounts && _repLookCounts[op.slug]) || 0; });
-        if (!denom) denom = 16;
+        if (!denom) denom = 23;
         return { known_pct: ls.length ? Math.round(100 * ls.filter(function (l) { return l.last_right === l.last_total; }).length / denom) : null,
           trend: ls.reduce(function (a, l) { return a.concat(l.history || []); }, []).sort(function (x, y) { return x.at < y.at ? -1 : 1; }).slice(-12).map(function (h) { return Math.round(100 * h.right / h.total); }) }; })(),
       masters: { best_score: gh.length ? Math.max.apply(null, gh.map(function (h) { return h.score; })) : null, scores: gh.slice(-12).map(function (h) { return h.score; }) },

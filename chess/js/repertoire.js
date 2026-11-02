@@ -606,6 +606,8 @@ const REP_OLYMPIAD = {
   modern: { fam: "Modern", q: { "150-attack": "150 attack", austrian: "austrian", "classical-quiet": "classical" } },
   grunfeld: { fam: "Grünfeld", q: { "exchange-classical": "exchange", "exchange-modern": "exchange", fianchetto: "fianchetto",
     russian: "vs. system", bf4: "vs. system", bg5: "vs. system" } },
+  scotch: { fam: "Scotch", q: {} },
+  alapin: { fam: "Alapin", q: {} },
 };
 function repOlympiadLink(slug, id) {
   const m = REP_OLYMPIAD[slug];
