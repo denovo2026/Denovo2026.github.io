@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=50">
+<link rel="stylesheet" href="style.css?v=51">
 </head>
 <body>
 <header class="app-header">
@@ -73,7 +73,7 @@
       <button class="tab-btn in-group" data-tab="games" data-group="play">My Games</button>
       <button class="tab-btn" data-tab="deck" data-group="train">Mistakes</button>
       <button class="tab-btn" data-tab="puzzles" data-group="train">Puzzles</button>
-      <button class="tab-btn" data-tab="cycles" data-group="train">Cycles</button>
+      <!-- Cycles retired: Woodpecker passes live on the Mistake Deck ("Cycle this set"). -->
       <button class="tab-btn" data-tab="sparring" data-group="train">Sparring</button>
       <button class="tab-btn" data-tab="endgames" data-group="train">Endgames</button>
       <button class="tab-btn" data-tab="attacks" data-group="train">Attacks</button>
@@ -419,7 +419,11 @@
           <div id="build-lib-status" class="info-line"></div>
         </div>
         <div id="puzzle-lib-info" class="info-line"></div>
-        <h3>Mistake Flashcards</h3>
+        <h3>Your mistakes</h3>
+        <div class="info-line">Mistake review lives in the Mistake Deck — real games first, with Again / Hard / Good / Easy and a Woodpecker cycle on whatever filter you set. This page is the tactics library.</div>
+        <div class="panel-row"><button class="btn primary" type="button" data-goto-tab="deck">Open the Mistake Deck</button></div>
+        <div id="fc-retired" class="hidden">
+        <h3 class="hidden">Mistake Flashcards</h3>
         <div class="panel-row"><button class="btn primary" type="button" data-goto-tab="deck" title="All your games, ranked by cost, with spaced repetition">Open the Mistake Deck →</button></div>
         <div id="fc-stats" class="info-line"></div>
         <div id="fc-quarantined" class="info-line hidden"></div>
@@ -465,6 +469,7 @@
           </div>
         </div>
         <div id="fc-done" class="info-line hidden"></div>
+        </div>
       </aside>
     </div>
   </section>
@@ -1425,7 +1430,9 @@
           <select id="deck-f-colour" aria-label="Colour"><option value="">Both colours</option><option value="white">As White</option><option value="black">As Black</option></select>
           <select id="deck-f-phase" aria-label="Phase"><option value="">All phases</option><option value="opening">Opening</option><option value="middlegame">Middlegame</option><option value="endgame">Endgame</option></select>
           <select id="deck-f-source" aria-label="Site"><option value="">All sites</option><option value="lichess">Lichess</option><option value="chesscom">Chess.com</option><option value="noctie">Noctie</option><option value="legacy">Earlier set</option><option value="local">Added here</option></select>
-          <select id="deck-sort" aria-label="Order"><option value="due">Due first, then cost</option><option value="cost">Cost (highest first)</option><option value="date">Newest first</option><option value="random">Shuffle</option></select>
+          <select id="deck-f-games" aria-label="Which games"><option value="real">Real games</option><option value="training">Training games</option><option value="all">All games</option></select>
+          <select id="deck-sort" aria-label="Order"><option value="due">Due first, middlegame first</option><option value="cost">Cost (highest first)</option><option value="date">Newest first</option><option value="random">Shuffle</option></select>
+          <button id="btn-deck-cycle" class="btn" type="button" title="Woodpecker pass: solve every card in this filter, then repeat in a day or three">Cycle this set</button>
           <button id="deck-f-reset" class="btn mini" type="button" title="Clear all filters">Reset</button>
         </div>
         <div class="deck-card">
@@ -1598,16 +1605,16 @@
 <!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
 <script src="vendor/chess.js?v=33"></script>
 <script src="js/engine.js?v=33"></script>
-<script src="api-shim.js?v=50"></script>
+<script src="api-shim.js?v=51"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=50"></script>
-<script src="app.js?v=50"></script>
+<script src="app.js?v=51"></script>
 <script src="js/repertoire.js?v=46"></script>
 <script src="js/top10.js?v=48"></script>
 <script src="js/alapin-drill.js?v=48"></script>
 <script src="js/attacks.js?v=44"></script>
 <script src="js/calc.js?v=44"></script>
-<script src="js/deck.js?v=48"></script>
+<script src="js/deck.js?v=51"></script>
 <script src="js/finish.js?v=49"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {

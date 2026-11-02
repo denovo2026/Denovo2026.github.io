@@ -1478,16 +1478,7 @@
     s.history = s.history.slice(-500);
     egSave(s);
     logActivity("endgame", "lesson");
-    if (!passed) {
-      // put the lesson's start position into the flashcard deck (best move from the tablebase)
-      try {
-        var tb = await tbProbe(att.start_fen);
-        if (tb && tb.moves && tb.moves.length) {
-          var l0 = await egLesson(p.id);
-          addCards([{ fen_before: att.start_fen, best_uci: tb.moves[0].uci, title: "Endgame: " + l0.title, explanation: l0.explanation, motif: "positional" }], "endgame");
-        }
-      } catch (_) {}
-    }
+    try { await rememberEndgameLesson(att, passed); } catch (_) {}
     var c = await egCanon(), lesson = await egLesson(p.id);
     var tier = c.tiers.find(function (t) { return t.tier === lesson.tier; });
     var tierComplete = passed && tier.lessons.every(function (l) { return l.status === "passed"; });
@@ -1495,6 +1486,38 @@
     c.tiers.some(function (t) { return t.lessons.some(function (l) { if (l.status === "available") { next = { id: l.id, title: l.title }; return true; } return false; }); });
     return { passed: passed, goal: att.goal, result: v.result, verification: { detail: v.detail }, tier_complete: tierComplete, next_lesson: next };
   });
+  /* A passed or missed canon lesson joins the Mistake Deck (cc-deck-local-v1).
+     eval_before stays under +3 so Finish it, which reads the same local cards,
+     does not treat a lesson as a conversion position. The old flashcard copy
+     is still written on a miss so that store is not wiped. */
+  function pushDeckLocal(card) {
+    var key = "cc-deck-local-v1";
+    var list = [];
+    try { list = JSON.parse(localStorage.getItem(key) || "[]"); } catch (_) { list = []; }
+    if (!Array.isArray(list)) list = [];
+    if (list.some(function (c) { return c && c.id === card.id; })) return false;
+    list.push(card);
+    try { localStorage.setItem(key, JSON.stringify(list)); } catch (_) { return false; }
+    return true;
+  }
+  async function rememberEndgameLesson(att, passed) {
+    var tb = await tbProbe(att.start_fen);
+    if (!tb || !tb.moves || !tb.moves.length) return;
+    var l0 = await egLesson(att.lesson_id);
+    var uci = tb.moves[0].uci, san = tb.moves[0].san || uci;
+    pushDeckLocal({
+      id: "eg-" + att.lesson_id, fen: att.start_fen, side: att.user_side,
+      played_uci: uci, played_san: san, best_uci: uci, best_san: san, accept: [uci],
+      theme: "Endgame technique", phase: "endgame", training: false, lesson_card: true,
+      source: "local", local: true, opening: "Endgame canon", game_type: "lesson",
+      title: (passed ? "Passed: " : "Missed: ") + (l0.title || att.lesson_id),
+      explanation: l0.explanation || "Find the tablebase move.",
+      game_label: "Endgame lesson", move_no: 1, eval_before: 0,
+      cost: passed ? 8 : 24, wp_loss: passed ? 8 : 24, wp_before: 50, wp_after: passed ? 42 : 26,
+      swing: passed ? "passed" : "missed", date: utcDay()
+    });
+    if (!passed) addCards([{ fen_before: att.start_fen, best_uci: uci, title: "Endgame: " + l0.title, explanation: l0.explanation, motif: "positional" }], "endgame");
+  }
   route("POST", "/api/endgame/hint", async function (b) { return hintFor(b.fen); });
 
   var placementSessions = {};
@@ -2272,7 +2295,6 @@
     var doneBy = function (pillar, kinds) { return acts.filter(function (a) { return a.pillar === pillar && (!kinds || kinds.indexOf(a.kind) !== -1); }); };
     var daysOf = function (list) { return new Set(list.map(function (a) { return a.date; })); };
     var reasons = [];
-    var st = fcStats();
     var pillars = {};
     // review
     var rv = doneBy("review");
@@ -2280,23 +2302,18 @@
       { label: "Run a full game review", kind: "analysis", done: doneBy("review", ["analysis"]).length > 0, due: null, ref: { tab: "games" } }];
     if (!S.get("games", []).length) { revItems.unshift({ label: "Import your games (Games tab)", kind: "onboarding", done: false, due: null, ref: { tab: "games" } }); reasons.push("no games imported yet"); }
     pillars.review = { target_sessions: PILLAR_TARGET.review, done_sessions: Math.min(PILLAR_TARGET.review, daysOf(rv).size), items: revItems };
-    // tactics: one flashcard item per day of the week (up to today)
-    var fc = [], fcDays = daysOf(doneBy("tactics", ["flashcards"]));
-    for (var i = 0; i < 7; i++) {
-      var d = addDays(week, i);
-      if (d > today) break;
-      fc.push({ label: "Flashcard queue" + (d === today ? " (" + st.due_today + " due)" : " — " + d), kind: "flashcards", done: fcDays.has(d) || (d === today && st.due_today === 0 && st.total > 0), due: d === today ? null : d, ref: { tab: "puzzles" } });
-    }
-    var tac = fc.concat([{ label: "Complete a Woodpecker cycle", kind: "cycle", done: doneBy("tactics", ["cycle"]).length > 0, due: null, ref: { tab: "cycles" } },
-      { label: "Solve 10 puzzles", kind: "motif_focus", done: doneBy("tactics", ["puzzle"]).length >= 10, due: null, ref: { tab: "puzzles" } }]);
-    if (st.due_today > 10) reasons.push(st.due_today + " flashcards due");
+    // tactics: the Mistake Deck is the review queue. Puzzle library stays optional.
+    var deckDays = daysOf(doneBy("tactics", ["deck", "flashcards", "cycle"]));
+    var tac = [
+      { label: "Review a real-game mistake", kind: "deck", done: deckDays.has(today), due: null, ref: { tab: "deck" } },
+      { label: "Solve 10 puzzles", kind: "motif_focus", done: doneBy("tactics", ["puzzle"]).length >= 10, due: null, ref: { tab: "puzzles" } }
+    ];
     var focus = cardFocus();
     if (focus.length) {
       var gm = gameMissFocus();
-      reasons.unshift("your " + focus.reduce(function (a, f) { return a + f.n; }, 0) + " mistake cards: " + focus.slice(0, 4).map(function (f) { return f.n + "× " + f.label.toLowerCase(); }).join(", ") +
-        (gm.length ? "; your analysed games add " + gm.slice(0, 2).map(function (f) { return f.n + "× " + f.label.toLowerCase(); }).join(" and ") : "") +
-        " — so this week leads with flashcards and the “My mistakes” Woodpecker cycle");
-      tac.unshift({ label: "Focus: " + focus[0].label + " (" + focus[0].n + " of your cards)", kind: "motif_focus_mine", done: doneBy("tactics", ["cycle", "flashcards"]).length > 0, due: null, ref: { tab: "cycles" } });
+      reasons.unshift("your mistake deck leads this week" +
+        (gm.length ? " (analysed games add " + gm.slice(0, 2).map(function (f) { return f.n + "× " + f.label.toLowerCase(); }).join(" and ") + ")" : ""));
+      tac.unshift({ label: "Focus: " + focus[0].label + " (" + focus[0].n + " of your older cards)", kind: "motif_focus_mine", done: deckDays.size > 0, due: null, ref: { tab: "deck" } });
     }
     pillars.tactics = { target_sessions: PILLAR_TARGET.tactics, done_sessions: Math.min(PILLAR_TARGET.tactics, daysOf(doneBy("tactics")).size), items: tac };
     // sparring

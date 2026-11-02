@@ -299,6 +299,7 @@ function showTabGroup(g) {
   document.querySelectorAll("#tab-subs [data-group]").forEach(b => b.classList.toggle("in-group", b.dataset.group === g));
 }
 function switchTab(name) {
+  if (name === "cycles") name = "deck"; // Woodpecker passes live on the deck
   const grp = tabGroupOf(name);
   showTabGroup(grp);
   try { localStorage.setItem("cc-last-tab-" + grp, name); localStorage.setItem("cc-last-tab", name); } catch (_) { /* */ }
@@ -4834,8 +4835,8 @@ async function endgameFinish(result, finalFen) {
       "goal was " + goalText + ", you scored a " + r.result + " (" +
       (r.verification && r.verification.detail ? r.verification.detail : "verified") +
       ").";
-    if (!r.passed && att.mode === "lesson") {
-      text += " The position was added to your flashcards.";
+    if (att.mode === "lesson") {
+      text += " The position joined your Mistake Deck.";
     }
     if (att.mode === "lesson" && r.passed && r.tier_complete) {
       text += " Tier complete!";
@@ -8584,8 +8585,7 @@ document.addEventListener("click", (e) => {
     const n = document.createElement("div");
     n.className = "mine-toast oly-toast"; n.setAttribute("role", "status");
     if (document.querySelector(".mine-toast")) n.style.bottom = (window.innerWidth <= 700 ? 140 : 86) + "px";
-    n.textContent = "Added " + r.puzzles_added + " Olympiad blunder positions to Puzzles and " + r.cards_added +
-      " flashcards (Cycles: \u201cOlympiad blunders\u201d, " + r.set_size + " positions). Find the better move.";
+    n.textContent = "Added " + r.puzzles_added + " Olympiad blunder positions to Tactics. Find the better move.";
     document.body.appendChild(n);
     setTimeout(() => n.classList.add("out"), 7000);
     setTimeout(() => n.remove(), 7800);
