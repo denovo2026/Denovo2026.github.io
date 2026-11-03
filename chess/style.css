@@ -1713,6 +1713,10 @@ select.opp-level { font-size: 0.92rem; }
   font-size: 1.45rem; font-weight: 750; letter-spacing: -0.02em; margin: 4px 0;
 }
 #tab-sparring .fi-actions { flex-wrap: wrap; }
+#tab-sparring .fi-actions .btn { min-height: 32px; padding: 4px 10px; font-size: 0.84rem; }
+#tab-sparring #fi-brief {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
 #tab-sparring #btn-fi-filter-all[aria-pressed="true"],
 #tab-sparring #btn-fi-filter-starter[aria-pressed="true"] {
   background: var(--accent-soft); color: var(--accent-text); border-color: var(--accent);
