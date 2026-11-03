@@ -88,6 +88,12 @@
     finalCp: null,
     moves: 0,
     hint: null, /* {uci, san} best move in the current user-to-move position */
+    hintFen: "",
+    hints: 0,
+    hinted: false,
+    resumed: false,
+    plies: [],
+    lineSeq: 0,
     worst: null,
     loaded: false,
     bound: false
@@ -142,14 +148,21 @@
   function fiBests() {
     try { return JSON.parse(localStorage.getItem(FI_LS) || "{}"); } catch (_) { return {}; }
   }
-  function fiSaveBest(id, pct, win) {
+  function fiSaveBest(id, pct, win, hinted) {
     var all = fiBests();
     var prev = all[id];
-    if (!prev || pct > prev.pct || (pct === prev.pct && win && !prev.win)) {
-      all[id] = { pct: pct, win: !!win, at: new Date().toISOString() };
+    var next = { pct: pct, win: !!win, hinted: !!hinted, at: new Date().toISOString() };
+    /* A hinted result must not replace a clean personal best. A clean result replaces a hinted one. */
+    var replace = !prev
+      || (!hinted && prev.hinted)
+      || (!hinted && !prev.hinted && (pct > prev.pct || (pct === prev.pct && win && !prev.win)))
+      || (hinted && prev.hinted && (pct > prev.pct || (pct === prev.pct && win && !prev.win)));
+    if (replace) {
+      all[id] = next;
       try { localStorage.setItem(FI_LS, JSON.stringify(all)); } catch (_) {}
+      return next;
     }
-    return all[id];
+    return prev;
   }
 
   function fiReal(c) {
@@ -273,17 +286,22 @@
     var drop = beforeCp - afterCp;
     if (drop <= 0) return;
     if (!FI.worst || drop > FI.worst.drop) {
-      var h = FI.hint || {};
+      var pre = FI._pre || {};
+      var h = (FI.hintFen && FI.hintFen === pre.fen) ? (FI.hint || {}) : (FI.hint || {});
       FI.worst = {
         drop: drop,
         before: beforeCp,
         after: afterCp,
         san: FI._lastSan || "",
         playedUci: FI._lastUci || "",
-        fen: FI._lastFen || "",
+        fen: pre.fen || FI._lastFen || "",
+        history: pre.history || [],
+        userMoves: pre.userMoves || 0,
+        minCp: pre.minCp,
         bestUci: h.uci || "",
         bestSan: h.san || ""
       };
+      fiSyncRunButtons();
     }
   }
 
@@ -409,6 +427,134 @@
 
   function fiSideName(side) { return side === "white" ? "White" : "Black"; }
 
+  function fiSyncRunButtons() {
+    var hint = $("btn-fi-hint");
+    var slip = $("btn-fi-slip");
+    if (hint) hint.disabled = !(FI.phase === "user" && !FI.busy && FI.chess);
+    if (slip) slip.disabled = !(FI.worst && FI.worst.fen && !FI.busy && (FI.phase === "user" || FI.phase === "over"));
+  }
+
+  function fiPvToSan(fen, pv) {
+    var ch;
+    try { ch = new Chess(fen); } catch (_) { return ""; }
+    var out = [];
+    for (var i = 0; i < pv.length && i < 6; i++) {
+      var turn = ch.turn();
+      var num = ch.moveNumber();
+      var m = fiApply(ch, pv[i]);
+      if (!m) break;
+      if (turn === "w") out.push(num + ". " + m.san);
+      else if (!out.length) out.push(num + "… " + m.san);
+      else out.push(m.san);
+    }
+    return out.join(" ");
+  }
+
+  function fiWalkLine(fen, n) {
+    var ch;
+    try { ch = new Chess(fen); } catch (_) { return Promise.resolve(""); }
+    var ucis = [];
+    function step(i) {
+      if (i >= n) return Promise.resolve(fiPvToSan(fen, ucis));
+      return fiAnalyse(ch.fen(), 8, 220).then(function (a) {
+        if (!a || !a.best) return fiPvToSan(fen, ucis);
+        if (!fiApply(ch, a.best)) return fiPvToSan(fen, ucis);
+        ucis.push(a.best);
+        return step(i + 1);
+      });
+    }
+    return step(0);
+  }
+
+  function fiSlipLine(fen) {
+    var token = ++FI.lineSeq;
+    var el = $("fi-slip-line");
+    if (!el) return;
+    if (!fen) { el.textContent = ""; return; }
+    el.textContent = "From the slip…";
+    fiAnalyse(fen, 12, 700).then(function (a) {
+      var pv = (a && a.pv ? a.pv : []).filter(Boolean).slice(0, 6);
+      if (pv.length >= 2) return fiPvToSan(fen, pv);
+      return fiWalkLine(fen, 6);
+    }).then(function (text) {
+      if (token !== FI.lineSeq) return;
+      var node = $("fi-slip-line");
+      if (node) node.textContent = text ? "From the slip: " + text : "";
+    }).catch(function () {
+      if (token !== FI.lineSeq) return;
+      var node = $("fi-slip-line");
+      if (node) node.textContent = "";
+    });
+  }
+
+  function fiGiveHint() {
+    if (FI.phase !== "user" || FI.busy || !FI.chess || !FI.pos) return;
+    var fen = FI.chess.fen();
+    var seq = FI.seq;
+    function show(uci, san) {
+      if (seq !== FI.seq || FI.phase !== "user") return;
+      FI.hints = (FI.hints || 0) + 1;
+      FI.hinted = true;
+      if (uci && uci.length >= 4) {
+        sparringBoard.setArrows([{ from: uci.slice(0, 2), to: uci.slice(2, 4), color: "green" }]);
+      }
+      fiSetStatus("Hint: " + (san || uci || "none") + ".");
+      fiSyncRunButtons();
+    }
+    if (FI.hint && FI.hint.uci && FI.hintFen === fen) {
+      show(FI.hint.uci, FI.hint.san);
+      return;
+    }
+    var btn = $("btn-fi-hint");
+    if (btn) btn.disabled = true;
+    fiSetStatus("Looking for a hint…");
+    fiAnalyse(fen, 12, 800).then(function (a) {
+      if (seq !== FI.seq || FI.phase !== "user") return;
+      var san = a && a.best ? fiSan(fen, a.best) : "";
+      FI.hint = { uci: (a && a.best) || "", san: san };
+      FI.hintFen = fen;
+      show(FI.hint.uci, san);
+    }).catch(function () {
+      if (seq !== FI.seq) return;
+      fiSetStatus("No hint — the engine did not answer.");
+      fiSyncRunButtons();
+    });
+  }
+
+  function fiRetrySlip() {
+    var w = FI.worst;
+    if (!w || !w.fen || !FI.pos || FI.mode !== "finish" || FI.startCp == null) return;
+    var ch;
+    try { ch = new Chess(w.fen); } catch (_) {
+      fiSetStatus("Could not restore that position.");
+      return;
+    }
+    FI.seq++;
+    FI.resumed = true;
+    FI.busy = false;
+    FI.phase = "user";
+    FI.chess = ch;
+    FI.moves = w.userMoves || 0;
+    FI.finalCp = w.before != null ? w.before : FI.finalCp;
+    FI.minCp = w.minCp != null ? w.minCp : FI.finalCp;
+    FI.hint = { uci: w.bestUci || "", san: w.bestSan || "" };
+    FI.hintFen = w.fen;
+    fiShowRun();
+    var sum = $("fi-summary");
+    if (sum) { sum.classList.add("hidden"); sum.innerHTML = ""; }
+    var give = $("btn-fi-giveup");
+    if (give) give.disabled = false;
+    sparringBoard.setOrientation(FI.pos.side);
+    sparringBoard.setFen(w.fen);
+    sparringBoard.setLastMove(null, null);
+    sparringBoard.clearArrows();
+    sparringBoard.setInteractive(true);
+    var note = $("sparring-board-note");
+    if (note) note.textContent = "Resumed · No clock · " + fiSideName(FI.pos.side) + " to move";
+    fiSetStatus("Back before " + (w.san || "the slip") + ". Edge " + fiFmt(FI.finalCp) + ". Your move.");
+    fiSyncRunButtons();
+  }
+
   function fiStart(id) {
     var p = FI.byId[id];
     if (!p) return;
@@ -423,7 +569,13 @@
     FI.finalCp = null;
     FI.moves = 0;
     FI.hint = null;
+    FI.hintFen = "";
+    FI.hints = 0;
+    FI.hinted = false;
+    FI.resumed = false;
+    FI.plies = [];
     FI.worst = null;
+    FI._pre = null;
     FI._lastSan = "";
     FI._lastUci = "";
     FI._lastFen = "";
@@ -468,9 +620,11 @@
       FI.minCp = cp;
       FI.finalCp = cp;
       FI.hint = { uci: a.best || p.bestUci, san: a.best ? fiSan(p.fen, a.best) : p.bestSan };
+      FI.hintFen = p.fen;
       FI.phase = "user";
       FI.busy = false;
       $("btn-fi-giveup").disabled = false;
+      fiSyncRunButtons();
       var deckNote = Math.abs(cp - p.evalBefore) >= 40 ? " Deck had " + fiFmt(p.evalBefore) + "." : "";
       fiSetStatus("Your move. Edge " + fiFmt(cp) + ". It fails under +1.5." + deckNote);
       if (FI.mode === "finish") sparringBoard.setInteractive(true);
@@ -490,11 +644,22 @@
     var p = FI.pos;
     var ch = FI.chess;
     var fenBefore = ch.fen();
+    var verbose = [];
+    try { verbose = ch.history({ verbose: true }); } catch (_) { verbose = []; }
+    var me = p.side === "white" ? "w" : "b";
     var uci = uciCandidate(sparringBoard, from, to);
     var mv = fiApply(ch, uci);
     if (!mv) { sparringBoard.shake(); sparringBoard.setFen(fenBefore); return; }
     var seq = FI.seq;
     var beforeCp = FI.finalCp;
+    FI._pre = {
+      fen: fenBefore,
+      eval: beforeCp,
+      history: verbose.map(function (m) { return m.san; }),
+      userMoves: verbose.filter(function (m) { return m.color === me; }).length,
+      minCp: FI.minCp
+    };
+    FI.plies.push(FI._pre);
     FI._lastSan = mv.san;
     FI._lastUci = uci;
     FI._lastFen = fenBefore;
@@ -520,6 +685,7 @@
         fiSetStatus("Stockfish returned no move.");
         FI.phase = "user";
         FI.busy = false;
+        fiSyncRunButtons();
         sparringBoard.setInteractive(true);
         return;
       }
@@ -533,11 +699,13 @@
         fiTrack(now);
         fiNoteDrop(beforeCp, now);
         FI.hint = { uci: b.best || "", san: b.best ? fiSan(ch.fen(), b.best) : "" };
+        FI.hintFen = ch.fen();
         var ended2 = fiEvalEnd(now);
         if (ended2) { fiFinish(ended2); return; }
         FI.phase = "user";
         FI.busy = false;
         fiSetStatus("Stockfish played " + reply.san + ". Edge " + fiFmt(now) + ". Your move.");
+        fiSyncRunButtons();
         if (FI.mode === "finish") sparringBoard.setInteractive(true);
       });
     }).catch(function (e) {
@@ -545,6 +713,7 @@
       FI.busy = false;
       FI.phase = "user";
       fiSetStatus("Engine unavailable: " + (e && e.message ? e.message : "no reply"));
+      fiSyncRunButtons();
       if (FI.mode === "finish") sparringBoard.setInteractive(true);
     });
   }
@@ -560,7 +729,7 @@
     var win = result.outcome === "win";
     var kept = fiKept(FI.startCp, FI.minCp);
     if (typeof ccLogAnswer === "function") ccLogAnswer("sparring", "finish");
-    fiSaveBest(p.id, kept, win);
+    fiSaveBest(p.id, kept, win, FI.hinted);
     var sum = $("fi-summary");
     var worst = FI.worst;
     var worstHtml = worst
@@ -584,12 +753,16 @@
       + '<div class="info-line">Start ' + fiEsc(fiFmt(FI.startCp))
       + " · lowest " + fiEsc(fiFmt(FI.minCp))
       + " · final " + fiEsc(fiFmt(FI.finalCp))
-      + ". Lowest ÷ start, both capped at +10. Mate counts as +10.</div>"
+      + ". Lowest ÷ start, both capped at +10. Mate counts as +10. "
+      + "(" + (FI.hints || 0) + " hint" + ((FI.hints || 0) === 1 ? "" : "s") + (FI.resumed ? ", resumed" : "") + ")</div>"
+      + '<div id="fi-slip-line" class="info-line"></div>'
       + worstHtml + clean;
     sum.classList.remove("hidden");
     fiSetStatus("");
     var show = $("btn-fi-show-drop");
     if (show) show.addEventListener("click", fiShowWorst);
+    fiSyncRunButtons();
+    if (worst && worst.fen) fiSlipLine(worst.fen);
     fiRenderList();
   }
 
@@ -674,6 +847,10 @@
       fiFinish({ outcome: "fail", reason: "resign", detail: "You gave up." });
     });
     $("btn-fi-positions").addEventListener("click", fiShowHome);
+    var hintBtn = $("btn-fi-hint");
+    if (hintBtn) hintBtn.addEventListener("click", fiGiveHint);
+    var slipBtn = $("btn-fi-slip");
+    if (slipBtn) slipBtn.addEventListener("click", fiRetrySlip);
     var startBtn = $("btn-fi-start");
     if (startBtn) startBtn.addEventListener("click", function () {
       var id = (FI.posId && FI.byId[FI.posId]) ? FI.posId : (fiVisible()[0] && fiVisible()[0].id);
