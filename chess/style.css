@@ -1753,3 +1753,30 @@ select.opp-level { font-size: 0.92rem; }
 .today-more > summary, .go-deeper > summary { cursor: pointer; font-weight: 650; margin: 4px 0 8px; }
 .go-deeper { margin-top: 8px; }
 #plan-today .plan-today-row { align-items: center; }
+
+/* v57: Modern, Grünfeld, Scotch, Queen's Gambit — same controls, readable plan cards.
+   Scoped so Alapin and the wider set keep their existing layout. */
+#tab-modern .rep-coachbar,
+#tab-grunfeld .rep-coachbar,
+#tab-scotch .rep-coachbar,
+#tab-qg .rep-coachbar { flex-wrap: wrap; }
+#tab-modern .rep-coachbar-text,
+#tab-grunfeld .rep-coachbar-text,
+#tab-scotch .rep-coachbar-text,
+#tab-qg .rep-coachbar-text { flex: 1 1 180px; min-width: 0; }
+.rep-picker-head .rep-due { margin-left: 8px; align-self: center; }
+.rep-picker-note { margin-left: auto; font-size: var(--fs-xs); color: var(--text-3); line-height: 1.35; }
+.rep-side { display: inline-flex; gap: 4px; align-items: center; flex: 0 0 auto; }
+.rep-side .btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-text); }
+.rep-details { margin: 8px 0 2px; }
+.rep-details summary {
+  cursor: pointer; font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--text-2);
+}
+.rep-details .info-line { margin-top: 6px; }
+#tab-modern .rep-controls .panel-row .btn,
+#tab-grunfeld .rep-controls .panel-row .btn,
+#tab-scotch .rep-controls .panel-row .btn,
+#tab-qg .rep-controls .panel-row .btn {
+  min-height: 32px; padding: 4px 10px; font-size: 0.82rem;
+}

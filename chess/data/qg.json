@@ -1,0 +1,1375 @@
+{
+  "name": "Queen's Gambit",
+  "eco": "D06–D60",
+  "side": "both",
+  "summary": "1.d4 d5 2.c4. Drill it as White or as Black. Seven set-ups cover what a club game actually becomes: Accepted, Exchange, Orthodox, Cambridge Springs, Lasker, Tarrasch, and the classical Slav.",
+  "coach_note": "Pick the side on this row before you quiz. The same line is asked twice in your life — once with White, once with Black — and the cards follow the toggle. As White you are offering the c-pawn to open lines. As Black you choose on move two: take it, hold the centre with ...e6 or ...c6, or strike with ...c5. The Semi-Slav, with ...e6 and ...c6 together and the bishop shut in, is a different opening and is not in this set.",
+  "scheme": [
+    "Move two names the opening. ...dxc4 is the Accepted, ...e6 is the Declined, ...c6 is the Slav, ...c5 is the Tarrasch.",
+    "As White, get the pawn back or take something permanent for it: development, the c-file, or an isolated pawn to blockade.",
+    "As Black, do not invent a fifth defence in the first six moves. Play the set-up you recognised, then the break that belongs to it."
+  ],
+  "scheme_by_side": {
+    "white": [
+      "Decide on move three whether you are trading (cxd5), developing against the tension (Nc3, Nf3, Bg5), or regaining a gambit pawn (Nf3 and e3).",
+      "The c-file is the point of the gambit. A rook belongs on c1 once the file is half open.",
+      "Do not grab a loose pawn with the queen or the c3-knight until the pins are gone. Cambridge Springs and the Tarrasch both punish that."
+    ],
+    "black": [
+      "Choose the structure on move two and stick to it. Mixing ...e6, ...c6 and an early ...c5 is how the bishop stays locked in.",
+      "In the Declined, castle before you open the centre. The pin on f6 is the only way to drop a pawn in the first ten moves.",
+      "Give a gambit pawn back on your terms (...c5 in the Accepted, ...b5 in the Tarrasch trap). Clinging to it is the mistake."
+    ]
+  },
+  "reading": [
+    "White's third move tells you the game: cxd5 is the Exchange, Bg5 is a pin variation, Nf3 against ...dxc4 is the Accepted.",
+    "Count whether c is open, half open, or still blocked. That decides which rook move is useful."
+  ],
+  "reading_by_side": {
+    "white": [
+      "If Black has a queen on a5 and a knight on d7, the c3-knight is the piece you must unpin before you take anything.",
+      "If Black has played ...c5, you want an isolated pawn on d5, not a pawn hunt with dxc5.",
+      "If the light-squared bishop is already on f5, e4 drops a pawn. Play e3 and take on c4 with the bishop."
+    ],
+    "black": [
+      "Be3 is not this opening. Bg5, with a knight on c3, means a pin variation: Orthodox, Cambridge Springs, or Lasker.",
+      "A pawn on c4 that you took is not yours until you have stopped a4 and Bxc4. Assume you will give it back with ...c5.",
+      "In the Exchange the e-file is yours and the c-file is White's. Put a rook on e8 before you look for ...c5."
+    ]
+  },
+  "looks": [
+    {
+      "id": "qga",
+      "name": "Accepted — 3.Nf3",
+      "eco": "D20–D27",
+      "frequency": "very common",
+      "tell": "Black has taken on c4. There is no pawn on d5, and the c-pawn is on c4. You do not have to win it back on the next move.",
+      "ideas": {
+        "white": "White wants the pawn back with development: Nf3, e3, Bxc4, castle, and only then a decision about ...c5. An early queen raid or 3.e3, letting ...b5 cement the pawn, is the way to lose the thread.",
+        "black": "Black wants to give the pawn back at a moment of their choosing, with ...c5, and to finish developing before White's lead becomes an attack. Holding the pawn with ...b5 is a project, not the main plan."
+      },
+      "plans_by_side": {
+        "white": [
+          "Play 3.Nf3. It stops ...e5 and prepares e3 and Bxc4. Do not start with Qb3 or Qa4.",
+          "4.e3 and 5.Bxc4 regain the pawn. Castle, then meet ...c5 with Bb3 or by taking on c5 once your pieces are out.",
+          "If Black expands with ...b5, drop the bishop back to b3 or e2 and keep developing. The pawn is not worth a piece hunt."
+        ],
+        "black": [
+          "Take on c4, then ...Nf6 and ...e6. The equaliser is ...c5, played once the light-squared bishop can recapture or the queen is not loose.",
+          "...a6 and ...Nc6, ...Be7 and castle. Do not try to keep the extra pawn with an early ...b5 unless you have counted a4.",
+          "Watch the a2–g8 diagonal until you have castled. That is the only way this opening becomes a miniature."
+        ]
+      },
+      "strategic_by_side": {
+        "white": [
+          "You are a move or two ahead in development in exchange for a pawn you expect to regain. Spend those moves on pieces, not on chasing the pawn a second time.",
+          "After ...c5 the centre opens. Be castled before you take on c5."
+        ],
+        "black": [
+          "The pawn on c4 is a loan. Give it back with ...c5 and you are fine; refuse to give it back and White's lead grows while your queenside stays shut.",
+          "Trades help you. White's compensation is time, and time disappears when pieces come off."
+        ]
+      },
+      "watch": "3...e5 does not break the centre open in your favour. The knight takes on e5 and then takes on c4, and Black is simply a pawn down.",
+      "moves": [
+        "d4",
+        "d5",
+        "c4",
+        "dxc4",
+        "Nf3",
+        "Nf6",
+        "e3",
+        "e6",
+        "Bxc4",
+        "c5",
+        "O-O",
+        "a6",
+        "Bb3",
+        "Nc6",
+        "Qe2",
+        "Be7"
+      ],
+      "moves_count": 8,
+      "line_san": "d4 d5 c4 dxc4 Nf3 Nf6 e3 e6 Bxc4 c5 O-O a6 Bb3 Nc6 Qe2 Be7",
+      "tactics": [
+        {
+          "name": "3...e5 gives the pawn back the wrong way",
+          "point": "Nf3 was played to stop this. Nxe5 wins the pawn, Bd6 kicks the knight, and Nxc4 takes the gambit pawn as well. White is a pawn up with the centre.",
+          "line_san": "Nxe5 Bd6 Nxc4",
+          "plies": [
+            {
+              "san": "Nxe5",
+              "uci": "f3e5",
+              "side": "white",
+              "fen": "rnbqkbnr/ppp2ppp/8/4N3/2pP4/8/PP2PPPP/RNBQKB1R b KQkq - 0 4"
+            },
+            {
+              "san": "Bd6",
+              "uci": "f8d6",
+              "side": "black",
+              "fen": "rnbqk1nr/ppp2ppp/3b4/4N3/2pP4/8/PP2PPPP/RNBQKB1R w KQkq - 1 5"
+            },
+            {
+              "san": "Nxc4",
+              "uci": "e5c4",
+              "side": "white",
+              "fen": "rnbqk1nr/ppp2ppp/3b4/8/2NP4/8/PP2PPPP/RNBQKB1R b KQkq - 0 5"
+            }
+          ],
+          "fen": "rnbqkbnr/ppp2ppp/8/4p3/2pP4/5N2/PP2PPPP/RNBQKB1R w KQkq - 0 4"
+        }
+      ],
+      "plies": [
+        {
+          "san": "d4",
+          "uci": "d2d4",
+          "side": "white",
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1"
+        },
+        {
+          "san": "d5",
+          "uci": "d7d5",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2"
+        },
+        {
+          "san": "c4",
+          "uci": "c2c4",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2"
+        },
+        {
+          "san": "dxc4",
+          "uci": "d5c4",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp1pppp/8/8/2pP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3"
+        },
+        {
+          "san": "Nf3",
+          "uci": "g1f3",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp1pppp/8/8/2pP4/5N2/PP2PPPP/RNBQKB1R b KQkq - 1 3"
+        },
+        {
+          "san": "Nf6",
+          "uci": "g8f6",
+          "side": "black",
+          "fen": "rnbqkb1r/ppp1pppp/5n2/8/2pP4/5N2/PP2PPPP/RNBQKB1R w KQkq - 2 4"
+        },
+        {
+          "san": "e3",
+          "uci": "e2e3",
+          "side": "white",
+          "fen": "rnbqkb1r/ppp1pppp/5n2/8/2pP4/4PN2/PP3PPP/RNBQKB1R b KQkq - 0 4"
+        },
+        {
+          "san": "e6",
+          "uci": "e7e6",
+          "side": "black",
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/8/2pP4/4PN2/PP3PPP/RNBQKB1R w KQkq - 0 5"
+        },
+        {
+          "san": "Bxc4",
+          "uci": "f1c4",
+          "side": "white",
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/8/2BP4/4PN2/PP3PPP/RNBQK2R b KQkq - 0 5"
+        },
+        {
+          "san": "c5",
+          "uci": "c7c5",
+          "side": "black",
+          "fen": "rnbqkb1r/pp3ppp/4pn2/2p5/2BP4/4PN2/PP3PPP/RNBQK2R w KQkq - 0 6"
+        },
+        {
+          "san": "O-O",
+          "uci": "e1g1",
+          "side": "white",
+          "fen": "rnbqkb1r/pp3ppp/4pn2/2p5/2BP4/4PN2/PP3PPP/RNBQ1RK1 b kq - 1 6"
+        },
+        {
+          "san": "a6",
+          "uci": "a7a6",
+          "side": "black",
+          "fen": "rnbqkb1r/1p3ppp/p3pn2/2p5/2BP4/4PN2/PP3PPP/RNBQ1RK1 w kq - 0 7"
+        },
+        {
+          "san": "Bb3",
+          "uci": "c4b3",
+          "side": "white",
+          "fen": "rnbqkb1r/1p3ppp/p3pn2/2p5/3P4/1B2PN2/PP3PPP/RNBQ1RK1 b kq - 1 7"
+        },
+        {
+          "san": "Nc6",
+          "uci": "b8c6",
+          "side": "black",
+          "fen": "r1bqkb1r/1p3ppp/p1n1pn2/2p5/3P4/1B2PN2/PP3PPP/RNBQ1RK1 w kq - 2 8"
+        },
+        {
+          "san": "Qe2",
+          "uci": "d1e2",
+          "side": "white",
+          "fen": "r1bqkb1r/1p3ppp/p1n1pn2/2p5/3P4/1B2PN2/PP2QPPP/RNB2RK1 b kq - 3 8"
+        },
+        {
+          "san": "Be7",
+          "uci": "f8e7",
+          "side": "black",
+          "fen": "r1bqk2r/1p2bppp/p1n1pn2/2p5/3P4/1B2PN2/PP2QPPP/RNB2RK1 w kq - 4 9"
+        }
+      ],
+      "fen": "r1bqk2r/1p2bppp/p1n1pn2/2p5/3P4/1B2PN2/PP2QPPP/RNB2RK1 w kq - 4 9"
+    },
+    {
+      "id": "exchange",
+      "name": "Exchange — Carlsbad",
+      "eco": "D35–D36",
+      "frequency": "very common",
+      "tell": "White has traded on d5. One pair of pawns is gone, d4 and d5 face each other, the c-file is half open for White and the e-file is half open for Black.",
+      "ideas": {
+        "white": "White wants a slow attack on the queenside: castle, Qc2, a rook on the c-file or the b-file, then b4–b5 against the c6-pawn. Rushing e4 opens the centre before the pieces are ready.",
+        "black": "Black wants a knight on e4 and a rook on e8. The break is ...c5 only when White is slow; against a prepared minority attack, ...a6 or a timely ...c5 is the answer, not waiting."
+      },
+      "plans_by_side": {
+        "white": [
+          "Develop Bd3, Nf3, Qc2 and castle. The dark-squared bishop on g5 is already doing its job.",
+          "The plan is the minority attack: Rb1, b4 and b5, to open a file against c6. Do not play it until you have castled.",
+          "Leave e4 alone until the rooks are connected. It looks central and it usually opens the e-file for Black."
+        ],
+        "black": [
+          "...c6, ...Nbd7, ...Be7 and castle. That is the structure. Then Re8 and ...Ne4, offering the trade of White's dark-squared bishop.",
+          "Meet b4–b5 with ...a6, or with ...c5 if your pieces are pointing at d4. Do not let b5 open your queenside for free.",
+          "The e-file is your file. A rook that stays on f8 is a rook that missed the point of the Exchange."
+        ]
+      },
+      "strategic_by_side": {
+        "white": [
+          "This is a manoeuvring game. You have the easier plan and the slower clock. Piece activity matters less than getting b5 in under good circumstances.",
+          "Trades of dark-squared bishops do not hurt you if your queenside play is already moving. Trades that open the e-file do."
+        ],
+        "black": [
+          "You are not worse. You are the side with the e-file and a knight that wants e4. Passive defence of c6 is how the minority attack wins.",
+          "If White has not castled, ...Ne4 is even stronger, because the e-file can open onto the king."
+        ]
+      },
+      "watch": "The knight jump to e4 is the move both sides must expect. White decides whether to take it; Black should not play ...c5 instead out of impatience.",
+      "moves": [
+        "d4",
+        "d5",
+        "c4",
+        "e6",
+        "cxd5",
+        "exd5",
+        "Nc3",
+        "Nf6",
+        "Bg5",
+        "Be7",
+        "e3",
+        "O-O",
+        "Bd3",
+        "Nbd7",
+        "Nf3",
+        "c6"
+      ],
+      "moves_count": 8,
+      "line_san": "d4 d5 c4 e6 cxd5 exd5 Nc3 Nf6 Bg5 Be7 e3 O-O Bd3 Nbd7 Nf3 c6",
+      "tactics": [
+        {
+          "name": "...Ne4 — the move the structure is for",
+          "point": "Qc2, ...Re8, castle, ...Ne4. The knight attacks the bishop on g5 and plants itself in the centre. This is the plan, not a combination, and it is the reason you put the rook on e8.",
+          "line_san": "Qc2 Re8 O-O Ne4",
+          "plies": [
+            {
+              "san": "Qc2",
+              "uci": "d1c2",
+              "side": "white",
+              "fen": "r1bq1rk1/pp1nbppp/2p2n2/3p2B1/3P4/2NBPN2/PPQ2PPP/R3K2R b KQ - 1 9"
+            },
+            {
+              "san": "Re8",
+              "uci": "f8e8",
+              "side": "black",
+              "fen": "r1bqr1k1/pp1nbppp/2p2n2/3p2B1/3P4/2NBPN2/PPQ2PPP/R3K2R w KQ - 2 10"
+            },
+            {
+              "san": "O-O",
+              "uci": "e1g1",
+              "side": "white",
+              "fen": "r1bqr1k1/pp1nbppp/2p2n2/3p2B1/3P4/2NBPN2/PPQ2PPP/R4RK1 b - - 3 10"
+            },
+            {
+              "san": "Ne4",
+              "uci": "f6e4",
+              "side": "black",
+              "fen": "r1bqr1k1/pp1nbppp/2p5/3p2B1/3Pn3/2NBPN2/PPQ2PPP/R4RK1 w - - 4 11"
+            }
+          ],
+          "fen": "r1bq1rk1/pp1nbppp/2p2n2/3p2B1/3P4/2NBPN2/PP3PPP/R2QK2R w KQ - 0 9"
+        }
+      ],
+      "plies": [
+        {
+          "san": "d4",
+          "uci": "d2d4",
+          "side": "white",
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1"
+        },
+        {
+          "san": "d5",
+          "uci": "d7d5",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2"
+        },
+        {
+          "san": "c4",
+          "uci": "c2c4",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2"
+        },
+        {
+          "san": "e6",
+          "uci": "e7e6",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3"
+        },
+        {
+          "san": "cxd5",
+          "uci": "c4d5",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3P4/3P4/8/PP2PPPP/RNBQKBNR b KQkq - 0 3"
+        },
+        {
+          "san": "exd5",
+          "uci": "e6d5",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp2ppp/8/3p4/3P4/8/PP2PPPP/RNBQKBNR w KQkq - 0 4"
+        },
+        {
+          "san": "Nc3",
+          "uci": "b1c3",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp2ppp/8/3p4/3P4/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 4"
+        },
+        {
+          "san": "Nf6",
+          "uci": "g8f6",
+          "side": "black",
+          "fen": "rnbqkb1r/ppp2ppp/5n2/3p4/3P4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 5"
+        },
+        {
+          "san": "Bg5",
+          "uci": "c1g5",
+          "side": "white",
+          "fen": "rnbqkb1r/ppp2ppp/5n2/3p2B1/3P4/2N5/PP2PPPP/R2QKBNR b KQkq - 3 5"
+        },
+        {
+          "san": "Be7",
+          "uci": "f8e7",
+          "side": "black",
+          "fen": "rnbqk2r/ppp1bppp/5n2/3p2B1/3P4/2N5/PP2PPPP/R2QKBNR w KQkq - 4 6"
+        },
+        {
+          "san": "e3",
+          "uci": "e2e3",
+          "side": "white",
+          "fen": "rnbqk2r/ppp1bppp/5n2/3p2B1/3P4/2N1P3/PP3PPP/R2QKBNR b KQkq - 0 6"
+        },
+        {
+          "san": "O-O",
+          "uci": "e8g8",
+          "side": "black",
+          "fen": "rnbq1rk1/ppp1bppp/5n2/3p2B1/3P4/2N1P3/PP3PPP/R2QKBNR w KQ - 1 7"
+        },
+        {
+          "san": "Bd3",
+          "uci": "f1d3",
+          "side": "white",
+          "fen": "rnbq1rk1/ppp1bppp/5n2/3p2B1/3P4/2NBP3/PP3PPP/R2QK1NR b KQ - 2 7"
+        },
+        {
+          "san": "Nbd7",
+          "uci": "b8d7",
+          "side": "black",
+          "fen": "r1bq1rk1/pppnbppp/5n2/3p2B1/3P4/2NBP3/PP3PPP/R2QK1NR w KQ - 3 8"
+        },
+        {
+          "san": "Nf3",
+          "uci": "g1f3",
+          "side": "white",
+          "fen": "r1bq1rk1/pppnbppp/5n2/3p2B1/3P4/2NBPN2/PP3PPP/R2QK2R b KQ - 4 8"
+        },
+        {
+          "san": "c6",
+          "uci": "c7c6",
+          "side": "black",
+          "fen": "r1bq1rk1/pp1nbppp/2p2n2/3p2B1/3P4/2NBPN2/PP3PPP/R2QK2R w KQ - 0 9"
+        }
+      ],
+      "fen": "r1bq1rk1/pp1nbppp/2p2n2/3p2B1/3P4/2NBPN2/PP3PPP/R2QK2R w KQ - 0 9"
+    },
+    {
+      "id": "orthodox",
+      "name": "Orthodox — Bg5 Be7",
+      "eco": "D60–D69",
+      "frequency": "the main line",
+      "tell": "Black has played ...e6, ...Nf6 and ...Be7 against Bg5. The centre is still full. Nobody has traded on d5 or on c4 yet.",
+      "ideas": {
+        "white": "White wants the pin on f6 to last, a rook on the c-file, and the bishop on d3. When Black takes on c4, the bishop recaptures with tempo and the rook is already on the file that opened.",
+        "black": "Black wants to castle, support the centre with ...Nbd7 and ...c6, then take on c4 and plant a knight on d5. That is the freeing move. An early ...c5, while the pawn is still on d5 and a rook sits on c1, is the one to avoid."
+      },
+      "plans_by_side": {
+        "white": [
+          "Bg5, e3, Nf3, Rc1, Bd3. Keep the tension until those pieces are out.",
+          "When Black plays ...dxc4, take back with the bishop. The rook on c1 is why you waited.",
+          "After ...Nd5, decide whether to take on e7 or to move the bishop. Do not take on d5 with the knight while you are still pinned."
+        ],
+        "black": [
+          "...Be7 breaks the worst of the pin. Castle before you touch the centre.",
+          "...Nbd7 and ...c6, then ...dxc4 and ...Nd5. That is the order. The knight on d5 forces the g5-bishop to declare itself.",
+          "Do not play ...c5 while your d-pawn is still on d5 and White's rook is on c1. You will be the one with the isolated pawn and the worse file."
+        ]
+      },
+      "strategic_by_side": {
+        "white": [
+          "The pin is an asset only while the centre can open. Once bishops are traded on e7 and knights on d5, you are playing a normal position and the c-file is your remaining edge.",
+          "A rook on c1 before the file opens is a rook well placed. A rook that arrives after ...c5 is a rook late."
+        ],
+        "black": [
+          "You are untangling, not attacking. Three accurate moves — castle, ...c6, ...dxc4 — turn a cramped position into an equal one.",
+          "The queen stays at home until d5 is occupied. ...Qa5 is a different variation, the Cambridge Springs, and it needs the knight on d7 first."
+        ]
+      },
+      "watch": "The freeing move is ...dxc4 followed by ...Nd5, not a pawn break you invent on move seven. Play it once the rook and the bishop have committed.",
+      "moves": [
+        "d4",
+        "d5",
+        "c4",
+        "e6",
+        "Nc3",
+        "Nf6",
+        "Bg5",
+        "Be7",
+        "e3",
+        "O-O",
+        "Nf3",
+        "Nbd7",
+        "Rc1",
+        "c6",
+        "Bd3",
+        "dxc4"
+      ],
+      "moves_count": 8,
+      "line_san": "d4 d5 c4 e6 Nc3 Nf6 Bg5 Be7 e3 O-O Nf3 Nbd7 Rc1 c6 Bd3 dxc4",
+      "tactics": [
+        {
+          "name": "The freeing move — ...dxc4 and ...Nd5",
+          "point": "From the tabiya, ...dxc4, Bxc4, ...Nd5. The knight attacks the bishop on g5 and stands in the centre. White has to take on e7 or step the bishop away. This is the point of the whole variation.",
+          "line_san": "dxc4 Bxc4 Nd5",
+          "plies": [
+            {
+              "san": "dxc4",
+              "uci": "d5c4",
+              "side": "black",
+              "fen": "r1bq1rk1/pp1nbppp/2p1pn2/6B1/2pP4/2NBPN2/PP3PPP/2RQK2R w K - 0 9"
+            },
+            {
+              "san": "Bxc4",
+              "uci": "d3c4",
+              "side": "white",
+              "fen": "r1bq1rk1/pp1nbppp/2p1pn2/6B1/2BP4/2N1PN2/PP3PPP/2RQK2R b K - 0 9"
+            },
+            {
+              "san": "Nd5",
+              "uci": "f6d5",
+              "side": "black",
+              "fen": "r1bq1rk1/pp1nbppp/2p1p3/3n2B1/2BP4/2N1PN2/PP3PPP/2RQK2R w K - 1 10"
+            }
+          ],
+          "fen": "r1bq1rk1/pp1nbppp/2p1pn2/3p2B1/2PP4/2NBPN2/PP3PPP/2RQK2R b K - 1 8"
+        }
+      ],
+      "plies": [
+        {
+          "san": "d4",
+          "uci": "d2d4",
+          "side": "white",
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1"
+        },
+        {
+          "san": "d5",
+          "uci": "d7d5",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2"
+        },
+        {
+          "san": "c4",
+          "uci": "c2c4",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2"
+        },
+        {
+          "san": "e6",
+          "uci": "e7e6",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3"
+        },
+        {
+          "san": "Nc3",
+          "uci": "b1c3",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 3"
+        },
+        {
+          "san": "Nf6",
+          "uci": "g8f6",
+          "side": "black",
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4"
+        },
+        {
+          "san": "Bg5",
+          "uci": "c1g5",
+          "side": "white",
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p2B1/2PP4/2N5/PP2PPPP/R2QKBNR b KQkq - 3 4"
+        },
+        {
+          "san": "Be7",
+          "uci": "f8e7",
+          "side": "black",
+          "fen": "rnbqk2r/ppp1bppp/4pn2/3p2B1/2PP4/2N5/PP2PPPP/R2QKBNR w KQkq - 4 5"
+        },
+        {
+          "san": "e3",
+          "uci": "e2e3",
+          "side": "white",
+          "fen": "rnbqk2r/ppp1bppp/4pn2/3p2B1/2PP4/2N1P3/PP3PPP/R2QKBNR b KQkq - 0 5"
+        },
+        {
+          "san": "O-O",
+          "uci": "e8g8",
+          "side": "black",
+          "fen": "rnbq1rk1/ppp1bppp/4pn2/3p2B1/2PP4/2N1P3/PP3PPP/R2QKBNR w KQ - 1 6"
+        },
+        {
+          "san": "Nf3",
+          "uci": "g1f3",
+          "side": "white",
+          "fen": "rnbq1rk1/ppp1bppp/4pn2/3p2B1/2PP4/2N1PN2/PP3PPP/R2QKB1R b KQ - 2 6"
+        },
+        {
+          "san": "Nbd7",
+          "uci": "b8d7",
+          "side": "black",
+          "fen": "r1bq1rk1/pppnbppp/4pn2/3p2B1/2PP4/2N1PN2/PP3PPP/R2QKB1R w KQ - 3 7"
+        },
+        {
+          "san": "Rc1",
+          "uci": "a1c1",
+          "side": "white",
+          "fen": "r1bq1rk1/pppnbppp/4pn2/3p2B1/2PP4/2N1PN2/PP3PPP/2RQKB1R b K - 4 7"
+        },
+        {
+          "san": "c6",
+          "uci": "c7c6",
+          "side": "black",
+          "fen": "r1bq1rk1/pp1nbppp/2p1pn2/3p2B1/2PP4/2N1PN2/PP3PPP/2RQKB1R w K - 0 8"
+        },
+        {
+          "san": "Bd3",
+          "uci": "f1d3",
+          "side": "white",
+          "fen": "r1bq1rk1/pp1nbppp/2p1pn2/3p2B1/2PP4/2NBPN2/PP3PPP/2RQK2R b K - 1 8"
+        },
+        {
+          "san": "dxc4",
+          "uci": "d5c4",
+          "side": "black",
+          "fen": "r1bq1rk1/pp1nbppp/2p1pn2/6B1/2pP4/2NBPN2/PP3PPP/2RQK2R w K - 0 9"
+        }
+      ],
+      "fen": "r1bq1rk1/pp1nbppp/2p1pn2/6B1/2pP4/2NBPN2/PP3PPP/2RQK2R w K - 0 9"
+    },
+    {
+      "id": "cambridge-springs",
+      "name": "Cambridge Springs",
+      "eco": "D52",
+      "frequency": "sharp",
+      "tell": "Queen on a5, knight on d7, pawns on c6 and e6, bishop still on f8. The queen eyes c3, and the dark squares around White's queen are not settled.",
+      "ideas": {
+        "white": "White wants the pin on c3 removed before anything is captured. Nd2 or Qc2, then Be2 and castle. Taking on d5 with the knight, while the bishop is on g5 and the knight is on d7, loses a piece.",
+        "black": "Black wants the c3-knight pinned, a bishop on b4, and the centre resolved only after that pin is in place. ...Qa5 is not a one-move threat; it is a reason for White to play carefully."
+      },
+      "plans_by_side": {
+        "white": [
+          "Unpin first. 7.Nd2 is the clean move; Qc2 is the other. Do not play cxd5 and Nxd5.",
+          "Then Be2, castle, and only afterwards look at the centre. The pin on c3 is annoying and it is not fatal if you refuse to open the position yourself.",
+          "a3 asks the bishop on b4 what it wants. You can live with ...Bxc3 if your king is safe and the c-file is the result."
+        ],
+        "black": [
+          "...Nbd7, ...c6, ...Qa5, then ...Bb4 and castle. That is the set-up.",
+          "Once White has unpinned with Nd2, take on c4 or play ...Ne4. You want the dark-squared bishops off or the c3-knight traded.",
+          "If White does play Nxd5 too early, you already know the answer: ...Nxd5, and after Bxd8 the check on b4 wins the piece back with interest."
+        ]
+      },
+      "strategic_by_side": {
+        "white": [
+          "This is a concrete variation. One wrong capture loses, and every other move is a normal Queen's Gambit. Play the unpin and you are fine.",
+          "Your dark-squared bishop is loose the moment the c3-knight leaves that square. Remember that before you take on d5."
+        ],
+        "black": [
+          "You have chosen tactics over the solid Orthodox. That is allowed, and it requires you to know the one trap and then play a normal middlegame.",
+          "If White survives the opening accurately, you still have ...Ne4 and pressure on c3. You have not been refuted."
+        ]
+      },
+      "watch": "The elephant trap is this position's exam. After ...Nbd7, cxd5 exd5 Nxd5 loses: ...Nxd5 Bxd8 Bb4+ and the king takes the bishop. It happens before ...Qa5, which is why you learn it here.",
+      "moves": [
+        "d4",
+        "d5",
+        "c4",
+        "e6",
+        "Nc3",
+        "Nf6",
+        "Bg5",
+        "Nbd7",
+        "e3",
+        "c6",
+        "Nf3",
+        "Qa5",
+        "Nd2",
+        "Bb4",
+        "Qc2",
+        "O-O"
+      ],
+      "moves_count": 8,
+      "line_san": "d4 d5 c4 e6 Nc3 Nf6 Bg5 Nbd7 e3 c6 Nf3 Qa5 Nd2 Bb4 Qc2 O-O",
+      "tactics": [
+        {
+          "name": "Elephant trap — Nxd5 loses a piece",
+          "point": "White has played cxd5 and then Nxd5, expecting ...Nxd5 Bxd8. Black does take the knight, and after Bxd8 comes Bb4+. The queen steps to d2, the bishop takes it, the king takes the bishop, and the king on d8 takes White's bishop. White is a piece down. Nd2 or Qc2 avoids the whole thing.",
+          "line_san": "Nxd5 Nxd5 Bxd8 Bb4+ Qd2 Bxd2+ Kxd2 Kxd8",
+          "plies": [
+            {
+              "san": "Nxd5",
+              "uci": "c3d5",
+              "side": "white",
+              "fen": "r1bqkb1r/pppn1ppp/5n2/3N2B1/3P4/8/PP2PPPP/R2QKBNR b KQkq - 0 6"
+            },
+            {
+              "san": "Nxd5",
+              "uci": "f6d5",
+              "side": "black",
+              "fen": "r1bqkb1r/pppn1ppp/8/3n2B1/3P4/8/PP2PPPP/R2QKBNR w KQkq - 0 7"
+            },
+            {
+              "san": "Bxd8",
+              "uci": "g5d8",
+              "side": "white",
+              "fen": "r1bBkb1r/pppn1ppp/8/3n4/3P4/8/PP2PPPP/R2QKBNR b KQkq - 0 7"
+            },
+            {
+              "san": "Bb4+",
+              "uci": "f8b4",
+              "side": "black",
+              "fen": "r1bBk2r/pppn1ppp/8/3n4/1b1P4/8/PP2PPPP/R2QKBNR w KQkq - 1 8"
+            },
+            {
+              "san": "Qd2",
+              "uci": "d1d2",
+              "side": "white",
+              "fen": "r1bBk2r/pppn1ppp/8/3n4/1b1P4/8/PP1QPPPP/R3KBNR b KQkq - 2 8"
+            },
+            {
+              "san": "Bxd2+",
+              "uci": "b4d2",
+              "side": "black",
+              "fen": "r1bBk2r/pppn1ppp/8/3n4/3P4/8/PP1bPPPP/R3KBNR w KQkq - 0 9"
+            },
+            {
+              "san": "Kxd2",
+              "uci": "e1d2",
+              "side": "white",
+              "fen": "r1bBk2r/pppn1ppp/8/3n4/3P4/8/PP1KPPPP/R4BNR b kq - 0 9"
+            },
+            {
+              "san": "Kxd8",
+              "uci": "e8d8",
+              "side": "black",
+              "fen": "r1bk3r/pppn1ppp/8/3n4/3P4/8/PP1KPPPP/R4BNR w - - 0 10"
+            }
+          ],
+          "fen": "r1bqkb1r/pppn1ppp/5n2/3p2B1/3P4/2N5/PP2PPPP/R2QKBNR w KQkq - 0 6"
+        }
+      ],
+      "plies": [
+        {
+          "san": "d4",
+          "uci": "d2d4",
+          "side": "white",
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1"
+        },
+        {
+          "san": "d5",
+          "uci": "d7d5",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2"
+        },
+        {
+          "san": "c4",
+          "uci": "c2c4",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2"
+        },
+        {
+          "san": "e6",
+          "uci": "e7e6",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3"
+        },
+        {
+          "san": "Nc3",
+          "uci": "b1c3",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 3"
+        },
+        {
+          "san": "Nf6",
+          "uci": "g8f6",
+          "side": "black",
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4"
+        },
+        {
+          "san": "Bg5",
+          "uci": "c1g5",
+          "side": "white",
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p2B1/2PP4/2N5/PP2PPPP/R2QKBNR b KQkq - 3 4"
+        },
+        {
+          "san": "Nbd7",
+          "uci": "b8d7",
+          "side": "black",
+          "fen": "r1bqkb1r/pppn1ppp/4pn2/3p2B1/2PP4/2N5/PP2PPPP/R2QKBNR w KQkq - 4 5"
+        },
+        {
+          "san": "e3",
+          "uci": "e2e3",
+          "side": "white",
+          "fen": "r1bqkb1r/pppn1ppp/4pn2/3p2B1/2PP4/2N1P3/PP3PPP/R2QKBNR b KQkq - 0 5"
+        },
+        {
+          "san": "c6",
+          "uci": "c7c6",
+          "side": "black",
+          "fen": "r1bqkb1r/pp1n1ppp/2p1pn2/3p2B1/2PP4/2N1P3/PP3PPP/R2QKBNR w KQkq - 0 6"
+        },
+        {
+          "san": "Nf3",
+          "uci": "g1f3",
+          "side": "white",
+          "fen": "r1bqkb1r/pp1n1ppp/2p1pn2/3p2B1/2PP4/2N1PN2/PP3PPP/R2QKB1R b KQkq - 1 6"
+        },
+        {
+          "san": "Qa5",
+          "uci": "d8a5",
+          "side": "black",
+          "fen": "r1b1kb1r/pp1n1ppp/2p1pn2/q2p2B1/2PP4/2N1PN2/PP3PPP/R2QKB1R w KQkq - 2 7"
+        },
+        {
+          "san": "Nd2",
+          "uci": "f3d2",
+          "side": "white",
+          "fen": "r1b1kb1r/pp1n1ppp/2p1pn2/q2p2B1/2PP4/2N1P3/PP1N1PPP/R2QKB1R b KQkq - 3 7"
+        },
+        {
+          "san": "Bb4",
+          "uci": "f8b4",
+          "side": "black",
+          "fen": "r1b1k2r/pp1n1ppp/2p1pn2/q2p2B1/1bPP4/2N1P3/PP1N1PPP/R2QKB1R w KQkq - 4 8"
+        },
+        {
+          "san": "Qc2",
+          "uci": "d1c2",
+          "side": "white",
+          "fen": "r1b1k2r/pp1n1ppp/2p1pn2/q2p2B1/1bPP4/2N1P3/PPQN1PPP/R3KB1R b KQkq - 5 8"
+        },
+        {
+          "san": "O-O",
+          "uci": "e8g8",
+          "side": "black",
+          "fen": "r1b2rk1/pp1n1ppp/2p1pn2/q2p2B1/1bPP4/2N1P3/PPQN1PPP/R3KB1R w KQ - 6 9"
+        }
+      ],
+      "fen": "r1b2rk1/pp1n1ppp/2p1pn2/q2p2B1/1bPP4/2N1P3/PPQN1PPP/R3KB1R w KQ - 6 9"
+    },
+    {
+      "id": "lasker",
+      "name": "Lasker — ...Ne4",
+      "eco": "D56–D57",
+      "frequency": "solid",
+      "tell": "...h6 has kicked the bishop to h4, and a knight has landed on e4. Black is offering two trades at once: the dark-squared bishops, and the knight for the knight on c3.",
+      "ideas": {
+        "white": "White should take the trades and play the slightly freer position that is left: Bxe7, cxd5, and after ...Nxc3 recapture with the b-pawn. Dodging ...Ne4 with a passive retreat gives Black the centre for nothing.",
+        "black": "Black wants the trades. Space is given up on purpose so that White's most active pieces leave the board. What remains should be a solid centre and a queen on e7, not an attack."
+      },
+      "plans_by_side": {
+        "white": [
+          "Take on e7. Then cxd5, and when the knight on e4 takes on c3, recapture bxc3 and meet ...exd5.",
+          "You have a pawn on c3, a half-open b-file, and more space. Bd3, castle, and use the b-file. Do not look for a combination that is no longer there.",
+          "The bishop on h4 did its job by forcing ...h6 and ...Ne4. Trading it is the variation, not a concession."
+        ],
+        "black": [
+          "...h6, ...Ne4, and after Bxe7 recapture with the queen. Then ...Nxc3 and ...exd5.",
+          "Finish with ...c6 or ...Nd7 and castle if you have not already. Do not start a new pawn push to 'get the activity back' on the next move.",
+          "The queen on e7 is well placed. She holds e4 and d6 and does not need a new square until White creates a threat."
+        ]
+      },
+      "strategic_by_side": {
+        "white": [
+          "You are a little better and a long way from winning. The half-open b-file and the space are the edge. Trade pieces only when it increases that edge.",
+          "Black's position has no weakness. If you charge, you will make one."
+        ],
+        "black": [
+          "You accepted a slightly worse structure in exchange for removing White's pin and White's c3-knight. Play accurately and the draw is a fair result; that is the Lasker.",
+          "The king on g8 is safe. ...h6 was a developing move here, not a loosening one, because the bishop that might have used it has been traded."
+        ]
+      },
+      "watch": "The knight on e4 is meant to be traded. Taking twice and recapturing with the b-pawn is the position, not a mistake.",
+      "moves": [
+        "d4",
+        "d5",
+        "c4",
+        "e6",
+        "Nc3",
+        "Nf6",
+        "Bg5",
+        "Be7",
+        "e3",
+        "O-O",
+        "Nf3",
+        "h6",
+        "Bh4",
+        "Ne4",
+        "Bxe7",
+        "Qxe7"
+      ],
+      "moves_count": 8,
+      "line_san": "d4 d5 c4 e6 Nc3 Nf6 Bg5 Be7 e3 O-O Nf3 h6 Bh4 Ne4 Bxe7 Qxe7",
+      "tactics": [
+        {
+          "name": "The trades, and the pawn structure you get",
+          "point": "From the queen recapture: cxd5, ...Nxc3, bxc3, ...exd5. Bishops and a pair of knights are gone. White has space and the b-file; Black has a solid pawn on d5 and no pin to worry about.",
+          "line_san": "cxd5 Nxc3 bxc3 exd5",
+          "plies": [
+            {
+              "san": "cxd5",
+              "uci": "c4d5",
+              "side": "white",
+              "fen": "rnb2rk1/ppp1qpp1/4p2p/3P4/3Pn3/2N1PN2/PP3PPP/R2QKB1R b KQ - 0 9"
+            },
+            {
+              "san": "Nxc3",
+              "uci": "e4c3",
+              "side": "black",
+              "fen": "rnb2rk1/ppp1qpp1/4p2p/3P4/3P4/2n1PN2/PP3PPP/R2QKB1R w KQ - 0 10"
+            },
+            {
+              "san": "bxc3",
+              "uci": "b2c3",
+              "side": "white",
+              "fen": "rnb2rk1/ppp1qpp1/4p2p/3P4/3P4/2P1PN2/P4PPP/R2QKB1R b KQ - 0 10"
+            },
+            {
+              "san": "exd5",
+              "uci": "e6d5",
+              "side": "black",
+              "fen": "rnb2rk1/ppp1qpp1/7p/3p4/3P4/2P1PN2/P4PPP/R2QKB1R w KQ - 0 11"
+            }
+          ],
+          "fen": "rnb2rk1/ppp1qpp1/4p2p/3p4/2PPn3/2N1PN2/PP3PPP/R2QKB1R w KQ - 0 9"
+        }
+      ],
+      "plies": [
+        {
+          "san": "d4",
+          "uci": "d2d4",
+          "side": "white",
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1"
+        },
+        {
+          "san": "d5",
+          "uci": "d7d5",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2"
+        },
+        {
+          "san": "c4",
+          "uci": "c2c4",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2"
+        },
+        {
+          "san": "e6",
+          "uci": "e7e6",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3"
+        },
+        {
+          "san": "Nc3",
+          "uci": "b1c3",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 3"
+        },
+        {
+          "san": "Nf6",
+          "uci": "g8f6",
+          "side": "black",
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4"
+        },
+        {
+          "san": "Bg5",
+          "uci": "c1g5",
+          "side": "white",
+          "fen": "rnbqkb1r/ppp2ppp/4pn2/3p2B1/2PP4/2N5/PP2PPPP/R2QKBNR b KQkq - 3 4"
+        },
+        {
+          "san": "Be7",
+          "uci": "f8e7",
+          "side": "black",
+          "fen": "rnbqk2r/ppp1bppp/4pn2/3p2B1/2PP4/2N5/PP2PPPP/R2QKBNR w KQkq - 4 5"
+        },
+        {
+          "san": "e3",
+          "uci": "e2e3",
+          "side": "white",
+          "fen": "rnbqk2r/ppp1bppp/4pn2/3p2B1/2PP4/2N1P3/PP3PPP/R2QKBNR b KQkq - 0 5"
+        },
+        {
+          "san": "O-O",
+          "uci": "e8g8",
+          "side": "black",
+          "fen": "rnbq1rk1/ppp1bppp/4pn2/3p2B1/2PP4/2N1P3/PP3PPP/R2QKBNR w KQ - 1 6"
+        },
+        {
+          "san": "Nf3",
+          "uci": "g1f3",
+          "side": "white",
+          "fen": "rnbq1rk1/ppp1bppp/4pn2/3p2B1/2PP4/2N1PN2/PP3PPP/R2QKB1R b KQ - 2 6"
+        },
+        {
+          "san": "h6",
+          "uci": "h7h6",
+          "side": "black",
+          "fen": "rnbq1rk1/ppp1bpp1/4pn1p/3p2B1/2PP4/2N1PN2/PP3PPP/R2QKB1R w KQ - 0 7"
+        },
+        {
+          "san": "Bh4",
+          "uci": "g5h4",
+          "side": "white",
+          "fen": "rnbq1rk1/ppp1bpp1/4pn1p/3p4/2PP3B/2N1PN2/PP3PPP/R2QKB1R b KQ - 1 7"
+        },
+        {
+          "san": "Ne4",
+          "uci": "f6e4",
+          "side": "black",
+          "fen": "rnbq1rk1/ppp1bpp1/4p2p/3p4/2PPn2B/2N1PN2/PP3PPP/R2QKB1R w KQ - 2 8"
+        },
+        {
+          "san": "Bxe7",
+          "uci": "h4e7",
+          "side": "white",
+          "fen": "rnbq1rk1/ppp1Bpp1/4p2p/3p4/2PPn3/2N1PN2/PP3PPP/R2QKB1R b KQ - 0 8"
+        },
+        {
+          "san": "Qxe7",
+          "uci": "d8e7",
+          "side": "black",
+          "fen": "rnb2rk1/ppp1qpp1/4p2p/3p4/2PPn3/2N1PN2/PP3PPP/R2QKB1R w KQ - 0 9"
+        }
+      ],
+      "fen": "rnb2rk1/ppp1qpp1/4p2p/3p4/2PPn3/2N1PN2/PP3PPP/R2QKB1R w KQ - 0 9"
+    },
+    {
+      "id": "tarrasch",
+      "name": "Tarrasch — ...c5",
+      "eco": "D32–D34",
+      "frequency": "common",
+      "tell": "Black has answered the gambit with ...c5. After the trade on d5, Black has an isolated queen pawn and open lines for the pieces. If White has fianchettoed the light-squared bishop, you are in the main line.",
+      "ideas": {
+        "white": "White wants the isolated pawn fixed on d5 and blockaded. Nf3, g3, Bg2, castle, Bg5. Grabbing with dxc5 on move five walks into ...d4 and ...b5, and the pawn comes back.",
+        "black": "Black wants piece play for the isolated pawn: ...Nc6, ...Nf6, ...Be7, castle, then ...Bg4 or pressure down the c-file and the e-file. The pawn on d5 is the price, not an accident."
+      },
+      "plans_by_side": {
+        "white": [
+          "Take on d5, then Nf3 and g3. The bishop on g2 is the piece that makes d5 a target.",
+          "Castle, Bg5, and put a rook on c1. Blockade d5 with a piece before you try to win it.",
+          "Do not play dxc5 as soon as ...c5 appears. ...d4 and ...b5 recover the pawn and leave your knight on the rim."
+        ],
+        "black": [
+          "...c5, recapture on d5 with the e-pawn, ...Nc6 and ...Nf6, ...Be7 and castle. Develop before you defend d5.",
+          "Keep the minor pieces. They are the compensation. Trading them leaves you with a weak pawn and nothing to do.",
+          "If White does grab on c5, ...d4 and ...b5 is the answer. You get the pawn back and a pawn on d4."
+        ]
+      },
+      "strategic_by_side": {
+        "white": [
+          "The endgame is yours if the pawn on d5 is still isolated and the minor pieces are gone. Steer towards that, and do not let Black's pieces become faster than the weakness.",
+          "The g2-bishop wants the long diagonal. Do not trade it for a knight unless d5 falls."
+        ],
+        "black": [
+          "You are playing for activity in the next fifteen moves. If the game reaches a pure pawn ending with d5 still isolated, you have lost the argument.",
+          "Open files are the compensation: c for a rook, e for a rook. Use them while White is still blockading."
+        ]
+      },
+      "watch": "dxc5, played before Nf3 and the fianchetto, is met by ...d4 and ...b5. The knight goes to a4, Black takes the pawn back, and White's development has gone sideways.",
+      "moves": [
+        "d4",
+        "d5",
+        "c4",
+        "e6",
+        "Nc3",
+        "c5",
+        "cxd5",
+        "exd5",
+        "Nf3",
+        "Nc6",
+        "g3",
+        "Nf6",
+        "Bg2",
+        "Be7",
+        "O-O",
+        "O-O"
+      ],
+      "moves_count": 8,
+      "line_san": "d4 d5 c4 e6 Nc3 c5 cxd5 exd5 Nf3 Nc6 g3 Nf6 Bg2 Be7 O-O O-O",
+      "tactics": [
+        {
+          "name": "dxc5 too early — ...d4 and ...b5",
+          "point": "Instead of Nf3, White takes on c5. Black plays ...d4, the knight steps to a4, and ...b5 hits it. After cxb6 axb6 the pawn is back, d4 cramps White, and the knight on a4 is out of play. Develop with Nf3 and g3.",
+          "line_san": "dxc5 d4 Na4 b5 cxb6 axb6",
+          "plies": [
+            {
+              "san": "dxc5",
+              "uci": "d4c5",
+              "side": "white",
+              "fen": "rnbqkbnr/pp3ppp/8/2Pp4/8/2N5/PP2PPPP/R1BQKBNR b KQkq - 0 5"
+            },
+            {
+              "san": "d4",
+              "uci": "d5d4",
+              "side": "black",
+              "fen": "rnbqkbnr/pp3ppp/8/2P5/3p4/2N5/PP2PPPP/R1BQKBNR w KQkq - 0 6"
+            },
+            {
+              "san": "Na4",
+              "uci": "c3a4",
+              "side": "white",
+              "fen": "rnbqkbnr/pp3ppp/8/2P5/N2p4/8/PP2PPPP/R1BQKBNR b KQkq - 1 6"
+            },
+            {
+              "san": "b5",
+              "uci": "b7b5",
+              "side": "black",
+              "fen": "rnbqkbnr/p4ppp/8/1pP5/N2p4/8/PP2PPPP/R1BQKBNR w KQkq b6 0 7"
+            },
+            {
+              "san": "cxb6",
+              "uci": "c5b6",
+              "side": "white",
+              "fen": "rnbqkbnr/p4ppp/1P6/8/N2p4/8/PP2PPPP/R1BQKBNR b KQkq - 0 7"
+            },
+            {
+              "san": "axb6",
+              "uci": "a7b6",
+              "side": "black",
+              "fen": "rnbqkbnr/5ppp/1p6/8/N2p4/8/PP2PPPP/R1BQKBNR w KQkq - 0 8"
+            }
+          ],
+          "fen": "rnbqkbnr/pp3ppp/8/2pp4/3P4/2N5/PP2PPPP/R1BQKBNR w KQkq - 0 5"
+        }
+      ],
+      "plies": [
+        {
+          "san": "d4",
+          "uci": "d2d4",
+          "side": "white",
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1"
+        },
+        {
+          "san": "d5",
+          "uci": "d7d5",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2"
+        },
+        {
+          "san": "c4",
+          "uci": "c2c4",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2"
+        },
+        {
+          "san": "e6",
+          "uci": "e7e6",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3"
+        },
+        {
+          "san": "Nc3",
+          "uci": "b1c3",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 3"
+        },
+        {
+          "san": "c5",
+          "uci": "c7c5",
+          "side": "black",
+          "fen": "rnbqkbnr/pp3ppp/4p3/2pp4/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 0 4"
+        },
+        {
+          "san": "cxd5",
+          "uci": "c4d5",
+          "side": "white",
+          "fen": "rnbqkbnr/pp3ppp/4p3/2pP4/3P4/2N5/PP2PPPP/R1BQKBNR b KQkq - 0 4"
+        },
+        {
+          "san": "exd5",
+          "uci": "e6d5",
+          "side": "black",
+          "fen": "rnbqkbnr/pp3ppp/8/2pp4/3P4/2N5/PP2PPPP/R1BQKBNR w KQkq - 0 5"
+        },
+        {
+          "san": "Nf3",
+          "uci": "g1f3",
+          "side": "white",
+          "fen": "rnbqkbnr/pp3ppp/8/2pp4/3P4/2N2N2/PP2PPPP/R1BQKB1R b KQkq - 1 5"
+        },
+        {
+          "san": "Nc6",
+          "uci": "b8c6",
+          "side": "black",
+          "fen": "r1bqkbnr/pp3ppp/2n5/2pp4/3P4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 2 6"
+        },
+        {
+          "san": "g3",
+          "uci": "g2g3",
+          "side": "white",
+          "fen": "r1bqkbnr/pp3ppp/2n5/2pp4/3P4/2N2NP1/PP2PP1P/R1BQKB1R b KQkq - 0 6"
+        },
+        {
+          "san": "Nf6",
+          "uci": "g8f6",
+          "side": "black",
+          "fen": "r1bqkb1r/pp3ppp/2n2n2/2pp4/3P4/2N2NP1/PP2PP1P/R1BQKB1R w KQkq - 1 7"
+        },
+        {
+          "san": "Bg2",
+          "uci": "f1g2",
+          "side": "white",
+          "fen": "r1bqkb1r/pp3ppp/2n2n2/2pp4/3P4/2N2NP1/PP2PPBP/R1BQK2R b KQkq - 2 7"
+        },
+        {
+          "san": "Be7",
+          "uci": "f8e7",
+          "side": "black",
+          "fen": "r1bqk2r/pp2bppp/2n2n2/2pp4/3P4/2N2NP1/PP2PPBP/R1BQK2R w KQkq - 3 8"
+        },
+        {
+          "san": "O-O",
+          "uci": "e1g1",
+          "side": "white",
+          "fen": "r1bqk2r/pp2bppp/2n2n2/2pp4/3P4/2N2NP1/PP2PPBP/R1BQ1RK1 b kq - 4 8"
+        },
+        {
+          "san": "O-O",
+          "uci": "e8g8",
+          "side": "black",
+          "fen": "r1bq1rk1/pp2bppp/2n2n2/2pp4/3P4/2N2NP1/PP2PPBP/R1BQ1RK1 w - - 5 9"
+        }
+      ],
+      "fen": "r1bq1rk1/pp2bppp/2n2n2/2pp4/3P4/2N2NP1/PP2PPBP/R1BQ1RK1 w - - 5 9"
+    },
+    {
+      "id": "slav",
+      "name": "Slav — bishop outside",
+      "eco": "D10–D19",
+      "frequency": "very common",
+      "tell": "Black has played ...c6, not ...e6, and the light-squared bishop has come to f5 before ...e6. The pawn on c4 is one Black has taken, and White has played a4 to stop ...b5.",
+      "ideas": {
+        "white": "White wants the pawn back with e3 and Bxc4, the king safe, and only then e4 — after the bishop on f5 has been challenged. Playing e4 while that bishop still sits on f5 drops the pawn.",
+        "black": "Black wants the light-squared bishop outside the chain, the pawn taken on c4 and given back, and ...Bb4 pinning the knight that would like to support e4. ...e6 before the bishop is out is a Semi-Slav, which is a different opening."
+      },
+      "plans_by_side": {
+        "white": [
+          "Nf3, Nc3, and a4 when Black takes on c4. a4 stops ...b5 from cementing the pawn.",
+          "e3, Bxc4, castle. Then Qe2 and a later e4, or Nh4 to ask the bishop on f5 where it is going.",
+          "Do not play e4 with the bishop still on f5. It takes the pawn."
+        ],
+        "black": [
+          "...c6, ...Nf6, take on c4, ...Bf5, and only then ...e6. That order is the Slav.",
+          "...Bb4 and castle. The pin slows e4. Meet a later e4 with ...Bg6.",
+          "If you play ...e6 before the bishop is out, you are no longer in this line. The bishop belongs on f5 or g4, not on c8."
+        ]
+      },
+      "strategic_by_side": {
+        "white": [
+          "You have a small space edge and the move e4 as a plan. It is a good position if you are patient about the move order.",
+          "The c-file and the e4 break are the play. The pawn on c6 is a hook for later, not an immediate target."
+        ],
+        "black": [
+          "You have the bishop you were denied in the Orthodox. Keep it. Trading it for a knight on f3 or c3 is a decision, not an automatic move.",
+          "Solid does not mean passive. ...Nbd7, ...O-O and ...Bg6 are the next three ideas once White pushes e4 at the right moment."
+        ]
+      },
+      "watch": "e4, played while the bishop is on f5 and before e3 and Bxc4, loses a pawn: ...Bxe4 and ...Nxe4. The book move is e3.",
+      "moves": [
+        "d4",
+        "d5",
+        "c4",
+        "c6",
+        "Nf3",
+        "Nf6",
+        "Nc3",
+        "dxc4",
+        "a4",
+        "Bf5",
+        "e3",
+        "e6",
+        "Bxc4",
+        "Bb4",
+        "O-O",
+        "O-O"
+      ],
+      "moves_count": 8,
+      "line_san": "d4 d5 c4 c6 Nf3 Nf6 Nc3 dxc4 a4 Bf5 e3 e6 Bxc4 Bb4 O-O O-O",
+      "tactics": [
+        {
+          "name": "e4 drops a pawn to the bishop on f5",
+          "point": "The bishop is already on f5, so e4 is not a break, it is a gift. ...Bxe4, and if the knight recaptures, ...Nxe4. White is a pawn down and the knight that wanted c3 has been dragged to e4. Play e3 and take on c4 with the bishop.",
+          "line_san": "e4 Bxe4 Nxe4 Nxe4",
+          "plies": [
+            {
+              "san": "e4",
+              "uci": "e2e4",
+              "side": "white",
+              "fen": "rn1qkb1r/pp2pppp/2p2n2/5b2/P1pPP3/2N2N2/1P3PPP/R1BQKB1R b KQkq - 0 6"
+            },
+            {
+              "san": "Bxe4",
+              "uci": "f5e4",
+              "side": "black",
+              "fen": "rn1qkb1r/pp2pppp/2p2n2/8/P1pPb3/2N2N2/1P3PPP/R1BQKB1R w KQkq - 0 7"
+            },
+            {
+              "san": "Nxe4",
+              "uci": "c3e4",
+              "side": "white",
+              "fen": "rn1qkb1r/pp2pppp/2p2n2/8/P1pPN3/5N2/1P3PPP/R1BQKB1R b KQkq - 0 7"
+            },
+            {
+              "san": "Nxe4",
+              "uci": "f6e4",
+              "side": "black",
+              "fen": "rn1qkb1r/pp2pppp/2p5/8/P1pPn3/5N2/1P3PPP/R1BQKB1R w KQkq - 0 8"
+            }
+          ],
+          "fen": "rn1qkb1r/pp2pppp/2p2n2/5b2/P1pP4/2N2N2/1P2PPPP/R1BQKB1R w KQkq - 1 6"
+        }
+      ],
+      "plies": [
+        {
+          "san": "d4",
+          "uci": "d2d4",
+          "side": "white",
+          "fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1"
+        },
+        {
+          "san": "d5",
+          "uci": "d7d5",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2"
+        },
+        {
+          "san": "c4",
+          "uci": "c2c4",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2"
+        },
+        {
+          "san": "c6",
+          "uci": "c7c6",
+          "side": "black",
+          "fen": "rnbqkbnr/pp2pppp/2p5/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3"
+        },
+        {
+          "san": "Nf3",
+          "uci": "g1f3",
+          "side": "white",
+          "fen": "rnbqkbnr/pp2pppp/2p5/3p4/2PP4/5N2/PP2PPPP/RNBQKB1R b KQkq - 1 3"
+        },
+        {
+          "san": "Nf6",
+          "uci": "g8f6",
+          "side": "black",
+          "fen": "rnbqkb1r/pp2pppp/2p2n2/3p4/2PP4/5N2/PP2PPPP/RNBQKB1R w KQkq - 2 4"
+        },
+        {
+          "san": "Nc3",
+          "uci": "b1c3",
+          "side": "white",
+          "fen": "rnbqkb1r/pp2pppp/2p2n2/3p4/2PP4/2N2N2/PP2PPPP/R1BQKB1R b KQkq - 3 4"
+        },
+        {
+          "san": "dxc4",
+          "uci": "d5c4",
+          "side": "black",
+          "fen": "rnbqkb1r/pp2pppp/2p2n2/8/2pP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 0 5"
+        },
+        {
+          "san": "a4",
+          "uci": "a2a4",
+          "side": "white",
+          "fen": "rnbqkb1r/pp2pppp/2p2n2/8/P1pP4/2N2N2/1P2PPPP/R1BQKB1R b KQkq - 0 5"
+        },
+        {
+          "san": "Bf5",
+          "uci": "c8f5",
+          "side": "black",
+          "fen": "rn1qkb1r/pp2pppp/2p2n2/5b2/P1pP4/2N2N2/1P2PPPP/R1BQKB1R w KQkq - 1 6"
+        },
+        {
+          "san": "e3",
+          "uci": "e2e3",
+          "side": "white",
+          "fen": "rn1qkb1r/pp2pppp/2p2n2/5b2/P1pP4/2N1PN2/1P3PPP/R1BQKB1R b KQkq - 0 6"
+        },
+        {
+          "san": "e6",
+          "uci": "e7e6",
+          "side": "black",
+          "fen": "rn1qkb1r/pp3ppp/2p1pn2/5b2/P1pP4/2N1PN2/1P3PPP/R1BQKB1R w KQkq - 0 7"
+        },
+        {
+          "san": "Bxc4",
+          "uci": "f1c4",
+          "side": "white",
+          "fen": "rn1qkb1r/pp3ppp/2p1pn2/5b2/P1BP4/2N1PN2/1P3PPP/R1BQK2R b KQkq - 0 7"
+        },
+        {
+          "san": "Bb4",
+          "uci": "f8b4",
+          "side": "black",
+          "fen": "rn1qk2r/pp3ppp/2p1pn2/5b2/PbBP4/2N1PN2/1P3PPP/R1BQK2R w KQkq - 1 8"
+        },
+        {
+          "san": "O-O",
+          "uci": "e1g1",
+          "side": "white",
+          "fen": "rn1qk2r/pp3ppp/2p1pn2/5b2/PbBP4/2N1PN2/1P3PPP/R1BQ1RK1 b kq - 2 8"
+        },
+        {
+          "san": "O-O",
+          "uci": "e8g8",
+          "side": "black",
+          "fen": "rn1q1rk1/pp3ppp/2p1pn2/5b2/PbBP4/2N1PN2/1P3PPP/R1BQ1RK1 w - - 3 9"
+        }
+      ],
+      "fen": "rn1q1rk1/pp3ppp/2p1pn2/5b2/PbBP4/2N1PN2/1P3PPP/R1BQ1RK1 w - - 3 9"
+    }
+  ]
+}

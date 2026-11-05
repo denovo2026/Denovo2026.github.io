@@ -2128,7 +2128,11 @@
   /* /api/attacks                 -> name, summary, patterns w/o puzzles   */
   /*                                 (puzzle_count instead)                */
   /* /api/attacks/:id             -> one pattern with its puzzles          */
-  var REPERTOIRES = { modern: "modern.json", grunfeld: "grunfeld.json", scotch: "scotch.json", alapin: "alapin.json" };
+  var REPERTOIRES = { modern: "modern.json", grunfeld: "grunfeld.json", scotch: "scotch.json", alapin: "alapin.json", qg: "qg.json" };
+  function repSlots(d) {
+    var n = (d && d.looks || []).length;
+    return d && d.side === "both" ? n * 2 : n;
+  }
   function repFile(slug) {
     if (!Object.prototype.hasOwnProperty.call(REPERTOIRES, slug)) fail(404, "repertoire_not_found");
     return loadData(REPERTOIRES[slug]);
@@ -2153,8 +2157,11 @@
   var REP_STEPS = [1, 3, 7, 14, 30, 60];
   function repProg() { return S.get("repProgress", {}); }
   route("POST", "/api/repertoire/:slug/:id/result", function (b, q, p) {
-    var all = repProg(), key = p.slug + "/" + p.id;
-    var r = all[key] || { slug: p.slug, id: p.id, name: b.name || p.id, attempts: 0, step: -1, history: [] };
+    var all = repProg();
+    var side = b.side === "white" || b.side === "black" ? b.side : "";
+    var key = p.slug + "/" + p.id + (side ? "/" + side : "");
+    var r = all[key] || { slug: p.slug, id: p.id, side: side, name: b.name || p.id, attempts: 0, step: -1, history: [] };
+    r.side = side;
     var total = Math.max(1, parseInt(b.total, 10) || 1), right = clamp(parseInt(b.right, 10) || 0, 0, total);
     r.attempts++; r.name = b.name || r.name;
     r.last_right = right; r.last_total = total; r.last_at = nowIso(); r.missed = (b.missed || []).slice(0, 10);
@@ -2171,7 +2178,7 @@
   async function repProgressSummary(slug) {
     var all = repProg(), lines = Object.keys(all).map(function (k) { return all[k]; }).filter(function (l) { return !slug || l.slug === slug; });
     var totalLines = 0;
-    for (var s2 of ["modern", "grunfeld", "scotch", "alapin"]) { if (slug && slug !== s2) continue; try { totalLines += ((await repFile(s2)).looks || []).length; } catch (_) {} }
+    for (var s2 of ["modern", "grunfeld", "scotch", "qg", "alapin"]) { if (slug && slug !== s2) continue; try { totalLines += repSlots(await repFile(s2)); } catch (_) {} }
     var now = Date.now();
     return { lines: lines, total_lines: totalLines, tried: lines.length,
       known: lines.filter(function (l) { return l.last_right === l.last_total; }).length,
@@ -2276,15 +2283,16 @@
     { slug: "modern", name: "Modern" },
     { slug: "grunfeld", name: "Grünfeld" },
     { slug: "scotch", name: "Scotch" },
+    { slug: "qg", name: "Queen's Gambit" },
     { slug: "alapin", name: "Alapin" },
   ];
   var _repLookCounts = null;
   async function repLookCounts() {
     if (_repLookCounts) return _repLookCounts;
     var out = {};
-    var slugs = ["modern", "grunfeld", "scotch", "alapin"];
+    var slugs = ["modern", "grunfeld", "scotch", "qg", "alapin"];
     for (var i = 0; i < slugs.length; i++) {
-      try { out[slugs[i]] = ((await repFile(slugs[i])).looks || []).length; }
+      try { out[slugs[i]] = repSlots(await repFile(slugs[i])); }
       catch (_) { out[slugs[i]] = 0; }
     }
     _repLookCounts = out;

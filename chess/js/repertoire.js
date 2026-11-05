@@ -35,12 +35,24 @@ function sendFenToPlay(fen, orientation, message) {
 function createRepertoireTab(cfg) {
   const P = cfg.prefix;
   const API = "/api/repertoire/" + cfg.slug;
-  /* v44: side is "black" (Modern/Grünfeld) or "white" (Scotch, v46 Alapin). Quizzes ask
-     for YOUR moves; the opponent's moves play themselves. */
-  const meSide = () => (S.data && S.data.side) || cfg.side || "black";
+  const bothSides = cfg.side === "both";
+  /* side is "black" (Modern/Grünfeld), "white" (Scotch, Alapin), or "both"
+     (Queen's Gambit). Quizzes ask for YOUR moves; the opponent's play themselves.
+     "both" follows the toggle, never the literal string on the JSON. */
+  const meSide = () => {
+    if (bothSides) return S.side === "black" ? "black" : "white";
+    const fromData = S.data && S.data.side;
+    if (fromData === "white" || fromData === "black") return fromData;
+    return cfg.side === "white" ? "white" : "black";
+  };
   const oppSide = () => meSide() === "white" ? "black" : "white";
-  const quizBtnLabel = () => meSide() === "white" ? "Quiz me on White's moves" : "Quiz me on Black's moves";
-  const ideaHeading = () => meSide() === "white" ? "What Black wants" : "What White wants";
+  const sideName = (side) => side === "white" ? "White" : "Black";
+  const quizBtnLabel = () => {
+    if (S.quiz) return cfg.coach ? "Stop quiz" : "Stop the quiz";
+    if (cfg.coach) return "Quiz this line";
+    return meSide() === "white" ? "Quiz me on White's moves" : "Quiz me on Black's moves";
+  };
+  const ideaHeading = () => "What " + sideName(oppSide()) + " wants";
 
   const S = {
     data: null,        // the overview payload
@@ -50,8 +62,9 @@ function createRepertoireTab(cfg) {
     score: { asked: 0, right: 0 },
     busy: false,
     branch: null,      // a tactic being shown instead of the main line
+    side: "white",     // Queen's Gambit toggle; ignored for one-sided tabs
 
-    // the blind drill: White plays one of the set-ups without saying which
+    // the blind drill: the opponent plays one of the set-ups without saying which
     blind: false,
     revealed: true,    // true whenever the identity is on show
     toldYou: false,    // did a wrong move force the answer out?
@@ -59,27 +72,53 @@ function createRepertoireTab(cfg) {
 
     // v41: memory
     first: {},         // ply index -> first try right? (this run)
+    hinted: {},        // ply index -> hint spent the first try
     transposed: 0,
-    progress: {},      // look id -> saved result (first tries, due date)
+    progress: {},      // look id -> saved result for the side being drilled
     posIndex: null,    // position key -> look name, for transpositions
   };
 
   const repBoard = new Board($(P + "-board"), { onMove: onRepMove });
-  // Orientation follows the repertoire side (Black for Modern/Grünfeld, White for Scotch).
-  repBoard.setOrientation((cfg.side === "white") ? "white" : "black");
+  // Black for Modern/Grünfeld, White for Scotch/Alapin and the QG default.
+  repBoard.setOrientation(cfg.side === "black" ? "black" : "white");
 
   function repPlies() {
     return (S.branch || S.look || {}).plies || [];
   }
 
+  /* A tactic's fen is the start only when the first ply is legal from it.
+     Modern and Grünfeld store the final position in that field; Scotch,
+     Alapin and Queen's Gambit store the position before the trap. */
+  function repUciOk(fen, uci) {
+    if (!uci || typeof Chess === "undefined") return !!(fen && uci);
+    try {
+      const ch = new Chess(fen);
+      return !!playUci(ch, uci);
+    } catch (_) { return false; }
+  }
+
   function repFenAt(ply) {
     const plies = repPlies();
     if (ply === 0) {
-      // v44: mid-game tactic branches carry their own start fen
-      if (S.branch && S.branch.fen) return S.branch.fen;
+      const start = S.branch && S.branch.fen;
+      if (start && plies[0] && repUciOk(start, plies[0].uci)) return start;
       return PLAY_START_FEN;
     }
     return plies[ply - 1].fen;
+  }
+
+  function repMovePrefix(i) {
+    const parts = String(repFenAt(i) || "").split(" ");
+    const n = parts[5] || String(Math.floor(i / 2) + 1);
+    const whiteToMove = (parts[1] || "w") !== "b";
+    if (whiteToMove) return n + ".";
+    if (i === 0) return n + "...";
+    return "";
+  }
+
+  function repClearGuides() {
+    repBoard.setGuided([]);
+    repBoard.clearArrows();
   }
 
   function repSetStatus(msg, kind) {
@@ -97,10 +136,12 @@ function createRepertoireTab(cfg) {
     const last = S.ply > 0 ? plies[S.ply - 1] : null;
     repBoard.setLastMove(last ? last.uci.slice(0, 2) : null,
                             last ? last.uci.slice(2, 4) : null);
+    repClearGuides();
     renderRepMoves();
+    const stepping = !S.quiz;
     repNav.update({
-      start: S.ply > 0, prev: S.ply > 0,
-      next: S.ply < plies.length, end: S.ply < plies.length,
+      start: stepping && S.ply > 0, prev: stepping && S.ply > 0,
+      next: stepping && S.ply < plies.length, end: stepping && S.ply < plies.length,
     });
   }
 
@@ -126,8 +167,7 @@ function createRepertoireTab(cfg) {
       const hidden = S.quiz && i >= S.ply;
       span.className = "rep-move " + p.side
         + (i < S.ply ? " played" : "");
-      span.textContent = (i % 2 === 0 ? (i / 2 + 1) + "." : "")
-        + (hidden ? "…" : p.san);
+      span.textContent = repMovePrefix(i) + (hidden ? "…" : p.san);
       if (!S.quiz) {
         span.addEventListener("click", () => repGoToPly(i + 1));
       }
@@ -139,15 +179,27 @@ function createRepertoireTab(cfg) {
      The opponent's moves play themselves; every move of YOUR side is asked.
      A wrong answer is taken back rather than accepted. */
 
+  function repHintBtn() { return $("btn-" + P + "-hint"); }
+
+  function repSetHintEnabled(on) {
+    const btn = repHintBtn();
+    if (btn) btn.disabled = !on;
+  }
+
   function repStartQuiz() {
-    if (!S.look) { repSetStatus("Pick a set-up first.", "warn"); return; }
+    if (!S.look) {
+      repSetStatus(S.data ? "Pick a set-up first." : "Still loading the lines.", "warn");
+      return;
+    }
     S.branch = null;
     S.quiz = true;
     S.score = { asked: 0, right: 0 };
-    S.first = {}; S.transposed = 0;
+    S.first = {}; S.hinted = {}; S.transposed = 0;
     S.ply = 0;
+    if (!(S.blind && !S.revealed) && S.look) $(P + "-label").textContent = repStudyLabel(S.look);
     $(P + "-score").classList.remove("hidden");
-    $("btn-" + P + "-quiz").textContent = "Stop the quiz";
+    $("btn-" + P + "-quiz").textContent = quizBtnLabel();
+    repSetHintEnabled(true);
     repGoToPly(0);
     renderRepScore();
     repAdvanceOpponent();
@@ -203,8 +255,7 @@ function createRepertoireTab(cfg) {
 
   function repReveal() {
     S.revealed = true;
-    $(P + "-label").textContent =
-      S.look.name + " — " + S.look.line_san;
+    $(P + "-label").textContent = repStudyLabel(S.look);
     renderRepDetail(S.look);
     renderRepLooks();
   }
@@ -212,12 +263,19 @@ function createRepertoireTab(cfg) {
   function repStopQuiz(message) {
     S.quiz = false;
     $("btn-" + P + "-quiz").textContent = quizBtnLabel();
+    repSetHintEnabled(false);
     repSetStatus(message || "");
     renderRepMoves();
     repGoToPly(S.ply);
   }
 
-  function repAdvanceOpponent() {
+  function repAskLine() {
+    const fen = String(repFenAt(S.ply) || "");
+    const n = fen.split(" ")[5] || String(Math.floor(S.ply / 2) + 1);
+    return sideName(meSide()) + " to play, move " + n + ". Make the move on the board.";
+  }
+
+  function repAdvanceOpponent(prefix) {
     const plies = repPlies();
     const opp = oppSide();
     while (S.ply < plies.length && plies[S.ply].side === opp) {
@@ -227,25 +285,27 @@ function createRepertoireTab(cfg) {
     if (S.ply >= plies.length) {
       const s = S.score;
       const rec = S.branch ? null : repRecordResult();
-      let msg = "Line complete — " + s.right + " of " + s.asked + " found."
-        + (rec ? " First tries " + rec.right + "/" + rec.total + (rec.next ? " · next drill " + rec.next : "") + "." : "");
+      let msg = "Line complete — " + s.right + " of " + s.asked + " on the first try.";
+      if (rec) {
+        msg += s.right === s.asked
+          ? " Clean — the card shows when it is due again."
+          : " Missed — back tomorrow.";
+      }
       if (S.blind) {
         if (!S.revealed) repReveal();
         msg += S.toldYou
-          ? " It was " + S.look.name + " — run another and see if the "
-            + "tell lands sooner."
-          : " Straight through without being told, against " + S.look.name
-            + ". That is the drill.";
+          ? " It was " + S.look.name + " — run another and see if the tell lands sooner."
+          : " Straight through without being told, against " + S.look.name + ". That is the drill.";
+      } else if (cfg.coach) {
+        msg += " Drill due for the next line, or play the plan.";
       } else {
         msg += " Step back through it and read the plans again.";
       }
       repStopQuiz(msg);
       return;
     }
-    const n = Math.floor(S.ply / 2) + 1;
-    const who = meSide() === "white" ? "White" : "Black";
-    repSetStatus(who + " to play, move " + n
-      + ". Make the move on the board.");
+    const ask = repAskLine();
+    repSetStatus(prefix ? prefix + " " + ask : ask, prefix ? "good" : "");
   }
 
   async function onRepMove(from, to) {
@@ -256,37 +316,34 @@ function createRepertoireTab(cfg) {
     S.busy = true;
     try {
       const guess = uciCandidate(repBoard, from, to);
-      S.score.asked++;
       ccLogAnswer("openings", "repertoire");
       const tr = guess === want.uci ? null : await repTransposition(guess, plies);
-      if (!(S.ply in S.first)) S.first[S.ply] = guess === want.uci || !!tr;
+      const correct = guess === want.uci || !!tr;
+      if (!(S.ply in S.first)) S.first[S.ply] = correct && !S.hinted[S.ply];
+      repSyncScore();
       if (tr) {
-        S.score.right++; S.transposed++;
-        renderRepScore();
+        S.transposed++;
         S.ply++;
         repGoToPly(S.ply);
         const msg = "Fine — that transposes" + (tr.to ? " to " + tr.to : "") + ". The book order here is "
           + want.san + "; carrying on with the book move.";
-        repAdvanceOpponent();
-        if (S.quiz) repSetStatus(msg + " " + $(P + "-status").textContent, "good");
+        repAdvanceOpponent(msg);
       } else if (guess === want.uci) {
-        S.score.right++;
-        renderRepScore();
         S.ply++;
         repGoToPly(S.ply);
-        repSetStatus(want.san + " — that's the move.", "good");
-        repAdvanceOpponent();
+        repAdvanceOpponent(want.san + " — that's the move.");
       } else {
-        renderRepScore();
         repGoToPly(S.ply);
         if (S.blind && !S.revealed) {
           S.toldYou = true;
           repReveal();
-          const who = oppSide() === "white" ? "White" : "Black";
-          const me = meSide() === "white" ? "White" : "Black";
-          repSetStatus("Not the move. " + who + " is playing " + S.look.name
+          repSetStatus("Not the move. " + sideName(oppSide()) + " is playing " + S.look.name
             + " — the tell was: " + S.look.tell
-            + " The plans are on the right now; find " + me + "'s answer.", "warn");
+            + " The plans are on the right now; find " + sideName(meSide()) + "'s answer.", "warn");
+        } else if (cfg.coach && S.hinted[S.ply]) {
+          repSetStatus("The book move is " + want.san + ". Play it on the board.", "warn");
+        } else if (cfg.coach) {
+          repSetStatus("Not the book move. Press Hint, or read Your plan and try again.", "warn");
         } else {
           repSetStatus("Not the book move here. Read the plan on the right "
                           + "and try again — or stop the quiz to see it.", "warn");
@@ -338,19 +395,31 @@ function createRepertoireTab(cfg) {
     if (!keys.length || !S.look) return null;
     const right = keys.filter(k => S.first[k]).length, total = keys.length;
     const missed = keys.filter(k => !S.first[k]).map(k => repPlies()[k] && repPlies()[k].san).filter(Boolean);
+    const body = { right, total, missed, transposed: S.transposed, blind: S.blind, name: S.look.name };
+    if (bothSides) body.side = meSide();
     const out = { right, total, next: right === total ? "later" : "tomorrow" };
-    fetch(API.replace(/^\//, "") + "/" + S.look.id + "/result", { method: "POST",
-      body: JSON.stringify({ right, total, missed, transposed: S.transposed, blind: S.blind, name: S.look.name }) })
-      .then(r => r.json()).then(p => { if (p && p.id) { S.progress[p.id] = p; renderRepLooks(); } })
+    fetch(API.replace(/^\//, "") + "/" + S.look.id + "/result", { method: "POST", body: JSON.stringify(body) })
+      .then(r => r.json()).then(p => {
+        if (!p || !p.id) return;
+        if (bothSides && p.side && p.side !== meSide()) return;
+        S.progress[p.id] = p;
+        renderRepLooks();
+        repPaintDue();
+      })
       .catch(() => {});
     return out;
   }
+  function repProgressMatches(line) {
+    if (!bothSides) return !line.side;
+    return line.side === meSide();
+  }
   async function repLoadProgress() {
+    S.progress = {};
     try {
       const r = await apiGet("/api/repertoire-progress?slug=" + cfg.slug);
-      S.progress = {};
-      (r.lines || []).forEach(l => { S.progress[l.id] = l; });
+      (r.lines || []).forEach(l => { if (repProgressMatches(l)) S.progress[l.id] = l; });
     } catch (_) { /* no memory yet */ }
+    repPaintDue();
   }
   function repDueText(p) {
     if (!p) return "New";
@@ -358,37 +427,103 @@ function createRepertoireTab(cfg) {
     const when = days <= 0 ? "due now" : days === 1 ? "due tomorrow" : "in " + days + " days";
     return (p.last_right === p.last_total ? "✓ " : "") + p.last_right + "/" + p.last_total + " · " + when;
   }
+  function repDueCount() {
+    if (!S.data || !S.data.looks) return { n: 0, total: 0 };
+    const now = Date.now();
+    let n = 0;
+    S.data.looks.forEach(l => {
+      const p = S.progress[l.id];
+      if (!p || Date.parse(p.due) <= now) n++;
+    });
+    return { n, total: S.data.looks.length };
+  }
+  function repPaintDue() {
+    if (!cfg.coach || !S.data) return;
+    const c = repDueCount();
+    const chip = $(P + "-due");
+    if (chip) {
+      chip.textContent = "Due · " + sideName(meSide()) + ": " + c.n;
+      chip.className = "rep-mem rep-due " + (c.n ? "miss" : "ok");
+      chip.title = "New lines count as due until you drill them. A clean line comes back in 3 days, then 7, 14, 30 and 60. A miss comes back tomorrow.";
+    }
+    const btn = $("btn-" + P + "-due");
+    if (btn) btn.textContent = c.n ? "Drill due (" + c.n + ")" : "Drill due";
+  }
   /* missed lines first, then lines never tried, then the most overdue */
   async function repDrillDue() {
+    repSetStatus("Checking which lines are due…");
     // the tab may still be loading its first set-up — let that land first
     for (let i = 0; i < 60 && !(S.data && S.look); i++) await new Promise(r => setTimeout(r, 100));
-    if (!S.data) return;
+    if (!S.data) {
+      repSetStatus("The lines have not loaded. Refresh the page and try Drill due again.", "warn");
+      return;
+    }
+    if (!S.data.looks || !S.data.looks.length) {
+      repSetStatus("This opening has no lines to drill yet.", "warn");
+      return;
+    }
     await repLoadProgress();
     const now = Date.now();
     const looks = S.data.looks.map(l => ({ l, p: S.progress[l.id] }));
     const rank = (x) => !x.p ? 1 : (Date.parse(x.p.due) <= now ? (x.p.last_right < x.p.last_total ? 0 : 2) : 3);
     looks.sort((a, b) => rank(a) - rank(b) || (a.p && b.p ? Date.parse(a.p.due) - Date.parse(b.p.due) : 0));
     const pick = looks[0];
+    if (!pick) {
+      repSetStatus("Nothing to drill.", "warn");
+      return;
+    }
     await loadRepLook(pick.l.id);
+    const why = rank(pick) === 0 ? "You missed this one last time."
+      : rank(pick) === 1 ? "A line you have not drilled yet."
+      : rank(pick) === 2 ? "Due for review."
+      : "Nothing is due. Drilling your weakest line.";
     repStartQuiz();
-    repSetStatus((rank(pick) === 0 ? "You missed this one last time — " : rank(pick) === 1 ? "A line you have not drilled yet — "
-      : rank(pick) === 2 ? "Due for review — " : "Nothing is due; drilling your weakest line — ")
-      + pick.l.name + ". " + (meSide() === "white" ? "White" : "Black") + " to play.");
+    repSetStatus(why + " " + pick.l.name + ". " + repAskLine());
+  }
+  function repActivePlans() {
+    return repPlans(S.look || {});
   }
   function repPlayThePlan() {
-    if (!S.look) return;
+    if (!S.look) { repSetStatus(S.data ? "Pick a set-up first." : "Still loading the lines.", "warn"); return; }
     if (S.quiz) repStopQuiz("");
     const plies = S.look.plies || [];
     const fen = plies.length ? plies[plies.length - 1].fen : PLAY_START_FEN;
+    const side = meSide();
+    const plan = repActivePlans()[0] || "";
+    const text = S.look.name + " — you are " + sideName(side) + ". Play the plan against the engine."
+      + (plan ? " " + plan : "");
     if (typeof startPracticeFrom === "function") {
-      startPracticeFrom(fen, S.data.side || "black");
-      const plan = (S.look.plans || [])[0];
-      if (plan) $("rehearsal-banner").textContent = S.look.name + " — play the plan against the engine at your level. " + plan;
+      startPracticeFrom(fen, side);
+      const banner = $("rehearsal-banner");
+      if (banner) banner.textContent = text;
     } else {
-      sendFenToPlay(fen, S.data.side || "black", "Final position of " + S.look.name + ".");
+      sendFenToPlay(fen, side, text);
     }
   }
+  function repHint() {
+    if (!S.quiz || !S.look) return;
+    const want = repPlies()[S.ply];
+    if (!want || want.side !== meSide()) return;
+    S.hinted[S.ply] = true;
+    if (!(S.ply in S.first)) S.first[S.ply] = false;
+    repSyncScore();
+    if (S.blind && !S.revealed) {
+      S.toldYou = true;
+      repReveal();
+    }
+    const from = want.uci.slice(0, 2);
+    const to = want.uci.slice(2, 4);
+    repBoard.setGuided([from, to]);
+    repBoard.setArrows([{ from: from, to: to, color: "green" }]);
+    repSetStatus("Hint: " + want.san + ". It will not count as a first try.", "warn");
+  }
 
+  function repSyncScore() {
+    const keys = Object.keys(S.first);
+    S.score.asked = keys.length;
+    S.score.right = keys.filter(k => S.first[k]).length;
+    renderRepScore();
+  }
   function renderRepScore() {
     const s = S.score;
     const pct = s.asked ? Math.round((100 * s.right) / s.asked) : 0;
@@ -396,6 +531,35 @@ function createRepertoireTab(cfg) {
       '<span class="calc-score-big">' + s.right + "</span>"
       + '<span class="calc-score-unit">of ' + s.asked + " first tries</span>"
       + '<span class="calc-score-sub">' + pct + "% straight away</span>";
+  }
+  function repPlans(look) {
+    const by = look && look.plans_by_side;
+    if (by && by[meSide()] && by[meSide()].length) return by[meSide()];
+    return (look && look.plans) || [];
+  }
+  function repStrategic(look) {
+    const by = look && look.strategic_by_side;
+    if (by && by[meSide()] && by[meSide()].length) return by[meSide()];
+    return (look && look.strategic) || [];
+  }
+  function repIdea(look) {
+    if (look && look.ideas && look.ideas[oppSide()]) return look.ideas[oppSide()];
+    return (look && (look.opponent_idea || look.white_idea)) || "";
+  }
+  function repWatch(look) {
+    const by = look && look.watch_by_side;
+    if (by && by[meSide()]) return by[meSide()];
+    return (look && look.watch) || "";
+  }
+  function repBundle(which) {
+    const data = S.data || {};
+    const by = data[which + "_by_side"];
+    if (by && by[meSide()]) return by[meSide()];
+    return data[which] || [];
+  }
+  function repStudyLabel(look) {
+    if (!cfg.coach) return look.name + " — " + (look.line_san || "");
+    return look.name + " · you play " + sideName(meSide());
   }
 
   /* ---- the panels ------------------------------------------------------ */
@@ -435,8 +599,35 @@ function createRepertoireTab(cfg) {
       + items.map(x => "<li>" + escapeHtml(x) + "</li>").join("") + "</ul>";
   }
 
+  function repTacticHtml(look) {
+    const tactics = look.tactics || [];
+    if (!tactics.length) return "";
+    let html = "<h4 class='sub-head'>" + (cfg.coach ? "Traps" : "The tactics that decide it") + "</h4>";
+    for (let i = 0; i < tactics.length; i++) {
+      const t = tactics[i];
+      html += '<div class="rep-tactic">'
+        + '<div class="mt-head"><strong>' + escapeHtml(t.name) + "</strong>"
+        + '<button class="btn mt-show" type="button" data-tactic="' + i + '">Show it</button>'
+        + "</div>"
+        + '<div class="mt-line">' + escapeHtml(t.line_san || "") + "</div>"
+        + "<div>" + escapeHtml(t.point || "") + "</div>"
+        + (t.url && S.data && S.data.show_tactic_links
+          ? '<a class="info-line" href="' + escapeHtml(t.url) + '" target="_blank" rel="noopener">Open the game position &#x2197;</a>' : "")
+        + "</div>";
+    }
+    return html;
+  }
+  function repBindTactics() {
+    $(P + "-detail").querySelectorAll(".mt-show").forEach(btn => {
+      btn.addEventListener("click", () => showRepTactic(Number(btn.dataset.tactic)));
+    });
+  }
   function renderRepDetail(look) {
     $(P + "-look-name").textContent = look.name;
+    if (cfg.coach) {
+      renderCoachDetail(look);
+      return;
+    }
     let html = '<div class="struct-head">'
       + '<span class="chip verified">' + escapeHtml(look.frequency) + "</span>"
       + '<span class="chip">' + escapeHtml(look.eco || (S.data && S.data.eco) || "") + "</span>"
@@ -444,43 +635,57 @@ function createRepertoireTab(cfg) {
 
     html += "<h4 class='sub-head'>The tell</h4>"
       + '<div class="coach-box">' + escapeHtml(look.tell) + "</div>";
-    const idea = look.opponent_idea || look.white_idea || "";
+    const idea = repIdea(look);
     html += "<h4 class='sub-head'>" + ideaHeading() + "</h4>"
       + '<div class="info-line">' + escapeHtml(idea) + "</div>";
-    html += "<h4 class='sub-head'>Your plan</h4>" + repList(look.plans);
+    html += "<h4 class='sub-head'>Your plan</h4>" + repList(repPlans(look));
     html += "<h4 class='sub-head'>Playing it strategically</h4>"
-      + repList(look.strategic);
+      + repList(repStrategic(look));
 
-    if (look.tactics && look.tactics.length) {
-      html += "<h4 class='sub-head'>The tactics that decide it</h4>";
-      for (let i = 0; i < look.tactics.length; i++) {
-        const t = look.tactics[i];
-        html += '<div class="rep-tactic">'
-          + '<div class="mt-head"><strong>' + escapeHtml(t.name) + "</strong>"
-          + '<button class="btn mt-show" data-tactic="' + i + '">Show it</button>'
-          + "</div>"
-          + '<div class="mt-line">' + escapeHtml(t.line_san) + "</div>"
-          + "<div>" + escapeHtml(t.point) + "</div>"
-          + (t.url && S.data && S.data.show_tactic_links
-            ? '<a class="info-line" href="' + escapeHtml(t.url) + '" target="_blank" rel="noopener">Open the game position &#x2197;</a>' : "")
-          + "</div>";
-      }
+    html += repTacticHtml(look);
+    const oly = repOlympiadLink(cfg.slug, look.id);
+    if (oly) {
+      html += '<div class="rep-oly"><a class="btn mini" href="' + oly.href + '" target="_blank" rel="noopener">'
+        + escapeHtml(oly.label) + " &#x2197;</a></div>";
+    }
+    const watch = repWatch(look);
+    if (watch) {
+      html += "<h4 class='sub-head'>What goes wrong</h4>"
+        + '<div class="coach-box warn-box">' + escapeHtml(watch) + "</div>";
+    }
+    $(P + "-detail").innerHTML = html;
+    repBindTactics();
+  }
+  function renderCoachDetail(look) {
+    const opp = sideName(oppSide());
+    let html = '<div class="struct-head">'
+      + '<span class="chip verified">You play ' + sideName(meSide()) + "</span>"
+      + '<span class="chip">' + escapeHtml(look.frequency || "") + "</span>"
+      + '<span class="chip">' + escapeHtml(look.eco || "") + "</span></div>";
+    html += "<h4 class='sub-head'>The tell</h4>"
+      + '<div class="coach-box">' + escapeHtml(look.tell || "") + "</div>";
+    html += "<h4 class='sub-head'>Your plan</h4>" + repList(repPlans(look));
+    const watch = repWatch(look);
+    if (watch) {
+      html += "<h4 class='sub-head'>What goes wrong</h4>"
+        + '<div class="coach-box warn-box">' + escapeHtml(watch) + "</div>";
+    }
+    html += repTacticHtml(look);
+    const idea = repIdea(look);
+    const strategic = repStrategic(look);
+    if (idea || strategic.length) {
+      html += "<details class='rep-details'><summary>What " + opp + " wants</summary>"
+        + (idea ? '<div class="info-line">' + escapeHtml(idea) + "</div>" : "")
+        + repList(strategic)
+        + "</details>";
     }
     const oly = repOlympiadLink(cfg.slug, look.id);
     if (oly) {
       html += '<div class="rep-oly"><a class="btn mini" href="' + oly.href + '" target="_blank" rel="noopener">'
         + escapeHtml(oly.label) + " &#x2197;</a></div>";
     }
-    if (look.watch) {
-      html += "<h4 class='sub-head'>What goes wrong</h4>"
-        + '<div class="coach-box warn-box">' + escapeHtml(look.watch) + "</div>";
-    }
     $(P + "-detail").innerHTML = html;
-
-    $(P + "-detail").querySelectorAll(".mt-show").forEach(btn => {
-      btn.addEventListener("click", () =>
-        showRepTactic(Number(btn.dataset.tactic)));
-    });
+    repBindTactics();
   }
 
   function showRepTactic(i) {
@@ -504,12 +709,15 @@ function createRepertoireTab(cfg) {
       S.blind = false;
       S.revealed = true;
       $("btn-" + P + "-quiz").textContent = quizBtnLabel();
+      repSetHintEnabled(false);
       $(P + "-score").classList.add("hidden");
-      $(P + "-label").textContent = look.name + " — " + look.line_san;
+      $(P + "-label").textContent = repStudyLabel(look);
       renderRepLooks();
       renderRepDetail(look);
       repGoToPly(0);
-      repSetStatus("Step through it, or take the quiz.");
+      repSetStatus(cfg.coach
+        ? "Step through it, quiz this line, or play the plan."
+        : "Step through it, or take the quiz.");
     } catch (e) {
       repSetStatus("Could not load that set-up: " + e.message, "warn");
     }
@@ -535,15 +743,48 @@ function createRepertoireTab(cfg) {
   $("btn-" + P + "-blind").addEventListener("click", repStartBlindQuiz);
   $("btn-" + P + "-due").addEventListener("click", repDrillDue);
   $("btn-" + P + "-plan").addEventListener("click", repPlayThePlan);
+  const hintBtn = repHintBtn();
+  if (hintBtn) hintBtn.addEventListener("click", repHint);
+  const sideHost = $(P + "-side");
+  if (sideHost) {
+    sideHost.addEventListener("click", (e) => {
+      const b = e.target.closest && e.target.closest("[data-side]");
+      if (!b || !bothSides) return;
+      const next = b.dataset.side === "black" ? "black" : "white";
+      if (next === meSide()) return;
+      const restart = S.quiz;
+      S.side = next;
+      try { localStorage.setItem("cc-rep-side-" + cfg.slug, next); } catch (_) { /* */ }
+      repBoard.setOrientation(next);
+      repPaintSide();
+      S.posIndex = null;
+      repLoadProgress().then(() => {
+        renderRepLooks();
+        if (S.look) renderRepDetail(S.look);
+        if (restart && S.look) {
+          S.blind = false;
+          S.revealed = true;
+          repStartQuiz();
+          repSetStatus("Now quizzing " + sideName(next) + "'s moves in " + S.look.name + ". " + repAskLine());
+        } else if (S.look) {
+          $(P + "-label").textContent = repStudyLabel(S.look);
+          repSetStatus("You play " + sideName(next) + ". Step through the line, or quiz it.");
+        }
+      });
+    });
+  }
 
 
   $("btn-" + P + "-play").addEventListener("click", () => {
-    if (!S.data) return;
+    if (!S.data) {
+      repSetStatus("Still loading the lines.", "warn");
+      return;
+    }
     if (S.quiz) repStopQuiz("");
     const fen = repFenAt(S.ply);
-    sendFenToPlay(fen, S.data.side || "black",
-      "Loaded from the " + S.data.name + " tab — you are "
-      + (S.data.side === "white" ? "White" : "Black") + ".");
+    const side = meSide();
+    sendFenToPlay(fen, side,
+      "Loaded from the " + (S.data.name || "opening") + " tab — you are " + sideName(side) + ".");
   });
 
   let repInitDone = false;
@@ -553,48 +794,92 @@ function createRepertoireTab(cfg) {
     try {
       S.data = await apiGet(API);
     } catch (e) {
+      repInitDone = false;
       $(P + "-looks").innerHTML =
         '<div class="info-line">Repertoire unavailable: '
-        + escapeHtml(e.message) + "</div>";
+        + escapeHtml(e.message) + ". Open the tab again to retry.</div>";
+      repSetStatus("Could not load the lines.", "warn");
       return;
     }
     $(P + "-title").textContent = S.data.name;
     $(P + "-summary").textContent = S.data.summary;
-    $(P + "-scheme").innerHTML = repList(S.data.scheme);
-    $(P + "-reading").innerHTML = repList(S.data.reading);
+    if (bothSides) {
+      try {
+        const saved = localStorage.getItem("cc-rep-side-" + cfg.slug);
+        if (saved === "white" || saved === "black") S.side = saved;
+      } catch (_) { /* default White */ }
+    }
     repBoard.setOrientation(meSide());
+    repPaintSide();
     const qb = $("btn-" + P + "-quiz");
     if (qb && !S.quiz) qb.textContent = quizBtnLabel();
+    repSetHintEnabled(false);
     if (S.data.coach_note) {
       const box = $(P + "-coach");
-      box.textContent = S.data.coach_note;
-      // v46: optional link (Alapin: your first game)
-      if (S.data.coach_link && S.data.coach_link.href) {
-        const a = document.createElement("a");
-        a.className = "btn mini rep-coach-link"; a.target = "_blank"; a.rel = "noopener";
-        a.href = S.data.coach_link.href; a.textContent = S.data.coach_link.label || "Open the game";
-        box.appendChild(document.createElement("br")); box.appendChild(a);
+      if (cfg.coach) {
+        box.innerHTML = "<details class='rep-details'><summary>Coach note</summary><div class='info-line'></div></details>";
+        box.querySelector(".info-line").textContent = S.data.coach_note;
+      } else {
+        box.textContent = S.data.coach_note;
+        // v46: optional link (Alapin: your first game)
+        if (S.data.coach_link && S.data.coach_link.href) {
+          const a = document.createElement("a");
+          a.className = "btn mini rep-coach-link"; a.target = "_blank"; a.rel = "noopener";
+          a.href = S.data.coach_link.href; a.textContent = S.data.coach_link.label || "Open the game";
+          box.appendChild(document.createElement("br")); box.appendChild(a);
+        }
       }
       box.classList.remove("hidden");
     }
     await repLoadProgress();
     renderRepLooks();
     if (S.data.looks.length) loadRepLook(S.data.looks[0].id);
+    else {
+      $(P + "-looks").innerHTML = '<div class="info-line">No set-ups in this opening yet.</div>';
+      repSetStatus("Nothing to show yet.", "warn");
+    }
+  }
+
+  function repPaintSide() {
+    const host = $(P + "-side");
+    if (host) {
+      host.querySelectorAll("[data-side]").forEach(b => {
+        const on = b.dataset.side === meSide();
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+        b.classList.toggle("primary", on);
+      });
+    }
+    if (!S.data) return;
+    const scheme = $(P + "-scheme");
+    const reading = $(P + "-reading");
+    if (scheme) scheme.innerHTML = repList(repBundle("scheme"));
+    if (reading) reading.innerHTML = repList(repBundle("reading"));
   }
 
 
   return { init: initRep, state: S, drillDue: repDrillDue, loadProgress: repLoadProgress };
 }
 
-/* The Modern Defense and Grünfeld Defense tabs — one implementation, two data sets. */
-const ModernTab = createRepertoireTab({ slug: "modern", prefix: "modern", side: "black" });
+/* Modern, Grünfeld, Scotch and Queen's Gambit share the coach layout.
+   Alapin stays on the earlier labels and cards. */
+const ModernTab = createRepertoireTab({ slug: "modern", prefix: "modern", side: "black", coach: true });
 const initModern = () => ModernTab.init();
-const GrunfeldTab = createRepertoireTab({ slug: "grunfeld", prefix: "grunfeld", side: "black" });
+const GrunfeldTab = createRepertoireTab({ slug: "grunfeld", prefix: "grunfeld", side: "black", coach: true });
 const initGrunfeld = () => GrunfeldTab.init();
-const ScotchTab = createRepertoireTab({ slug: "scotch", prefix: "scotch", side: "white" });
+const ScotchTab = createRepertoireTab({ slug: "scotch", prefix: "scotch", side: "white", coach: true });
 const initScotch = () => ScotchTab.init();
+const QgTab = createRepertoireTab({ slug: "qg", prefix: "qg", side: "both", coach: true });
+const initQg = () => QgTab.init();
 const AlapinTab = createRepertoireTab({ slug: "alapin", prefix: "alapin", side: "white" });
 const initAlapin = () => AlapinTab.init();
+
+function repertoireTabFor(slug) {
+  if (slug === "grunfeld") return GrunfeldTab;
+  if (slug === "scotch") return ScotchTab;
+  if (slug === "alapin") return AlapinTab;
+  if (slug === "qg") return QgTab;
+  return ModernTab;
+}
 
 /* v40: count a training day only after a real answer on this trainer */
 function ccLogAnswer(pillar, kind) {
@@ -608,13 +893,27 @@ const REP_OLYMPIAD = {
     russian: "vs. system", bf4: "vs. system", bg5: "vs. system" } },
   scotch: { fam: "Scotch", q: {} },
   alapin: { fam: "Alapin", q: {} },
+  qg: {
+    fam: "Queen's Gambit Declined",
+    q: {
+      qga: { fam: "Queen's Gambit (other)" },
+      slav: { fam: "Slav" },
+    },
+  },
 };
 function repOlympiadLink(slug, id) {
   const m = REP_OLYMPIAD[slug];
   if (!m) return null;
-  const q = m.q[id];
-  const href = "./olympiad/?fam=" + encodeURIComponent(m.fam) + (q ? "&q=" + encodeURIComponent(q) : "") + "#games";
-  return { href, label: q ? "Olympiad games with this set-up" : "All Olympiad " + m.fam + " games" };
+  const spec = m.q ? m.q[id] : "";
+  let fam = m.fam;
+  let q = "";
+  if (typeof spec === "string") q = spec;
+  else if (spec && typeof spec === "object") {
+    if (spec.fam) fam = spec.fam;
+    q = spec.q || "";
+  }
+  const href = "./olympiad/?fam=" + encodeURIComponent(fam) + (q ? "&q=" + encodeURIComponent(q) : "") + "#games";
+  return { href, label: q ? "Olympiad games with this set-up" : "Olympiad " + fam + " games" };
 }
 
 /* whole calendar days from today to an ISO date (0 = today or overdue) */
