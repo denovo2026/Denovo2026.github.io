@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=56">
+<link rel="stylesheet" href="style.css?v=57">
 </head>
 <body>
 <header class="app-header">
@@ -81,6 +81,7 @@
       <button class="tab-btn" data-tab="modern" data-group="openings">Modern</button>
       <button class="tab-btn" data-tab="grunfeld" data-group="openings">Gr&uuml;nfeld</button>
       <button class="tab-btn" data-tab="scotch" data-group="openings">Scotch</button>
+      <button class="tab-btn" data-tab="qg" data-group="openings">Queen's Gambit</button>
       <button class="tab-btn" data-tab="alapin" data-group="openings">Alapin</button>
       <button class="tab-btn" data-tab="top10" data-group="openings">Wider set</button>
       <button class="tab-btn" data-tab="play" data-group="review">Analyze</button>
@@ -994,8 +995,8 @@
         <div id="progress-trend"></div>
       </div>
       <div class="lab-panel" id="progress-openings-card">
-        <h3>Opening lines <span class="muted">(first tries, Modern, Grünfeld, Scotch &amp; Alapin)</span></h3>
-        <div id="progress-openings"><div class="info-line muted">Take a quiz on the Modern, Scotch or Grünfeld tab to start.</div></div>
+        <h3>Opening lines <span class="muted">(first tries — Modern, Grünfeld, Scotch, Queen's Gambit, Alapin)</span></h3>
+        <div id="progress-openings"><div class="info-line muted">Take a quiz on Modern, Grünfeld, Scotch or Queen's Gambit to start.</div></div>
       </div>
       <div class="lab-panel" id="progress-cycles-card">
         <h3>Latest cycle <span class="muted">(Woodpecker sets)</span></h3>
@@ -1166,8 +1167,8 @@
         <div class="rep-picker">
           <div class="rep-picker-head">
             <h3>What White shows you</h3>
-            <span class="info-line">You never choose the line — you recognise it. Each one is
-            named by the move that gives it away.</span>
+            <span id="modern-due" class="rep-mem rep-due">Due: …</span>
+            <span class="rep-picker-note">You are Black. The card is the set-up White just played.</span>
           </div>
           <div id="modern-looks" class="rep-looks">Loading…</div>
         </div>
@@ -1175,13 +1176,14 @@
         <div class="rep-controls">
           <div id="modern-movebar" class="rep-movebar"></div>
           <div class="panel-row">
-            <button id="btn-modern-quiz" class="btn primary">Quiz me on Black's moves</button>
-            <button id="btn-modern-due" class="btn" title="Missed lines first, then new ones, then the lines due for review">Drill due lines</button>
-            <button id="btn-modern-blind" class="btn">Quiz against all types</button>
-            <button id="btn-modern-plan" class="btn" title="Play on from the final position against the engine at your level">&#9654; Play the plan</button>
-            <button id="btn-modern-play" class="btn">Send to Play &amp; Analyze</button>
+            <button id="btn-modern-quiz" class="btn primary" type="button">Quiz this line</button>
+            <button id="btn-modern-due" class="btn" type="button" title="Missed lines first, then new ones, then lines due for review">Drill due</button>
+            <button id="btn-modern-blind" class="btn" type="button" title="A random set-up. The name stays hidden until you miss">All set-ups</button>
+            <button id="btn-modern-hint" class="btn" type="button" disabled title="Shows the book move. It will not count as a first try">Hint</button>
+            <button id="btn-modern-plan" class="btn" type="button" title="Play on from the final position against the engine at your level">Play the plan</button>
+            <button id="btn-modern-play" class="btn" type="button" title="Send this position to Play and Analyze">Analyze</button>
           </div>
-          <div class="rep-status-row"><span id="modern-status" class="info-line"></span></div>
+          <div class="rep-status-row"><span id="modern-status" class="info-line" role="status" aria-live="polite"></span></div>
           <div id="modern-score" class="rep-score hidden"></div>
         </div>
 
@@ -1226,8 +1228,8 @@
         <div class="rep-picker">
           <div class="rep-picker-head">
             <h3>What Black shows you</h3>
-            <span class="info-line">You are White. Each set-up is named by Black's reply after 3.d4 —
-            recognise it, then play your plan.</span>
+            <span id="scotch-due" class="rep-mem rep-due">Due: …</span>
+            <span class="rep-picker-note">You are White. The card is Black's reply.</span>
           </div>
           <div id="scotch-looks" class="rep-looks">Loading…</div>
         </div>
@@ -1235,13 +1237,14 @@
         <div class="rep-controls">
           <div id="scotch-movebar" class="rep-movebar"></div>
           <div class="panel-row">
-            <button id="btn-scotch-quiz" class="btn primary">Quiz me on White's moves</button>
-            <button id="btn-scotch-due" class="btn" title="Missed lines first, then new ones, then the lines due for review">Drill due lines</button>
-            <button id="btn-scotch-blind" class="btn">Quiz against all types</button>
-            <button id="btn-scotch-plan" class="btn" title="Play on from the final position against the engine at your level">&#9654; Play the plan</button>
-            <button id="btn-scotch-play" class="btn">Send to Play &amp; Analyze</button>
+            <button id="btn-scotch-quiz" class="btn primary" type="button">Quiz this line</button>
+            <button id="btn-scotch-due" class="btn" type="button" title="Missed lines first, then new ones, then lines due for review">Drill due</button>
+            <button id="btn-scotch-blind" class="btn" type="button" title="A random set-up. The name stays hidden until you miss">All set-ups</button>
+            <button id="btn-scotch-hint" class="btn" type="button" disabled title="Shows the book move. It will not count as a first try">Hint</button>
+            <button id="btn-scotch-plan" class="btn" type="button" title="Play on from the final position against the engine at your level">Play the plan</button>
+            <button id="btn-scotch-play" class="btn" type="button" title="Send this position to Play and Analyze">Analyze</button>
           </div>
-          <div class="rep-status-row"><span id="scotch-status" class="info-line"></span></div>
+          <div class="rep-status-row"><span id="scotch-status" class="info-line" role="status" aria-live="polite"></span></div>
           <div id="scotch-score" class="rep-score hidden"></div>
         </div>
 
@@ -1398,8 +1401,8 @@
         <div class="rep-picker">
           <div class="rep-picker-head">
             <h3>What White shows you</h3>
-            <span class="info-line">You never choose the line — you recognise it. Each one is
-            named by the move that gives it away.</span>
+            <span id="grunfeld-due" class="rep-mem rep-due">Due: …</span>
+            <span class="rep-picker-note">You are Black. The card is the set-up White just played.</span>
           </div>
           <div id="grunfeld-looks" class="rep-looks">Loading…</div>
         </div>
@@ -1407,13 +1410,14 @@
         <div class="rep-controls">
           <div id="grunfeld-movebar" class="rep-movebar"></div>
           <div class="panel-row">
-            <button id="btn-grunfeld-quiz" class="btn primary">Quiz me on Black's moves</button>
-            <button id="btn-grunfeld-due" class="btn" title="Missed lines first, then new ones, then the lines due for review">Drill due lines</button>
-            <button id="btn-grunfeld-blind" class="btn">Quiz against all types</button>
-            <button id="btn-grunfeld-plan" class="btn" title="Play on from the final position against the engine at your level">&#9654; Play the plan</button>
-            <button id="btn-grunfeld-play" class="btn">Send to Play &amp; Analyze</button>
+            <button id="btn-grunfeld-quiz" class="btn primary" type="button">Quiz this line</button>
+            <button id="btn-grunfeld-due" class="btn" type="button" title="Missed lines first, then new ones, then lines due for review">Drill due</button>
+            <button id="btn-grunfeld-blind" class="btn" type="button" title="A random set-up. The name stays hidden until you miss">All set-ups</button>
+            <button id="btn-grunfeld-hint" class="btn" type="button" disabled title="Shows the book move. It will not count as a first try">Hint</button>
+            <button id="btn-grunfeld-plan" class="btn" type="button" title="Play on from the final position against the engine at your level">Play the plan</button>
+            <button id="btn-grunfeld-play" class="btn" type="button" title="Send this position to Play and Analyze">Analyze</button>
           </div>
-          <div class="rep-status-row"><span id="grunfeld-status" class="info-line"></span></div>
+          <div class="rep-status-row"><span id="grunfeld-status" class="info-line" role="status" aria-live="polite"></span></div>
           <div id="grunfeld-score" class="rep-score hidden"></div>
         </div>
 
@@ -1430,6 +1434,70 @@
             <h4 class="sub-head">Reading the board</h4>
             <div id="grunfeld-reading"></div>
             <div id="grunfeld-coach" class="coach-box hidden"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== QUEEN'S GAMBIT ===================== -->
+  <section id="tab-qg" class="tab-panel rep-tab">
+    <div class="rep-layout">
+      <div class="rep-left">
+        <div id="qg-label" class="lab-game-bar">Pick a line. You play White.</div>
+        <div id="qg-board" class="board-holder"></div>
+        <div id="qg-nav" class="nav-slot"></div>
+      </div>
+
+      <div class="rep-right">
+        <div class="rep-coachbar">
+          <span class="rep-coach-avatar" aria-hidden="true">&#x2655;</span>
+          <div class="rep-coachbar-text">
+            <strong id="qg-title">Queen's Gambit</strong>
+            <span class="info-line" id="qg-summary">Loading…</span>
+          </div>
+        </div>
+
+        <div class="rep-picker">
+          <div class="rep-picker-head">
+            <h3>The set-up</h3>
+            <div class="rep-side" id="qg-side" role="group" aria-label="Side you drill">
+              <button type="button" class="btn mini primary" data-side="white" aria-pressed="true">White</button>
+              <button type="button" class="btn mini" data-side="black" aria-pressed="false">Black</button>
+            </div>
+            <span id="qg-due" class="rep-mem rep-due">Due: …</span>
+            <span class="rep-picker-note">The quiz asks only for the side you picked.</span>
+          </div>
+          <div id="qg-looks" class="rep-looks">Loading…</div>
+        </div>
+
+        <div class="rep-controls">
+          <div id="qg-movebar" class="rep-movebar"></div>
+          <div class="panel-row">
+            <button id="btn-qg-quiz" class="btn primary" type="button">Quiz this line</button>
+            <button id="btn-qg-due" class="btn" type="button" title="Missed lines first, then new ones, then lines due for review. Count is for the side you are drilling">Drill due</button>
+            <button id="btn-qg-blind" class="btn" type="button" title="A random set-up. The name stays hidden until you miss">All set-ups</button>
+            <button id="btn-qg-hint" class="btn" type="button" disabled title="Shows the book move. It will not count as a first try">Hint</button>
+            <button id="btn-qg-plan" class="btn" type="button" title="Play on from the final position against the engine, as the side you picked">Play the plan</button>
+            <button id="btn-qg-play" class="btn" type="button" title="Send this position to Play and Analyze">Analyze</button>
+          </div>
+          <div class="rep-status-row"><span id="qg-status" class="info-line" role="status" aria-live="polite"></span></div>
+          <div id="qg-score" class="rep-score hidden"></div>
+        </div>
+
+        <div class="rep-panels">
+          <div class="lab-panel" id="qg-detail-panel">
+            <h3 id="qg-look-name">The set-up</h3>
+            <div id="qg-detail">
+              <p class="info-line">Choose a set-up to see the tell, the plan and the trap.</p>
+            </div>
+          </div>
+          <div class="lab-panel">
+            <h3>Your scheme, for the side you picked</h3>
+            <div id="qg-scheme"></div>
+            <h4 class="sub-head">Reading the board</h4>
+            <div id="qg-reading"></div>
+            <div id="qg-coach" class="coach-box hidden"></div>
           </div>
         </div>
       </div>
@@ -1633,11 +1701,11 @@
 <!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
 <script src="vendor/chess.js?v=33"></script>
 <script src="js/engine.js?v=33"></script>
-<script src="api-shim.js?v=54"></script>
+<script src="api-shim.js?v=57"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=50"></script>
-<script src="app.js?v=54"></script>
-<script src="js/repertoire.js?v=52"></script>
+<script src="app.js?v=57"></script>
+<script src="js/repertoire.js?v=57"></script>
 <script src="js/top10.js?v=54"></script>
 <script src="js/alapin-drill.js?v=48"></script>
 <script src="js/attacks.js?v=44"></script>

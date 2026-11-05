@@ -283,7 +283,7 @@ function parsePgn(pgn) {
 const TAB_GROUPS = {
   today: ["plan", "progress"],
   train: ["deck", "puzzles", "cycles", "sparring", "endgames", "attacks", "calc"],
-  openings: ["modern", "grunfeld", "scotch", "alapin", "alapin-drill", "top10"],
+  openings: ["modern", "grunfeld", "scotch", "qg", "alapin", "alapin-drill", "top10"],
   review: ["play", "games", "lab"],
   study: ["masters", "learn"],
 };
@@ -329,6 +329,7 @@ function switchTab(name) {
   if (name === "alapin" && typeof initAlapin === "function") initAlapin();
   if (name === "alapin-drill" && typeof initAlapinDrill === "function") initAlapinDrill();
   if (name === "grunfeld" && typeof initGrunfeld === "function") initGrunfeld();
+  if (name === "qg" && typeof initQg === "function") initQg();
   if (name === "attacks" && typeof initAttacks === "function") initAttacks();
   syncPlayOutBar(name);
   if (openDeeper) { const d = $("go-deeper"); if (d) d.open = true; }
@@ -7920,7 +7921,7 @@ function sessionRow(tag, label, onClick) {
 function openingSessionLabel(plan) {
   const items = (((plan || {}).pillars || {}).openings || {}).items || [];
   const it = items.find(x => !x.done) || items[0];
-  return it ? it.label.replace(/^Openings:\s*/, "") : "One line from Modern, Grünfeld, Scotch or Alapin";
+  return it ? it.label.replace(/^Openings:\s*/, "") : "One opening line";
 }
 function openTodayOpening(plan) {
   const items = (((plan || {}).pillars || {}).openings || {}).items || [];
@@ -7929,7 +7930,7 @@ function openTodayOpening(plan) {
   if (!slug) { switchTab("modern"); return; }
   switchTab(slug);
   setTimeout(() => {
-    const T = slug === "grunfeld" ? GrunfeldTab : slug === "scotch" ? ScotchTab : slug === "alapin" ? AlapinTab : ModernTab;
+    const T = typeof repertoireTabFor === "function" ? repertoireTabFor(slug) : null;
     if (T && T.init) T.init().then(() => T.drillDue());
   }, 50);
 }
@@ -8612,8 +8613,9 @@ async function renderProgressOpenings() {
   const row = (l) => {
     const days = repDaysUntil(l.due);
     const cls = l.last_right === l.last_total ? "ok" : "miss";
-    const slugLbl = l.slug === "grunfeld" ? "Grünfeld" : l.slug === "scotch" ? "Scotch" : l.slug === "alapin" ? "Alapin" : "Modern";
-    return '<div class="po-row"><span class="po-name">' + escapeHtml(l.name || l.id) + ' <span class="muted">' + escapeHtml(slugLbl) + "</span></span>"
+    const slugLbl = l.slug === "grunfeld" ? "Grünfeld" : l.slug === "scotch" ? "Scotch" : l.slug === "alapin" ? "Alapin" : l.slug === "qg" ? "Queen's Gambit" : "Modern";
+    const sideLbl = l.side === "white" ? " · White" : l.side === "black" ? " · Black" : "";
+    return '<div class="po-row"><span class="po-name">' + escapeHtml(l.name || l.id) + ' <span class="muted">' + escapeHtml(slugLbl + sideLbl) + "</span></span>"
       + '<span class="rep-mem ' + cls + '">' + l.last_right + "/" + l.last_total + "</span>"
       + '<span class="muted">' + (days <= 0 ? "due now" : days === 1 ? "tomorrow" : "in " + days + " d") + "</span></div>";
   };
@@ -8626,7 +8628,7 @@ document.addEventListener("click", (e) => {
   if (!b) return;
   const slug = b.getAttribute("data-opening-drill");
   switchTab(slug);
-  setTimeout(() => { const T = slug === "grunfeld" ? GrunfeldTab : slug === "scotch" ? ScotchTab : slug === "alapin" ? AlapinTab : ModernTab; T.init().then(() => T.drillDue()); }, 50);
+  setTimeout(() => { const T = typeof repertoireTabFor === "function" ? repertoireTabFor(slug) : null; if (T && T.init) T.init().then(() => T.drillDue()); }, 50);
 });
 
 
