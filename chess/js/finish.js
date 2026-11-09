@@ -8,6 +8,12 @@
    the same filter show up on their own, including cards saved locally
    after an in-browser analysis.
 
+   FI_ADDED is three extra starts, not deck cards. EpaT0ls0 and 7HUeCT5v
+   are Lichess From-Position games against the AI and are marked training.
+   AnaYlr4G is a rated rapid game with him as Black: White is to move, so
+   the board stays on Black and Stockfish plays White's first move.
+   Stored evals are Stockfish 19 Lite, depth 22, from his side.
+
    One named position was rechecked under +3 with Stockfish 17.1 depth 22
    and is excluded even though the deck stored +3.1: XtnIByaY ply 40
    (move 21, Qxd6), +2.85. The other three named starters are absent
@@ -48,6 +54,78 @@
       blurb: "Scotch endgame, Chess.com daily 856440792. The link's move 32 is ply 32 — move 17, you to move as White."
     }
   };
+
+  /* Player-side centipawns from Stockfish 19 Lite depth 22.
+     Stated reads were about +5.8, −5.3 and +4.4; the depth-22 numbers
+     below are what this build actually returns, and all stay past +3. */
+  var FI_ADDED = [
+    {
+      id: "fi-lichess-EpaT0ls0-27",
+      fen: "2r3k1/1b4pp/p4b2/1p2pB2/1P1p4/P3QP2/4N1PP/7K w - - 0 27",
+      side: "white",
+      moveNo: 27,
+      opening: "Conversion practice",
+      opp: "AI level 7",
+      date: "2026-11-06",
+      url: "https://lichess.org/EpaT0ls0",
+      gameId: "EpaT0ls0",
+      evalBefore: 696,
+      bestSan: "Qb3+",
+      bestUci: "e3b3",
+      bestLine: "27. Qb3+ Kf8 28. Bxc8 Bxc8 29. Qd5 Ke7 30. Qc5+ Kd7",
+      playedSan: "",
+      starter: true,
+      training: true,
+      added: true,
+      verifiedCp: 696,
+      verifiedDepth: 22,
+      blurb: "Lichess EpaT0ls0, conversion practice against AI level 7. You are White, to move. Best start: 27.Qb3+."
+    },
+    {
+      id: "fi-lichess-AnaYlr4G-34",
+      fen: "1n1q1rk1/4ppb1/b4np1/3p3p/2PP2PP/1p1BBP2/1P1Q1N2/rNKR3R w - - 0 18",
+      side: "black",
+      moveNo: 18,
+      opening: "Modern, 150 Attack",
+      opp: "alansutton",
+      date: "2026-11-03",
+      url: "https://lichess.org/AnaYlr4G#34",
+      gameId: "AnaYlr4G",
+      evalBefore: 451,
+      bestSan: "",
+      bestUci: "",
+      bestLine: "18. c5 Bxd3 19. Qxd3 Nc6, then you attacked the king.",
+      playedSan: "",
+      starter: true,
+      training: false,
+      added: true,
+      verifiedCp: 451,
+      verifiedDepth: 22,
+      blurb: "Your rated rapid win as Black, Modern Defense against the 150 Attack. White moves first. The game went 18.c5 Bxd3 19.Qxd3 Nc6."
+    },
+    {
+      id: "fi-lichess-7HUeCT5v-24",
+      fen: "2r3k1/1b4pp/p3p3/1p1p1p2/1P1b4/P2B1P2/4N1PP/2Q4K w - - 1 24",
+      side: "white",
+      moveNo: 24,
+      opening: "Conversion practice",
+      opp: "AI level 6",
+      date: "2026-11-06",
+      url: "https://lichess.org/7HUeCT5v",
+      gameId: "7HUeCT5v",
+      evalBefore: 514,
+      bestSan: "Qf4",
+      bestUci: "c1f4",
+      bestLine: "24. Qf4 Bf6 25. Qd6 Re8 26. h4 Kf7 27. h5 g6",
+      playedSan: "",
+      starter: true,
+      training: true,
+      added: true,
+      verifiedCp: 514,
+      verifiedDepth: 22,
+      blurb: "Lichess 7HUeCT5v, conversion practice against AI level 6, after the AI played 23…Rc8. You are White, to move."
+    }
+  ];
 
   var FI_LEFT_OUT = [
     {
@@ -321,8 +399,8 @@
     var starters = FI.positions.filter(function (p) { return p.starter; }).length;
     var el = $("fi-lead");
     if (!el) return;
-    el.innerHTML = "Your own games, from a position the deck has at <b>+3</b> or better, with you to move. "
-      + "<b>No clock.</b> Stockfish defends at full strength (skill 20). "
+    el.innerHTML = "Positions at <b>+3</b> or better for you, mostly from your own games. "
+      + "<b>No clock.</b> Stockfish defends at full strength (skill 20), and moves first when it is to move. "
       + "A win is checkmate, a forced mate, or <b>+10</b> — about a queen, where the conversion is no longer in doubt. "
       + "A fail is an edge under <b>+1.5</b>, or any draw. "
       + "The score is the lowest edge divided by the start, both capped at +10. "
@@ -367,7 +445,11 @@
       btn.className = "fi-row" + (p.id === FI.posId ? " current" : "");
       btn.setAttribute("role", "listitem");
       btn.dataset.id = p.id;
-      var sub = (p.starter ? "Starter · " : "") + (p.opp ? "vs " + p.opp : "") + (p.date ? " · " + p.date : "");
+      var sub = (p.starter ? "Starter · " : "")
+        + (p.training ? "Training · " : "")
+        + (fiEngineFirst(p) ? fiSideName(p.side === "white" ? "black" : "white") + " moves first · " : "")
+        + (p.opp ? "vs " + p.opp : "")
+        + (p.date ? " · " + p.date : "");
       btn.innerHTML = '<span class="fi-ev">' + fiEsc(fiFmt(p.evalBefore)) + "</span>"
         + '<span class="fi-text"><span class="fi-main">' + fiEsc(p.opening) + " · " + fiEsc(String(p.moveNo)) + (p.side === "white" ? "." : "…")
         + "</span>"
@@ -392,7 +474,7 @@
     sparringBoard.setLastMove(null, null);
     sparringBoard.clearArrows();
     var note = $("sparring-board-note");
-    if (note) note.textContent = "Preview · No clock · " + fiSideName(p.side) + " to move";
+    if (note) note.textContent = fiPreviewNote(p);
     fiSyncStart();
   }
 
@@ -413,7 +495,7 @@
     FI.phase = "idle";
     if (FI.pos && FI.mode === "finish") {
       var note = $("sparring-board-note");
-      if (note) note.textContent = "Preview · No clock · " + fiSideName(FI.pos.side) + " to move";
+      if (note) note.textContent = fiPreviewNote(FI.pos);
     }
     fiSyncStart();
     fiRenderList();
@@ -426,6 +508,22 @@
   }
 
   function fiSideName(side) { return side === "white" ? "White" : "Black"; }
+
+  /* True when the side to move is Stockfish, so the run must open with its move. */
+  function fiEngineFirst(p) {
+    if (!p || !p.fen) return false;
+    var stm = p.fen.split(" ")[1] || "w";
+    var me = p.side === "black" ? "b" : "w";
+    return stm !== me;
+  }
+
+  function fiPreviewNote(p) {
+    if (fiEngineFirst(p)) {
+      return "Preview · No clock · You play " + fiSideName(p.side) + " · "
+        + fiSideName(p.side === "white" ? "black" : "white") + " moves first";
+    }
+    return "Preview · No clock · " + fiSideName(p.side) + " to move";
+  }
 
   function fiSyncRunButtons() {
     var hint = $("btn-fi-hint");
@@ -583,8 +681,11 @@
     $("fi-summary").classList.add("hidden");
     $("fi-summary").innerHTML = "";
     $("btn-fi-giveup").disabled = true;
-    $("fi-kicker").textContent = [p.date, p.opp ? "vs " + p.opp : "", "you are " + fiSideName(p.side)].filter(Boolean).join(" · ");
-    $("fi-brief").textContent = p.blurb || (p.opening + ", move " + p.moveNo + ". You are " + fiSideName(p.side) + ", to move. The game's best move stays hidden until the end.");
+    $("fi-kicker").textContent = [p.training ? "Training" : "", p.date, p.opp ? "vs " + p.opp : "", "you are " + fiSideName(p.side)].filter(Boolean).join(" · ");
+    var turnLine = fiEngineFirst(p)
+      ? "You are " + fiSideName(p.side) + ". " + fiSideName(p.side === "white" ? "black" : "white") + " moves first."
+      : "You are " + fiSideName(p.side) + ", to move.";
+    $("fi-brief").textContent = p.blurb || (p.opening + ", move " + p.moveNo + ". " + turnLine + " The game's best move stays hidden until the end.");
     fiSetStatus("Reading the position…");
     $("sparring-board-note").textContent = "No clock · " + fiSideName(p.side) + " · Stockfish skill 20";
     sparringBoard.setInteractive(false);
@@ -619,17 +720,57 @@
       FI.startCp = cp;
       FI.minCp = cp;
       FI.finalCp = cp;
-      FI.hint = { uci: a.best || p.bestUci, san: a.best ? fiSan(p.fen, a.best) : p.bestSan };
-      FI.hintFen = p.fen;
-      FI.phase = "user";
-      FI.busy = false;
-      $("btn-fi-giveup").disabled = false;
-      fiSyncRunButtons();
-      var deckNote = Math.abs(cp - p.evalBefore) >= 40 ? " Deck had " + fiFmt(p.evalBefore) + "." : "";
-      fiSetStatus("Your move. Edge " + fiFmt(cp) + ". It fails under +1.5." + deckNote);
-      if (FI.mode === "finish") sparringBoard.setInteractive(true);
+      var gapNote = Math.abs(cp - p.evalBefore) >= 40
+        ? " " + (p.added ? "Listed at " : "Deck had ") + fiFmt(p.evalBefore) + "."
+        : "";
+      if (!fiEngineFirst(p)) {
+        FI.hint = { uci: a.best || p.bestUci, san: a.best ? fiSan(p.fen, a.best) : p.bestSan };
+        FI.hintFen = p.fen;
+        FI.phase = "user";
+        FI.busy = false;
+        $("btn-fi-giveup").disabled = false;
+        fiSyncRunButtons();
+        fiSetStatus("Your move. Edge " + fiFmt(cp) + ". It fails under +1.5." + gapNote);
+        if (FI.mode === "finish") sparringBoard.setInteractive(true);
+        return;
+      }
+      var reply = fiApply(ch, a.best);
+      if (!reply) {
+        fiSetStatus("Stockfish returned no opening move.");
+        FI.busy = false;
+        FI.phase = "idle";
+        return;
+      }
+      sparringBoard.setFen(ch.fen());
+      sparringBoard.setLastMove(reply.from, reply.to);
+      var opened = fiTerminal(ch, p.side);
+      if (opened) { fiFinish(opened); return; }
+      fiSetStatus("Stockfish played " + reply.san + ".");
+      return fiAnalyse(ch.fen(), 14, 1600).then(function (b) {
+        if (seq !== FI.seq || FI.mode !== "finish") return;
+        var now = fiCp(b.score, ch.fen(), p.side);
+        if (now != null) fiTrack(now);
+        FI.hint = { uci: (b && b.best) || "", san: b && b.best ? fiSan(ch.fen(), b.best) : "" };
+        FI.hintFen = ch.fen();
+        FI.phase = "user";
+        FI.busy = false;
+        $("btn-fi-giveup").disabled = false;
+        fiSyncRunButtons();
+        fiSetStatus("Stockfish played " + reply.san + ". Edge " + fiFmt(now != null ? now : cp) + ". Your move. It fails under +1.5.");
+        if (FI.mode === "finish") sparringBoard.setInteractive(true);
+      });
     }).catch(function (e) {
       if (seq !== FI.seq) return;
+      var me = p.side === "black" ? "b" : "w";
+      if (FI.chess && fiEngineFirst(p) && FI.chess.turn() === me && FI.startCp != null) {
+        FI.phase = "user";
+        FI.busy = false;
+        $("btn-fi-giveup").disabled = false;
+        fiSyncRunButtons();
+        fiSetStatus("Your move. Edge " + fiFmt(FI.finalCp) + ". It fails under +1.5.");
+        if (FI.mode === "finish") sparringBoard.setInteractive(true);
+        return;
+      }
       FI.busy = false;
       FI.phase = "idle";
       fiSetStatus("Engine unavailable: " + (e && e.message ? e.message : "could not analyse"));
@@ -741,10 +882,12 @@
       : "<div class=\"info-line\">No move of yours gave the edge back.</div>";
     var line = p.bestLine ? String(p.bestLine) : "";
     if (line.length > 180) line = line.slice(0, 177) + "…";
-    var clean = "<div class=\"coach-box\"><b>" + (p.starter ? "Clean finish" : "Known better move") + ": "
-      + fiEsc(p.bestSan || "—") + ".</b>"
+    var cleanTitle = fiEngineFirst(p)
+      ? "How the game went"
+      : ((p.starter ? "Clean finish" : "Known better move") + ": " + (p.bestSan || "—"));
+    var clean = "<div class=\"coach-box\"><b>" + fiEsc(cleanTitle) + ".</b>"
       + (line ? "<div class=\"info-line\">" + fiEsc(line) + "</div>" : "")
-      + (p.playedSan ? "<div class=\"info-line\">In the game you played " + fiEsc(p.playedSan) + ".</div>" : "")
+      + (!fiEngineFirst(p) && p.playedSan ? "<div class=\"info-line\">In the game you played " + fiEsc(p.playedSan) + ".</div>" : "")
       + (p.url ? '<div class="info-line"><a href="' + fiEsc(p.url) + '" target="_blank" rel="noopener">Open the game</a></div>' : "")
       + "</div>";
     sum.innerHTML = '<div class="banner ' + (win ? "green" : "red") + '">'
@@ -873,7 +1016,8 @@
       if (typeof Deck !== "undefined" && Deck.loaded && Deck.all) {
         Deck.all.forEach(function (c) { if (c && c.id) byId[c.id] = c; });
       }
-      var list = fiDedupe(Object.keys(byId).map(function (k) { return byId[k]; }).filter(fiReal).map(fiFromCard));
+      var fromDeck = Object.keys(byId).map(function (k) { return byId[k]; }).filter(fiReal).map(fiFromCard);
+      var list = fiDedupe(fromDeck.concat(FI_ADDED));
       list.sort(function (a, b) {
         if (a.starter !== b.starter) return a.starter ? -1 : 1;
         return b.evalBefore - a.evalBefore || String(b.date).localeCompare(String(a.date));
