@@ -613,7 +613,7 @@
         <!-- v49: Finish it — convert your own +3 positions, no clock -->
         <div id="sparring-finish" class="hidden">
           <div id="fi-home">
-            <p id="fi-hint" class="info-line">Pick a position, then Start. You play, Stockfish defends.</p>
+            <p id="fi-hint" class="info-line">Pick a position, then Start. You play, Stockfish defends. If Stockfish is to move, it plays first.</p>
             <div class="panel-row">
               <button type="button" id="btn-fi-start" class="btn primary" disabled>Start vs Stockfish</button>
             </div>
@@ -1711,7 +1711,7 @@
 <script src="js/attacks.js?v=44"></script>
 <script src="js/calc.js?v=44"></script>
 <script src="js/deck.js?v=51"></script>
-<script src="js/finish.js?v=56"></script>
+<script src="js/finish.js?v=58"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});
