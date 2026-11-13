@@ -1,9 +1,9 @@
 /* Chess Coach AI service worker: network-first for the app shell (so updates
    land immediately), cache fallback for offline use. Cross-origin requests
    (lichess / chess.com / LLM) are never cached. */
-var CACHE = "chesscoach-v58";
-var SHELL = ["./", "index.html", "style.css?v=57", "app.js?v=57", "board.js?v=50", "pieces.js?v=33",
-  "api-shim.js?v=57", "js/engine.js?v=33", "js/repertoire.js?v=57", "js/top10.js?v=54", "js/alapin-drill.js?v=48", "js/attacks.js?v=44", "js/calc.js?v=44", "js/deck.js?v=51", "js/finish.js?v=58", "vendor/chess.js?v=33",
+var CACHE = "chesscoach-v59";
+var SHELL = ["./", "index.html", "style.css?v=59", "app.js?v=57", "board.js?v=50", "pieces.js?v=33",
+  "api-shim.js?v=57", "js/engine.js?v=33", "js/repertoire.js?v=57", "js/top10.js?v=54", "js/alapin-drill.js?v=48", "js/attacks.js?v=44", "js/calc.js?v=44", "js/deck.js?v=59", "js/finish.js?v=59", "js/lichess-import.js?v=59", "vendor/chess.js?v=33",
   "vendor/stockfish/stockfish-19-lite-single.js", "vendor/stockfish/stockfish-19-lite-single.wasm",
   "data/puzzles.json", "data/masters.json", "data/lessons.json", "data/endgames.json",
   "data/modern.json", "data/scotch.json", "data/alapin.json", "data/alapin-drill.json?v=48", "data/grunfeld.json", "data/qg.json", "data/top10.json?v=48", "data/attacks.json", "data/puzzle_sets.json", "data/mine/deck.json?v=48",

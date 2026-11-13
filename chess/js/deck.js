@@ -43,7 +43,7 @@ async function deckLoad() {
   const srs = deckLS(DECK_KEYS.srs, {});
   Object.values(byId).forEach(c => (c.alias_ids || []).forEach(a => { if (srs[a] && !srs[c.id]) srs[c.id] = srs[a]; }));
   Deck.known = new Set(Object.values(byId).map(c => c.game_id).concat(local.map(c => c.game_id)));
-  Deck.all = Object.values(byId).filter(c => !c.marker);
+  Deck.all = Object.values(byId).filter(c => !c.marker && !c.finish_start);
   Deck.byId = byId;
   Deck.meta = bundled;
   Deck.srs = srs;
@@ -541,22 +541,6 @@ async function deckSync() {
   if (Deck.busy) return; Deck.busy = true; $("btn-deck-sync").disabled = true;
   const max = parseInt($("deck-sync-max").value, 10) || 5, sync = deckLS(DECK_KEYS.sync, {}), games = [];
   try {
-    deckSyncStatus("Fetching Lichess…");
-    const since = sync.lichess || Date.parse((Deck.meta && Deck.meta.summary && Deck.meta.summary.newest) || "2026-10-22") + 86400000;
-    try {
-      const r = await fetch("https://lichess.org/api/games/user/Jetblack007?max=" + max + "&since=" + since + "&opening=true&pgnInJson=false", { headers: { Accept: "application/x-ndjson" } });
-      if (r.ok) {
-        const txt = await r.text();
-        txt.split("\n").filter(Boolean).forEach(l => {
-          const j = JSON.parse(l); if (j.variant !== "standard" && j.variant !== "fromPosition") return;
-          const side = ((j.players.white.user || {}).name || "").toLowerCase() === "jetblack007" ? "white" : "black";
-          const opp = side === "white" ? j.players.black : j.players.white, sans = (j.moves || "").split(" ").filter(Boolean);
-          games.push({ site: "lichess", id: j.id, url: "https://lichess.org/" + j.id, date: new Date(j.createdAt).toISOString().slice(0, 10), side,
-            opp: (opp.user && opp.user.name) || (opp.aiLevel ? "lichess AI " + opp.aiLevel : "?"), sans, startFen: j.initialFen,
-            opening: deckOpeningName(side, sans, j.opening && j.opening.name), ts: j.createdAt });
-        });
-      }
-    } catch (e) { console.info("[deck] lichess fetch failed", e && e.message); }
     deckSyncStatus("Fetching Chess.com…");
     try {
       const a = await (await fetch("https://api.chess.com/pub/player/jetblack007/games/archives")).json();
@@ -575,7 +559,7 @@ async function deckSync() {
     games.sort((a, b) => b.ts - a.ts);
     const pick = games.slice(0, max);
     const added = await deckAddGames(pick);
-    games.forEach(g => { if (g.site === "lichess") sync.lichess = Math.max(sync.lichess || 0, g.ts + 1); if (g.site === "chesscom") sync.chesscom = Math.max(sync.chesscom || 0, g.ts); });
+    games.forEach(g => { if (g.site === "chesscom") sync.chesscom = Math.max(sync.chesscom || 0, g.ts); });
     sync.at = new Date().toISOString(); deckSave(DECK_KEYS.sync, sync);
     deckSyncStatus(games.length ? "Done: " + pick.length + " new game(s) analysed, " + added + " new card(s)." : "No new games since the last check.", "good");
   } catch (e) {
