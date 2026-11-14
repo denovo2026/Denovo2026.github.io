@@ -281,9 +281,9 @@ function parsePgn(pgn) {
 
 /* Four places: Today, Train, Openings, Review. Study is a menu (Masters, Learn, Olympiad). */
 const TAB_GROUPS = {
-  today: ["plan", "progress"],
-  train: ["deck", "puzzles", "cycles", "sparring", "endgames", "attacks", "calc"],
-  openings: ["modern", "grunfeld", "scotch", "qg", "alapin", "alapin-drill", "top10"],
+  today: ["plan", "dash", "progress"],
+  train: ["deck", "puzzles", "cycles", "sparring", "endgames", "attacks", "calc", "plans"],
+  openings: ["modern", "grunfeld", "scotch", "qg", "alapin", "alapin-drill", "top10", "leaks"],
   review: ["play", "games", "lab"],
   study: ["masters", "learn"],
 };
@@ -331,6 +331,9 @@ function switchTab(name) {
   if (name === "grunfeld" && typeof initGrunfeld === "function") initGrunfeld();
   if (name === "qg" && typeof initQg === "function") initQg();
   if (name === "attacks" && typeof initAttacks === "function") initAttacks();
+  if (name === "leaks" && window.Leaks) Leaks.open();
+  if (name === "plans" && window.Plans) Plans.open();
+  if (name === "dash" && window.Dash) Dash.open();
   syncPlayOutBar(name);
   if (openDeeper) { const d = $("go-deeper"); if (d) d.open = true; }
 }
@@ -8757,8 +8760,9 @@ document.addEventListener("click", (e) => {
     play: "play", review: "play", lab: "lab", games: "games",
     deck: "deck", mistakes: "deck", puzzles: "puzzles", cycles: "deck",
     sparring: "sparring", endgames: "endgames", finish: "finish",
-    attacks: "attacks", calc: "calc", calculation: "calc",
+    attacks: "attacks", calc: "calc", calculation: "calc", plans: "plans",
     top10: "top10", modern: "modern", scotch: "scotch", alapin: "alapin",
+    leaks: "leaks", dash: "dash", dashboard: "dash",
     "alapin-drill": "alapin-drill", grunfeld: "grunfeld",
     masters: "masters", learn: "learn",
   };
