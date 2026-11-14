@@ -229,6 +229,15 @@
     return Math.min(100, Math.round(100 * fiEdge(minCp) / s));
   }
 
+  var FI_LOG = "cc-finish-log-v1";
+  function fiLogRun(entry) {
+    var log = [];
+    try { log = JSON.parse(localStorage.getItem(FI_LOG) || "[]"); } catch (_) { log = []; }
+    if (!Array.isArray(log)) log = [];
+    log.push(entry);
+    if (log.length > 400) log = log.slice(-400);
+    try { localStorage.setItem(FI_LOG, JSON.stringify(log)); } catch (_) {}
+  }
   function fiBests() {
     try { return JSON.parse(localStorage.getItem(FI_LS) || "{}"); } catch (_) { return {}; }
   }
@@ -1127,6 +1136,7 @@
     var skipBest = result.reason === "time" && (FI.moves || 0) < 1;
     if (!skipBest) {
       fiSaveBest(p.id, kept, win, FI.hinted, clocked, clocked ? { budget: FI.clock.budgetMin, inc: Math.round((FI.clock.incMs || 0) / 1000) } : null);
+      fiLogRun({ id: p.id, at: new Date().toISOString(), win: win, hinted: !!FI.hinted, clocked: clocked, pct: kept });
     }
     var sum = $("fi-summary");
     var worst = FI.worst;

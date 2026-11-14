@@ -10,6 +10,8 @@
 
    Stockfish runs only where a server eval or a best move is missing.
    New mistake cards and Finish it starts go in cc-deck-local-v1.
+   The games themselves (moves and any Lichess evals) go in cc-games-local-v1
+   so Opening leaks, Plans and the dashboard can reuse them.
    ===================================================================== */
 (function () {
   "use strict";
@@ -17,6 +19,7 @@
   var USER_KEY = "cc-lichess-user-v1";
   var SEEN_KEY = "cc-lichess-seen-v1";
   var DECK_KEY = "cc-deck-local-v1";
+  var GAMES_KEY = "cc-games-local-v1";
   /* Deck stored +3.1 here; a deeper read was +2.85, so it is not a Finish it start. */
   var SKIP_FINISH = { "XtnIByaY#40": 1 };
   var state = { busy: false, stop: false, ctrl: null };
@@ -570,8 +573,11 @@
     return text.split("\n").filter(Boolean).map(function (line) { return JSON.parse(line); }).filter(function (g) { return g && g.id; });
   }
   async function liFetchGames(user, max, signal) {
+    /* rated=true currently comes back as an empty file for this account, so the
+       rated filter is applied by the caller. Unrated standard games stay in
+       the stored set for Opening leaks. */
     var url = "https://lichess.org/api/games/user/" + encodeURIComponent(user)
-      + "?max=" + max + "&rated=true&opening=true&moves=true&evals=true&clocks=false&pgnInJson=false";
+      + "?max=" + max + "&opening=true&moves=true&evals=true&clocks=false&pgnInJson=false";
     var r;
     try {
       r = await fetch(url, { headers: { Accept: "application/x-ndjson" }, signal: signal });
@@ -598,6 +604,124 @@
   }
   function liPlural(n, word) { return n + " " + word + (n === 1 ? "" : "s"); }
 
+  function liLoadGames() {
+    try {
+      var v = JSON.parse(localStorage.getItem(GAMES_KEY) || "[]");
+      return Array.isArray(v) ? v : [];
+    } catch (_) { return []; }
+  }
+  function liCompact(j) {
+    if (!j || !j.id) return null;
+    if (j.moves && (j.white || j.black) && !j.players) return j;
+    var wp = j.players && j.players.white;
+    var bp = j.players && j.players.black;
+    var w = wp && wp.user;
+    var b = bp && bp.user;
+    function num(v) { return typeof v === "number" ? v : null; }
+    var evals = null;
+    if (j.analysis && j.analysis.length) {
+      var arr = [], any = false;
+      for (var i = 0; i < j.analysis.length; i++) {
+        var cp = liWhiteFromServer(j.analysis[i]);
+        arr.push(cp);
+        if (cp != null) any = true;
+      }
+      if (any) evals = arr;
+    }
+    return {
+      id: j.id,
+      white: (w && (w.name || w.id)) || "",
+      black: (b && (b.name || b.id)) || "",
+      winner: j.winner === "white" || j.winner === "black" ? j.winner : null,
+      status: j.status || "",
+      speed: j.speed || "",
+      whiteRating: num(wp && wp.rating),
+      blackRating: num(bp && bp.rating),
+      whiteDiff: num(wp && wp.ratingDiff),
+      blackDiff: num(bp && bp.ratingDiff),
+      createdAt: j.createdAt || 0,
+      opening: (j.opening && j.opening.name) || "",
+      eco: (j.opening && j.opening.eco) || "",
+      moves: j.moves || "",
+      evals: evals,
+      rated: j.rated !== false,
+      variant: j.variant || "standard"
+    };
+  }
+  function liSaveGames(raw) {
+    var by = {};
+    liLoadGames().forEach(function (g) { if (g && g.id) by[g.id] = g; });
+    (raw || []).forEach(function (j) {
+      if (j && j.variant && j.variant !== "standard") return;
+      var c = liCompact(j);
+      if (!c || !c.id || !c.moves) return;
+      var prev = by[c.id];
+      if (!prev || (c.evals && !prev.evals)) by[c.id] = c;
+    });
+    var arr = Object.keys(by).map(function (k) { return by[k]; });
+    arr.sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+    if (arr.length > 80) arr = arr.slice(0, 80);
+    try { localStorage.setItem(GAMES_KEY, JSON.stringify(arr)); } catch (_) {}
+    return arr;
+  }
+  var liBundleP = null;
+  function liBundled() {
+    if (liBundleP) return liBundleP;
+    liBundleP = fetch("data/mine/games.json", { cache: "force-cache" }).then(function (r) {
+      if (!r.ok) return [];
+      return r.json();
+    }).then(function (data) {
+      var out = [];
+      ((data && data.games) || []).forEach(function (g) {
+        if (!g || !g.pgn || typeof parsePgn !== "function") return;
+        var p;
+        try { p = parsePgn(g.pgn); } catch (_) { return; }
+        if (!p || !p.sans || p.sans.length < 8) return;
+        out.push({
+          id: "bundle-" + g.id,
+          white: g.white || "",
+          black: g.black || "",
+          winner: g.result === "1-0" ? "white" : g.result === "0-1" ? "black" : null,
+          status: g.result === "1/2-1/2" ? "draw" : "",
+          result: g.result || "",
+          createdAt: 0,
+          opening: "",
+          moves: p.sans.join(" "),
+          evals: null,
+          source: "bundled",
+          variant: "standard",
+          rated: true
+        });
+      });
+      return out;
+    }).catch(function () { liBundleP = null; return []; });
+    return liBundleP;
+  }
+  function liNamed(g, user) {
+    var n = String(user || "").toLowerCase();
+    if (!n) return true;
+    return (g.white || "").toLowerCase() === n || (g.black || "").toLowerCase() === n;
+  }
+  function liPool(user) {
+    return liBundled().then(function (extra) {
+      var seen = {}, out = [];
+      liLoadGames().concat(extra).forEach(function (g) {
+        if (!g || !g.id || seen[g.id] || !liNamed(g, user)) return;
+        seen[g.id] = 1;
+        out.push(g);
+      });
+      out.sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+      return out;
+    });
+  }
+  async function liEnsure(user, max, force) {
+    var have = liLoadGames().filter(function (g) { return liNamed(g, user); });
+    if (!force && have.length >= Math.min(max || 30, 12)) return liPool(user);
+    var games = await liFetchGames(user, max || 30, null);
+    liSaveGames(games);
+    return liPool(user);
+  }
+
   async function liRun() {
     if (state.busy) return;
     var user = liUser();
@@ -622,6 +746,7 @@
       }
       liStatus("Fetching recent games for " + user + "…");
       var games = await liFetchGames(user, max, state.ctrl && state.ctrl.signal);
+      liSaveGames(games);
       var seen = {};
       liSeen().forEach(function (id) { seen[id] = 1; });
       var todo = [];
@@ -706,5 +831,13 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", liBind);
   else liBind();
-  window.LichessImport = { run: liRun };
+  window.LichessImport = {
+    run: liRun,
+    fetchGames: liFetchGames,
+    loadGames: liLoadGames,
+    saveGames: liSaveGames,
+    pool: liPool,
+    ensure: liEnsure,
+    userKey: USER_KEY
+  };
 })();
