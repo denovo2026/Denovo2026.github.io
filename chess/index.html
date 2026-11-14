@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=57">
+<link rel="stylesheet" href="style.css?v=59">
 </head>
 <body>
 <header class="app-header">
@@ -92,7 +92,7 @@
     <span class="playout-k">Play it out</span>
     <button type="button" data-playout="sparring">Sparring</button>
     <button type="button" data-playout="endgames">Endgames</button>
-    <button type="button" data-playout="finish" title="Convert a won position from your own games. No clock.">Finish it</button>
+    <button type="button" data-playout="finish" title="Convert a won position from your own games. Optional clock.">Finish it</button>
   </div>
 </header>
 <script>
@@ -558,6 +558,7 @@
       <div class="board-nav-col">
         <div id="sparring-board" class="board-holder"></div>
         <div class="board-actions">
+          <span id="fi-clock" class="fi-clock hidden" role="timer" aria-live="polite" aria-atomic="true"></span>
           <span id="sparring-board-note" class="info-line"></span>
         </div>
       </div>
@@ -610,10 +611,24 @@
           </div>
         </div>
         </div>
-        <!-- v49: Finish it — convert your own +3 positions, no clock -->
+        <!-- v59: Finish it — convert your own +3 positions, optional clock -->
         <div id="sparring-finish" class="hidden">
           <div id="fi-home">
             <p id="fi-hint" class="info-line">Pick a position, then Start. You play, Stockfish defends. If Stockfish is to move, it plays first.</p>
+            <div class="fi-clock-row" role="group" aria-label="Clock for your moves">
+              <span class="fi-clock-k">Clock</span>
+              <span class="seg" id="fi-clock-presets">
+                <button type="button" class="seg-btn active" data-clock="off" aria-pressed="true">Off</button>
+                <button type="button" class="seg-btn" data-clock="3" aria-pressed="false">3 min</button>
+                <button type="button" class="seg-btn" data-clock="5" aria-pressed="false">5 min</button>
+                <button type="button" class="seg-btn" data-clock="10" aria-pressed="false">10 min</button>
+              </span>
+              <span class="seg hidden" id="fi-inc-presets" aria-label="Increment">
+                <button type="button" class="seg-btn" data-inc="0" aria-pressed="true">+0</button>
+                <button type="button" class="seg-btn" data-inc="2" aria-pressed="false">+2s</button>
+                <button type="button" class="seg-btn" data-inc="5" aria-pressed="false">+5s</button>
+              </span>
+            </div>
             <div class="panel-row">
               <button type="button" id="btn-fi-start" class="btn primary" disabled>Start vs Stockfish</button>
             </div>
@@ -629,6 +644,7 @@
             <div id="fi-kicker" class="info-line muted"></div>
             <div id="fi-brief" class="fc-prompt"></div>
             <div id="fi-status" class="info-line" role="status"></div>
+            <div id="fi-pace" class="info-line fi-pace hidden"></div>
             <div id="fi-summary" class="hidden"></div>
             <div class="panel-row fi-actions">
               <button type="button" id="btn-fi-hint" class="btn" disabled>Hint</button>
@@ -1531,6 +1547,24 @@
           <button id="btn-deck-cycle" class="btn" type="button" title="Woodpecker pass: solve every card in this filter, then repeat in a day or three">Cycle this set</button>
           <button id="deck-f-reset" class="btn mini" type="button" title="Clear all filters">Reset</button>
         </div>
+        <div class="lab-panel deck-sync">
+            <div class="panel-row li-import">
+              <label class="deck-sync-n" for="li-user">Lichess <input id="li-user" type="text" spellcheck="false" autocomplete="off" value="Jetblack007" maxlength="20"></label>
+              <label class="deck-sync-n">Max <select id="li-max" aria-label="How many recent games"><option>5</option><option selected>10</option><option>15</option></select></label>
+              <button id="btn-li-import" class="btn primary" type="button">Import recent games</button>
+              <button id="btn-li-cancel" class="btn hidden" type="button">Cancel</button>
+            </div>
+            <div id="li-status" class="info-line" role="status" aria-live="polite"></div>
+            <details class="deck-pgn"><summary>Chess.com or a pasted PGN</summary>
+              <div class="panel-row">
+                <button id="btn-deck-sync" class="btn" type="button">Check Chess.com</button>
+                <label class="deck-sync-n">Max <select id="deck-sync-max"><option>3</option><option selected>5</option><option>10</option></select> games</label>
+              </div>
+              <textarea id="deck-pgn" rows="3" placeholder="[Event ...] 1. e4 d6 2. d4 g6 …"></textarea>
+              <div class="panel-row"><button id="btn-deck-pgn" class="btn" type="button">Analyse PGN</button></div>
+              <div id="deck-sync-status" class="info-line"></div>
+            </details>
+        </div>
         <div class="deck-card">
           <div class="deck-card-top">
             <span id="deck-rank" class="deck-rank"></span>
@@ -1559,19 +1593,6 @@
           <div class="lab-panel deck-top">
             <h3>★ Most costly 20 <span class="muted">— ranked by win-chance lost, ×1.5 when it changed the result</span></h3>
             <ol id="deck-top-list" class="deck-top-list"></ol>
-          </div>
-          <div class="lab-panel deck-sync">
-            <h3>Add new games</h3>
-            <div class="info-line">Fetch your newest Lichess / Chess.com games (or paste a Noctie PGN) and analyse them here with Stockfish. New mistakes join the deck on this device.</div>
-            <div class="panel-row">
-              <button id="btn-deck-sync" class="btn primary" type="button">Check for new games</button>
-              <label class="deck-sync-n">Max <select id="deck-sync-max"><option>3</option><option selected>5</option><option>10</option></select> games</label>
-            </div>
-            <details class="deck-pgn"><summary>Paste PGN (e.g. exported from Noctie)</summary>
-              <textarea id="deck-pgn" rows="4" placeholder="[Event ...] 1. e4 d6 2. d4 g6 …"></textarea>
-              <div class="panel-row"><button id="btn-deck-pgn" class="btn" type="button">Analyse PGN</button></div>
-            </details>
-            <div id="deck-sync-status" class="info-line"></div>
           </div>
         </div>
       </div>
@@ -1710,8 +1731,9 @@
 <script src="js/alapin-drill.js?v=48"></script>
 <script src="js/attacks.js?v=44"></script>
 <script src="js/calc.js?v=44"></script>
-<script src="js/deck.js?v=51"></script>
-<script src="js/finish.js?v=58"></script>
+<script src="js/deck.js?v=59"></script>
+<script src="js/finish.js?v=59"></script>
+<script src="js/lichess-import.js?v=59"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});
