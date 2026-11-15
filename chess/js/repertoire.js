@@ -788,6 +788,44 @@ function createRepertoireTab(cfg) {
   });
 
   let repInitDone = false;
+  let initFinished = false;
+  let pendingOpen = null;
+
+  /* Jump here from Opening leaks: load this set-up and step to the ply
+     where the game left the line. `side` matters for Queen's Gambit. */
+  async function applyOpen() {
+    const p = pendingOpen;
+    if (!p || !S.data) return false;
+    pendingOpen = null;
+    if (bothSides && (p.side === "white" || p.side === "black") && p.side !== meSide()) {
+      S.side = p.side;
+      try { localStorage.setItem("cc-rep-side-" + cfg.slug, p.side); } catch (_) { /* */ }
+      repBoard.setOrientation(p.side);
+      repPaintSide();
+      S.posIndex = null;
+      await repLoadProgress();
+      renderRepLooks();
+    }
+    if (p.id && !(S.look && S.look.id === p.id)) await loadRepLook(p.id);
+    if (typeof p.ply === "number") repGoToPly(p.ply);
+    return !!(S.look && (!p.id || S.look.id === p.id));
+  }
+  async function openLook(id, ply, side) {
+    pendingOpen = { id: id, ply: ply, side: side };
+    if (!repInitDone) return initRep();
+    /* Init is in flight or already done. Wait it out so two loads cannot race. */
+    if (!initFinished) {
+      for (let i = 0; i < 120 && !initFinished; i++) await new Promise((r) => setTimeout(r, 50));
+      if (!pendingOpen) {
+        for (let i = 0; i < 80 && !(S.look && (!id || S.look.id === id)); i++) {
+          await new Promise((r) => setTimeout(r, 50));
+        }
+        return !!(S.look && (!id || S.look.id === id));
+      }
+    }
+    return applyOpen();
+  }
+
   async function initRep() {
     if (repInitDone) return;
     repInitDone = true;
@@ -833,11 +871,14 @@ function createRepertoireTab(cfg) {
     }
     await repLoadProgress();
     renderRepLooks();
+    initFinished = true;
+    if (pendingOpen) return applyOpen();
     if (S.data.looks.length) loadRepLook(S.data.looks[0].id);
     else {
       $(P + "-looks").innerHTML = '<div class="info-line">No set-ups in this opening yet.</div>';
       repSetStatus("Nothing to show yet.", "warn");
     }
+    return false;
   }
 
   function repPaintSide() {
@@ -857,7 +898,7 @@ function createRepertoireTab(cfg) {
   }
 
 
-  return { init: initRep, state: S, drillDue: repDrillDue, loadProgress: repLoadProgress };
+  return { init: initRep, state: S, drillDue: repDrillDue, loadProgress: repLoadProgress, openLook: openLook };
 }
 
 /* Modern, Grünfeld, Scotch and Queen's Gambit share the coach layout.
@@ -880,6 +921,16 @@ function repertoireTabFor(slug) {
   if (slug === "qg") return QgTab;
   return ModernTab;
 }
+
+/* Opening leaks calls this. Resolves true when that set-up is on the board. */
+async function openRepertoireLine(slug, id, ply, side) {
+  const tab = repertoireTabFor(slug);
+  switchTab(slug);
+  if (!tab || !tab.openLook) return false;
+  try { return await tab.openLook(id, ply, side); }
+  catch (_) { return false; }
+}
+window.openRepertoireLine = openRepertoireLine;
 
 /* v40: count a training day only after a real answer on this trainer */
 function ccLogAnswer(pillar, kind) {

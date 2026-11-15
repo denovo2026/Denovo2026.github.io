@@ -25,7 +25,7 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=59">
+<link rel="stylesheet" href="style.css?v=60">
 </head>
 <body>
 <header class="app-header">
@@ -72,11 +72,13 @@
     <span class="tab-sep" aria-hidden="true"></span>
     <div class="tab-subs" id="tab-subs">
       <button class="tab-btn active in-group" data-tab="plan" data-group="today">Session</button>
+      <button class="tab-btn" data-tab="dash" data-group="today">Dashboard</button>
       <button class="tab-btn" data-tab="progress" data-group="today">Charts</button>
       <button class="tab-btn" data-tab="deck" data-group="train">Mistakes</button>
       <button class="tab-btn" data-tab="sparring" data-group="train">Play it out</button>
       <button class="tab-btn" data-tab="calc" data-group="train">Calculate</button>
       <button class="tab-btn" data-tab="attacks" data-group="train">Attacks</button>
+      <button class="tab-btn" data-tab="plans" data-group="train">Plans</button>
       <button class="tab-btn" data-tab="puzzles" data-group="train">Tactics</button>
       <button class="tab-btn" data-tab="modern" data-group="openings">Modern</button>
       <button class="tab-btn" data-tab="grunfeld" data-group="openings">Gr&uuml;nfeld</button>
@@ -84,6 +86,7 @@
       <button class="tab-btn" data-tab="qg" data-group="openings">Queen's Gambit</button>
       <button class="tab-btn" data-tab="alapin" data-group="openings">Alapin</button>
       <button class="tab-btn" data-tab="top10" data-group="openings">Wider set</button>
+      <button class="tab-btn" data-tab="leaks" data-group="openings">Leaks</button>
       <button class="tab-btn" data-tab="play" data-group="review">Analyze</button>
       <button class="tab-btn" data-tab="games" data-group="review">My games</button>
     </div>
@@ -1709,6 +1712,79 @@
     </div>
   </section>
 
+  <!-- ===================== OPENING LEAKS (v60) ===================== -->
+  <section id="tab-leaks" class="tab-panel">
+    <div class="leak-screen">
+      <div class="leak-bar">
+        <strong>Opening leaks</strong>
+        <label class="leak-field">Lichess <input id="leak-user" type="text" spellcheck="false" autocomplete="off" maxlength="20" value="Jetblack007" aria-label="Lichess username"></label>
+        <label class="leak-field">Games <select id="leak-max" aria-label="How many recent games"><option>30</option><option selected>60</option><option>80</option></select></label>
+        <button id="btn-leak-load" class="btn primary" type="button">Load games</button>
+        <span id="leak-filters" class="seg" role="group" aria-label="Colour">
+          <button type="button" class="btn mini primary" data-leak-side="all" aria-pressed="true">All</button>
+          <button type="button" class="btn mini" data-leak-side="white" aria-pressed="false">White</button>
+          <button type="button" class="btn mini" data-leak-side="black" aria-pressed="false">Black</button>
+        </span>
+        <span id="leak-status" class="info-line" role="status" aria-live="polite"></span>
+      </div>
+      <div class="leak-body">
+        <div class="leak-board-col">
+          <div id="leak-board" class="board-holder"></div>
+          <div id="leak-pos" class="info-line">The biggest leak shows here. Red is the move that left the book.</div>
+        </div>
+        <div id="leak-list" class="leak-list" role="list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MIDDLEGAME PLANS (v60) ===================== -->
+  <section id="tab-plans" class="tab-panel rep-tab">
+    <div class="rep-layout">
+      <div class="rep-left">
+        <div id="plans-label" class="lab-game-bar">Middlegame plans</div>
+        <div id="plans-board" class="board-holder"></div>
+      </div>
+      <div class="rep-right">
+        <div class="rep-coachbar">
+          <span class="rep-coach-avatar" aria-hidden="true">&#x265E;</span>
+          <div class="rep-coachbar-text">
+            <strong>Middlegame plans</strong>
+            <span class="info-line">Moves 12–30 from your games. One plan is clearly best. The other two are plausible.</span>
+          </div>
+        </div>
+        <div class="rep-controls">
+          <div id="plans-choices" class="plan-choices"></div>
+          <div id="plans-reveal" class="coach-box hidden" role="status"></div>
+          <div class="panel-row">
+            <button id="btn-plans-next" class="btn primary" type="button">Next position</button>
+            <span id="plans-acc" class="info-line"></span>
+          </div>
+          <div id="plans-status" class="info-line" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PROGRESS DASHBOARD (v60) ===================== -->
+  <section id="tab-dash" class="tab-panel">
+    <div class="dash-screen">
+      <div class="dash-bar">
+        <strong>Progress</strong>
+        <label class="leak-field">Lichess <input id="dash-user" type="text" spellcheck="false" autocomplete="off" maxlength="20" value="Jetblack007" aria-label="Lichess username"></label>
+        <button id="btn-dash-load" class="btn" type="button">Refresh</button>
+        <span id="dash-status" class="info-line" role="status"></span>
+      </div>
+      <div class="dash-grid">
+        <div class="lab-panel dash-card"><h3>Rating</h3><div id="dash-rating-body"></div></div>
+        <div class="lab-panel dash-card"><h3>Won from +3</h3><div id="dash-conv-body"></div></div>
+        <div class="lab-panel dash-card"><h3>Finish it</h3><div id="dash-finish-body"></div></div>
+        <div class="lab-panel dash-card"><h3>Puzzles</h3><div id="dash-puzzle-body"></div></div>
+        <div class="lab-panel dash-card"><h3>Opening drills</h3><div id="dash-open-body"></div></div>
+        <div class="lab-panel dash-card"><h3>Plan trainer</h3><div id="dash-plan-body"></div></div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <div id="pfh-menu" role="menu" hidden>
@@ -1725,15 +1801,18 @@
 <script src="api-shim.js?v=57"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=50"></script>
-<script src="app.js?v=57"></script>
-<script src="js/repertoire.js?v=57"></script>
+<script src="app.js?v=60"></script>
+<script src="js/repertoire.js?v=60"></script>
 <script src="js/top10.js?v=54"></script>
 <script src="js/alapin-drill.js?v=48"></script>
 <script src="js/attacks.js?v=44"></script>
 <script src="js/calc.js?v=44"></script>
 <script src="js/deck.js?v=59"></script>
-<script src="js/finish.js?v=59"></script>
-<script src="js/lichess-import.js?v=59"></script>
+<script src="js/finish.js?v=60"></script>
+<script src="js/lichess-import.js?v=60"></script>
+<script src="js/leaks.js?v=60"></script>
+<script src="js/plans.js?v=60"></script>
+<script src="js/dashboard.js?v=60"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});
