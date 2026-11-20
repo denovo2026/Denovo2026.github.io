@@ -398,7 +398,28 @@
       + '<div class="info-line">Streak ' + streak + (streak === 1 ? " day" : " days")
       + " · repertoire " + (rep.tried || 0) + "/" + (rep.total_lines || 0) + " tried</div>"
       + '<div class="info-line">Book due ' + (rep.due_count || 0)
-      + " · wider set " + topDue + " · Alapin drill " + alnDue + "</div>";
+      + " · wider set " + topDue + " · Alapin drill " + alnDue + "</div>"
+      + magnusOpenLine();
+  }
+  function magnusSummary() {
+    try { if (window.MagnusModern && MagnusModern.summary) return MagnusModern.summary(); }
+    catch (_) {}
+    return null;
+  }
+  function magnusOpenLine() {
+    var mm = magnusSummary();
+    if (!mm) return "";
+    return '<div class="info-line">Magnus Modern · ' + mm.gamesStepped + "/" + mm.gamesTotal + " games stepped"
+      + " · " + mm.themesRead + "/" + mm.themesTotal + " themes"
+      + (mm.playStarted ? " · " + mm.playStarted + " play-on" : "") + "</div>";
+  }
+  function magnusPlanLine() {
+    var mm = magnusSummary();
+    if (!mm) return "";
+    if (!mm.quizAnswered) return '<div class="info-line">Magnus Modern · ' + mm.quizTotal + " plans, none answered yet.</div>";
+    var pct = Math.round(100 * mm.quizCorrect / mm.quizAnswered);
+    return '<div class="info-line">Magnus Modern · ' + mm.quizCorrect + "/" + mm.quizAnswered
+      + " of " + mm.quizTotal + " plans (" + pct + "%).</div>";
   }
 
   function paintPlans() {
@@ -408,7 +429,8 @@
     if (window.Plans && Plans.log) log = Plans.log();
     else log = readJSON("cc-plan-log-v1", []);
     if (!Array.isArray(log) || !log.length) {
-      host.innerHTML = big("—") + '<div class="info-line">No plan-trainer answers yet. They record when you pick a plan.</div>';
+      host.innerHTML = big("—") + '<div class="info-line">No plan-trainer answers yet. They record when you pick a plan.</div>'
+        + magnusPlanLine();
       return;
     }
     var ok = log.filter(function (x) { return x.correct; }).length;
@@ -423,7 +445,8 @@
       + '<div class="info-line">' + ok + " of " + log.length + " plans"
       + " · this week " + (tw.length ? tw.filter(function (x) { return x.correct; }).length + "/" + tw.length : "—")
       + " · last week " + (pw.length ? pw.filter(function (x) { return x.correct; }).length + "/" + pw.length : "—") + "</div>"
-      + spark(log.slice(-30).map(function (x) { return x.correct ? 1 : 0; }), 320, 48);
+      + spark(log.slice(-30).map(function (x) { return x.correct ? 1 : 0; }), 320, 48)
+      + magnusPlanLine();
   }
 
   async function boot(forceGames) {

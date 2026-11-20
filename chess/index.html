@@ -25,14 +25,14 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=60">
+<link rel="stylesheet" href="style.css?v=61">
 </head>
 <body>
 <header class="app-header">
   <div class="header-bar">
     <div class="brand">
       <span class="brand-mark" aria-hidden="true">&#x265E;</span>
-      <h1>Chess Coach <span class="brand-ai">AI</span></h1>
+      <h1>Chess Coach <span class="brand-ai">AI</span> <span class="ver-label">v61</span></h1>
     </div>
     <div class="header-tools">
       <button id="btn-me" class="icon-btn me-btn" type="button" aria-haspopup="true" aria-expanded="false" title="My side and level (used by Play, Sparring, Masters and Strategy Lab)"><span class="icon-btn-glyph" aria-hidden="true">♚</span><span id="me-label" class="me-label">Black · Club</span></button>
@@ -81,6 +81,7 @@
       <button class="tab-btn" data-tab="plans" data-group="train">Plans</button>
       <button class="tab-btn" data-tab="puzzles" data-group="train">Tactics</button>
       <button class="tab-btn" data-tab="modern" data-group="openings">Modern</button>
+      <button class="tab-btn" data-tab="magnus" data-group="openings">Magnus Modern</button>
       <button class="tab-btn" data-tab="grunfeld" data-group="openings">Gr&uuml;nfeld</button>
       <button class="tab-btn" data-tab="scotch" data-group="openings">Scotch</button>
       <button class="tab-btn" data-tab="qg" data-group="openings">Queen's Gambit</button>
@@ -1226,6 +1227,35 @@
   </section>
 
 
+  <!-- ===================== MAGNUS MODERN (v61) ===================== -->
+  <section id="tab-magnus" class="tab-panel" data-view="games">
+    <div class="mm-screen">
+      <div class="mm-bar">
+        <strong>Magnus Modern</strong>
+        <div class="seg" id="mm-views" role="tablist" aria-label="Magnus Modern">
+          <button type="button" class="seg-btn active" data-mm="games" role="tab" aria-selected="true">Games</button>
+          <button type="button" class="seg-btn" data-mm="quiz" role="tab" aria-selected="false">Find the plan</button>
+          <button type="button" class="seg-btn" data-mm="play" role="tab" aria-selected="false">Play like Magnus</button>
+          <button type="button" class="seg-btn" data-mm="themes" role="tab" aria-selected="false">Themes</button>
+        </div>
+        <span id="mm-progress" class="info-line">Carlsen as Black. 15 documented games, 8 wins, 4 draws, 3 losses. A curated set, not a census.</span>
+      </div>
+      <div class="mm-body">
+        <div class="mm-board-view">
+          <div class="mm-board-col">
+            <div id="mm-label" class="lab-game-bar">Magnus Modern</div>
+            <div id="mm-board" class="board-holder"></div>
+            <div id="mm-nav" class="nav-slot"></div>
+          </div>
+          <div id="mm-side" class="mm-side">
+            <p class="info-line">Open this tab to load the games.</p>
+          </div>
+        </div>
+        <div id="mm-themes" class="mm-themes"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== SCOTCH GAME (v44) ===================== -->
   <section id="tab-scotch" class="tab-panel rep-tab">
     <div class="rep-layout">
@@ -1801,7 +1831,7 @@
 <script src="api-shim.js?v=57"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=50"></script>
-<script src="app.js?v=60"></script>
+<script src="app.js?v=61"></script>
 <script src="js/repertoire.js?v=60"></script>
 <script src="js/top10.js?v=54"></script>
 <script src="js/alapin-drill.js?v=48"></script>
@@ -1812,7 +1842,8 @@
 <script src="js/lichess-import.js?v=60"></script>
 <script src="js/leaks.js?v=60"></script>
 <script src="js/plans.js?v=60"></script>
-<script src="js/dashboard.js?v=60"></script>
+<script src="js/magnus.js?v=61"></script>
+<script src="js/dashboard.js?v=61"></script>
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(function () {});
