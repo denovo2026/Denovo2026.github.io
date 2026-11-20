@@ -283,7 +283,7 @@ function parsePgn(pgn) {
 const TAB_GROUPS = {
   today: ["plan", "dash", "progress"],
   train: ["deck", "puzzles", "cycles", "sparring", "endgames", "attacks", "calc", "plans"],
-  openings: ["modern", "grunfeld", "scotch", "qg", "alapin", "alapin-drill", "top10", "leaks"],
+  openings: ["modern", "magnus", "grunfeld", "scotch", "qg", "alapin", "alapin-drill", "top10", "leaks"],
   review: ["play", "games", "lab"],
   study: ["masters", "learn"],
 };
@@ -325,6 +325,7 @@ function switchTab(name) {
   if (name === "deck" && typeof initDeck === "function") initDeck();
   if (name === "top10" && typeof initTop10 === "function") initTop10();
   if (name === "modern" && typeof initModern === "function") initModern();
+  if (name === "magnus" && window.MagnusModern) MagnusModern.open();
   if (name === "scotch" && typeof initScotch === "function") initScotch();
   if (name === "alapin" && typeof initAlapin === "function") initAlapin();
   if (name === "alapin-drill" && typeof initAlapinDrill === "function") initAlapinDrill();
