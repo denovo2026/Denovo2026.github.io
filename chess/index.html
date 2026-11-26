@@ -25,14 +25,14 @@
   if (m) m.setAttribute("content", t === "light" ? "#f5f7fa" : "#0d1117");
 })();
 </script>
-<link rel="stylesheet" href="style.css?v=61">
+<link rel="stylesheet" href="style.css?v=62">
 </head>
 <body>
 <header class="app-header">
   <div class="header-bar">
     <div class="brand">
       <span class="brand-mark" aria-hidden="true">&#x265E;</span>
-      <h1>Chess Coach <span class="brand-ai">AI</span> <span class="ver-label">v61</span></h1>
+      <h1>Chess Coach <span class="brand-ai">AI</span> <span class="ver-label">v62</span></h1>
     </div>
     <div class="header-tools">
       <button id="btn-me" class="icon-btn me-btn" type="button" aria-haspopup="true" aria-expanded="false" title="My side and level (used by Play, Sparring, Masters and Strategy Lab)"><span class="icon-btn-glyph" aria-hidden="true">♚</span><span id="me-label" class="me-label">Black · Club</span></button>
@@ -86,6 +86,8 @@
       <button class="tab-btn" data-tab="scotch" data-group="openings">Scotch</button>
       <button class="tab-btn" data-tab="qg" data-group="openings">Queen's Gambit</button>
       <button class="tab-btn" data-tab="alapin" data-group="openings">Alapin</button>
+      <button class="tab-btn" data-tab="french" data-group="openings">French</button>
+      <button class="tab-btn" data-tab="caro" data-group="openings">Caro-Kann</button>
       <button class="tab-btn" data-tab="top10" data-group="openings">Wider set</button>
       <button class="tab-btn" data-tab="leaks" data-group="openings">Leaks</button>
       <button class="tab-btn" data-tab="play" data-group="review">Analyze</button>
@@ -1429,6 +1431,118 @@
     </div>
   </section>
 
+  <!-- ===================== FRENCH ADVANCE (v62) ===================== -->
+  <section id="tab-french" class="tab-panel rep-tab">
+    <div class="rep-layout">
+      <div class="rep-left">
+        <div id="french-label" class="lab-game-bar">Pick a Black reply.</div>
+        <div id="french-board" class="board-holder"></div>
+        <div id="french-nav" class="nav-slot"></div>
+      </div>
+      <div class="rep-right">
+        <div class="rep-coachbar">
+          <span class="rep-coach-avatar" aria-hidden="true">&#x265F;</span>
+          <div class="rep-coachbar-text">
+            <strong id="french-title">French Advance</strong>
+            <span class="info-line" id="french-summary">Loading…</span>
+          </div>
+        </div>
+        <div class="rep-picker">
+          <div class="rep-picker-head">
+            <h3>What Black shows you</h3>
+            <span id="french-due" class="rep-mem rep-due">Due: …</span>
+            <span class="rep-picker-note">You are White. The card is Black's reply after 3.e5.</span>
+          </div>
+          <div id="french-looks" class="rep-looks">Loading…</div>
+        </div>
+        <div class="rep-controls">
+          <div id="french-movebar" class="rep-movebar"></div>
+          <div class="panel-row">
+            <button id="btn-french-quiz" class="btn primary" type="button">Quiz this line</button>
+            <button id="btn-french-due" class="btn" type="button" title="Missed lines first, then new ones, then lines due for review">Drill due</button>
+            <button id="btn-french-blind" class="btn" type="button" title="A random set-up. The name stays hidden until you miss">All set-ups</button>
+            <button id="btn-french-hint" class="btn" type="button" disabled title="Shows the book move. It will not count as a first try">Hint</button>
+            <button id="btn-french-plan" class="btn" type="button" title="Play on from the final position against the engine at your level">Play the plan</button>
+            <button id="btn-french-play" class="btn" type="button" title="Send this position to Play and Analyze">Analyze</button>
+          </div>
+          <div class="rep-status-row"><span id="french-status" class="info-line" role="status" aria-live="polite"></span></div>
+          <div id="french-score" class="rep-score hidden"></div>
+        </div>
+        <div class="rep-panels">
+          <div class="lab-panel" id="french-detail-panel">
+            <h3 id="french-look-name">The set-up</h3>
+            <div id="french-detail">
+              <p class="info-line">Choose a set-up to see the tell, the plan and the tactics that decide it.</p>
+            </div>
+          </div>
+          <div class="lab-panel">
+            <h3>Your scheme, whatever they play</h3>
+            <div id="french-scheme"></div>
+            <h4 class="sub-head">Reading the board</h4>
+            <div id="french-reading"></div>
+            <div id="french-coach" class="coach-box hidden"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CARO-KANN ADVANCE (v62) ===================== -->
+  <section id="tab-caro" class="tab-panel rep-tab">
+    <div class="rep-layout">
+      <div class="rep-left">
+        <div id="caro-label" class="lab-game-bar">Pick a Black reply.</div>
+        <div id="caro-board" class="board-holder"></div>
+        <div id="caro-nav" class="nav-slot"></div>
+      </div>
+      <div class="rep-right">
+        <div class="rep-coachbar">
+          <span class="rep-coach-avatar" aria-hidden="true">&#x265F;</span>
+          <div class="rep-coachbar-text">
+            <strong id="caro-title">Caro-Kann Advance</strong>
+            <span class="info-line" id="caro-summary">Loading…</span>
+          </div>
+        </div>
+        <div class="rep-picker">
+          <div class="rep-picker-head">
+            <h3>What Black shows you</h3>
+            <span id="caro-due" class="rep-mem rep-due">Due: …</span>
+            <span class="rep-picker-note">You are White. The card is Black's reply after 3.e5.</span>
+          </div>
+          <div id="caro-looks" class="rep-looks">Loading…</div>
+        </div>
+        <div class="rep-controls">
+          <div id="caro-movebar" class="rep-movebar"></div>
+          <div class="panel-row">
+            <button id="btn-caro-quiz" class="btn primary" type="button">Quiz this line</button>
+            <button id="btn-caro-due" class="btn" type="button" title="Missed lines first, then new ones, then lines due for review">Drill due</button>
+            <button id="btn-caro-blind" class="btn" type="button" title="A random set-up. The name stays hidden until you miss">All set-ups</button>
+            <button id="btn-caro-hint" class="btn" type="button" disabled title="Shows the book move. It will not count as a first try">Hint</button>
+            <button id="btn-caro-plan" class="btn" type="button" title="Play on from the final position against the engine at your level">Play the plan</button>
+            <button id="btn-caro-play" class="btn" type="button" title="Send this position to Play and Analyze">Analyze</button>
+          </div>
+          <div class="rep-status-row"><span id="caro-status" class="info-line" role="status" aria-live="polite"></span></div>
+          <div id="caro-score" class="rep-score hidden"></div>
+        </div>
+        <div class="rep-panels">
+          <div class="lab-panel" id="caro-detail-panel">
+            <h3 id="caro-look-name">The set-up</h3>
+            <div id="caro-detail">
+              <p class="info-line">Choose a set-up to see the tell, the plan and the tactics that decide it.</p>
+            </div>
+          </div>
+          <div class="lab-panel">
+            <h3>Your scheme, whatever they play</h3>
+            <div id="caro-scheme"></div>
+            <h4 class="sub-head">Reading the board</h4>
+            <div id="caro-reading"></div>
+            <div id="caro-coach" class="coach-box hidden"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== GR&UUML;NFELD DEFENSE ===================== -->
   <section id="tab-grunfeld" class="tab-panel rep-tab">
     <div class="rep-layout">
@@ -1828,19 +1942,19 @@
 <!-- static build: chess rules + in-browser engine + /api shim load BEFORE the app -->
 <script src="vendor/chess.js?v=33"></script>
 <script src="js/engine.js?v=33"></script>
-<script src="api-shim.js?v=57"></script>
+<script src="api-shim.js?v=62"></script>
 <script src="pieces.js?v=33"></script>
 <script src="board.js?v=50"></script>
-<script src="app.js?v=61"></script>
-<script src="js/repertoire.js?v=60"></script>
-<script src="js/top10.js?v=54"></script>
+<script src="app.js?v=62"></script>
+<script src="js/repertoire.js?v=62"></script>
+<script src="js/top10.js?v=62"></script>
 <script src="js/alapin-drill.js?v=48"></script>
 <script src="js/attacks.js?v=44"></script>
 <script src="js/calc.js?v=44"></script>
 <script src="js/deck.js?v=59"></script>
 <script src="js/finish.js?v=60"></script>
 <script src="js/lichess-import.js?v=60"></script>
-<script src="js/leaks.js?v=60"></script>
+<script src="js/leaks.js?v=62"></script>
 <script src="js/plans.js?v=60"></script>
 <script src="js/magnus.js?v=61"></script>
 <script src="js/dashboard.js?v=61"></script>

@@ -1,0 +1,607 @@
+{
+  "name": "French Advance (3.e5)",
+  "eco": "C02",
+  "side": "white",
+  "summary": "1.e4 e6 2.d4 d5 3.e5. You keep a pawn wedge on e5 and hold d4. Three replies after 4.c3 Nc6 5.Nf3: 5...Bd7, 5...Qb6, and 5...Nge7.",
+  "coach_note": "You play 1.e4. Against the French, this tab is the Advance: 3.e5, then c3 and Nf3. You do not take on c5. Castle before you push pawns in front of your king. The queen on b6 looks at g1.",
+  "source_note": "Popularity is the Lichess masters opening explorer, queried 26 Nov 2026. The Lichess player explorer for rapid games in rating group 1800 returned HTTP 401, so 1800–2000 shares are not cited. After 1.e4 e6 2.d4 d5 3.e5 the masters database has 16,497 games and 3...c5 is 15,807 of them (95.8%). After 3...c5 4.c3 Nc6 5.Nf3 (11,915 games): 5...Bd7 5,482 (46.0%), 5...Qb6 4,871 (40.9%), 5...Nge7 889 (7.5%). 5...Nh6 is 453 (3.8%) and 5...f6 is 61 (0.5%), so those two are notes inside the lines, not separate drills. Engine numbers on the cards are Lichess cloud eval (Stockfish).",
+  "scheme": [
+    "3.e5 is the wedge. 4.c3 holds d4. 5.Nf3 holds d4 again and develops.",
+    "Meet ...Qb6 with a3. Meet a quiet bishop or knight with Be2 or Na3-c2, then castle.",
+    "Black's breaks are ...cxd4 and ...f6. Yours is b4, later, once a rook or a knight is ready. Do not rush f4.",
+    "If they play something other than 3...c5, still play Nf3, a bishop, and castle. The wedge does not depend on their next move."
+  ],
+  "reading": [
+    "5...Bd7 is the most common master reply. The queen is not on b6 yet. Develop.",
+    "5...Qb6 attacks d4 at once. a3, and do not put the bishop on d3 unless you know Bb5+.",
+    "5...Nge7 is the knight heading for f5. The same Na3-c2 idea meets it."
+  ],
+  "looks": [
+    {
+      "id": "fr-bd7",
+      "name": "5...Bd7 — bishop first",
+      "eco": "C02",
+      "frequency": "46.0% of masters after 5.Nf3",
+      "tell": "The light-squared bishop goes to d7. The queen stays at home. Black will bring the knight from e7 to f5 and only then put the queen on b6.",
+      "opponent_idea": "Black wants ...Nge7-f5, pressure on d4, and a choice between ...cxd4 and a later ...f6. The bishop on d7 keeps the option of queenside castling and supports the c6 knight.",
+      "moves": [
+        "e4",
+        "e6",
+        "d4",
+        "d5",
+        "e5",
+        "c5",
+        "c3",
+        "Nc6",
+        "Nf3",
+        "Bd7",
+        "Be2",
+        "Nge7",
+        "Na3",
+        "cxd4",
+        "cxd4",
+        "Nf5",
+        "Nc2",
+        "Qb6",
+        "O-O",
+        "Rc8",
+        "Kh1"
+      ],
+      "plans": [
+        "6.Be2. The bishop is safe on e2. Then 7.Na3: the knight is going to c2, where it defends the centre and does not block the c-pawn.",
+        "When they take ...cxd4, recapture with the c-pawn. Your centre stays d4 and e5.",
+        "After ...Qb6, castle, and step the king to h1. The queen on b6 looks down the diagonal at g1. Kh1 gets off it before you move the f3 knight."
+      ],
+      "strategic": [
+        "This is a closed centre with a space edge. You do not need a tactic. Finish the knights, put a bishop on e3 or d3 once d4 is safe, and use the e5 pawn to keep their pieces cramped.",
+        "If they castle short, you can think about f4 later. Not before the king is on h1."
+      ],
+      "breaks": [
+        "Theirs: ...cxd4 opens the c-file while the knight sits on f5. ...f6 hits e5, usually after they have developed.",
+        "Yours: no pawn break yet. Hold d4. b4 is not the idea in this open-c-file shape. f4 is the later break, once the king has stepped to h1."
+      ],
+      "offbook": "If the queen comes to b6 before the knight reaches f5, you have transposed toward the other card: a3 is the move when that queen attacks d4. If they play ...f6 early, do not drop e5 for nothing and do not take automatically. Hold the wedge, castle, and take on f6 only when the open e-file helps you. If they play ...Nh6 instead of ...Nge7, it is the same knight heading for f5. Do not take it on h6 unless it wins something.",
+      "watch": "The queen on b6 and a knight jump to b4 can annoy c2 if that square is empty. That is why the knight goes Na3-c2 before you get fancy. Kh1 is not a pass. In the masters database it is the most common move in this exact position (60 of 201 games).",
+      "eval_note": "Engine at the end of the line, after 11.Kh1: +0.14 for White (Lichess cloud eval, Stockfish, depth 33).",
+      "tactics": [],
+      "plies": [
+        {
+          "san": "e4",
+          "uci": "e2e4",
+          "side": "white",
+          "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+        },
+        {
+          "san": "e6",
+          "uci": "e7e6",
+          "side": "black",
+          "fen": "rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
+        },
+        {
+          "san": "d4",
+          "uci": "d2d4",
+          "side": "white",
+          "fen": "rnbqkbnr/pppp1ppp/4p3/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq - 0 2"
+        },
+        {
+          "san": "d5",
+          "uci": "d7d5",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3"
+        },
+        {
+          "san": "e5",
+          "uci": "e4e5",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3pP3/3P4/8/PPP2PPP/RNBQKBNR b KQkq - 0 3"
+        },
+        {
+          "san": "c5",
+          "uci": "c7c5",
+          "side": "black",
+          "fen": "rnbqkbnr/pp3ppp/4p3/2ppP3/3P4/8/PPP2PPP/RNBQKBNR w KQkq - 0 4"
+        },
+        {
+          "san": "c3",
+          "uci": "c2c3",
+          "side": "white",
+          "fen": "rnbqkbnr/pp3ppp/4p3/2ppP3/3P4/2P5/PP3PPP/RNBQKBNR b KQkq - 0 4"
+        },
+        {
+          "san": "Nc6",
+          "uci": "b8c6",
+          "side": "black",
+          "fen": "r1bqkbnr/pp3ppp/2n1p3/2ppP3/3P4/2P5/PP3PPP/RNBQKBNR w KQkq - 1 5"
+        },
+        {
+          "san": "Nf3",
+          "uci": "g1f3",
+          "side": "white",
+          "fen": "r1bqkbnr/pp3ppp/2n1p3/2ppP3/3P4/2P2N2/PP3PPP/RNBQKB1R b KQkq - 2 5"
+        },
+        {
+          "san": "Bd7",
+          "uci": "c8d7",
+          "side": "black",
+          "fen": "r2qkbnr/pp1b1ppp/2n1p3/2ppP3/3P4/2P2N2/PP3PPP/RNBQKB1R w KQkq - 3 6"
+        },
+        {
+          "san": "Be2",
+          "uci": "f1e2",
+          "side": "white",
+          "fen": "r2qkbnr/pp1b1ppp/2n1p3/2ppP3/3P4/2P2N2/PP2BPPP/RNBQK2R b KQkq - 4 6"
+        },
+        {
+          "san": "Nge7",
+          "uci": "g8e7",
+          "side": "black",
+          "fen": "r2qkb1r/pp1bnppp/2n1p3/2ppP3/3P4/2P2N2/PP2BPPP/RNBQK2R w KQkq - 5 7"
+        },
+        {
+          "san": "Na3",
+          "uci": "b1a3",
+          "side": "white",
+          "fen": "r2qkb1r/pp1bnppp/2n1p3/2ppP3/3P4/N1P2N2/PP2BPPP/R1BQK2R b KQkq - 6 7"
+        },
+        {
+          "san": "cxd4",
+          "uci": "c5d4",
+          "side": "black",
+          "fen": "r2qkb1r/pp1bnppp/2n1p3/3pP3/3p4/N1P2N2/PP2BPPP/R1BQK2R w KQkq - 0 8"
+        },
+        {
+          "san": "cxd4",
+          "uci": "c3d4",
+          "side": "white",
+          "fen": "r2qkb1r/pp1bnppp/2n1p3/3pP3/3P4/N4N2/PP2BPPP/R1BQK2R b KQkq - 0 8"
+        },
+        {
+          "san": "Nf5",
+          "uci": "e7f5",
+          "side": "black",
+          "fen": "r2qkb1r/pp1b1ppp/2n1p3/3pPn2/3P4/N4N2/PP2BPPP/R1BQK2R w KQkq - 1 9"
+        },
+        {
+          "san": "Nc2",
+          "uci": "a3c2",
+          "side": "white",
+          "fen": "r2qkb1r/pp1b1ppp/2n1p3/3pPn2/3P4/5N2/PPN1BPPP/R1BQK2R b KQkq - 2 9"
+        },
+        {
+          "san": "Qb6",
+          "uci": "d8b6",
+          "side": "black",
+          "fen": "r3kb1r/pp1b1ppp/1qn1p3/3pPn2/3P4/5N2/PPN1BPPP/R1BQK2R w KQkq - 3 10"
+        },
+        {
+          "san": "O-O",
+          "uci": "e1g1",
+          "side": "white",
+          "fen": "r3kb1r/pp1b1ppp/1qn1p3/3pPn2/3P4/5N2/PPN1BPPP/R1BQ1RK1 b kq - 4 10"
+        },
+        {
+          "san": "Rc8",
+          "uci": "a8c8",
+          "side": "black",
+          "fen": "2r1kb1r/pp1b1ppp/1qn1p3/3pPn2/3P4/5N2/PPN1BPPP/R1BQ1RK1 w k - 5 11"
+        },
+        {
+          "san": "Kh1",
+          "uci": "g1h1",
+          "side": "white",
+          "fen": "2r1kb1r/pp1b1ppp/1qn1p3/3pPn2/3P4/5N2/PPN1BPPP/R1BQ1R1K b k - 6 11"
+        }
+      ],
+      "fen": "2r1kb1r/pp1b1ppp/1qn1p3/3pPn2/3P4/5N2/PPN1BPPP/R1BQ1R1K b k - 6 11",
+      "line_san": "1. e4 e6 2. d4 d5 3. e5 c5 4. c3 Nc6 5. Nf3 Bd7 6. Be2 Nge7 7. Na3 cxd4 8. cxd4 Nf5 9. Nc2 Qb6 10. O-O Rc8 11. Kh1",
+      "moves_count": 21
+    },
+    {
+      "id": "fr-qb6",
+      "name": "5...Qb6 — the queen hits d4",
+      "eco": "C02",
+      "frequency": "40.9% of masters after 5.Nf3",
+      "tell": "The queen lands on b6, eyeing d4 and the g1 square. This is the French attack every club player has seen.",
+      "opponent_idea": "Black wants three things on d4: the queen, the c6 knight, and often a knight on f5. If you lock the queenside with their ...c4, they plant a knight on a5 and play on the other wing.",
+      "moves": [
+        "e4",
+        "e6",
+        "d4",
+        "d5",
+        "e5",
+        "c5",
+        "c3",
+        "Nc6",
+        "Nf3",
+        "Qb6",
+        "a3",
+        "c4",
+        "Nbd2",
+        "Na5",
+        "Be2",
+        "Bd7",
+        "O-O",
+        "Ne7",
+        "Rb1",
+        "Qc7",
+        "Re1"
+      ],
+      "plans": [
+        "6.a3 stops ...Bb4+ and prepares b4. In the masters database it is the main move after ...Qb6 (4,469 of 6,571 games).",
+        "The most common answer is 6...c4, locking the queenside. Play Nbd2, Be2, castle, and Rb1.",
+        "Do not play b4 on the next move. 11.Re1 is the move. b4 waits until ...cxb3 does not just wreck your queenside."
+      ],
+      "strategic": [
+        "The other big answer to 6.a3 is 6...Nh6 (1,527 of 4,548 games), with 7.b4 the main reply. Take back on d4 with the c-pawn.",
+        "You are playing a closed position. King safety and the b4 break, in that order."
+      ],
+      "breaks": [
+        "Theirs: ...c4 locks your queenside and points a knight at a5. ...f6 hits e5 later. ...cxd4 opens lines for their pieces.",
+        "Yours: b4, but not on move 8 and not the move after Rb1 in this order. Re1 first. f4 is a kingside break only after you have castled and stepped off the b6 diagonal."
+      ],
+      "offbook": "If they play ...Nh6, ...Bd7, ...Nge7 or ...cxd4 instead of ...c4, keep the same pieces: the pawn is already on a3, the knight stays on f3, the bishop goes to e2, you castle. Against ...Nh6 the master move is b4, then cxd4 cxd4. Against an early ...f6, hold e5 unless taking clearly opens their king. Do not grab on c5.",
+      "watch": "6.Bd3 loses a pawn and a bishop unless you know the queen trap below. If you are not sure, play 6.a3. And 8.b4, the moment the knight arrives on a5, is a mistake: ...cxb3 and you are worse.",
+      "eval_note": "Engine at the end of the line, after 11.Re1: 0.00 (Lichess cloud eval, Stockfish, depth 39). The position before 11.Re1, with Black's queen on c7, is +0.12 (depth 55).",
+      "tactics": [
+        {
+          "name": "Their trap: grabbing on d4 after 6.Bd3",
+          "point": "6.Bd3 is only playable if you see this. After 6...cxd4 7.cxd4 Nxd4 8.Nxd4 Qxd4 the queen on d4 is loose and your bishop on d3 is attacked. 9.Bb5+ Bd7 10.Qxd4 wins the queen. Black then takes the bishop on b5 and you are still well ahead. Cloud eval of the position before 9.Bb5+ is +7.58 for White (depth 36). If you play 6.Bd3 and do not see Bb5+, you just drop the centre. The drill move is 6.a3.",
+          "line_san": "9. Bb5+ Bd7 10. Qxd4",
+          "plies": [
+            {
+              "san": "Bb5+",
+              "uci": "d3b5",
+              "side": "white",
+              "fen": "r1b1kbnr/pp3ppp/4p3/1B1pP3/3q4/8/PP3PPP/RNBQK2R b KQkq - 1 9"
+            },
+            {
+              "san": "Bd7",
+              "uci": "c8d7",
+              "side": "black",
+              "fen": "r3kbnr/pp1b1ppp/4p3/1B1pP3/3q4/8/PP3PPP/RNBQK2R w KQkq - 2 10"
+            },
+            {
+              "san": "Qxd4",
+              "uci": "d1d4",
+              "side": "white",
+              "fen": "r3kbnr/pp1b1ppp/4p3/1B1pP3/3Q4/8/PP3PPP/RNB1K2R b KQkq - 0 10"
+            }
+          ],
+          "fen": "r1b1kbnr/pp3ppp/4p3/3pP3/3q4/3B4/PP3PPP/RNBQK2R w KQkq - 0 9",
+          "url": null
+        },
+        {
+          "name": "Your trap: b4 too early against ...c4",
+          "point": "8.b4, instead of 8.Be2, is about -0.71 for White (depth 30). Black's best is ...cxb3. 8.Be2 in the same position is about +0.17 (depth 38). Put the bishop on e2, castle, and put the rook on b1 before you think about b4.",
+          "line_san": "8. b4 cxb3",
+          "plies": [
+            {
+              "san": "b4",
+              "uci": "b2b4",
+              "side": "white",
+              "fen": "r1b1kbnr/pp3ppp/1q2p3/n2pP3/1PpP4/P1P2N2/3N1PPP/R1BQKB1R b KQkq b3 0 8"
+            },
+            {
+              "san": "cxb3",
+              "uci": "c4b3",
+              "side": "black",
+              "fen": "r1b1kbnr/pp3ppp/1q2p3/n2pP3/3P4/PpP2N2/3N1PPP/R1BQKB1R w KQkq - 0 9"
+            }
+          ],
+          "fen": "r1b1kbnr/pp3ppp/1q2p3/n2pP3/2pP4/P1P2N2/1P1N1PPP/R1BQKB1R w KQkq - 2 8",
+          "url": null
+        }
+      ],
+      "plies": [
+        {
+          "san": "e4",
+          "uci": "e2e4",
+          "side": "white",
+          "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+        },
+        {
+          "san": "e6",
+          "uci": "e7e6",
+          "side": "black",
+          "fen": "rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
+        },
+        {
+          "san": "d4",
+          "uci": "d2d4",
+          "side": "white",
+          "fen": "rnbqkbnr/pppp1ppp/4p3/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq - 0 2"
+        },
+        {
+          "san": "d5",
+          "uci": "d7d5",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3"
+        },
+        {
+          "san": "e5",
+          "uci": "e4e5",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3pP3/3P4/8/PPP2PPP/RNBQKBNR b KQkq - 0 3"
+        },
+        {
+          "san": "c5",
+          "uci": "c7c5",
+          "side": "black",
+          "fen": "rnbqkbnr/pp3ppp/4p3/2ppP3/3P4/8/PPP2PPP/RNBQKBNR w KQkq - 0 4"
+        },
+        {
+          "san": "c3",
+          "uci": "c2c3",
+          "side": "white",
+          "fen": "rnbqkbnr/pp3ppp/4p3/2ppP3/3P4/2P5/PP3PPP/RNBQKBNR b KQkq - 0 4"
+        },
+        {
+          "san": "Nc6",
+          "uci": "b8c6",
+          "side": "black",
+          "fen": "r1bqkbnr/pp3ppp/2n1p3/2ppP3/3P4/2P5/PP3PPP/RNBQKBNR w KQkq - 1 5"
+        },
+        {
+          "san": "Nf3",
+          "uci": "g1f3",
+          "side": "white",
+          "fen": "r1bqkbnr/pp3ppp/2n1p3/2ppP3/3P4/2P2N2/PP3PPP/RNBQKB1R b KQkq - 2 5"
+        },
+        {
+          "san": "Qb6",
+          "uci": "d8b6",
+          "side": "black",
+          "fen": "r1b1kbnr/pp3ppp/1qn1p3/2ppP3/3P4/2P2N2/PP3PPP/RNBQKB1R w KQkq - 3 6"
+        },
+        {
+          "san": "a3",
+          "uci": "a2a3",
+          "side": "white",
+          "fen": "r1b1kbnr/pp3ppp/1qn1p3/2ppP3/3P4/P1P2N2/1P3PPP/RNBQKB1R b KQkq - 0 6"
+        },
+        {
+          "san": "c4",
+          "uci": "c5c4",
+          "side": "black",
+          "fen": "r1b1kbnr/pp3ppp/1qn1p3/3pP3/2pP4/P1P2N2/1P3PPP/RNBQKB1R w KQkq - 0 7"
+        },
+        {
+          "san": "Nbd2",
+          "uci": "b1d2",
+          "side": "white",
+          "fen": "r1b1kbnr/pp3ppp/1qn1p3/3pP3/2pP4/P1P2N2/1P1N1PPP/R1BQKB1R b KQkq - 1 7"
+        },
+        {
+          "san": "Na5",
+          "uci": "c6a5",
+          "side": "black",
+          "fen": "r1b1kbnr/pp3ppp/1q2p3/n2pP3/2pP4/P1P2N2/1P1N1PPP/R1BQKB1R w KQkq - 2 8"
+        },
+        {
+          "san": "Be2",
+          "uci": "f1e2",
+          "side": "white",
+          "fen": "r1b1kbnr/pp3ppp/1q2p3/n2pP3/2pP4/P1P2N2/1P1NBPPP/R1BQK2R b KQkq - 3 8"
+        },
+        {
+          "san": "Bd7",
+          "uci": "c8d7",
+          "side": "black",
+          "fen": "r3kbnr/pp1b1ppp/1q2p3/n2pP3/2pP4/P1P2N2/1P1NBPPP/R1BQK2R w KQkq - 4 9"
+        },
+        {
+          "san": "O-O",
+          "uci": "e1g1",
+          "side": "white",
+          "fen": "r3kbnr/pp1b1ppp/1q2p3/n2pP3/2pP4/P1P2N2/1P1NBPPP/R1BQ1RK1 b kq - 5 9"
+        },
+        {
+          "san": "Ne7",
+          "uci": "g8e7",
+          "side": "black",
+          "fen": "r3kb1r/pp1bnppp/1q2p3/n2pP3/2pP4/P1P2N2/1P1NBPPP/R1BQ1RK1 w kq - 6 10"
+        },
+        {
+          "san": "Rb1",
+          "uci": "a1b1",
+          "side": "white",
+          "fen": "r3kb1r/pp1bnppp/1q2p3/n2pP3/2pP4/P1P2N2/1P1NBPPP/1RBQ1RK1 b kq - 7 10"
+        },
+        {
+          "san": "Qc7",
+          "uci": "b6c7",
+          "side": "black",
+          "fen": "r3kb1r/ppqbnppp/4p3/n2pP3/2pP4/P1P2N2/1P1NBPPP/1RBQ1RK1 w kq - 8 11"
+        },
+        {
+          "san": "Re1",
+          "uci": "f1e1",
+          "side": "white",
+          "fen": "r3kb1r/ppqbnppp/4p3/n2pP3/2pP4/P1P2N2/1P1NBPPP/1RBQR1K1 b kq - 9 11"
+        }
+      ],
+      "fen": "r3kb1r/ppqbnppp/4p3/n2pP3/2pP4/P1P2N2/1P1NBPPP/1RBQR1K1 b kq - 9 11",
+      "line_san": "1. e4 e6 2. d4 d5 3. e5 c5 4. c3 Nc6 5. Nf3 Qb6 6. a3 c4 7. Nbd2 Na5 8. Be2 Bd7 9. O-O Ne7 10. Rb1 Qc7 11. Re1",
+      "moves_count": 21
+    },
+    {
+      "id": "fr-nge7",
+      "name": "5...Nge7 — knight toward f5",
+      "eco": "C02",
+      "frequency": "7.5% of masters after 5.Nf3",
+      "tell": "The knight comes via e7, heading for f5, before the bishop moves. This is the third master reply. ...Nh6 (3.8%) and ...f6 (0.5%) are less common, so they are covered in the notes rather than as their own drills.",
+      "opponent_idea": "Black wants the knight on f5, biting d4, and then ...cxd4 to open the position while that knight is well placed. The queen often follows to b6.",
+      "moves": [
+        "e4",
+        "e6",
+        "d4",
+        "d5",
+        "e5",
+        "c5",
+        "c3",
+        "Nc6",
+        "Nf3",
+        "Nge7",
+        "Na3",
+        "cxd4",
+        "cxd4",
+        "Nf5",
+        "Nc2",
+        "Bd7",
+        "Bd3",
+        "Qb6",
+        "O-O",
+        "a5",
+        "Kh1"
+      ],
+      "plans": [
+        "6.Na3 is the main master move. The knight is heading to c2, the same idea as in the 5...Bd7 line.",
+        "They usually take ...cxd4. Recapture cxd4. When the knight lands on f5, Nc2.",
+        "Bd3 and castle. Once the queen arrives on b6 and they play ...a5, step the king to h1. a4 here is a mistake."
+      ],
+      "strategic": [
+        "d4 is under pressure from the knight on f5, the knight on c6 and the queen on b6. Nc2 and the knight on f3 hold it. Do not trade those knights for nothing.",
+        "Be3 can walk into ...Nxe3. Kh1 is the useful move. It also steps off the check on the b6-g1 diagonal."
+      ],
+      "breaks": [
+        "Theirs: ...cxd4, already played in this line, and ...a5 to gain space on the queenside. ...f6 against e5 comes later.",
+        "Yours: you do not push b4 into their ...a5. Hold d4, castle, and use the space on e5. f4 is possible only after Kh1."
+      ],
+      "offbook": "If they play ...Bd7 or ...Qb6 before taking on d4, keep the same plan: Nc2, a bishop, castle. ...Nh6 is another route to f5. Treat it the same way and do not capture on h6 unless it wins material. ...f6 is rare in this position in the masters database (61 games after 5.Nf3). Meet it by holding e5 and castling, not by an automatic capture.",
+      "watch": "11.a4 is about -0.35 for White (depth 22). The engine answer is ...Nfxd4. 11.Be3 is about -0.17 (depth 25) because ...Nxe3. 11.Kh1 is about +0.44 (depth 37). Step the king off the diagonal. Do not put the bishop on e3 while the knight sits on f5.",
+      "eval_note": "Engine at the end of the line, after 11.Kh1: +0.44 for White (Lichess cloud eval, Stockfish, depth 37).",
+      "tactics": [],
+      "plies": [
+        {
+          "san": "e4",
+          "uci": "e2e4",
+          "side": "white",
+          "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+        },
+        {
+          "san": "e6",
+          "uci": "e7e6",
+          "side": "black",
+          "fen": "rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
+        },
+        {
+          "san": "d4",
+          "uci": "d2d4",
+          "side": "white",
+          "fen": "rnbqkbnr/pppp1ppp/4p3/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq - 0 2"
+        },
+        {
+          "san": "d5",
+          "uci": "d7d5",
+          "side": "black",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3"
+        },
+        {
+          "san": "e5",
+          "uci": "e4e5",
+          "side": "white",
+          "fen": "rnbqkbnr/ppp2ppp/4p3/3pP3/3P4/8/PPP2PPP/RNBQKBNR b KQkq - 0 3"
+        },
+        {
+          "san": "c5",
+          "uci": "c7c5",
+          "side": "black",
+          "fen": "rnbqkbnr/pp3ppp/4p3/2ppP3/3P4/8/PPP2PPP/RNBQKBNR w KQkq - 0 4"
+        },
+        {
+          "san": "c3",
+          "uci": "c2c3",
+          "side": "white",
+          "fen": "rnbqkbnr/pp3ppp/4p3/2ppP3/3P4/2P5/PP3PPP/RNBQKBNR b KQkq - 0 4"
+        },
+        {
+          "san": "Nc6",
+          "uci": "b8c6",
+          "side": "black",
+          "fen": "r1bqkbnr/pp3ppp/2n1p3/2ppP3/3P4/2P5/PP3PPP/RNBQKBNR w KQkq - 1 5"
+        },
+        {
+          "san": "Nf3",
+          "uci": "g1f3",
+          "side": "white",
+          "fen": "r1bqkbnr/pp3ppp/2n1p3/2ppP3/3P4/2P2N2/PP3PPP/RNBQKB1R b KQkq - 2 5"
+        },
+        {
+          "san": "Nge7",
+          "uci": "g8e7",
+          "side": "black",
+          "fen": "r1bqkb1r/pp2nppp/2n1p3/2ppP3/3P4/2P2N2/PP3PPP/RNBQKB1R w KQkq - 3 6"
+        },
+        {
+          "san": "Na3",
+          "uci": "b1a3",
+          "side": "white",
+          "fen": "r1bqkb1r/pp2nppp/2n1p3/2ppP3/3P4/N1P2N2/PP3PPP/R1BQKB1R b KQkq - 4 6"
+        },
+        {
+          "san": "cxd4",
+          "uci": "c5d4",
+          "side": "black",
+          "fen": "r1bqkb1r/pp2nppp/2n1p3/3pP3/3p4/N1P2N2/PP3PPP/R1BQKB1R w KQkq - 0 7"
+        },
+        {
+          "san": "cxd4",
+          "uci": "c3d4",
+          "side": "white",
+          "fen": "r1bqkb1r/pp2nppp/2n1p3/3pP3/3P4/N4N2/PP3PPP/R1BQKB1R b KQkq - 0 7"
+        },
+        {
+          "san": "Nf5",
+          "uci": "e7f5",
+          "side": "black",
+          "fen": "r1bqkb1r/pp3ppp/2n1p3/3pPn2/3P4/N4N2/PP3PPP/R1BQKB1R w KQkq - 1 8"
+        },
+        {
+          "san": "Nc2",
+          "uci": "a3c2",
+          "side": "white",
+          "fen": "r1bqkb1r/pp3ppp/2n1p3/3pPn2/3P4/5N2/PPN2PPP/R1BQKB1R b KQkq - 2 8"
+        },
+        {
+          "san": "Bd7",
+          "uci": "c8d7",
+          "side": "black",
+          "fen": "r2qkb1r/pp1b1ppp/2n1p3/3pPn2/3P4/5N2/PPN2PPP/R1BQKB1R w KQkq - 3 9"
+        },
+        {
+          "san": "Bd3",
+          "uci": "f1d3",
+          "side": "white",
+          "fen": "r2qkb1r/pp1b1ppp/2n1p3/3pPn2/3P4/3B1N2/PPN2PPP/R1BQK2R b KQkq - 4 9"
+        },
+        {
+          "san": "Qb6",
+          "uci": "d8b6",
+          "side": "black",
+          "fen": "r3kb1r/pp1b1ppp/1qn1p3/3pPn2/3P4/3B1N2/PPN2PPP/R1BQK2R w KQkq - 5 10"
+        },
+        {
+          "san": "O-O",
+          "uci": "e1g1",
+          "side": "white",
+          "fen": "r3kb1r/pp1b1ppp/1qn1p3/3pPn2/3P4/3B1N2/PPN2PPP/R1BQ1RK1 b kq - 6 10"
+        },
+        {
+          "san": "a5",
+          "uci": "a7a5",
+          "side": "black",
+          "fen": "r3kb1r/1p1b1ppp/1qn1p3/p2pPn2/3P4/3B1N2/PPN2PPP/R1BQ1RK1 w kq - 0 11"
+        },
+        {
+          "san": "Kh1",
+          "uci": "g1h1",
+          "side": "white",
+          "fen": "r3kb1r/1p1b1ppp/1qn1p3/p2pPn2/3P4/3B1N2/PPN2PPP/R1BQ1R1K b kq - 1 11"
+        }
+      ],
+      "fen": "r3kb1r/1p1b1ppp/1qn1p3/p2pPn2/3P4/3B1N2/PPN2PPP/R1BQ1R1K b kq - 1 11",
+      "line_san": "1. e4 e6 2. d4 d5 3. e5 c5 4. c3 Nc6 5. Nf3 Nge7 6. Na3 cxd4 7. cxd4 Nf5 8. Nc2 Bd7 9. Bd3 Qb6 10. O-O a5 11. Kh1",
+      "moves_count": 21
+    }
+  ]
+}

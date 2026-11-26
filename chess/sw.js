@@ -1,12 +1,12 @@
 /* Chess Coach AI service worker: network-first for the app shell (so updates
    land immediately), cache fallback for offline use. Cross-origin requests
    (lichess / chess.com / LLM) are never cached. */
-var CACHE = "chesscoach-v61";
-var SHELL = ["./", "index.html", "style.css?v=61", "app.js?v=61", "board.js?v=50", "pieces.js?v=33",
-  "api-shim.js?v=57", "js/engine.js?v=33", "js/repertoire.js?v=60", "js/top10.js?v=54", "js/alapin-drill.js?v=48", "js/attacks.js?v=44", "js/calc.js?v=44", "js/deck.js?v=59", "js/finish.js?v=60", "js/lichess-import.js?v=60", "js/leaks.js?v=60", "js/plans.js?v=60", "js/magnus.js?v=61", "js/dashboard.js?v=61", "vendor/chess.js?v=33",
+var CACHE = "chesscoach-v62";
+var SHELL = ["./", "index.html", "style.css?v=62", "app.js?v=62", "board.js?v=50", "pieces.js?v=33",
+  "api-shim.js?v=62", "js/engine.js?v=33", "js/repertoire.js?v=62", "js/top10.js?v=62", "js/alapin-drill.js?v=48", "js/attacks.js?v=44", "js/calc.js?v=44", "js/deck.js?v=59", "js/finish.js?v=60", "js/lichess-import.js?v=60", "js/leaks.js?v=62", "js/plans.js?v=60", "js/magnus.js?v=61", "js/dashboard.js?v=61", "vendor/chess.js?v=33",
   "vendor/stockfish/stockfish-19-lite-single.js", "vendor/stockfish/stockfish-19-lite-single.wasm",
   "data/puzzles.json", "data/masters.json", "data/lessons.json", "data/endgames.json",
-  "data/modern.json", "data/magnus-modern.json?v=61", "data/scotch.json", "data/alapin.json", "data/alapin-drill.json?v=48", "data/grunfeld.json", "data/qg.json", "data/top10.json?v=48", "data/attacks.json", "data/puzzle_sets.json", "data/mine/deck.json?v=48",
+  "data/modern.json", "data/magnus-modern.json?v=61", "data/scotch.json", "data/alapin.json", "data/french.json", "data/caro.json", "data/alapin-drill.json?v=48", "data/grunfeld.json", "data/qg.json", "data/top10.json?v=62", "data/attacks.json", "data/puzzle_sets.json", "data/mine/deck.json?v=48",
   "manifest.webmanifest", "icons/icon-192.png", "icons/apple-touch-icon.png"];
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(SHELL); }).then(function () { return self.skipWaiting(); }));
