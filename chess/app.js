@@ -283,7 +283,7 @@ function parsePgn(pgn) {
 const TAB_GROUPS = {
   today: ["plan", "dash", "progress"],
   train: ["deck", "puzzles", "cycles", "sparring", "endgames", "attacks", "calc", "plans"],
-  openings: ["modern", "magnus", "grunfeld", "scotch", "qg", "alapin", "alapin-drill", "top10", "leaks"],
+  openings: ["modern", "magnus", "grunfeld", "scotch", "qg", "alapin", "alapin-drill", "french", "caro", "top10", "leaks"],
   review: ["play", "games", "lab"],
   study: ["masters", "learn"],
 };
@@ -329,6 +329,8 @@ function switchTab(name) {
   if (name === "scotch" && typeof initScotch === "function") initScotch();
   if (name === "alapin" && typeof initAlapin === "function") initAlapin();
   if (name === "alapin-drill" && typeof initAlapinDrill === "function") initAlapinDrill();
+  if (name === "french" && typeof initFrench === "function") initFrench();
+  if (name === "caro" && typeof initCaro === "function") initCaro();
   if (name === "grunfeld" && typeof initGrunfeld === "function") initGrunfeld();
   if (name === "qg" && typeof initQg === "function") initQg();
   if (name === "attacks" && typeof initAttacks === "function") initAttacks();
@@ -8617,7 +8619,8 @@ async function renderProgressOpenings() {
   const row = (l) => {
     const days = repDaysUntil(l.due);
     const cls = l.last_right === l.last_total ? "ok" : "miss";
-    const slugLbl = l.slug === "grunfeld" ? "Grünfeld" : l.slug === "scotch" ? "Scotch" : l.slug === "alapin" ? "Alapin" : l.slug === "qg" ? "Queen's Gambit" : "Modern";
+    const REP_LABEL = { modern: "Modern", grunfeld: "Grünfeld", scotch: "Scotch", qg: "Queen's Gambit", alapin: "Alapin", french: "French", caro: "Caro-Kann" };
+    const slugLbl = REP_LABEL[l.slug] || l.slug;
     const sideLbl = l.side === "white" ? " · White" : l.side === "black" ? " · Black" : "";
     return '<div class="po-row"><span class="po-name">' + escapeHtml(l.name || l.id) + ' <span class="muted">' + escapeHtml(slugLbl + sideLbl) + "</span></span>"
       + '<span class="rep-mem ' + cls + '">' + l.last_right + "/" + l.last_total + "</span>"
@@ -8763,6 +8766,7 @@ document.addEventListener("click", (e) => {
     sparring: "sparring", endgames: "endgames", finish: "finish",
     attacks: "attacks", calc: "calc", calculation: "calc", plans: "plans",
     top10: "top10", modern: "modern", scotch: "scotch", alapin: "alapin",
+    french: "french", caro: "caro",
     leaks: "leaks", dash: "dash", dashboard: "dash",
     "alapin-drill": "alapin-drill", grunfeld: "grunfeld",
     masters: "masters", learn: "learn",

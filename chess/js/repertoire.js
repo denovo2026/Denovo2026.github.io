@@ -642,6 +642,9 @@ function createRepertoireTab(cfg) {
     html += "<h4 class='sub-head'>Playing it strategically</h4>"
       + repList(repStrategic(look));
 
+    if (look.breaks && look.breaks.length) {
+      html += "<h4 class='sub-head'>Pawn breaks</h4>" + repList(look.breaks);
+    }
     html += repTacticHtml(look);
     const oly = repOlympiadLink(cfg.slug, look.id);
     if (oly) {
@@ -652,6 +655,13 @@ function createRepertoireTab(cfg) {
     if (watch) {
       html += "<h4 class='sub-head'>What goes wrong</h4>"
         + '<div class="coach-box warn-box">' + escapeHtml(watch) + "</div>";
+    }
+    if (look.offbook) {
+      html += "<h4 class='sub-head'>When they leave the book</h4>"
+        + '<div class="info-line">' + escapeHtml(look.offbook) + "</div>";
+    }
+    if (look.eval_note) {
+      html += '<p class="info-line muted">' + escapeHtml(look.eval_note) + "</p>";
     }
     $(P + "-detail").innerHTML = html;
     repBindTactics();
@@ -665,12 +675,22 @@ function createRepertoireTab(cfg) {
     html += "<h4 class='sub-head'>The tell</h4>"
       + '<div class="coach-box">' + escapeHtml(look.tell || "") + "</div>";
     html += "<h4 class='sub-head'>Your plan</h4>" + repList(repPlans(look));
+    if (look.breaks && look.breaks.length) {
+      html += "<h4 class='sub-head'>Pawn breaks</h4>" + repList(look.breaks);
+    }
     const watch = repWatch(look);
     if (watch) {
       html += "<h4 class='sub-head'>What goes wrong</h4>"
         + '<div class="coach-box warn-box">' + escapeHtml(watch) + "</div>";
     }
     html += repTacticHtml(look);
+    if (look.offbook) {
+      html += "<h4 class='sub-head'>When they leave the book</h4>"
+        + '<div class="info-line">' + escapeHtml(look.offbook) + "</div>";
+    }
+    if (look.eval_note) {
+      html += '<p class="info-line muted">' + escapeHtml(look.eval_note) + "</p>";
+    }
     const idea = repIdea(look);
     const strategic = repStrategic(look);
     if (idea || strategic.length) {
@@ -894,7 +914,15 @@ function createRepertoireTab(cfg) {
     const scheme = $(P + "-scheme");
     const reading = $(P + "-reading");
     if (scheme) scheme.innerHTML = repList(repBundle("scheme"));
-    if (reading) reading.innerHTML = repList(repBundle("reading"));
+    if (reading) {
+      reading.innerHTML = repList(repBundle("reading"));
+      if (S.data && S.data.source_note) {
+        const note = document.createElement("p");
+        note.className = "info-line muted";
+        note.textContent = S.data.source_note;
+        reading.appendChild(note);
+      }
+    }
   }
 
 
@@ -913,11 +941,17 @@ const QgTab = createRepertoireTab({ slug: "qg", prefix: "qg", side: "both", coac
 const initQg = () => QgTab.init();
 const AlapinTab = createRepertoireTab({ slug: "alapin", prefix: "alapin", side: "white" });
 const initAlapin = () => AlapinTab.init();
+const FrenchTab = createRepertoireTab({ slug: "french", prefix: "french", side: "white", coach: true });
+const initFrench = () => FrenchTab.init();
+const CaroTab = createRepertoireTab({ slug: "caro", prefix: "caro", side: "white", coach: true });
+const initCaro = () => CaroTab.init();
 
 function repertoireTabFor(slug) {
   if (slug === "grunfeld") return GrunfeldTab;
   if (slug === "scotch") return ScotchTab;
   if (slug === "alapin") return AlapinTab;
+  if (slug === "french") return FrenchTab;
+  if (slug === "caro") return CaroTab;
   if (slug === "qg") return QgTab;
   return ModernTab;
 }
@@ -944,6 +978,8 @@ const REP_OLYMPIAD = {
     russian: "vs. system", bf4: "vs. system", bg5: "vs. system" } },
   scotch: { fam: "Scotch", q: {} },
   alapin: { fam: "Alapin", q: {} },
+  french: { fam: "French", q: {} },
+  caro: { fam: "Caro-Kann", q: {} },
   qg: {
     fam: "Queen's Gambit Declined",
     q: {

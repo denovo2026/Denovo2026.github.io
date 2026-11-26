@@ -2128,7 +2128,7 @@
   /* /api/attacks                 -> name, summary, patterns w/o puzzles   */
   /*                                 (puzzle_count instead)                */
   /* /api/attacks/:id             -> one pattern with its puzzles          */
-  var REPERTOIRES = { modern: "modern.json", grunfeld: "grunfeld.json", scotch: "scotch.json", alapin: "alapin.json", qg: "qg.json" };
+  var REPERTOIRES = { modern: "modern.json", grunfeld: "grunfeld.json", scotch: "scotch.json", alapin: "alapin.json", french: "french.json", caro: "caro.json", qg: "qg.json" };
   function repSlots(d) {
     var n = (d && d.looks || []).length;
     return d && d.side === "both" ? n * 2 : n;
@@ -2178,7 +2178,7 @@
   async function repProgressSummary(slug) {
     var all = repProg(), lines = Object.keys(all).map(function (k) { return all[k]; }).filter(function (l) { return !slug || l.slug === slug; });
     var totalLines = 0;
-    for (var s2 of ["modern", "grunfeld", "scotch", "qg", "alapin"]) { if (slug && slug !== s2) continue; try { totalLines += repSlots(await repFile(s2)); } catch (_) {} }
+    for (var s2 of Object.keys(REPERTOIRES)) { if (slug && slug !== s2) continue; try { totalLines += repSlots(await repFile(s2)); } catch (_) {} }
     var now = Date.now();
     return { lines: lines, total_lines: totalLines, tried: lines.length,
       known: lines.filter(function (l) { return l.last_right === l.last_total; }).length,
@@ -2285,12 +2285,14 @@
     { slug: "scotch", name: "Scotch" },
     { slug: "qg", name: "Queen's Gambit" },
     { slug: "alapin", name: "Alapin" },
+    { slug: "french", name: "French" },
+    { slug: "caro", name: "Caro-Kann" },
   ];
   var _repLookCounts = null;
   async function repLookCounts() {
     if (_repLookCounts) return _repLookCounts;
     var out = {};
-    var slugs = ["modern", "grunfeld", "scotch", "qg", "alapin"];
+    var slugs = Object.keys(REPERTOIRES);
     for (var i = 0; i < slugs.length; i++) {
       try { out[slugs[i]] = repSlots(await repFile(slugs[i])); }
       catch (_) { out[slugs[i]] = 0; }

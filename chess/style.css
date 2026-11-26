@@ -1560,6 +1560,10 @@ select.opp-level { font-size: 0.92rem; }
   .mine-toast { top: calc(var(--hdr-h, 86px) + 6px); right: 8px; bottom: auto; }
   .tab-subs .tab-btn { min-height: 40px; }
 }
+/* French and Caro-Kann sit in this row. At 1366 the tighter padding keeps Leaks on screen. */
+@media (min-width: 961px) and (max-width: 1439px) {
+  .tab-subs .tab-btn { padding-left: 8px; padding-right: 8px; }
+}
 
 .calc-type { display: flex; gap: 6px; margin: 0 0 6px; }
 .calc-type input { flex: 1 1 auto; min-width: 0; font: inherit; font-size: 0.86rem; padding: 5px 9px; border-radius: 8px;

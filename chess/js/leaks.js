@@ -13,7 +13,9 @@
     { slug: "grunfeld", file: "data/grunfeld.json" },
     { slug: "scotch", file: "data/scotch.json" },
     { slug: "qg", file: "data/qg.json" },
-    { slug: "alapin", file: "data/alapin.json" }
+    { slug: "alapin", file: "data/alapin.json" },
+    { slug: "french", file: "data/french.json" },
+    { slug: "caro", file: "data/caro.json" }
   ];
   /* Two plies in the book is enough to say the opening started
      (1.e4 e5 is already the Scotch path; 1.e4 c5 is already the Alapin). */
@@ -312,7 +314,7 @@
     var rows = visibleRows();
     host.innerHTML = "";
     if (!rows.length) {
-      host.innerHTML = '<div class="info-line leak-empty">No repertoire games in this set yet. Load games, or these games never reached the Modern, Grünfeld, Scotch, Queen\'s Gambit or Alapin.</div>';
+      host.innerHTML = '<div class="info-line leak-empty">No repertoire games in this set yet. Load games, or these games never reached the Modern, Grünfeld, Scotch, Queen\'s Gambit, Alapin, French or Caro-Kann.</div>';
       return;
     }
     rows.forEach(function (row, i) {

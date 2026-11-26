@@ -529,7 +529,8 @@
         }
       ],
       "links": [
-        {"opening": "caro", "label": "Caro-Kann", "note": "The same ...d5 idea against 1.e4, with the light-squared bishop free outside the pawn chain."}
+        {"opening": "caro", "label": "Caro-Kann", "note": "The same ...d5 idea against 1.e4, with the light-squared bishop free outside the pawn chain."},
+        {"tab": "french", "label": "French Advance as White", "note": "Your 1.e4 repertoire: 3.e5, then 5...Bd7, 5...Qb6 and 5...Nge7."}
       ],
       "games": [
         {
@@ -605,7 +606,8 @@
         }
       ],
       "links": [
-        {"opening": "french", "label": "French", "note": "The sister opening. Same ...d5 against e4. In the French the light-squared bishop is inside; here it is already out."}
+        {"opening": "french", "label": "French", "note": "The sister opening. Same ...d5 against e4. In the French the light-squared bishop is inside; here it is already out."},
+        {"tab": "caro", "label": "Caro-Kann Advance as White", "note": "Your 1.e4 repertoire: 3.e5 against 3...Bf5 (...Nd7 and ...c5) and against 3...c5."}
       ],
       "games": [],
       "lines": [

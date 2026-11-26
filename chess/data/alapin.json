@@ -2,7 +2,7 @@
  "name": "Alapin Sicilian (2.c3)",
  "eco": "B22",
  "side": "white",
- "summary": "1.e4 c5 2.c3. You prepare d4 so you can keep a pawn centre. Five shapes cover Black's replies: 2...d5, 2...Nf6, 2...e6, 2...d6, and 2...g6 (with 2...Nc6 and 2...e5).",
+ "summary": "1.e4 c5 2.c3. You prepare d4 and keep a pawn centre. Drill 2...Nf6, 2...d5 and 2...e6 first. 2...d6 and 2...g6 use the same ideas.",
  "coach_note": "Your first Alapin game was a win: Jetblack007 vs leehooni (1753), Lichess rapid 10+5, Oct 22, 2026. Black locked the queenside with ...c4 and went ...Bf5 and ...Bd3. You kept the edge. Two lessons from that game are here: Nf4 and Nh5 to trade the f6 knight, and trade queens first when you are ahead.",
  "coach_link": {
   "label": "Open your first Alapin game (1-0) ↗",
@@ -22,9 +22,224 @@
  ],
  "looks": [
   {
+   "id": "alapin-nf6",
+   "name": "2...Nf6 — hit e4, knight to d5",
+   "frequency": "44.9% of masters",
+   "tell": "Black attacks e4 with 2...Nf6. Push 3.e5: the knight has to go to d5, and you build the centre with d4 and Nf3.",
+   "opponent_idea": "Black wants to undermine your e5/d4 chain with ...d6 and ...Nc6, trade on d4 and e5, and use the d5 knight against c3 and e3. If you push too far, the centre becomes a target.",
+   "moves": [
+    "e4",
+    "c5",
+    "c3",
+    "Nf6",
+    "e5",
+    "Nd5",
+    "d4",
+    "cxd4",
+    "Nf3",
+    "Nc6",
+    "cxd4",
+    "d6",
+    "Bc4",
+    "Nb6",
+    "Bb5",
+    "dxe5",
+    "Nxe5",
+    "Bd7"
+   ],
+   "plans": [
+    "3.e5 Nd5 4.d4 cxd4 5.Nf3, and take back cxd4 next move.",
+    "Bc4 hits the d5 knight. After ...Nb6, Bb5 pins the c6 knight and keeps the pressure.",
+    "Castle and either hold e5 or trade it for active pieces (Nxe5)."
+   ],
+   "strategic": [
+    "...d6 attacks e5. If the position opens, your lead in development counts. Do not let Black win e5 for nothing.",
+    "If Black plays ...e6 instead, you get a French-like position: Bc4, O-O, Qe2 and Nc3."
+   ],
+   "tactics": [
+    {
+     "name": "The knight must move: 3...e6?? 4.exf6",
+     "point": "After 3.e5 the f6 knight is attacked by a pawn. Any slow move loses it (+4.0).",
+     "line_san": "4. exf6",
+     "plies": [
+      {
+       "san": "exf6",
+       "uci": "e5f6",
+       "side": "white",
+       "fen": "rnbqkb1r/pp1p1ppp/4pP2/2p5/8/2P5/PP1P1PPP/RNBQKBNR b KQkq - 0 4"
+      }
+     ],
+     "fen": "rnbqkb1r/pp1p1ppp/4pn2/2p1P3/8/2P5/PP1P1PPP/RNBQKBNR w KQkq - 0 4",
+     "url": null
+    },
+    {
+     "name": "Loose knight on d5: 7...Bg4? 8.Bxd5",
+     "point": "Once Black has played ...d6, the d6 pawn blocks the queen's defence of the d5 knight. Bxd5 wins a piece (+4.8), and after 8...dxe5 9.Bxf7+ Kxf7 10.Ng5+ even more.",
+     "line_san": "8. Bxd5 dxe5 9. Bxf7+ Kxf7 10. Ng5+",
+     "plies": [
+      {
+       "san": "Bxd5",
+       "uci": "c4d5",
+       "side": "white",
+       "fen": "r2qkb1r/pp2pppp/2np4/3BP3/3P2b1/5N2/PP3PPP/RNBQK2R b KQkq - 0 8"
+      },
+      {
+       "san": "dxe5",
+       "uci": "d6e5",
+       "side": "black",
+       "fen": "r2qkb1r/pp2pppp/2n5/3Bp3/3P2b1/5N2/PP3PPP/RNBQK2R w KQkq - 0 9"
+      },
+      {
+       "san": "Bxf7+",
+       "uci": "d5f7",
+       "side": "white",
+       "fen": "r2qkb1r/pp2pBpp/2n5/4p3/3P2b1/5N2/PP3PPP/RNBQK2R b KQkq - 0 9"
+      },
+      {
+       "san": "Kxf7",
+       "uci": "e8f7",
+       "side": "black",
+       "fen": "r2q1b1r/pp2pkpp/2n5/4p3/3P2b1/5N2/PP3PPP/RNBQK2R w KQ - 0 10"
+      },
+      {
+       "san": "Ng5+",
+       "uci": "f3g5",
+       "side": "white",
+       "fen": "r2q1b1r/pp2pkpp/2n5/4p1N1/3P2b1/8/PP3PPP/RNBQK2R b KQ - 1 10"
+      }
+     ],
+     "fen": "r2qkb1r/pp2pppp/2np4/3nP3/2BP2b1/5N2/PP3PPP/RNBQK2R w KQkq - 2 8",
+     "url": null
+    }
+   ],
+   "watch": "Every time Black's knight sits on d5 with a pawn on d6 and no pawn on e6, check whether it is defended. If it is not, Bxd5 wins it.",
+   "plies": [
+    {
+     "san": "e4",
+     "uci": "e2e4",
+     "side": "white",
+     "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+    },
+    {
+     "san": "c5",
+     "uci": "c7c5",
+     "side": "black",
+     "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
+    },
+    {
+     "san": "c3",
+     "uci": "c2c3",
+     "side": "white",
+     "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR b KQkq - 0 2"
+    },
+    {
+     "san": "Nf6",
+     "uci": "g8f6",
+     "side": "black",
+     "fen": "rnbqkb1r/pp1ppppp/5n2/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR w KQkq - 1 3"
+    },
+    {
+     "san": "e5",
+     "uci": "e4e5",
+     "side": "white",
+     "fen": "rnbqkb1r/pp1ppppp/5n2/2p1P3/8/2P5/PP1P1PPP/RNBQKBNR b KQkq - 0 3"
+    },
+    {
+     "san": "Nd5",
+     "uci": "f6d5",
+     "side": "black",
+     "fen": "rnbqkb1r/pp1ppppp/8/2pnP3/8/2P5/PP1P1PPP/RNBQKBNR w KQkq - 1 4"
+    },
+    {
+     "san": "d4",
+     "uci": "d2d4",
+     "side": "white",
+     "fen": "rnbqkb1r/pp1ppppp/8/2pnP3/3P4/2P5/PP3PPP/RNBQKBNR b KQkq - 0 4"
+    },
+    {
+     "san": "cxd4",
+     "uci": "c5d4",
+     "side": "black",
+     "fen": "rnbqkb1r/pp1ppppp/8/3nP3/3p4/2P5/PP3PPP/RNBQKBNR w KQkq - 0 5"
+    },
+    {
+     "san": "Nf3",
+     "uci": "g1f3",
+     "side": "white",
+     "fen": "rnbqkb1r/pp1ppppp/8/3nP3/3p4/2P2N2/PP3PPP/RNBQKB1R b KQkq - 1 5"
+    },
+    {
+     "san": "Nc6",
+     "uci": "b8c6",
+     "side": "black",
+     "fen": "r1bqkb1r/pp1ppppp/2n5/3nP3/3p4/2P2N2/PP3PPP/RNBQKB1R w KQkq - 2 6"
+    },
+    {
+     "san": "cxd4",
+     "uci": "c3d4",
+     "side": "white",
+     "fen": "r1bqkb1r/pp1ppppp/2n5/3nP3/3P4/5N2/PP3PPP/RNBQKB1R b KQkq - 0 6"
+    },
+    {
+     "san": "d6",
+     "uci": "d7d6",
+     "side": "black",
+     "fen": "r1bqkb1r/pp2pppp/2np4/3nP3/3P4/5N2/PP3PPP/RNBQKB1R w KQkq - 0 7"
+    },
+    {
+     "san": "Bc4",
+     "uci": "f1c4",
+     "side": "white",
+     "fen": "r1bqkb1r/pp2pppp/2np4/3nP3/2BP4/5N2/PP3PPP/RNBQK2R b KQkq - 1 7"
+    },
+    {
+     "san": "Nb6",
+     "uci": "d5b6",
+     "side": "black",
+     "fen": "r1bqkb1r/pp2pppp/1nnp4/4P3/2BP4/5N2/PP3PPP/RNBQK2R w KQkq - 2 8"
+    },
+    {
+     "san": "Bb5",
+     "uci": "c4b5",
+     "side": "white",
+     "fen": "r1bqkb1r/pp2pppp/1nnp4/1B2P3/3P4/5N2/PP3PPP/RNBQK2R b KQkq - 3 8"
+    },
+    {
+     "san": "dxe5",
+     "uci": "d6e5",
+     "side": "black",
+     "fen": "r1bqkb1r/pp2pppp/1nn5/1B2p3/3P4/5N2/PP3PPP/RNBQK2R w KQkq - 0 9"
+    },
+    {
+     "san": "Nxe5",
+     "uci": "f3e5",
+     "side": "white",
+     "fen": "r1bqkb1r/pp2pppp/1nn5/1B2N3/3P4/8/PP3PPP/RNBQK2R b KQkq - 0 9"
+    },
+    {
+     "san": "Bd7",
+     "uci": "c8d7",
+     "side": "black",
+     "fen": "r2qkb1r/pp1bpppp/1nn5/1B2N3/3P4/8/PP3PPP/RNBQK2R w KQkq - 1 10"
+    }
+   ],
+   "fen": "r2qkb1r/pp1bpppp/1nn5/1B2N3/3P4/8/PP3PPP/RNBQK2R w KQkq - 1 10",
+   "line_san": "1. e4 c5 2. c3 Nf6 3. e5 Nd5 4. d4 cxd4 5. Nf3 Nc6 6. cxd4 d6 7. Bc4 Nb6 8. Bb5 dxe5 9. Nxe5 Bd7",
+   "moves_count": 18,
+   "white_idea": "Black wants to undermine your e5/d4 chain with ...d6 and ...Nc6, trade on d4 and e5, and use the d5 knight against c3 and e3. If you push too far, the centre becomes a target.",
+   "eco": "B22",
+   "source_games": [],
+   "breaks": [
+    "Black's break is ...d6, chipping at the e5 pawn. If the centre opens, your lead in development is what you are playing for.",
+    "You do not need a pawn break of your own. After ...cxd4, cxd4 keeps a pawn on d4 and a pawn on e5. That is the centre 2.c3 was for."
+   ],
+   "offbook": "3...Nd5 is the move. If the knight goes back to g8 or out to e4, play d4 and Nf3 anyway. That knight is worse than it would have been on d5. If they play ...e6 or ...Nc6 before taking on d4, still play d4, Nf3, Bc4 and castle. Do not trade e5 unless it wins a piece or opens a file you want.",
+   "eval_note": "Engine at the end of the line: +0.02 for White (Lichess cloud eval, Stockfish, depth 55)."
+  },
+  {
    "id": "alapin-d5",
    "name": "2...d5 — the queen comes to d5",
-   "frequency": "most common reply",
+   "frequency": "33.2% of masters",
    "tell": "Black hits e4 at once with 2...d5. After 3.exd5 Qxd5 4.d4 the queen sits in the centre. Your c3 pawn has taken the c3 square from your knight for now, so the queen is safe there.",
    "opponent_idea": "Black wants quick development (...Nf6, ...Bg4, ...e6, ...Nc6), pressure on d4 from the queen, knight and the pin on your f3 knight, and then ...cxd4 to leave you with an isolated d-pawn to aim at.",
    "moves": [
@@ -230,221 +445,18 @@
    "moves_count": 20,
    "white_idea": "Black wants quick development (...Nf6, ...Bg4, ...e6, ...Nc6), pressure on d4 from the queen, knight and the pin on your f3 knight, and then ...cxd4 to leave you with an isolated d-pawn to aim at.",
    "eco": "B22",
-   "source_games": []
-  },
-  {
-   "id": "alapin-nf6",
-   "name": "2...Nf6 — hit e4, knight to d5",
-   "frequency": "second main line",
-   "tell": "Black attacks e4 with 2...Nf6. Push 3.e5: the knight has to go to d5, and you build the centre with d4 and Nf3.",
-   "opponent_idea": "Black wants to undermine your e5/d4 chain with ...d6 and ...Nc6, trade on d4 and e5, and use the d5 knight against c3 and e3. If you push too far, the centre becomes a target.",
-   "moves": [
-    "e4",
-    "c5",
-    "c3",
-    "Nf6",
-    "e5",
-    "Nd5",
-    "d4",
-    "cxd4",
-    "Nf3",
-    "Nc6",
-    "cxd4",
-    "d6",
-    "Bc4",
-    "Nb6",
-    "Bb5",
-    "dxe5",
-    "Nxe5",
-    "Bd7"
+   "source_games": [],
+   "breaks": [
+    "After ...cxd4 cxd4 you have an isolated d-pawn. While pieces are on, it is a strength: it holds e5 and c5, and your pieces get open lines.",
+    "There is no pawn break to rush. Ne5, Bd3 and Re1 are the attack. If too many pieces come off, the d-pawn becomes a weakness, so do not trade just to trade."
    ],
-   "plans": [
-    "3.e5 Nd5 4.d4 cxd4 5.Nf3, and take back cxd4 next move.",
-    "Bc4 hits the d5 knight. After ...Nb6, Bb5 pins the c6 knight and keeps the pressure.",
-    "Castle and either hold e5 or trade it for active pieces (Nxe5)."
-   ],
-   "strategic": [
-    "...d6 attacks e5. If the position opens, your lead in development counts. Do not let Black win e5 for nothing.",
-    "If Black plays ...e6 instead, you get a French-like position: Bc4, O-O, Qe2 and Nc3."
-   ],
-   "tactics": [
-    {
-     "name": "The knight must move: 3...e6?? 4.exf6",
-     "point": "After 3.e5 the f6 knight is attacked by a pawn. Any slow move loses it (+4.0).",
-     "line_san": "4. exf6",
-     "plies": [
-      {
-       "san": "exf6",
-       "uci": "e5f6",
-       "side": "white",
-       "fen": "rnbqkb1r/pp1p1ppp/4pP2/2p5/8/2P5/PP1P1PPP/RNBQKBNR b KQkq - 0 4"
-      }
-     ],
-     "fen": "rnbqkb1r/pp1p1ppp/4pn2/2p1P3/8/2P5/PP1P1PPP/RNBQKBNR w KQkq - 0 4",
-     "url": null
-    },
-    {
-     "name": "Loose knight on d5: 7...Bg4? 8.Bxd5",
-     "point": "Once Black has played ...d6, the d6 pawn blocks the queen's defence of the d5 knight. Bxd5 wins a piece (+4.8), and after 8...dxe5 9.Bxf7+ Kxf7 10.Ng5+ even more.",
-     "line_san": "8. Bxd5 dxe5 9. Bxf7+ Kxf7 10. Ng5+",
-     "plies": [
-      {
-       "san": "Bxd5",
-       "uci": "c4d5",
-       "side": "white",
-       "fen": "r2qkb1r/pp2pppp/2np4/3BP3/3P2b1/5N2/PP3PPP/RNBQK2R b KQkq - 0 8"
-      },
-      {
-       "san": "dxe5",
-       "uci": "d6e5",
-       "side": "black",
-       "fen": "r2qkb1r/pp2pppp/2n5/3Bp3/3P2b1/5N2/PP3PPP/RNBQK2R w KQkq - 0 9"
-      },
-      {
-       "san": "Bxf7+",
-       "uci": "d5f7",
-       "side": "white",
-       "fen": "r2qkb1r/pp2pBpp/2n5/4p3/3P2b1/5N2/PP3PPP/RNBQK2R b KQkq - 0 9"
-      },
-      {
-       "san": "Kxf7",
-       "uci": "e8f7",
-       "side": "black",
-       "fen": "r2q1b1r/pp2pkpp/2n5/4p3/3P2b1/5N2/PP3PPP/RNBQK2R w KQ - 0 10"
-      },
-      {
-       "san": "Ng5+",
-       "uci": "f3g5",
-       "side": "white",
-       "fen": "r2q1b1r/pp2pkpp/2n5/4p1N1/3P2b1/8/PP3PPP/RNBQK2R b KQ - 1 10"
-      }
-     ],
-     "fen": "r2qkb1r/pp2pppp/2np4/3nP3/2BP2b1/5N2/PP3PPP/RNBQK2R w KQkq - 2 8",
-     "url": null
-    }
-   ],
-   "watch": "Every time Black's knight sits on d5 with a pawn on d6 and no pawn on e6, check whether it is defended. If it is not, Bxd5 wins it.",
-   "plies": [
-    {
-     "san": "e4",
-     "uci": "e2e4",
-     "side": "white",
-     "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
-    },
-    {
-     "san": "c5",
-     "uci": "c7c5",
-     "side": "black",
-     "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"
-    },
-    {
-     "san": "c3",
-     "uci": "c2c3",
-     "side": "white",
-     "fen": "rnbqkbnr/pp1ppppp/8/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR b KQkq - 0 2"
-    },
-    {
-     "san": "Nf6",
-     "uci": "g8f6",
-     "side": "black",
-     "fen": "rnbqkb1r/pp1ppppp/5n2/2p5/4P3/2P5/PP1P1PPP/RNBQKBNR w KQkq - 1 3"
-    },
-    {
-     "san": "e5",
-     "uci": "e4e5",
-     "side": "white",
-     "fen": "rnbqkb1r/pp1ppppp/5n2/2p1P3/8/2P5/PP1P1PPP/RNBQKBNR b KQkq - 0 3"
-    },
-    {
-     "san": "Nd5",
-     "uci": "f6d5",
-     "side": "black",
-     "fen": "rnbqkb1r/pp1ppppp/8/2pnP3/8/2P5/PP1P1PPP/RNBQKBNR w KQkq - 1 4"
-    },
-    {
-     "san": "d4",
-     "uci": "d2d4",
-     "side": "white",
-     "fen": "rnbqkb1r/pp1ppppp/8/2pnP3/3P4/2P5/PP3PPP/RNBQKBNR b KQkq - 0 4"
-    },
-    {
-     "san": "cxd4",
-     "uci": "c5d4",
-     "side": "black",
-     "fen": "rnbqkb1r/pp1ppppp/8/3nP3/3p4/2P5/PP3PPP/RNBQKBNR w KQkq - 0 5"
-    },
-    {
-     "san": "Nf3",
-     "uci": "g1f3",
-     "side": "white",
-     "fen": "rnbqkb1r/pp1ppppp/8/3nP3/3p4/2P2N2/PP3PPP/RNBQKB1R b KQkq - 1 5"
-    },
-    {
-     "san": "Nc6",
-     "uci": "b8c6",
-     "side": "black",
-     "fen": "r1bqkb1r/pp1ppppp/2n5/3nP3/3p4/2P2N2/PP3PPP/RNBQKB1R w KQkq - 2 6"
-    },
-    {
-     "san": "cxd4",
-     "uci": "c3d4",
-     "side": "white",
-     "fen": "r1bqkb1r/pp1ppppp/2n5/3nP3/3P4/5N2/PP3PPP/RNBQKB1R b KQkq - 0 6"
-    },
-    {
-     "san": "d6",
-     "uci": "d7d6",
-     "side": "black",
-     "fen": "r1bqkb1r/pp2pppp/2np4/3nP3/3P4/5N2/PP3PPP/RNBQKB1R w KQkq - 0 7"
-    },
-    {
-     "san": "Bc4",
-     "uci": "f1c4",
-     "side": "white",
-     "fen": "r1bqkb1r/pp2pppp/2np4/3nP3/2BP4/5N2/PP3PPP/RNBQK2R b KQkq - 1 7"
-    },
-    {
-     "san": "Nb6",
-     "uci": "d5b6",
-     "side": "black",
-     "fen": "r1bqkb1r/pp2pppp/1nnp4/4P3/2BP4/5N2/PP3PPP/RNBQK2R w KQkq - 2 8"
-    },
-    {
-     "san": "Bb5",
-     "uci": "c4b5",
-     "side": "white",
-     "fen": "r1bqkb1r/pp2pppp/1nnp4/1B2P3/3P4/5N2/PP3PPP/RNBQK2R b KQkq - 3 8"
-    },
-    {
-     "san": "dxe5",
-     "uci": "d6e5",
-     "side": "black",
-     "fen": "r1bqkb1r/pp2pppp/1nn5/1B2p3/3P4/5N2/PP3PPP/RNBQK2R w KQkq - 0 9"
-    },
-    {
-     "san": "Nxe5",
-     "uci": "f3e5",
-     "side": "white",
-     "fen": "r1bqkb1r/pp2pppp/1nn5/1B2N3/3P4/8/PP3PPP/RNBQK2R b KQkq - 0 9"
-    },
-    {
-     "san": "Bd7",
-     "uci": "c8d7",
-     "side": "black",
-     "fen": "r2qkb1r/pp1bpppp/1nn5/1B2N3/3P4/8/PP3PPP/RNBQK2R w KQkq - 1 10"
-    }
-   ],
-   "fen": "r2qkb1r/pp1bpppp/1nn5/1B2N3/3P4/8/PP3PPP/RNBQK2R w KQkq - 1 10",
-   "line_san": "1. e4 c5 2. c3 Nf6 3. e5 Nd5 4. d4 cxd4 5. Nf3 Nc6 6. cxd4 d6 7. Bc4 Nb6 8. Bb5 dxe5 9. Nxe5 Bd7",
-   "moves_count": 18,
-   "white_idea": "Black wants to undermine your e5/d4 chain with ...d6 and ...Nc6, trade on d4 and e5, and use the d5 knight against c3 and e3. If you push too far, the centre becomes a target.",
-   "eco": "B22",
-   "source_games": []
+   "offbook": "If they do not take back with the queen, play d4 and Nf3 all the same. If they skip ...cxd4, do not force it: Be2, castle, Be3, and let them decide. If they play ...e5, keep developing and only take when it helps a piece. When they do take on d4, recapture with the c-pawn, then Nc3 with tempo on the queen. Club games in the 1800 rating group were not available (the player explorer returned HTTP 401), so a 1790 may meet ...d5 as often as ...Nf6. Know both.",
+   "eval_note": "Engine at the end of the line: 0.00 (Lichess cloud eval, Stockfish, depth 36)."
   },
   {
    "id": "alapin-e6",
    "name": "2...e6 — French style, then ...d5",
-   "frequency": "your first Alapin game",
+   "frequency": "7.9% of masters",
    "tell": "Black plays 2...e6 and meets 3.d4 with 3...d5. After 4.exd5 exd5 the e-file is open and Black chooses between an isolated pawn (...cxd4 or dxc5) and the ...c4 lock you saw in your game.",
    "opponent_idea": "Black wants either active pieces around an isolated d5 pawn (...Bd6, ...Nge7, ...O-O), or to lock the queenside with ...c4 and use the d3 and e4 squares for the light bishop (...Bf5 and ...Bd3), as in your game.",
    "moves": [
@@ -826,12 +838,18 @@
    "line_san": "1. e4 c5 2. c3 e6 3. d4 d5 4. exd5 exd5 5. Nf3 Nc6 6. Bb5 Bd6 7. dxc5 Bxc5 8. O-O Ne7 9. Nbd2 O-O 10. Nb3 Bd6",
    "moves_count": 20,
    "white_idea": "Black wants either active pieces around an isolated d5 pawn (...Bd6, ...Nge7, ...O-O), or to lock the queenside with ...c4 and use the d3 and e4 squares for the light bishop (...Bf5 and ...Bd3), as in your game.",
-   "eco": "B22"
+   "eco": "B22",
+   "breaks": [
+    "If the centre opens, Black's d5 pawn is the target and d4 is your blockading square. Nb3 and then a knight on d4 is the setup.",
+    "If they lock with ...c4, your break is b3, but only after the pieces are ready. Their idea in the lock is a kingside push, or parking a bishop on d3."
+   ],
+   "offbook": "3...d5 is the usual follow-up, and it is the shape from your first Alapin game. If they play ...Nf6, ...b6 or ...cxd4 instead, bring out Nf3 and a bishop and castle. Take on c5 or d5 only when it improves a piece. In the ...c4 lock, cover d3 with a knight and look at Nh5 if the knight on f6 is their only kingside defender.",
+   "eval_note": "Engine at the end of the line: +0.28 for White (Lichess cloud eval, Stockfish, depth 44)."
   },
   {
    "id": "alapin-d6",
    "name": "2...d6 — a quiet set-up",
-   "frequency": "less common",
+   "frequency": "7.1% of masters",
    "tell": "Black plays 2...d6, often with ...Nf6 and ...g6. Nothing attacks e4 yet, so take the full centre with 3.d4.",
    "opponent_idea": "Black wants a slow Dragon or Pirc set-up: ...Nf6, ...g6, ...Bg7, ...O-O and ...Nc6, then pressure on your centre with ...cxd4, ...Bg4 or ...e5.",
    "moves": [
@@ -1002,12 +1020,18 @@
    "moves_count": 15,
    "white_idea": "Black wants a slow Dragon or Pirc set-up: ...Nf6, ...g6, ...Bg7, ...O-O and ...Nc6, then pressure on your centre with ...cxd4, ...Bg4 or ...e5.",
    "eco": "B22",
-   "source_games": []
+   "source_games": [],
+   "breaks": [
+    "Black is building a small centre and will choose ...Nf6, ...Be7 or ...g6. Your space is the d4 and e4 pawns.",
+    "You do not need a pawn break until you see where their king is going. Develop, castle, and meet ...cxd4 with cxd4."
+   ],
+   "offbook": "They are waiting. Play d4, Nf3, a bishop and castle. If they take on d4, take with the c-pawn. If they hit e4 later with ...Nf6, e5 is still the move. Do not play an early dxc5 unless you have checked the knight-on-e4 trap on this card.",
+   "eval_note": "Engine at the end of the line: +0.64 for White (Lichess cloud eval, Stockfish, depth 31)."
   },
   {
    "id": "alapin-g6",
    "name": "2...g6 and the rest (2...Nc6, 2...e5)",
-   "frequency": "briefly",
+   "frequency": "3.3% of masters",
    "tell": "Black fianchettoes with 2...g6, or plays 2...Nc6 or 2...e5. Take the centre with 3.d4. After ...cxd4 cxd4 d5, push e5.",
    "opponent_idea": "With ...g6 and ...Bg7, Black wants to hit d4 down the long diagonal and break with ...d5 or ...d6. After 2...Nc6 Black usually goes back into the ...d5 lines. 2...e5 closes the centre for a solid game.",
    "moves": [
@@ -1153,7 +1177,14 @@
    "moves_count": 13,
    "white_idea": "With ...g6 and ...Bg7, Black wants to hit d4 down the long diagonal and break with ...d5 or ...d6. After 2...Nc6 Black usually goes back into the ...d5 lines. 2...e5 closes the centre for a solid game.",
    "eco": "B22",
-   "source_games": []
+   "source_games": [],
+   "breaks": [
+    "Against ...g6 you still want d4. Their bishop on g7 will stare at d4, so keep it defended with the c-pawn and a knight.",
+    "2...Nc6 and 2...e5 belong on this card too. d4 is still the move. There is no separate pawn break to memorise."
+   ],
+   "offbook": "2...Nc6 and 2...e5 are less common than the three main replies, and they are handled here. Against both, play d4, Nf3 and a bishop, then castle. If a piece lands on g4 before you have played Nf3, the queen takes it. That trap is on this card. If you are unsure of the order, develop and castle. The centre is yours.",
+   "eval_note": "Engine at the end of the line: +0.78 for White (Lichess cloud eval, Stockfish, depth 36)."
   }
- ]
+ ],
+ "source_note": "Popularity is the Lichess masters opening explorer, queried 26 Nov 2026. The Lichess player explorer for rapid games in rating group 1800 returned HTTP 401, so 1800–2000 shares are not cited. After 1.e4 c5 2.c3 the masters database has 39,207 games: 2...Nf6 17,602 (44.9%), 2...d5 13,023 (33.2%), 2...e6 3,082 (7.9%), 2...d6 2,765 (7.1%), 2...g6 1,283 (3.3%). Engine numbers on the cards are Lichess cloud eval (Stockfish) of the position at the end of each line."
 }
